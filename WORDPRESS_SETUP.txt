@@ -1,0 +1,83 @@
+WordPress REST API 和应用密码配置说明
+==========================================
+
+1. WordPress REST API
+---------------------
+✅ WordPress REST API 是 WordPress 内置功能，无需单独安装或配置
+✅ 系统自动使用标准端点：/wp-json/wp/v2
+✅ 只需要提供正确的 WordPress URL（如：https://vertu.com/）
+
+如何验证 REST API 是否可用：
+1. 在浏览器中访问：https://vertu.com/wp-json/
+2. 如果看到 JSON 数据，说明 REST API 已启用
+3. 如果看到 404 或错误，可能需要检查 WordPress 配置
+
+2. 应用密码（Application Password）
+-----------------------------------
+✅ 应用密码是必需的，用于认证 WordPress API 请求
+✅ 系统已经在使用应用密码（通过前端表单输入）
+
+如何创建应用密码：
+1. 登录 WordPress 后台
+2. 进入：用户 → 个人资料（或：用户 → 所有用户 → 编辑用户）
+3. 滚动到页面底部的"应用密码"部分
+4. 输入应用名称（如："AI Content Generator"）
+5. 点击"添加新应用密码"
+6. WordPress 会生成一个应用密码，格式类似：xxxx xxxx xxxx xxxx
+7. ⚠️ 重要：立即复制并保存，因为 WordPress 只会显示一次
+
+当前配置：
+- WordPress URL: https://vertu.com/
+- 用户名: Long tail keywords
+- 应用密码: y4uh p63B lY26 yIJe uL2v oJSB (名称: keywords)
+
+3. 系统如何使用这些信息
+------------------------
+系统通过以下方式使用 WordPress 凭据：
+
+1. 前端表单收集：
+   - WordPress URL
+   - 用户名
+   - 应用密码
+   - （可选）WooCommerce Consumer Key / Secret
+
+2. 后端使用 Basic Auth：
+   - WordPress 页面发布：Authorization: Basic base64(username:appPassword)
+   - WooCommerce 产品 API：Authorization: Basic base64(consumerKey:consumerSecret)
+   - 代码：Buffer.from(`${username}:${appPassword}`).toString("base64") / Buffer.from(`${consumerKey}:${consumerSecret}`).toString("base64")
+
+3. API 请求：
+   - 获取产品：GET /wp-json/wc/v3/products（回退 /wc/v2、/wp/v2）
+   - 发布页面：POST /wp-json/wp/v2/pages
+
+4. 常见问题
+-----------
+Q: 是否需要安装 REST API 插件？
+A: 不需要。WordPress 5.0+ 内置 REST API。
+
+Q: 应用密码和普通密码有什么区别？
+A: 应用密码更安全：
+   - 可以单独撤销，不影响主密码
+   - 只能用于 API 访问
+   - 可以创建多个，用于不同应用
+
+Q: WooCommerce API 需要额外配置吗？
+A: 是的，推荐在 WordPress 后台 → WooCommerce → 设置 → 高级 → REST API 创建密钥：
+   - 权限至少选择 “读取”
+   - 记下生成的 Consumer Key / Secret
+   - 填写到 backend/.env（WOOCOMMERCE_CONSUMER_KEY、WOOCOMMERCE_CONSUMER_SECRET）
+
+Q: 如果应用密码丢失怎么办？
+A: 在 WordPress 后台删除旧的应用密码，创建新的。
+
+Q: 如何验证应用密码是否正确？
+A: 系统会在日志中显示认证错误。如果看到 401/403 错误，说明密码不正确。
+
+5. 安全建议
+-----------
+✅ 不要在代码中硬编码应用密码
+✅ 使用环境变量或前端表单输入（当前方式）
+✅ 定期轮换应用密码
+✅ 为不同应用创建不同的应用密码
+✅ 如果不再使用，及时删除应用密码
+

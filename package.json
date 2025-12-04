@@ -1,0 +1,16 @@
+{
+  "name": "wp-ai-automation",
+  "version": "0.1.0",
+  "description": "WordPress AI content automation engine",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npx http-server -p 8080 -c-1 --cors",
+    "install:all": "npm install && cd backend && npm install",
+    "build": "cd backend && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
