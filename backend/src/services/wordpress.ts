@@ -1020,10 +1020,13 @@ async function fetchWooCommerceProductsBySearch(
     return null;
   }
 
+  // 如果有多个目标产品名称，增加搜索数量以确保能获取到所有相关产品
+  const perPage = targetProductNames.length > 1 ? 20 : 10;
+
   const response = await client.get("/products", {
     params: {
       search: trimmedTerm,
-      per_page: 10,
+      per_page: perPage,
       stock_status: "instock", // 只获取有库存的产品
     },
   });
@@ -1031,10 +1034,19 @@ async function fetchWooCommerceProductsBySearch(
   if (response.data && Array.isArray(response.data) && response.data.length > 0) {
     console.log(`[WordPress] ✅ 成功使用 ${apiName} （search=${trimmedTerm}）获取 ${response.data.length} 个产品`);
     const filteredRaw = filterRawProductsByTargetNames(response.data, targetProductNames);
+    
+    // 如果有目标产品名称但未找到匹配的产品，记录警告但不立即返回 null
+    // 因为可能通过其他搜索方式找到产品
     if (targetProductNames.length && filteredRaw.length === 0) {
-      console.warn(`[WordPress] ${apiName} （search=${trimmedTerm}）未找到指定产品`);
+      console.warn(`[WordPress] ${apiName} （search=${trimmedTerm}）未找到指定产品: ${targetProductNames.join(", ")}`);
+      // 不返回 null，继续尝试其他搜索方式
       return null;
     }
+    
+    if (targetProductNames.length > 1) {
+      console.log(`[WordPress] 多产品关键词匹配: 找到 ${filteredRaw.length} 个产品（目标产品: ${targetProductNames.join(", ")})`);
+    }
+    
     const products = parseProductsData(filteredRaw, apiName);
     const relatedProducts = await fetchWooCommerceRelatedProducts(
       client,
@@ -1115,12 +1127,15 @@ async function fetchWooCommerceProductsByCategory(
 
     const uniqueProducts = new Map<number, any>();
 
+    // 如果有多个目标产品名称，增加搜索数量以确保能获取到所有相关产品
+    const perPage = targetProductNames.length > 1 ? 20 : 10;
+
     for (const category of categories) {
       try {
         const productsResp = await client.get("/products", {
           params: {
             category: category.id,
-            per_page: 10,
+            per_page: perPage,
             status: "publish",
             stock_status: "instock", // 只获取有库存的产品
           },
@@ -1147,13 +1162,22 @@ async function fetchWooCommerceProductsByCategory(
 
     const collectedProducts = Array.from(uniqueProducts.values());
     const filteredRaw = filterRawProductsByTargetNames(collectedProducts, targetProductNames);
+    
+    // 如果有目标产品名称但未找到匹配的产品，记录警告但不立即返回 null
     if (targetProductNames.length && filteredRaw.length === 0) {
-      console.warn(`[WordPress] 分类检索未找到指定产品（${trimmedKeyword}）`);
+      console.warn(`[WordPress] 分类检索未找到指定产品（${trimmedKeyword}）: ${targetProductNames.join(", ")}`);
       return null;
     }
-    console.log(
-      `[WordPress] ✅ 通过分类检索获取 ${collectedProducts.length} 个产品`
-    );
+    
+    if (targetProductNames.length > 1) {
+      console.log(
+        `[WordPress] ✅ 通过分类检索获取 ${collectedProducts.length} 个产品，匹配到 ${filteredRaw.length} 个目标产品（目标产品: ${targetProductNames.join(", ")})`
+      );
+    } else {
+      console.log(
+        `[WordPress] ✅ 通过分类检索获取 ${collectedProducts.length} 个产品`
+      );
+    }
 
     const products = parseProductsData(filteredRaw, apiName);
     const relatedProducts = await fetchWooCommerceRelatedProducts(
@@ -1374,16 +1398,32 @@ function buildKeywordVariants(keyword: string, preferredNames: string[] = []): s
       variants.add(withoutBrand);
     }
 
+    // 提取关键词中的产品相关词汇（支持多个产品关键词）
+    // 例如："smart ring vs smart watch" 会提取 "ring" 和 "watch"
     const tokens = normalized
       .split(/[^a-z0-9+]+/)
-      .filter((token) => token.length >= 4 && !STOP_WORDS.has(token));
-    tokens.forEach((token) => variants.add(token));
-
+      .filter((token) => token.length >= 3 && !STOP_WORDS.has(token));
+    
+    // 检查这些词汇是否匹配产品关键词提示
+    const productKeywords: string[] = [];
     for (const hint of PRODUCT_KEYWORD_HINTS) {
-      if (hint.keywords.some((kw) => normalized.includes(kw))) {
+      const matchedKeywords = hint.keywords.filter(kw => 
+        tokens.some(token => token.includes(kw) || kw.includes(token)) || normalized.includes(kw)
+      );
+      if (matchedKeywords.length > 0) {
+        // 如果匹配到产品关键词，添加对应的产品名称和关键词本身
         hint.productNames.forEach((name) => variants.add(name));
+        productKeywords.push(...matchedKeywords);
       }
     }
+    
+    // 添加匹配到的产品关键词本身（如 "ring", "watch"）
+    productKeywords.forEach(kw => variants.add(kw));
+    
+    // 添加其他有意义的词汇（长度>=4的）
+    tokens
+      .filter((token) => token.length >= 4)
+      .forEach((token) => variants.add(token));
   }
 
   variants.add("VERTU");
@@ -1401,9 +1441,23 @@ function extractTargetProductNames(keyword: string): string[] {
   }
 
   const matches = new Set<string>();
+  
+  // 1. 直接匹配产品名称（精确匹配）
   for (const entry of PRODUCT_NAME_ENTRIES) {
     if (entry.normalized && normalizedKeyword.includes(entry.normalized)) {
       matches.add(entry.canonical);
+    }
+  }
+  
+  // 2. 通过产品关键词提示匹配（支持多个产品关键词）
+  // 例如："smart ring vs smart watch" 应该匹配到 ring 和 watch 相关的产品
+  for (const hint of PRODUCT_KEYWORD_HINTS) {
+    // 检查关键词中是否包含该提示的关键词
+    const matchedKeywords = hint.keywords.filter(kw => normalizedKeyword.includes(kw));
+    if (matchedKeywords.length > 0) {
+      // 如果匹配到，添加该提示对应的所有产品
+      hint.productNames.forEach(name => matches.add(name));
+      console.log(`[WordPress] 通过关键词提示匹配到产品: ${hint.productNames.join(", ")} (匹配关键词: ${matchedKeywords.join(", ")})`);
     }
   }
 
@@ -1420,6 +1474,7 @@ function filterRawProductsByTargetNames(productsData: any[], targetNames: string
     return productsData;
   }
 
+  // 过滤产品：只要产品名称包含任何一个目标关键词就匹配
   const filtered = productsData.filter((product) => {
     const rawName = product?.name || product?.title?.rendered || product?.slug || "";
     const normalizedProductName = normalizePhrase(rawName);
@@ -1430,8 +1485,11 @@ function filterRawProductsByTargetNames(productsData: any[], targetNames: string
     return [];
   }
 
-  const limit = Math.max(1, normalizedTargets.length);
-  return filtered.slice(0, limit);
+  // 优化：当有多个产品关键词时，返回所有匹配的产品，而不是只返回一个
+  // 例如："smart ring vs smart watch" 应该返回所有 ring 和 watch 相关的产品
+  // 设置一个合理的上限，避免返回过多产品（最多返回 20 个）
+  const maxProducts = Math.min(20, filtered.length);
+  return filtered.slice(0, maxProducts);
 }
 
 function normalizePhrase(value: string): string {

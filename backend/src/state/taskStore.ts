@@ -1,5 +1,6 @@
 import { randomUUID } from "crypto";
 import type { TaskProgress, TaskStatus } from "../types.js";
+import { saveHistoryRecord } from "./historyStore.js";
 
 const tasks = new Map<string, TaskProgress>();
 
@@ -32,11 +33,21 @@ export function updateTaskStatus(id: string, status: TaskStatus, message: string
 }
 
 export function setTaskError(id: string, error: string) {
-  updateTaskStatus(id, "failed", error, { error });
+  const task = tasks.get(id);
+  if (task) {
+    updateTaskStatus(id, "failed", error, { error });
+    // 保存到历史记录
+    saveHistoryRecord(task);
+  }
 }
 
 export function setTaskCompleted(id: string, message: string, pageUrl?: string) {
-  updateTaskStatus(id, "completed", message, { pageUrl });
+  const task = tasks.get(id);
+  if (task) {
+    updateTaskStatus(id, "completed", message, { pageUrl });
+    // 保存到历史记录
+    saveHistoryRecord(task);
+  }
 }
 
 export function getTask(id: string): TaskProgress | undefined {

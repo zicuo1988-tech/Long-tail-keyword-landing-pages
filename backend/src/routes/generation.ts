@@ -89,6 +89,14 @@ generationRouter.post("/generate-page", (req, res) => {
 
 async function processTask(taskId: string, payload: GenerationRequestPayload) {
   try {
+    // 保存任务的关键信息到任务对象中（用于历史记录）
+    updateTaskStatus(taskId, "queued", "任务已创建", {
+      keyword: payload.keyword,
+      pageTitle: payload.pageTitle,
+      titleType: payload.titleType,
+      templateType: payload.templateType,
+    });
+
     // 如果请求中提供了 API Key，优先使用；否则使用环境变量中的 Key 池
     const apiKey = payload.googleApiKey || undefined;
     const siteBaseUrl = normalizeSiteUrl(payload.wordpress.url);

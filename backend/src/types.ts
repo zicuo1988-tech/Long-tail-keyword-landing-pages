@@ -63,4 +63,9 @@ export interface TaskProgress {
   createdAt: number;
   updatedAt: number;
   error?: string;
+  // 历史记录相关字段
+  keyword?: string;
+  pageTitle?: string;
+  titleType?: string;
+  templateType?: string;
 }

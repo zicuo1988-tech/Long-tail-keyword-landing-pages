@@ -71,6 +71,27 @@ async function loadTemplate(templateType = "template-1") {
 // 页面加载时自动加载默认模板
 loadTemplate("template-1");
 
+// 关键词池功能：显示/隐藏关键词池输入框
+const useKeywordPoolCheckbox = document.querySelector("#useKeywordPool");
+const keywordPoolRow = document.querySelector("#keywordPoolRow");
+const keywordInput = document.querySelector("#keyword");
+
+if (useKeywordPoolCheckbox && keywordPoolRow) {
+  useKeywordPoolCheckbox.addEventListener("change", (e) => {
+    if (e.target.checked) {
+      keywordPoolRow.style.display = "block";
+      if (keywordInput) {
+        keywordInput.removeAttribute("required");
+      }
+    } else {
+      keywordPoolRow.style.display = "none";
+      if (keywordInput) {
+        keywordInput.setAttribute("required", "required");
+      }
+    }
+  });
+}
+
 // 模板卡片选择功能
 function initTemplateCards() {
   const templateCards = document.querySelectorAll(".template-card");
@@ -313,22 +334,175 @@ form.addEventListener("submit", async (event) => {
   }
 
   const formData = new FormData(form);
+  const useKeywordPool = formData.get("useKeywordPool") === "on";
   const keyword = String(formData.get("keyword") ?? "").trim();
-  const titleType = String(formData.get("titleType") ?? "").trim();
-  const pageTitle = String(formData.get("pageTitle") ?? "").trim();
+  const keywordPool = String(formData.get("keywordPool") ?? "").trim();
   const templateContent = templateTextarea.value.trim();
   const backendUrl = String(formData.get("backendUrl") ?? "").trim().replace(/\/$/, "");
 
-  if (!keyword || !templateContent) {
-    updateProgress("failed", "请填写关键词和模板内容");
-    appendLog("请填写关键词和模板内容", "error");
+  // 检查后端URL是否有效
+  if (!backendUrl || !backendUrl.startsWith("http")) {
+    updateProgress("failed", "请填写有效的后端 API 地址");
+    appendLog("请填写有效的后端 API 地址（例如：http://localhost:4000）", "error");
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
+    return;
+  }
+
+  if (!templateContent) {
+    updateProgress("failed", "请填写模板内容");
+    appendLog("请填写模板内容", "error");
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
+    return;
+  }
+
+  // 如果使用关键词池
+  if (useKeywordPool) {
+    if (!keywordPool) {
+      updateProgress("failed", "请填写关键词池");
+      appendLog("请填写关键词池（每行一个关键词）", "error");
       if (submitButton) {
         submitButton.removeAttribute("disabled");
         submitButton.classList.remove("loading");
       }
+      return;
+    }
+
+    // 解析关键词池（每行一个）
+    const keywords = keywordPool
+      .split("\n")
+      .map(k => k.trim())
+      .filter(k => k.length > 0);
+
+    if (keywords.length === 0) {
+      updateProgress("failed", "关键词池为空");
+      appendLog("关键词池为空，请至少输入一个关键词", "error");
+      if (submitButton) {
+        submitButton.removeAttribute("disabled");
+        submitButton.classList.remove("loading");
+      }
+      return;
+    }
+
+    // 定义模板和标题类型循环数组
+    const templateTypes = ["template-1", "template-2", "template-3"];
+    const titleTypes = [
+      "purchase", "informational", "review", "commercial", "how-to",
+      "recommendations", "services-guides", "tech-insights", "comparison",
+      "expert", "best", "top", "top-ranking", "most"
+    ];
+
+    appendLog(`开始批量生成，共 ${keywords.length} 个关键词`, "info");
+    updateProgress("submitted", `批量生成中：0/${keywords.length}`);
+
+    // 循环处理每个关键词
+    let successCount = 0;
+    let failCount = 0;
+
+    for (let i = 0; i < keywords.length; i++) {
+      const currentKeyword = keywords[i];
+      const templateIndex = i % templateTypes.length;
+      const titleIndex = i % titleTypes.length;
+      const currentTemplate = templateTypes[templateIndex];
+      const currentTitleType = titleTypes[titleIndex];
+
+      appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
+      appendLog(`处理第 ${i + 1}/${keywords.length} 个关键词: "${currentKeyword}"`, "info");
+      appendLog(`使用模板: ${currentTemplate === "template-1" ? "模板1" : currentTemplate === "template-2" ? "模板2" : "模板3"}`, "info");
+      appendLog(`使用标题类型: ${currentTitleType}`, "info");
+
+      // 加载对应的模板
+      await loadTemplate(currentTemplate);
+      const currentTemplateContent = templateTextarea.value.trim();
+
+      const payload = {
+        keyword: currentKeyword,
+        titleType: currentTitleType,
+        pageTitle: String(formData.get("pageTitle") ?? "").trim() || undefined,
+        userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
+        targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
+        templateType: currentTemplate,
+        templateContent: currentTemplateContent,
+        useElementor: formData.get("useElementor") === "on",
+        wordpress: {
+          url: String(formData.get("wpUrl") ?? "").trim(),
+          username: String(formData.get("wpUsername") ?? "").trim(),
+          appPassword: String(formData.get("wpAppPassword") ?? "").trim(),
+        },
+      };
+
+      try {
+        updateProgress("submitted", `批量生成中：${i + 1}/${keywords.length} - 正在处理: ${currentKeyword}`);
+
+        const response = await fetch(`${backendUrl}/api/generate-page`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorPayload = await response.json().catch(() => ({}));
+          throw new Error(errorPayload.error || `后端返回错误：${response.status}`);
+        }
+
+        const json = await response.json();
+        const taskId = json.taskId;
+        appendLog(`任务提交成功，等待处理...`, "info");
+
+        pollingAbortController = new AbortController();
+        await pollTaskStatus({ 
+          backendUrl, 
+          taskId, 
+          signal: pollingAbortController.signal,
+          keywordIndex: i + 1,
+          totalKeywords: keywords.length
+        });
+
+        successCount++;
+        appendLog(`✅ 关键词 "${currentKeyword}" 处理完成`, "success");
+      } catch (error) {
+        failCount++;
+        console.error(error);
+        const errorMessage = error instanceof Error ? error.message : "请求失败";
+        appendLog(`❌ 关键词 "${currentKeyword}" 处理失败: ${errorMessage}`, "error");
+        
+        // 继续处理下一个关键词，不中断整个流程
+        continue;
+      }
+    }
+
+    // 批量处理完成
+    appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
+    appendLog(`批量生成完成！`, "success");
+    appendLog(`成功: ${successCount} 个，失败: ${failCount} 个，总计: ${keywords.length} 个`, 
+      failCount > 0 ? "error" : "success");
+    updateProgress(failCount > 0 ? "failed" : "completed", 
+      `批量生成完成：成功 ${successCount}/${keywords.length}`);
+
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
     return;
   }
 
+  // 单个关键词处理（原有逻辑）
+  if (!keyword) {
+    updateProgress("failed", "请填写关键词");
+    appendLog("请填写关键词", "error");
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
+    return;
+  }
+
+  const titleType = String(formData.get("titleType") ?? "").trim();
   if (!titleType) {
     updateProgress("failed", "请选择标题类型");
     appendLog("请选择标题类型", "error");
@@ -340,13 +514,14 @@ form.addEventListener("submit", async (event) => {
   }
 
   const templateType = String(formData.get("templateType") ?? "template-1").trim();
+  const pageTitle = String(formData.get("pageTitle") ?? "").trim();
   
   const payload = {
     keyword,
     titleType,
-    pageTitle,
-    userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined, // 用户提示词（可选）
-    targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined, // 目标产品分类（可选）
+    pageTitle: pageTitle || undefined,
+    userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
+    targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
     templateType,
     templateContent,
     useElementor: formData.get("useElementor") === "on",
@@ -360,11 +535,6 @@ form.addEventListener("submit", async (event) => {
   appendLog("正在创建任务...");
 
   try {
-    // 检查后端URL是否有效
-    if (!backendUrl || !backendUrl.startsWith("http")) {
-      throw new Error("请填写有效的后端 API 地址（例如：http://localhost:4000）");
-    }
-
     const response = await fetch(`${backendUrl}/api/generate-page`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -416,7 +586,7 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
-async function pollTaskStatus({ backendUrl, taskId, signal }) {
+async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalKeywords }) {
   let lastStatus = null;
 
   while (!signal.aborted) {
@@ -448,8 +618,14 @@ async function pollTaskStatus({ backendUrl, taskId, signal }) {
       }
       
       if (task.status !== lastStatus) {
-        appendLog(task.message ?? task.status);
-        updateProgress(progressStage, message);
+        let logMessage = task.message ?? task.status;
+        if (keywordIndex && totalKeywords) {
+          logMessage = `[${keywordIndex}/${totalKeywords}] ${logMessage}`;
+        }
+        appendLog(logMessage);
+        updateProgress(progressStage, keywordIndex && totalKeywords 
+          ? `批量生成中：${keywordIndex}/${totalKeywords} - ${message || task.status}`
+          : message);
         lastStatus = task.status;
       }
 
@@ -463,12 +639,24 @@ async function pollTaskStatus({ backendUrl, taskId, signal }) {
           appendLog("✅ 页面已发布成功!", "success");
           appendLog("⚠️ 注意：未获取到页面 URL，请在 WordPress 后台查看", "info");
         }
+        // 任务完成后刷新历史记录
+        setTimeout(() => {
+          if (typeof loadHistory === "function") {
+            loadHistory();
+          }
+        }, 1000);
         return;
       }
 
       if (task.status === "failed") {
         updateProgress("failed", task.error || "任务失败");
         appendLog(task.error || "任务失败", "error");
+        // 任务失败后也刷新历史记录
+        setTimeout(() => {
+          if (typeof loadHistory === "function") {
+            loadHistory();
+          }
+        }, 1000);
         return;
       }
     } catch (error) {
@@ -514,3 +702,218 @@ function delay(ms, signal) {
     signal.addEventListener("abort", onAbort, { once: true });
   });
 }
+
+// ==================== 历史记录功能 ====================
+
+// 历史记录相关元素
+const historySection = document.querySelector("#history-section");
+const historyList = document.querySelector("#history-list");
+const refreshHistoryBtn = document.querySelector("#refresh-history-btn");
+const clearHistoryBtn = document.querySelector("#clear-history-btn");
+const historySearch = document.querySelector("#history-search");
+const historyStatusFilter = document.querySelector("#history-status-filter");
+
+// 加载历史记录
+async function loadHistory() {
+  if (!historyList) return;
+
+  try {
+    const backendUrl = backendUrlInput?.value?.trim().replace(/\/$/, "") || "http://localhost:4000";
+    const search = historySearch?.value?.trim() || "";
+    const status = historyStatusFilter?.value || "";
+
+    let url = `${backendUrl}/api/history?`;
+    if (search) url += `search=${encodeURIComponent(search)}&`;
+    if (status) url += `status=${encodeURIComponent(status)}&`;
+    url = url.replace(/[&?]$/, "");
+
+    historyList.innerHTML = '<p style="text-align: center; color: var(--text-secondary); padding: 2rem;">加载中...</p>';
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`获取历史记录失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "获取历史记录失败");
+    }
+
+    const records = data.records || [];
+
+    if (records.length === 0) {
+      historyList.innerHTML = `
+        <div class="history-empty">
+          <div class="history-empty-icon">📭</div>
+          <p>暂无历史记录</p>
+          <small>生成页面后，记录会显示在这里</small>
+        </div>
+      `;
+      return;
+    }
+
+    historyList.innerHTML = records.map(record => {
+      const date = new Date(record.createdAt);
+      const dateStr = date.toLocaleString("zh-CN", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const statusClass = record.status === "completed" ? "completed" : "failed";
+      const statusText = record.status === "completed" ? "✅ 已完成" : "❌ 失败";
+
+      return `
+        <div class="history-item">
+          <div class="history-item-header">
+            <h3 class="history-item-title">${record.pageTitle || record.keyword || "未命名页面"}</h3>
+            <span class="history-item-status ${statusClass}">${statusText}</span>
+          </div>
+          <div class="history-item-meta">
+            <span class="history-item-meta-item">
+              <strong>关键词:</strong> ${record.keyword || "N/A"}
+            </span>
+            <span class="history-item-meta-item">
+              <strong>标题类型:</strong> ${record.titleType || "N/A"}
+            </span>
+            <span class="history-item-meta-item">
+              <strong>模板:</strong> ${record.templateType === "template-1" ? "模板1" : record.templateType === "template-2" ? "模板2" : record.templateType === "template-3" ? "模板3" : "N/A"}
+            </span>
+            <span class="history-item-meta-item">
+              <strong>生成时间:</strong> ${dateStr}
+            </span>
+          </div>
+          ${record.pageUrl ? `
+            <div style="margin-top: 0.5rem;">
+              <a href="${record.pageUrl}" target="_blank" rel="noopener noreferrer" 
+                 style="color: var(--primary-color); text-decoration: none; word-break: break-all;">
+                🔗 ${record.pageUrl}
+              </a>
+            </div>
+          ` : ""}
+          ${record.error ? `
+            <div style="margin-top: 0.5rem; padding: 0.5rem; background: rgba(239, 68, 68, 0.1); border-radius: 6px; color: var(--error-color); font-size: 0.9rem;">
+              <strong>错误:</strong> ${record.error}
+            </div>
+          ` : ""}
+          <div class="history-item-actions">
+            ${record.pageUrl ? `
+              <a href="${record.pageUrl}" target="_blank" rel="noopener noreferrer" class="secondary-btn">
+                🔗 查看页面
+              </a>
+            ` : ""}
+            <button type="button" class="secondary-btn" onclick="deleteHistoryRecord('${record.id}')" 
+                    style="background: var(--error-color); color: white;">
+              🗑️ 删除
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("加载历史记录失败:", error);
+    historyList.innerHTML = `
+      <div class="history-empty">
+        <div class="history-empty-icon">⚠️</div>
+        <p>加载历史记录失败</p>
+        <small>${error instanceof Error ? error.message : "未知错误"}</small>
+      </div>
+    `;
+  }
+}
+
+// 删除历史记录
+async function deleteHistoryRecord(taskId) {
+  if (!confirm("确定要删除这条历史记录吗？")) {
+    return;
+  }
+
+  try {
+    const backendUrl = backendUrlInput?.value?.trim().replace(/\/$/, "") || "http://localhost:4000";
+    const response = await fetch(`${backendUrl}/api/history/${taskId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`删除失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "删除失败");
+    }
+
+    // 重新加载历史记录
+    await loadHistory();
+  } catch (error) {
+    console.error("删除历史记录失败:", error);
+    alert(`删除失败: ${error instanceof Error ? error.message : "未知错误"}`);
+  }
+}
+
+// 清空所有历史记录
+async function clearAllHistory() {
+  if (!confirm("确定要清空所有历史记录吗？此操作不可恢复！")) {
+    return;
+  }
+
+  try {
+    const backendUrl = backendUrlInput?.value?.trim().replace(/\/$/, "") || "http://localhost:4000";
+    const response = await fetch(`${backendUrl}/api/history`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`清空失败: ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "清空失败");
+    }
+
+    // 重新加载历史记录
+    await loadHistory();
+  } catch (error) {
+    console.error("清空历史记录失败:", error);
+    alert(`清空失败: ${error instanceof Error ? error.message : "未知错误"}`);
+  }
+}
+
+// 将函数暴露到全局作用域，以便在HTML中调用
+window.deleteHistoryRecord = deleteHistoryRecord;
+
+// 绑定事件
+if (refreshHistoryBtn) {
+  refreshHistoryBtn.addEventListener("click", loadHistory);
+}
+
+if (clearHistoryBtn) {
+  clearHistoryBtn.addEventListener("click", clearAllHistory);
+}
+
+if (historySearch) {
+  let searchTimeout;
+  historySearch.addEventListener("input", () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(loadHistory, 500); // 防抖，500ms后执行
+  });
+}
+
+if (historyStatusFilter) {
+  historyStatusFilter.addEventListener("change", loadHistory);
+}
+
+// 页面加载时自动加载历史记录
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(loadHistory, 500); // 延迟加载，确保后端URL已设置
+  });
+} else {
+  setTimeout(loadHistory, 500);
+}
+
+// 注意：历史记录刷新已在 pollTaskStatus 函数内部的任务完成/失败时触发

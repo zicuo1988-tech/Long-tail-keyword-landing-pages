@@ -58,7 +58,20 @@
             <legend>📝 内容信息</legend>
             <div class="form-row">
               <label for="keyword">长尾关键词</label>
-              <input type="text" id="keyword" name="keyword" placeholder="女士最佳防水登山鞋推荐" required />
+              <input type="text" id="keyword" name="keyword" placeholder="女士最佳防水登山鞋推荐" />
+              <small>输入要生成内容的长尾关键词（英式英语）。如果使用关键词池，此字段可以为空。</small>
+            </div>
+            <div class="form-row">
+              <label for="useKeywordPool" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="useKeywordPool" name="useKeywordPool" style="width: auto; margin: 0;" />
+                <span>使用关键词池（批量生成）</span>
+              </label>
+              <small>勾选后，将使用下方的关键词池进行批量生成，每个关键词生成一篇页面。系统会自动循环选择模板和标题类型。</small>
+            </div>
+            <div class="form-row" id="keywordPoolRow" style="display: none;">
+              <label for="keywordPool">关键词池（每行一个关键词）</label>
+              <textarea id="keywordPool" name="keywordPool" rows="6" placeholder="例如：&#10;luxury smartphone buying guide&#10;best android phone reviews&#10;how to choose premium mobile phone&#10;&#10;每行一个关键词，系统将循环使用模板和标题类型为每个关键词生成页面"></textarea>
+              <small>输入多个长尾关键词，每行一个。系统将自动循环选择模板（模板1、模板2、模板3）和标题类型，为每个关键词生成一篇页面。</small>
             </div>
             <div class="form-row">
               <label>页面模板</label>
@@ -189,6 +202,32 @@
         <!-- 进度日志 -->
         <div id="progress-log" class="progress-log">
           <p>提交表单后将在此显示流程进度。</p>
+        </div>
+      </section>
+
+      <!-- 历史记录查看 -->
+      <section class="card" id="history-section">
+        <h2 style="margin-top: 0; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <span>📋 生成历史记录</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" id="refresh-history-btn" class="secondary-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+              🔄 刷新
+            </button>
+            <button type="button" id="clear-history-btn" class="secondary-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; background: var(--error-color); color: white;">
+              🗑️ 清空
+            </button>
+          </div>
+        </h2>
+        <div style="margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <input type="text" id="history-search" placeholder="搜索关键词或标题..." style="flex: 1; min-width: 200px; padding: 0.5rem 1rem; border: 2px solid var(--border-color); border-radius: 8px;" />
+          <select id="history-status-filter" style="padding: 0.5rem 1rem; border: 2px solid var(--border-color); border-radius: 8px;">
+            <option value="">全部状态</option>
+            <option value="completed">已完成</option>
+            <option value="failed">失败</option>
+          </select>
+        </div>
+        <div id="history-list" class="history-list">
+          <p style="text-align: center; color: var(--text-secondary); padding: 2rem;">加载中...</p>
         </div>
       </section>
     </main>
