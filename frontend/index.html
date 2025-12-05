@@ -146,6 +146,11 @@
               <textarea id="userPrompt" name="userPrompt" rows="4" placeholder="例如：重点介绍产品的工艺特色、强调品牌的奢华定位、突出产品的技术创新等...&#10;如果填写，AI将按照您的提示词和想法来生成内容" style="min-height: 100px; font-family: inherit;"></textarea>
               <small>您可以提供内容创作的想法和方向，AI将根据您的提示词生成更符合需求的内容。留空则使用默认策略。</small>
             </div>
+            <div class="form-row">
+              <label for="targetCategory">指定产品分类（可选）</label>
+              <input type="text" id="targetCategory" name="targetCategory" placeholder="例如：Phones, Agent Q, quantum-flip 或 agent-q,quantum-flip（支持多个分类，用逗号分隔）" />
+              <small>如果填写，页面将只显示该分类下的产品。支持模糊匹配，可以输入分类名称或slug，支持多个分类（用逗号分隔）。留空则根据关键词自动匹配产品。</small>
+            </div>
             <!-- 模板内容已隐藏，系统会自动加载对应模板 -->
             <div class="form-row" style="display: none;">
               <label for="templateFile">上传 HTML 模板（可选）</label>

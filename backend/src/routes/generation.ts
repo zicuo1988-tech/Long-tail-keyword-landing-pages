@@ -153,11 +153,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       },
     });
 
-    updateTaskStatus(taskId, "fetching_products", "正在搜索相关产品...");
+    updateTaskStatus(taskId, "fetching_products", payload.targetCategory ? `正在搜索分类 "${payload.targetCategory}" 下的产品...` : "正在搜索相关产品...");
     let products: ProductSummary[] = [];
     let relatedProducts: ProductSummary[] = [];
     try {
-      const productResult = await fetchRelatedProducts(payload.wordpress, payload.keyword);
+      const productResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, payload.targetCategory);
       products = attachCategoryLinks(attachLearnMoreLinks(productResult.products), siteBaseUrl);
       relatedProducts = attachCategoryLinks(attachLearnMoreLinks(productResult.relatedProducts), siteBaseUrl);
       if (products.length === 0) {

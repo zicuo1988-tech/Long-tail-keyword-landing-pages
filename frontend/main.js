@@ -346,6 +346,7 @@ form.addEventListener("submit", async (event) => {
     titleType,
     pageTitle,
     userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined, // 用户提示词（可选）
+    targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined, // 目标产品分类（可选）
     templateType,
     templateContent,
     useElementor: formData.get("useElementor") === "on",

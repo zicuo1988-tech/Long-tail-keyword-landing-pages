@@ -201,7 +201,8 @@ function createClient({ url, username, appPassword }: WordpressCredentials) {
 
 export async function fetchRelatedProducts(
   credentials: WordpressCredentials,
-  keyword: string
+  keyword: string,
+  targetCategory?: string
 ): Promise<ProductFetchResult> {
   // WooCommerce 使用自己的 REST API 命名空间和认证方式
   // 支持两种认证方式：
@@ -247,6 +248,196 @@ export async function fetchRelatedProducts(
     }
   } catch (e) {
     console.warn(`[WordPress] URL 解析失败: ${baseURL}`);
+  }
+
+  // 如果用户指定了目标分类，优先使用分类搜索
+  if (targetCategory && targetCategory.trim()) {
+    console.log(`[WordPress] 用户指定了目标分类: "${targetCategory.trim()}"，优先使用分类搜索`);
+    
+    // 尝试多个端点和认证方式
+    const endpoints = [
+      { path: "/wp-json/wc/v3/products", name: "WooCommerce v3" },
+      { path: "/wp-json/wc/v2/products", name: "WooCommerce v2" },
+    ];
+    
+    const consumerKey = process.env.WOOCOMMERCE_CONSUMER_KEY || (credentials as any).consumerKey;
+    const consumerSecret = process.env.WOOCOMMERCE_CONSUMER_SECRET || (credentials as any).consumerSecret;
+    
+    // 准备代理配置
+    const noProxy = process.env.NO_PROXY || "";
+    const wordpressProxy = process.env.WORDPRESS_PROXY || "";
+    let proxyConfig: any = undefined;
+    
+    try {
+      const urlObj = new URL(baseURL);
+      const hostname = urlObj.hostname;
+      
+      if (noProxy) {
+        const noProxyList = noProxy.split(",").map(d => d.trim());
+        const shouldDisableProxy = noProxyList.some(domain => {
+          return domain === "*" || hostname.includes(domain) || hostname === domain;
+        });
+        if (shouldDisableProxy) {
+          proxyConfig = false;
+        }
+      }
+      
+      if (proxyConfig === undefined && wordpressProxy) {
+        try {
+          const proxyUrl = new URL(wordpressProxy);
+          proxyConfig = {
+            protocol: proxyUrl.protocol.replace(":", ""),
+            host: proxyUrl.hostname,
+            port: proxyUrl.port || (proxyUrl.protocol === "https:" ? 443 : 80),
+          };
+        } catch (e) {
+          console.warn(`[WordPress] WORDPRESS_PROXY 配置无效: ${wordpressProxy}`);
+        }
+      }
+    } catch (e) {
+      console.warn(`[WordPress] URL 解析失败: ${baseURL}`);
+    }
+    
+    // 尝试通过分类搜索产品
+    for (const endpoint of endpoints) {
+      try {
+        const endpointBase = endpoint.path.replace("/products", "");
+        let client: ReturnType<typeof axios.create>;
+        
+        if (consumerKey && consumerSecret) {
+          client = axios.create({
+            baseURL: `${baseURL}${endpointBase}`,
+            auth: {
+              username: consumerKey,
+              password: consumerSecret,
+            },
+            proxy: proxyConfig,
+            httpsAgent: undefined,
+          });
+        } else {
+          client = axios.create({
+            baseURL: `${baseURL}${endpointBase}`,
+            headers: {
+              Authorization: `Basic ${Buffer.from(`${credentials.username}:${credentials.appPassword}`).toString("base64")}`,
+            },
+            proxy: proxyConfig,
+            httpsAgent: undefined,
+          });
+        }
+        
+        // 支持多个分类（逗号分隔）
+        const targetCategories = targetCategory.trim().split(',').map(c => c.trim()).filter(c => c.length > 0);
+        console.log(`[WordPress] 解析目标分类: ${targetCategories.length} 个分类 - ${targetCategories.join(", ")}`);
+        
+        // 收集所有匹配的分类
+        const matchedCategories = new Map<number, { id: number; name: string; slug: string }>();
+        
+        // 标准化分类名称和slug进行匹配
+        const normalizeCategory = (str: string) => str.replace(/[\s_-]+/g, "-").toLowerCase().trim();
+        
+        // 对每个目标分类进行搜索
+        for (const targetCat of targetCategories) {
+          try {
+            const categoryResp = await client.get("/products/categories", {
+              params: {
+                search: targetCat,
+                per_page: 20, // 增加搜索数量以支持模糊匹配
+                hide_empty: true,
+              },
+            });
+            
+            let categories: Array<{ id: number; name: string; slug: string }> = Array.isArray(categoryResp.data)
+              ? categoryResp.data
+              : [];
+            
+            const targetCategoryNormalized = normalizeCategory(targetCat);
+            
+            // 模糊匹配分类（包含匹配，不区分大小写）
+            categories.forEach((category) => {
+              const categoryName = normalizeCategory(category.name || "");
+              const categorySlug = normalizeCategory(category.slug || "");
+              
+              // 检查分类名称或slug是否包含目标关键词（模糊匹配）
+              const nameMatches = categoryName.includes(targetCategoryNormalized) || targetCategoryNormalized.includes(categoryName);
+              const slugMatches = categorySlug.includes(targetCategoryNormalized) || targetCategoryNormalized.includes(categorySlug);
+              
+              // 也支持精确匹配
+              const exactMatch = categoryName === targetCategoryNormalized || categorySlug === targetCategoryNormalized;
+              
+              if (exactMatch || nameMatches || slugMatches) {
+                // 使用Map避免重复
+                if (!matchedCategories.has(category.id)) {
+                  matchedCategories.set(category.id, category);
+                  console.log(`[WordPress] ✅ 匹配到分类: "${category.name}" (slug: "${category.slug}") - 匹配关键词: "${targetCat}"`);
+                }
+              }
+            });
+          } catch (error: any) {
+            console.warn(`[WordPress] 搜索分类 "${targetCat}" 失败:`, error.response?.status || error.message);
+            continue;
+          }
+        }
+        
+        const categories = Array.from(matchedCategories.values());
+        
+        if (categories.length > 0) {
+          console.log(`[WordPress] ✅ 找到 ${categories.length} 个匹配的分类: ${categories.map(c => `${c.name}(${c.slug})`).join(", ")}`);
+          
+          // 获取这些分类下的所有产品
+          const uniqueProducts = new Map<number, any>();
+          
+          for (const category of categories) {
+            try {
+              const productsResp = await client.get("/products", {
+                params: {
+                  category: category.id,
+                  per_page: 50, // 获取更多产品以确保有足够的选择
+                  status: "publish",
+                  stock_status: "instock", // 只获取有库存的产品
+                },
+              });
+              
+              const list: any[] = Array.isArray(productsResp.data) ? productsResp.data : [];
+              list.forEach((product) => {
+                if (!uniqueProducts.has(product.id)) {
+                  uniqueProducts.set(product.id, product);
+                }
+              });
+              console.log(`[WordPress]   从分类 "${category.name}" 获取 ${list.length} 个产品`);
+            } catch (error: any) {
+              console.warn(
+                `[WordPress] 分类 ${category.slug || category.name} 拉取产品失败:`,
+                error.response?.status || error.message
+              );
+              continue;
+            }
+          }
+          
+          if (uniqueProducts.size > 0) {
+            const collectedProducts = Array.from(uniqueProducts.values());
+            const products = parseProductsData(collectedProducts, endpoint.name);
+            
+            // 获取相关产品（upsells）
+            const relatedProducts = await fetchWooCommerceRelatedProducts(
+              client,
+              collectedProducts,
+              endpoint.name,
+              products
+            );
+            
+            console.log(`[WordPress] ✅ 通过指定分类获取 ${products.length} 个产品（去重后），${relatedProducts.length} 个相关产品`);
+            return { products, relatedProducts };
+          } else {
+            console.warn(`[WordPress] ⚠️ 匹配的分类下没有产品，将使用默认搜索策略`);
+          }
+        } else {
+          console.warn(`[WordPress] ⚠️ 未找到匹配的分类: "${targetCategory.trim()}"，将使用默认搜索策略`);
+        }
+      } catch (error: any) {
+        console.warn(`[WordPress] 通过分类搜索失败:`, error.response?.status || error.message);
+        // 继续使用默认搜索策略
+      }
+    }
   }
 
   const targetProductNames = extractTargetProductNames(keyword);
@@ -413,6 +604,40 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
     "signature",
   ];
   
+  // 检查产品是否缺货
+  const isProductOutOfStock = (product: any): boolean => {
+    // WooCommerce API 格式
+    if (product.stock_status !== undefined) {
+      // stock_status: "instock" 或 "outofstock"
+      if (product.stock_status === "outofstock") {
+        return true; // 缺货
+      }
+      if (product.stock_status === "instock") {
+        return false; // 有货
+      }
+    }
+    
+    // 检查 in_stock 字段（boolean）
+    if (product.in_stock !== undefined) {
+      if (product.in_stock === false) {
+        return true; // 缺货
+      }
+    }
+    
+    // 检查 manage_stock 和 stock_quantity
+    if (product.manage_stock === true) {
+      const stockQuantity = product.stock_quantity;
+      if (stockQuantity !== undefined && stockQuantity !== null) {
+        if (stockQuantity <= 0) {
+          return true; // 库存数量为0或负数，缺货
+        }
+      }
+    }
+    
+    // 如果所有库存相关字段都不存在，默认认为有货（向后兼容）
+    return false;
+  };
+  
   // 检查产品是否属于排除的分类
   const isProductExcluded = (product: any): boolean => {
     let categories: Array<{ name?: string; slug?: string; parent?: number }> = [];
@@ -515,7 +740,16 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
   };
   
   return productsData
-    .filter((product) => !isProductExcluded(product)) // 先过滤掉属于排除分类的产品
+    .filter((product) => {
+      // 先过滤掉缺货的产品
+      if (isProductOutOfStock(product)) {
+        const productName = product.name || product.title?.rendered || product.slug || "Unknown";
+        console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName} (stock_status: ${product.stock_status || "N/A"}, in_stock: ${product.in_stock ?? "N/A"}, stock_quantity: ${product.stock_quantity ?? "N/A"})`);
+        return false;
+      }
+      // 再过滤掉属于排除分类的产品
+      return !isProductExcluded(product);
+    })
     .map((product) => {
     if (apiType.includes("WooCommerce")) {
       const imageUrl = product.images?.[0]?.src;
@@ -790,6 +1024,7 @@ async function fetchWooCommerceProductsBySearch(
     params: {
       search: trimmedTerm,
       per_page: 10,
+      stock_status: "instock", // 只获取有库存的产品
     },
   });
 
@@ -887,6 +1122,7 @@ async function fetchWooCommerceProductsByCategory(
             category: category.id,
             per_page: 10,
             status: "publish",
+            stock_status: "instock", // 只获取有库存的产品
           },
         });
 
@@ -948,6 +1184,7 @@ async function fetchWooCommerceFallbackProducts(
         status: "publish",
         orderby: "date",
         order: "desc",
+        stock_status: "instock", // 只获取有库存的产品
       },
     });
 
@@ -1018,7 +1255,11 @@ async function fetchWooCommerceUpsells(
     console.log(`[WordPress] 找到 ${upsellIds.length} 个 upsell 产品 ID:`, upsellIds);
 
     const response = await client.get("/products", {
-      params: { include: upsellIds.join(","), per_page: upsellIds.length },
+      params: { 
+        include: upsellIds.join(","), 
+        per_page: upsellIds.length,
+        stock_status: "instock", // 只获取有库存的产品
+      },
     });
 
     if (response.data && Array.isArray(response.data) && response.data.length > 0) {
@@ -1058,6 +1299,7 @@ async function fetchWordpressStandardProducts(
           search: trimmed,
           per_page: 10,
           _embed: true,
+          stock_status: "instock", // 只获取有库存的产品（如果API支持）
         },
       });
 
@@ -1085,6 +1327,7 @@ async function fetchWordpressStandardProducts(
         per_page: 10,
         status: "publish",
         _embed: true,
+        stock_status: "instock", // 只获取有库存的产品（如果API支持）
       },
     });
 
