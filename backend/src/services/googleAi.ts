@@ -14,6 +14,7 @@ export interface GenerateContentOptions {
   pageTitle: string;
   titleType?: string; // 标题类型：用于调整内容风格和FAQ重点
   templateType?: string; // 模板类型：template-1, template-2, template-3（template-3无字数限制）
+  userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   knowledgeBaseContent?: string;
   onStatusUpdate?: (message: string) => void; // 可选：状态更新回调
 }
@@ -37,7 +38,7 @@ export interface GeneratedContent {
 /**
  * 使用官方 SDK 生成内容
  */
-async function generateWithKey(apiKey: string, keyword: string, pageTitle: string, titleType?: string, templateType?: string, knowledgeBaseContent?: string): Promise<GeneratedContent> {
+async function generateWithKey(apiKey: string, keyword: string, pageTitle: string, titleType?: string, templateType?: string, userPrompt?: string, knowledgeBaseContent?: string): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
   // template-3 无字数限制
   const isTemplate3 = templateType === "template-3";
@@ -85,6 +86,9 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   console.log(`[GoogleAI] Keyword: "${keyword}"`);
   console.log(`[GoogleAI] Relevant products matched: ${relevantProducts.length > 0 ? relevantProducts.join(", ") : "None - will use general VERTU content"}`);
   console.log(`[GoogleAI] Title type: ${titleType || 'not specified'} - content will be tailored to match this type`);
+  if (userPrompt && userPrompt.trim()) {
+    console.log(`[GoogleAI] User prompt provided: "${userPrompt.substring(0, 100)}${userPrompt.length > 100 ? '...' : ''}" - content will follow user's direction`);
+  }
 
   // 根据标题类型生成内容风格指导
   const getContentStyleByType = (type?: string): string => {
@@ -92,11 +96,12 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
     
     const styleMap: Record<string, string> = {
       "purchase": `CONTENT STYLE (Purchase/Transaction Type):
-- Focus on WHERE TO BUY, PRICING, DEALS, and PURCHASE OPTIONS
-- Emphasise value, discounts, special offers, and buying process
+- Focus on WHERE TO BUY, OFFICIAL CHANNELS, AUTHORISED RETAILERS, and PURCHASE OPTIONS
+- Emphasise authenticity, official stores, authorised dealers, and buying process
 - Include information about purchase locations, payment options, and delivery
-- Use action-oriented language: "Buy", "Purchase", "Shop for", "Find the Best"
-- Highlight competitive pricing, deals, and value propositions`,
+- Use action-oriented language: "Buy", "Purchase", "Shop", "Find the Best" (avoid "Shop for where to buy" - redundant)
+- Highlight official channels, authorised retailers, and premium quality (avoid discount language like "Best Prices" or "Cheapest")
+- For luxury brands: Emphasise "Official Store", "Authorised Retailer", "Premium Collection"`,
       
       "informational": `CONTENT STYLE (Informational/Guide Type):
 - Focus on COMPREHENSIVE INFORMATION, FEATURES, and DETAILED EXPLANATIONS
@@ -113,11 +118,12 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
 - Highlight strengths, weaknesses, and recommendations`,
       
       "commercial": `CONTENT STYLE (Commercial/Deal Type):
-- Focus on DEALS, DISCOUNTS, SPECIAL OFFERS, and PRICING
-- Emphasise savings, promotions, and limited-time offers
-- Include pricing information, discount codes, and special deals
-- Use promotional language: "Best Deals", "Discounts", "Special Offers", "Best Prices"
-- Highlight value and savings opportunities`,
+- Focus on PREMIUM COLLECTIONS, EXCLUSIVE SELECTIONS, and OFFICIAL STORE
+- Emphasise authenticity, authorised retailers, and official channels
+- Include pricing information, official availability, and authorised dealers
+- Use premium language: "Premium Collection", "Exclusive Selection", "Official Store", "Authorised Retailer"
+- Highlight quality, craftsmanship, and official channels (avoid discount language like "Best Prices" or "Cheapest")
+- For luxury brands: NEVER use discount language - use "Premium", "Official", "Exclusive" instead`,
       
       "how-to": `CONTENT STYLE (How-to Type):
 - Focus on STEP-BY-STEP GUIDES, SELECTION PROCESS, and PRACTICAL ADVICE
@@ -196,23 +202,161 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
 
   const contentStyleGuide = getContentStyleByType(titleType);
 
+  // 处理用户提示词
+  const userPromptSection = userPrompt && userPrompt.trim() 
+    ? `\n\nUSER-SPECIFIED CONTENT DIRECTION (MUST FOLLOW):
+The user has provided specific guidance for content creation. You MUST incorporate these ideas and directions into the article:
+"${userPrompt.trim()}"
+
+IMPORTANT: While following the user's direction, you MUST still:
+- Maintain British English grammar and vocabulary
+- Adhere to the knowledge base (no fabricated information)
+- Follow the content structure requirements (H2 headings, paragraphs, lists)
+- Keep the content concise and SEO-optimised
+- Match the selected title type style`
+    : "";
+
   const articlePrompt = `You are an expert SEO content strategist specialising in concise, high-value content. Write a BRIEF, SEO-optimised article about "${keyword}" that directly answers the user's search query without unnecessary length.
 
-${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}
+${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}${userPromptSection}
 
 CRITICAL REQUIREMENTS:
-- You MUST write in British English (UK English) only
+- You MUST write in British English (UK English) ONLY - this is non-negotiable
 - You MUST NOT include any Chinese characters, words, or phrases
-- Use British English spelling (e.g., "colour", "realise", "centre", "organise")
+- You MUST NOT use American English spelling, grammar, or vocabulary
 - ALL product information MUST come EXCLUSIVELY from the knowledge base provided below
 - NO fabricated information, NO assumptions, NO external knowledge beyond the knowledge base
 - Content MUST be COMPLETE - every section must be fully written, no incomplete sentences or cut-off content
 
-SEO OPTIMISATION REQUIREMENTS (Focused on Concise, High-Value Content):
-1. KEYWORD OPTIMISATION:
+BRITISH ENGLISH REQUIREMENTS (CRITICAL - MUST FOLLOW):
+1. SPELLING (British English only):
+   - Use "colour" NOT "color"
+   - Use "realise" NOT "realize"
+   - Use "centre" NOT "center"
+   - Use "organise" NOT "organize"
+   - Use "customise" NOT "customize"
+   - Use "analyse" NOT "analyze"
+   - Use "optimise" NOT "optimize"
+   - Use "recognise" NOT "recognize"
+   - Use "favour" NOT "favor"
+   - Use "behaviour" NOT "behavior"
+   - Use "honour" NOT "honor"
+   - Use "labour" NOT "labor"
+   - Use "defence" NOT "defense"
+   - Use "licence" (noun) NOT "license" (noun) - but "license" (verb) is correct
+   - Use "practise" (verb) NOT "practice" (verb) - but "practice" (noun) is correct
+   - Use "travelling" NOT "traveling"
+   - Use "cancelled" NOT "canceled"
+   - Use "labelled" NOT "labeled"
+   - Use "modelling" NOT "modeling"
+   - Use "programme" (schedule/show) NOT "program" (except for computer programs)
+   - Use "cheque" (payment) NOT "check" (payment)
+   - Use "tyre" NOT "tire"
+   - Use "aluminium" NOT "aluminum"
+   - Use "sulphur" NOT "sulfur"
+   - Use "grey" NOT "gray"
+   - Use "whilst" NOT "while" (preferred in formal British English)
+   - Use "amongst" NOT "among" (preferred in formal British English)
+
+2. GRAMMAR (British English conventions):
+   - Use collective nouns with plural verbs when referring to groups: "The team are..." NOT "The team is..."
+   - Use "have got" NOT "have gotten" (British English doesn't use "gotten")
+   - Use "different to" or "different from" NOT "different than"
+   - Use "at the weekend" NOT "on the weekend"
+   - Use "in hospital" NOT "in the hospital" (when referring to being a patient)
+   - Use "at university" NOT "at the university" (when referring to studying)
+   - Use "needn't" NOT "don't need to" (more common in British English)
+   - Use "shan't" NOT "won't" (in formal British English for "shall not")
+   - Use "I should like to" NOT "I would like to" (more formal British English)
+
+3. VOCABULARY (British English words only):
+   - Use "mobile phone" or "mobile" NOT "cell phone" or "cellular phone"
+   - Use "lift" NOT "elevator"
+   - Use "flat" NOT "apartment"
+   - Use "boot" (car) NOT "trunk"
+   - Use "bonnet" (car) NOT "hood"
+   - Use "petrol" NOT "gas" or "gasoline"
+   - Use "pavement" NOT "sidewalk"
+   - Use "trousers" NOT "pants" (pants means underwear in British English)
+   - Use "jumper" NOT "sweater"
+   - Use "trainers" NOT "sneakers"
+   - Use "biscuit" NOT "cookie"
+   - Use "crisps" NOT "chips" (chips are thick-cut fries in British English)
+   - Use "chips" NOT "fries" (thin-cut fries)
+   - Use "aubergine" NOT "eggplant"
+   - Use "courgette" NOT "zucchini"
+   - Use "correspondence" NOT "mail" (in formal contexts)
+   - Use "post" NOT "mail" (for sending letters)
+   - Use "queue" NOT "line" (for waiting)
+   - Use "fortnight" NOT "two weeks"
+   - Use "holiday" NOT "vacation"
+   - Use "autumn" NOT "fall"
+   - Use "rubbish" NOT "trash" or "garbage"
+   - Use "bin" NOT "trash can" or "garbage can"
+   - Use "car park" NOT "parking lot"
+   - Use "motorway" NOT "highway" or "freeway"
+   - Use "roundabout" NOT "traffic circle" or "rotary"
+   - Use "zebra crossing" NOT "crosswalk"
+   - Use "chemist" NOT "pharmacy" or "drugstore"
+   - Use "shop" NOT "store" (in most contexts)
+   - Use "high street" NOT "main street"
+   - Use "bill" NOT "check" (in restaurants)
+   - Use "current account" NOT "checking account"
+   - Use "current" NOT "present" (for time reference: "at the current time")
+   - Use "whilst" NOT "while" (preferred in formal writing)
+   - Use "amongst" NOT "among" (preferred in formal writing)
+
+4. PUNCTUATION (British English conventions):
+   - Place full stops and commas outside quotation marks: "word", not "word,"
+   - Use single quotation marks for quotes, double for quotes within quotes: 'He said "hello"'
+   - Use "..." (ellipsis) with spaces: "word . . . word" (though modern British English often uses "word...word")
+
+5. DATE AND TIME FORMAT:
+   - Use "day month year": "25 December 2024" NOT "December 25, 2024"
+   - Use "25/12/2024" NOT "12/25/2024"
+   - Use "half past three" NOT "three-thirty" (in spoken form)
+   - Use "quarter to" and "quarter past" NOT "quarter of" or "quarter after"
+
+EXAMPLES OF BRITISH vs AMERICAN ENGLISH:
+- BRITISH: "The team are travelling to the centre of London to organise a programme."
+- AMERICAN: "The team is traveling to the center of London to organize a program."
+- BRITISH: "I should like to buy a mobile phone from the shop on the high street."
+- AMERICAN: "I would like to buy a cell phone from the store on main street."
+- BRITISH: "We need to queue at the car park near the motorway."
+- AMERICAN: "We need to line up at the parking lot near the highway."
+
+CRITICAL GRAMMAR RULES (MUST FOLLOW):
+1. ALWAYS use proper articles (a/an/the) - this is essential for natural English:
+   - WRONG: "Looking for luxury phone?" (missing article)
+   - CORRECT: "Looking for a luxury phone?" or "Looking for the luxury phone?"
+   - WRONG: "VERTU offers premium experience" (missing article)
+   - CORRECT: "VERTU offers a premium experience" or "VERTU offers the premium experience"
+   - Use "a/an" for general references, "the" for specific references
+   - Example: "A luxury phone from VERTU" (general) vs "The luxury phone you're considering" (specific)
+
+2. AVOID cheap-sounding vocabulary - replace with premium alternatives:
+   - NEVER use: "Best Prices", "Cheapest", "Best Value", "Affordable", "Budget", "Deal", "Discount"
+   - REPLACE with: "Premium", "Exclusive", "Handcrafted", "Official", "Authorised", "Craftsmanship", "Quality"
+   - WRONG: "Best prices for luxury phones"
+   - CORRECT: "Premium luxury phones from authorised retailers"
+   - WRONG: "Best value option"
+   - CORRECT: "Premium selection" or "Exclusive collection"
+
+3. Natural SEO - avoid obvious keyword stuffing:
+   - Use keywords naturally, not mechanically
+   - WRONG: "luxury phone luxury phone luxury phone" (obvious stuffing)
+   - CORRECT: "luxury phone" used naturally 2-3 times throughout
+   - Vary phrasing: use "premium device", "handcrafted phone", "luxury smartphone" as alternatives
+   - Focus on readability first, SEO second
+
+SEO OPTIMISATION REQUIREMENTS (Natural, Not Obvious):
+1. KEYWORD OPTIMISATION (Natural Integration):
    - Use "${keyword}" naturally in the main H2 heading, first paragraph, and 2-3 times throughout (natural density)
-   - Include semantic variations related to "${keyword}"
-   - Place "${keyword}" in the first sentence of the introduction
+   - Include semantic variations related to "${keyword}" (e.g., "premium device", "handcrafted phone", "luxury smartphone")
+   - Place "${keyword}" in the first sentence of the introduction, but make it feel natural
+   - AVOID keyword stuffing - readability and brand image come first
+   - Use synonyms and related terms to avoid repetition
+   - Example: Instead of repeating "luxury phone" 5 times, use "premium device", "handcrafted phone", "luxury smartphone" as variations
 
 2. CONTENT LENGTH (CRITICAL - Must fit on one screen):
    - Target: 400-600 words MAXIMUM (approximately one screen of content)
@@ -248,19 +392,26 @@ CONTENT STRUCTURE TEMPLATE (BRIEF, ONE-SCREEN FORMAT - follow this exact structu
    - Example: "Where to Buy ${keyword} - Expert Guide"
 
 2. INTRODUCTION PARAGRAPH (use <p> tag - 2 sentences MAXIMUM):
-   - First sentence MUST include "${keyword}" and directly answer the search query
+   - First sentence MUST include "${keyword}" with proper articles (a/an/the) and directly answer the search query
    - Second sentence provides key value proposition from knowledge base
-   - Be concise and direct
-   - Example: "Looking for ${keyword}? VERTU offers [specific benefit] that [value proposition]."
+   - Be concise, direct, and refined (private butler tone, not salesperson)
+   - Use proper grammar: "Looking for a ${keyword}?" or "Considering the ${keyword}?"
+   - Example: "Looking for a ${keyword}? VERTU offers [specific benefit] that [value proposition]." (with proper articles)
+   - AVOID: "Looking for ${keyword}?" (missing article - sounds unnatural)
 
 3. QUESTION-BASED SUBHEADINGS (use <h2> tags - MAXIMUM 2-3 headings):
-   - Use question format that directly relates to "${keyword}"
+   - CRITICAL: Subheadings MUST match the main title's topic and scope
+   - If title is about "Purchase Options" → content should ONLY cover payment methods and purchase channels (NOT shipping, warranty, returns)
+   - If title is about "Shopping Experience" → content can cover payment, shipping, warranty, returns (comprehensive shopping experience)
+   - If title is about "Service Commitment" → content should cover service, warranty, returns, support
+   - Use question format that directly relates to "${keyword}" AND matches the title scope
    - Each H2 must include "${keyword}" or clear semantic variation
-   - Examples:
-     * "Why Choose ${keyword}?"
-     * "What Makes ${keyword} Different?"
-     * "How to Choose the Best ${keyword}?"
+   - Examples (match title scope):
+     * Title: "Where to Buy ${keyword}" → H2: "Official Purchase Channels" or "Authorised Retailers"
+     * Title: "Why Shop at VERTU Official?" → H2: "Official Shopping Benefits" or "Exclusive Advantages"
+     * Title: "Our Service Commitment" → H2: "Comprehensive Warranty" or "Hassle-Free Returns"
    - Limit to 2-3 headings maximum to keep content brief
+   - AVOID expanding beyond the title's scope (e.g., don't add shipping/warranty if title only asks about "purchase options")
 
 4. NUMBERED LISTS UNDER EACH QUESTION (use <ol> with <li> tags):
    - Under each H2, provide ONE concise numbered list (3-5 items maximum)
@@ -281,9 +432,11 @@ CONTENT STRUCTURE TEMPLATE (BRIEF, ONE-SCREEN FORMAT - follow this exact structu
    - Keep it brief (1-2 sentences maximum)
 
 6. CONCLUSION PARAGRAPH (use <p> tag - 1-2 sentences MAXIMUM):
-   - ONE concise summary sentence
+   - ONE concise summary sentence with proper articles
    - Reinforce value proposition using knowledge base facts
-   - Example: "VERTU offers ${keyword} with [key benefit from knowledge base] to meet your needs."
+   - Use refined, understated language (private butler tone)
+   - Example: "VERTU offers a ${keyword} with [key benefit from knowledge base] to meet your requirements." (with proper articles, refined tone)
+   - AVOID: "VERTU offers ${keyword}..." (missing article) or "Don't miss out on..." (salesperson tone)
 
 CONTENT REQUIREMENTS (BRIEF, ONE-SCREEN, COMPLETE):
 - Target: 400-600 words MAXIMUM (must fit on one screen without scrolling)
@@ -295,6 +448,43 @@ CONTENT REQUIREMENTS (BRIEF, ONE-SCREEN, COMPLETE):
 - Each section must be fully written - ensure all sentences are complete
 - Focus on directly answering the keyword question - eliminate unnecessary content
 - Use semantic keywords naturally but sparingly (don't over-optimise)
+
+BRAND VOICE & TONE (Private Butler, Not Salesperson):
+- Write as a knowledgeable, discreet private butler, not a pushy salesperson
+- Tone should be: Professional, Refined, Helpful, Understated, Confident
+- AVOID salesperson language:
+  * WRONG: "Don't miss out!", "Limited time offer!", "Act now!", "Best deal ever!"
+  * WRONG: "You won't believe...", "Amazing value!", "Incredible savings!"
+  * WRONG: Exclamation marks everywhere! (use sparingly)
+- USE private butler language:
+  * CORRECT: "We are pleased to present..." (formal, refined)
+  * CORRECT: "Each device is assembled by English master artisans..." (factual, elegant)
+  * CORRECT: "The Concierge Service is available 24/7..." (helpful, professional)
+  * CORRECT: "Our service commitment includes..." (confident, understated)
+- Write with authority and expertise, not desperation
+- Focus on facts, craftsmanship, and service - let quality speak for itself
+- Use passive voice sparingly - prefer active voice for clarity
+- Example transformation:
+  * Salesperson: "Get the BEST luxury phone NOW at AMAZING prices! Don't miss out!"
+  * Private Butler: "We present a selection of handcrafted luxury phones, each assembled by English master artisans and backed by our comprehensive service commitment."
+
+CRITICAL: TITLE-CONTENT MATCHING REQUIREMENTS:
+- The content MUST match the title's scope and topic exactly
+- If the page title asks about "Purchase Options" → content should ONLY cover:
+  * Payment methods (credit cards, Apple Pay, Google Pay, financing)
+  * Purchase channels (online store, authorised retailers, official website)
+  * DO NOT include: shipping, warranty, returns (these are separate topics)
+- If the page title asks about "Shopping Experience" or "Why Shop Official" → content CAN cover:
+  * Payment methods, shipping, warranty, returns (comprehensive shopping experience)
+- If the page title asks about "Service Commitment" → content should cover:
+  * Warranty, returns, customer service, support
+- If the page title asks about "How to Choose" → content should cover:
+  * Selection criteria, features to consider, comparison factors
+- DO NOT expand beyond the title's scope - stay focused on what the title promises
+- Example mismatch to AVOID:
+  * Title: "What Purchase Options Are Available?" 
+  * Content: Payment methods ✓, Shipping ✗, Warranty ✗, Returns ✗
+  * This mismatch confuses users - it's like showing "restaurant decoration" under "Menu"
 
 KNOWLEDGE BASE (CRITICAL - use ONLY this data for ALL product information. This is your ONLY source of truth):
 ${kbContent}
@@ -351,32 +541,36 @@ OUTPUT FORMAT (BRIEF, COMPLETE, SEO-Optimised HTML):
 - Do NOT include Chinese characters
 - CRITICAL: Every sentence MUST be complete - no incomplete thoughts, no cut-off content
 - CRITICAL: Every section MUST be fully written - all paragraphs, lists, and headings must be complete
+- CRITICAL: Every sentence MUST use proper articles (a/an/the) - this is essential for natural English
+- CRITICAL: Use refined, professional tone (private butler, not salesperson) - avoid cheap-sounding words
 - Ensure the main H2 heading includes "${keyword}" naturally
 - Use H2 tags for all headings (main heading and question-based subheadings)
 - Keep HTML clean and semantic for better SEO crawling
 - Total content must be between ${currentMinLength} and ${currentMaxLength} characters${isTemplate3 ? " (no strict limit for template-3)" : " (one screen)"}
 
-EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT):
-<h2>Where to Buy ${keyword} - Expert Guide</h2>
-<p>Looking for ${keyword}? VERTU offers [specific benefit from knowledge base] that [value proposition].</p>
+EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REFINED TONE):
+<h2>Where to Buy a ${keyword} - Expert Guide</h2>
+<p>Looking for a ${keyword}? VERTU offers [specific benefit from knowledge base] that [value proposition].</p>
 
-<h2>Why Choose ${keyword}?</h2>
+<h2>Why Choose a ${keyword}?</h2>
 <ol>
-  <li>[Benefit 1] - [Specific detail from knowledge base]</li>
-  <li>[Benefit 2] - [Specific detail from knowledge base]</li>
-  <li>[Benefit 3] - [Specific detail from knowledge base]</li>
+  <li>[Benefit 1] - [Specific detail from knowledge base with proper articles]</li>
+  <li>[Benefit 2] - [Specific detail from knowledge base with proper articles]</li>
+  <li>[Benefit 3] - [Specific detail from knowledge base with proper articles]</li>
 </ol>
-<p>[One brief sentence connecting the benefits]</p>
+<p>[One brief sentence connecting the benefits - refined, professional tone]</p>
 
-<h2>What Makes ${keyword} Different?</h2>
+<h2>What Makes a ${keyword} Different?</h2>
 <ol>
-  <li>[Unique feature 1] - [Specific detail from knowledge base]</li>
-  <li>[Unique feature 2] - [Specific detail from knowledge base]</li>
-  <li>[Unique feature 3] - [Specific detail from knowledge base]</li>
+  <li>[Unique feature 1] - [Specific detail from knowledge base with proper articles]</li>
+  <li>[Unique feature 2] - [Specific detail from knowledge base with proper articles]</li>
+  <li>[Unique feature 3] - [Specific detail from knowledge base with proper articles]</li>
 </ol>
-<p>[One brief sentence with context]</p>
+<p>[One brief sentence with context - refined, professional tone]</p>
 
-<p>[One concise conclusion sentence reinforcing value proposition]</p>
+<p>[One concise conclusion sentence reinforcing value proposition - with proper articles and refined tone]</p>
+
+NOTE: Notice the proper use of articles (a/an/the) throughout, and the refined, professional tone (private butler, not salesperson).
 
 IMPORTANT: 
 - Keep total word count between 400-600 words
@@ -620,6 +814,30 @@ The previous attempt was incomplete, too long, or did not follow the required BR
         console.warn(`[GoogleAI] First paragraph does not include keyword "${keyword}". First paragraph: ${firstParagraphMatch[1].substring(0, 100)}`);
       }
 
+      // 验证标题和内容匹配（如果提供了pageTitle）
+      if (pageTitle && pageTitle.trim()) {
+        const titleLower = pageTitle.toLowerCase();
+        const contentLower = articleText.toLowerCase();
+        
+        // 检查标题范围匹配
+        // 如果标题问的是"Purchase Options"，内容应该只讲购买相关，不应该讲物流、保修、退换货
+        if (titleLower.includes("purchase option") || titleLower.includes("payment method") || titleLower.includes("how to pay")) {
+          const hasShipping = contentLower.includes("shipping") || contentLower.includes("delivery") || contentLower.includes("logistics");
+          const hasWarranty = contentLower.includes("warranty") || contentLower.includes("guarantee");
+          const hasReturns = contentLower.includes("return") || contentLower.includes("exchange") || contentLower.includes("refund");
+          
+          if (hasShipping || hasWarranty || hasReturns) {
+            console.warn(`[GoogleAI] ⚠️ Title-Content Mismatch: Title asks about "Purchase Options" but content includes shipping/warranty/returns. Title scope: purchase/payment only.`);
+          }
+        }
+        
+        // 如果标题问的是"Shopping Experience"或"Why Shop Official"，内容可以包含所有方面
+        if (titleLower.includes("shopping experience") || titleLower.includes("why shop") || titleLower.includes("service commitment")) {
+          // 这些标题允许涵盖全面的购物体验，包括支付、物流、保修、退换货
+          console.log(`[GoogleAI] ✅ Title scope allows comprehensive shopping experience content.`);
+        }
+      }
+
       if (isArticleRich(articleText, templateType)) {
         break;
       }
@@ -836,9 +1054,11 @@ The previous attempt was incomplete, too long, or did not follow the required BR
         const descPrompt = `You are an expert SEO content writer. Write a COMPREHENSIVE, COMPLETE description paragraph (3-5 sentences, 200-300 characters) for a page about "${keyword}" with title "${pageTitle}".
 
 CRITICAL REQUIREMENTS:
-- You MUST write in British English (UK English) only
+- You MUST write in British English (UK English) ONLY - this is non-negotiable
 - You MUST NOT include any Chinese characters, words, or phrases
-- Use British English spelling (e.g., "colour", "realise", "centre", "organise")
+- You MUST NOT use American English spelling, grammar, or vocabulary
+- Use British English spelling: "colour", "realise", "centre", "organise", "customise", "optimise", "recognise", "favour", "behaviour", "honour", "labour", "defence", "travelling", "cancelled", "labelled", "modelling", "programme", "cheque", "tyre", "aluminium", "sulphur", "grey", "whilst", "amongst"
+- Use British vocabulary: "mobile phone" NOT "cell phone", "shop" NOT "store", "lift" NOT "elevator", "flat" NOT "apartment", "petrol" NOT "gas", "pavement" NOT "sidewalk", "trousers" NOT "pants", "biscuit" NOT "cookie", "crisps" NOT "chips", "post" NOT "mail", "queue" NOT "line", "holiday" NOT "vacation", "autumn" NOT "fall", "rubbish" NOT "trash", "bin" NOT "trash can", "car park" NOT "parking lot", "motorway" NOT "highway", "roundabout" NOT "traffic circle", "chemist" NOT "pharmacy", "high street" NOT "main street"
 - Write a COMPLETE paragraph (3-5 sentences), NOT just 2 sentences
 - The description should be comprehensive and informative
 - Include the keyword "${keyword}" naturally in the first sentence
@@ -1645,10 +1865,10 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
 
   // 定义标题类型映射
   const titleTypeMap: Record<string, string> = {
-    "purchase": "purchase/transaction type (e.g., 'Buy', 'Purchase', 'Shop for', 'Find the Best', 'Where to Buy', 'Best Deals on')",
+    "purchase": "purchase/transaction type (e.g., 'Buy', 'Purchase', 'Find the Best', 'Premium Selection', 'Official Store')",
     "informational": "informational/guide type (e.g., 'Complete Guide to', 'Everything About', 'Ultimate Guide to', 'All You Need to Know About')",
     "review": "review/comparison type (e.g., 'Best', 'Top Rated', 'Review', 'Comparison', 'Top 10', 'Best Rated')",
-    "commercial": "commercial/deal type (e.g., 'Best Deals on', 'Discounts for', 'Special Offers on', 'Best Prices for')",
+    "commercial": "commercial/deal type (e.g., 'Premium Collection', 'Exclusive Selection', 'Official Store', 'Authorised Retailer')",
     "how-to": "How to type (e.g., 'How to Choose', 'How to Find', 'How to Select', 'How to Buy', 'How to Use')",
     "recommendations": "Recommendations type (e.g., 'Top-rated', 'Recommended', 'Best Rated', 'Top Picks', 'Highly Recommended')",
     "services-guides": "Services Guides type (e.g., 'Usage Guide', 'User Guide', 'Service Guide', 'How to Use', 'Getting Started')",
@@ -1679,8 +1899,9 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
   const getFallbackTitleByType = (keyword: string, type?: string): string => {
     if (!type || !titleTypeMap[type]) {
       // 如果没有指定类型，随机选择一个
+      // 注意：避免使用 "Best Prices" 和语法错误
       const allFallbacks = [
-        `Buy ${keyword} - Best Deals & Reviews`,
+        `Buy ${keyword} - Official Store`,
         `Complete Guide to ${keyword}`,
         `Best ${keyword} - Top Rated & Reviews`,
         `${keyword} - Expert Buying Guide`,
@@ -1688,7 +1909,7 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `Top-rated ${keyword}: Expert Recommendations`,
         `${keyword} Usage Guide: Complete Manual`,
         `${keyword} Comparison: Tech Insights`,
-        `Best ${keyword}: Quality & Performance Guide`,
+        `Premium ${keyword}: Quality & Performance Guide`,
         `Top ${keyword}: Premium Choices Reviewed`,
         `Most Popular ${keyword}: Best-Selling Models`,
       ];
@@ -1696,12 +1917,14 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
     }
 
     // 根据类型生成对应的备用标题
+    // 注意：避免使用 "Shop for where to buy" 这种语法错误
+    // 避免使用 "Best Prices" 这种不符合奢侈品牌的表达
     const typeFallbacks: Record<string, string[]> = {
       "purchase": [
-        `Buy ${keyword} - Best Deals & Reviews`,
-        `Purchase ${keyword} - Where to Buy`,
-        `Shop for ${keyword} - Best Prices`,
-        `Find the Best ${keyword} - Deals & Reviews`,
+        `Buy ${keyword} - Official Store`,
+        `Purchase ${keyword} - Premium Selection`,
+        `Shop ${keyword} - Official Retailer`,
+        `Find the Best ${keyword} - Expert Guide`,
       ],
       "informational": [
         `Complete Guide to ${keyword}`,
@@ -1716,10 +1939,10 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `${keyword} Comparison: Best Rated`,
       ],
       "commercial": [
-        `Best Deals on ${keyword}`,
-        `Discounts for ${keyword}`,
-        `Special Offers on ${keyword}`,
-        `Best Prices for ${keyword}`,
+        `Premium ${keyword} Collection`,
+        `Exclusive ${keyword} Selection`,
+        `Official ${keyword} Store`,
+        `Authorised ${keyword} Retailer`,
       ],
       "how-to": [
         `How to Choose the Best ${keyword}`,
@@ -1790,40 +2013,66 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
   const titlePrompt = `Generate a diverse, SEO-friendly page title in British English for the keyword "${keyword}".
 
 CRITICAL REQUIREMENTS:
-- You MUST write in British English (UK English) only
+- You MUST write in British English (UK English) ONLY - this is non-negotiable
 - You MUST NOT include any Chinese characters, words, or phrases
+- You MUST NOT use American English spelling, grammar, or vocabulary
 - The title should be a ${selectedType} title
 - The title MUST include the exact keyword "${keyword}"
 - The title should be SEO-friendly, compelling, and natural-sounding
 - Keep it concise (maximum 65 characters recommended, but can be slightly longer if needed for clarity)
-- Use British English spelling and vocabulary (e.g., "colour", "realise", "centre", "organise")
+- Use British English spelling and vocabulary (e.g., "colour", "realise", "centre", "organise", "mobile phone", "shop", "whilst")
 - Be creative and vary the title style - don't always use the same format
-- Consider the context when choosing title type:
-  * If keyword is about choosing/buying: use "How to" type (e.g., "How to choose a luxury phone")
-  * If keyword is about recommendations/ratings: use "Recommendations" type (e.g., "Top-rated Luxury Phone")
-  * If keyword is about services/features: use "Services Guides" type (e.g., "Ruby Key usage")
-  * If keyword is about comparison/tech: use "Tech Insights" type (e.g., "Claude Sonnet 4.5 vs Gemini 3 Pro")
-  * If keyword suggests best/quality: use "Best" type (e.g., "Best Luxury Phone: Quality & Performance")
-  * If keyword suggests top/premium: use "Top" type (e.g., "Top Luxury Phones: Premium Choices")
-  * If keyword suggests popularity/trending: use "Most" type (e.g., "Most Popular Luxury Phone")
-  * If keyword suggests a product: use purchase/comparison types
-  * If keyword is informational: use guide types
-  * If keyword is technical: use how-to/tech insights types
 
-EXAMPLES OF GOOD TITLES:
-- "Buy Best Android Phones - Best Deals & Reviews"
-- "Complete Guide to Android Phones: Everything You Need to Know"
-- "Best Android Phones 2024: Top Rated Models Compared"
-- "How to Choose the Best Android Phone: Expert Buying Guide"
-- "Top-rated Luxury Phone: Expert Recommendations"
-- "Ruby Key Usage Guide: Complete Service Manual"
-- "Claude Sonnet 4.5 vs Gemini 3 Pro: Tech Comparison"
-- "Android Phones vs iPhone: Which is Better for You?"
-- "Best Deals on Android Phones: Discounts & Special Offers"
-- "Best Luxury Phone: Quality & Performance Guide"
-- "Top Luxury Phones: Premium Choices Reviewed"
-- "Top 10 Luxury Phones: Complete Ranking List"
-- "Most Popular Luxury Phone: Best-Selling Models"
+BRITISH ENGLISH REQUIREMENTS (CRITICAL):
+- Use British spelling: "colour", "realise", "centre", "organise", "customise", "optimise", "recognise", "favour", "behaviour", "honour", "labour", "defence", "travelling", "cancelled", "labelled", "modelling", "programme", "cheque", "tyre", "aluminium", "sulphur", "grey", "whilst", "amongst"
+- Use British vocabulary: "mobile phone" NOT "cell phone", "shop" NOT "store", "lift" NOT "elevator", "flat" NOT "apartment", "petrol" NOT "gas", "pavement" NOT "sidewalk", "trousers" NOT "pants", "biscuit" NOT "cookie", "crisps" NOT "chips", "aubergine" NOT "eggplant", "courgette" NOT "zucchini", "post" NOT "mail", "queue" NOT "line", "holiday" NOT "vacation", "autumn" NOT "fall", "rubbish" NOT "trash", "bin" NOT "trash can", "car park" NOT "parking lot", "motorway" NOT "highway", "roundabout" NOT "traffic circle", "chemist" NOT "pharmacy", "high street" NOT "main street", "bill" NOT "check"
+- Use British grammar: "The team are..." NOT "The team is...", "different to/from" NOT "different than", "at the weekend" NOT "on the weekend", "in hospital" NOT "in the hospital", "needn't" NOT "don't need to"
+
+CRITICAL GRAMMAR RULES (MUST FOLLOW):
+1. NEVER combine "Shop for" with "where to buy" - this creates grammatical errors like "Shop for where to buy"
+   - WRONG: "Shop for where to buy luxury phones"
+   - CORRECT: "Shop Luxury Phones - Official Store" or "Where to Buy Luxury Phones"
+2. NEVER use "Best Prices" or "Cheapest" for luxury brands - use premium language instead
+   - WRONG: "Best Prices for Luxury Phones" (sounds like cheap electronics)
+   - CORRECT: "Premium Luxury Phones - Official Store" or "Handcrafted Luxury Phones"
+3. Use PLURAL form for product categories (e.g., "Luxury Phones" not "Luxury Phone")
+   - If keyword is a product category, use plural: "Luxury Phones", "Smartphones", "Watches"
+   - If keyword is a specific product name, use as-is: "Agent Q", "Quantum Flip"
+4. Avoid redundant phrases:
+   - WRONG: "Shop for where to buy" (redundant)
+   - WRONG: "Best prices cheapest" (redundant and cheap-sounding)
+   - CORRECT: "Premium Selection" or "Official Store"
+
+BRAND TONE GUIDELINES (for luxury brands like VERTU):
+- Use premium language: "Premium", "Handcrafted", "Exclusive", "Official", "Authorised"
+- Avoid discount language: NEVER use "Best Prices", "Cheapest", "Discounts", "Deals" (unless specifically commercial type)
+- Emphasise quality: "Quality", "Craftsmanship", "Expert", "Professional"
+- Use formal tone: "Official Store", "Authorised Retailer", "Premium Collection"
+
+GRAMMAR EXAMPLES:
+- CORRECT: "Buy Luxury Phones - Official Store"
+- CORRECT: "Premium Luxury Phones - Handcrafted Selection"
+- CORRECT: "Where to Buy Luxury Phones - Authorised Retailer"
+- WRONG: "Shop for where to buy luxury phones" (grammatical error)
+- WRONG: "Best Prices for Luxury Phones" (cheap-sounding, not luxury)
+
+EXAMPLES OF GOOD TITLES (Natural, Not SEO Machine Text):
+- "Buy Luxury Phones - Official Store" (declarative, natural)
+- "The VERTU Online Shopping Experience" (natural, comprehensive)
+- "Why Shop at VERTU Official?" (natural question users ask)
+- "Complete Guide to Luxury Phones: Everything You Need to Know" (natural guide format)
+- "Best Luxury Phones 2024: Top Rated Models Compared" (natural comparison)
+- "How to Choose the Best Luxury Phone: Expert Buying Guide" (natural how-to)
+- "Top-rated Luxury Phones: Expert Recommendations" (natural recommendation)
+- "Premium Luxury Phones - Handcrafted Collection" (natural, premium)
+- "Our Service Commitment" (natural, service-focused)
+- "Exclusive Benefits" (natural, benefit-focused)
+
+EXAMPLES OF BAD TITLES (Too SEO-Optimised, Avoid These):
+- "What Purchase Options Are Available for a Luxury Phone?" (stiff, search-engine-like)
+- "What Are the Best Prices for Luxury Phones?" (awkward phrasing, cheap-sounding)
+- "What Are the Features of Luxury Phones?" (too generic, SEO-optimised)
+- "Where Can I Buy Luxury Phones?" (too search-engine-like, use "Where to Buy" instead)
 
 Output only the title text, nothing else. No quotes, no explanations, just the title.`;
 
@@ -1885,15 +2134,15 @@ export async function generatePageTitle({ apiKey, keyword, titleType, onStatusUp
   );
 }
 
-export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, knowledgeBaseContent, onStatusUpdate }: GenerateContentOptions): Promise<GeneratedContent> {
+export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate }: GenerateContentOptions): Promise<GeneratedContent> {
   // 如果提供了 apiKey，直接使用（向后兼容）
   if (apiKey) {
-    return generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, knowledgeBaseContent || KNOWLEDGE_BASE);
+    return generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE);
   }
 
   // 否则使用 API Key 管理器（支持多 Key 轮换和故障转移）
   return withApiKey(
-    (key) => generateWithKey(key, keyword, pageTitle, titleType, templateType, knowledgeBaseContent || KNOWLEDGE_BASE),
+    (key) => generateWithKey(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE),
     5, // maxRetries
     onStatusUpdate // 传递状态更新回调
   );

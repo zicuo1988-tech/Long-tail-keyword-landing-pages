@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import os from "os";
 import { createApp } from "./app.js";
 import { initializeApiKeyManager } from "./services/apiKeyManager.js";
 
@@ -32,10 +33,32 @@ async function performNetworkDiagnostics() {
 }
 
 const port = Number(process.env.PORT ?? 4000);
+const host = process.env.HOST ?? "0.0.0.0"; // 绑定到所有网络接口，允许局域网访问
 const app = createApp();
 
-app.listen(port, async () => {
-  console.log(`[server] WordPress AI automation engine listening on port ${port}`);
+app.listen(port, host, async () => {
+  console.log(`[server] WordPress AI automation engine listening on ${host}:${port}`);
+  console.log(`[server] Local: http://localhost:${port}`);
+  console.log(`[server] Network: http://${getLocalIP()}:${port}`);
   // 异步执行网络诊断，不阻塞服务器启动
   void performNetworkDiagnostics();
 });
+
+// 获取本地IP地址
+function getLocalIP(): string {
+  const interfaces = os.networkInterfaces();
+  if (!interfaces) return "localhost";
+  
+  for (const name of Object.keys(interfaces)) {
+    const ifaceList = interfaces[name];
+    if (!ifaceList) continue;
+    
+    for (const iface of ifaceList) {
+      // 跳过内部（即127.0.0.1）和非IPv4地址
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+}

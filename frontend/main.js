@@ -2,9 +2,48 @@ const form = document.querySelector("#generator-form");
 const templateFileInput = document.querySelector("#templateFile");
 const templateTextarea = document.querySelector("#templateContent");
 const progressLog = document.querySelector("#progress-log");
+const backendUrlInput = document.querySelector("#backendUrl");
 
 if (!form || !templateFileInput || !templateTextarea || !progressLog) {
   throw new Error("初始化前端控件失败，请检查 HTML 结构。");
+}
+
+// 自动检测并设置后端地址
+function autoDetectBackendUrl() {
+  if (!backendUrlInput) return;
+  
+  // 如果已经有值（用户手动设置），不覆盖
+  if (backendUrlInput.value && backendUrlInput.value.trim() !== "") {
+    return;
+  }
+  
+  // 获取当前页面的主机名和端口
+  const currentHost = window.location.hostname;
+  const currentPort = window.location.port;
+  
+  // 如果是 localhost 或 127.0.0.1，使用 localhost:4000
+  if (currentHost === "localhost" || currentHost === "127.0.0.1") {
+    backendUrlInput.value = "http://localhost:4000";
+    return;
+  }
+  
+  // 如果是局域网IP，使用相同的IP但端口改为4000
+  // 匹配 192.168.x.x, 10.x.x.x, 172.16-31.x.x
+  const lanIPPattern = /^(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2[0-9]|3[0-1])\.\d{1,3}\.\d{1,3})$/;
+  if (lanIPPattern.test(currentHost)) {
+    backendUrlInput.value = `http://${currentHost}:4000`;
+    return;
+  }
+  
+  // 默认使用 localhost:4000
+  backendUrlInput.value = "http://localhost:4000";
+}
+
+// 页面加载时自动检测后端地址
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", autoDetectBackendUrl);
+} else {
+  autoDetectBackendUrl();
 }
 
 let pollingAbortController = null;
@@ -268,7 +307,10 @@ form.addEventListener("submit", async (event) => {
   }
 
   const submitButton = form.querySelector("button[type=submit]");
-  submitButton?.setAttribute("disabled", "true");
+  if (submitButton) {
+    submitButton.setAttribute("disabled", "true");
+    submitButton.classList.add("loading");
+  }
 
   const formData = new FormData(form);
   const keyword = String(formData.get("keyword") ?? "").trim();
@@ -280,14 +322,20 @@ form.addEventListener("submit", async (event) => {
   if (!keyword || !templateContent) {
     updateProgress("failed", "请填写关键词和模板内容");
     appendLog("请填写关键词和模板内容", "error");
-    submitButton?.removeAttribute("disabled");
+      if (submitButton) {
+        submitButton.removeAttribute("disabled");
+        submitButton.classList.remove("loading");
+      }
     return;
   }
 
   if (!titleType) {
     updateProgress("failed", "请选择标题类型");
     appendLog("请选择标题类型", "error");
-    submitButton?.removeAttribute("disabled");
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
     return;
   }
 
@@ -297,6 +345,7 @@ form.addEventListener("submit", async (event) => {
     keyword,
     titleType,
     pageTitle,
+    userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined, // 用户提示词（可选）
     templateType,
     templateContent,
     useElementor: formData.get("useElementor") === "on",
@@ -359,7 +408,10 @@ form.addEventListener("submit", async (event) => {
     
     appendLog(errorMessage, "error");
   } finally {
-    submitButton?.removeAttribute("disabled");
+    if (submitButton) {
+      submitButton.removeAttribute("disabled");
+      submitButton.classList.remove("loading");
+    }
   }
 });
 

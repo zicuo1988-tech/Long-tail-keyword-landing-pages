@@ -12,6 +12,7 @@ export interface GenerationRequestPayload {
   keyword: string;
   titleType?: string; // 标题类型：purchase, informational, review, commercial, how-to, recommendations, services-guides, tech-insights, comparison, expert, best, top, most
   pageTitle?: string; // 可选：如果为空，将根据长尾词和选择的标题类型自动生成标题
+  userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   templateType?: string; // 模板类型：template-1, template-2, template-3
   templateContent: string;
   googleApiKey?: string;

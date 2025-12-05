@@ -4,12 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WordPress AI 内容自动化引擎</title>
+    <link rel="icon" type="image/svg+xml" href="assets/logo-icon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <header class="page-header">
+      <div class="logo-container">
+        <img src="assets/logo.svg" alt="WordPress AI 内容自动化引擎" class="main-logo" />
+      </div>
       <h1>WordPress AI 内容自动化引擎</h1>
-      <p>输入长尾关键词、页面信息和 HTML 模板，一键生成并发布到 WordPress。</p>
+      <p>输入长尾关键词和页面信息，一键生成并发布到 WordPress。系统会自动使用选定的模板和默认配置。</p>
     </header>
 
     <main>
@@ -19,12 +23,13 @@
             <legend>⚙️ 后端配置</legend>
             <div class="form-row">
               <label for="backendUrl">后端 API 地址</label>
-              <input type="url" id="backendUrl" name="backendUrl" value="http://localhost:4000" required />
-              <small>Google AI Studio API Key 已在后端环境变量中配置，无需在此填写。</small>
+              <input type="url" id="backendUrl" name="backendUrl" value="" required />
+              <small>系统会自动检测并填充后端地址。如果无法自动检测，请手动输入（例如：http://192.168.110.32:4000）</small>
             </div>
           </fieldset>
 
-          <fieldset>
+          <!-- WordPress 凭据已隐藏，使用默认值 -->
+          <fieldset style="display: none;">
             <legend>🔐 WordPress 凭据</legend>
             <div class="form-row">
               <label for="wpUrl">WordPress 站点 URL</label>
@@ -110,7 +115,7 @@
               </div>
               <small>点击卡片选择模板，点击Preview按钮查看全屏预览</small>
             </div>
-            <div class="form-row">
+            <div class="form-row required">
               <label for="titleType">标题类型</label>
               <select id="titleType" name="titleType" required>
                 <option value="">-- 请选择标题类型 --</option>
@@ -137,17 +142,29 @@
               <small>如果留空，系统将根据长尾词和选择的标题类型自动生成一个包含该关键词的标题（英式英语）</small>
             </div>
             <div class="form-row">
+              <label for="userPrompt">内容提示词（可选）</label>
+              <textarea id="userPrompt" name="userPrompt" rows="4" placeholder="例如：重点介绍产品的工艺特色、强调品牌的奢华定位、突出产品的技术创新等...&#10;如果填写，AI将按照您的提示词和想法来生成内容" style="min-height: 100px; font-family: inherit;"></textarea>
+              <small>您可以提供内容创作的想法和方向，AI将根据您的提示词生成更符合需求的内容。留空则使用默认策略。</small>
+            </div>
+            <!-- 模板内容已隐藏，系统会自动加载对应模板 -->
+            <div class="form-row" style="display: none;">
               <label for="templateFile">上传 HTML 模板（可选）</label>
               <input type="file" id="templateFile" name="templateFile" accept=".html,.hbs,.handlebars,.txt" />
               <small>默认模板已自动加载。如需使用自定义模板，请上传文件。模板需包含占位符：{{PAGE_TITLE}}、{{{AI_GENERATED_CONTENT}}}、{{#each products}}...</small>
             </div>
-            <div class="form-row">
+            <div class="form-row" style="display: none;">
               <label for="templateContent">模板内容</label>
               <textarea id="templateContent" name="templateContent" rows="12" placeholder="默认模板已自动加载，或在此粘贴自定义 HTML 模板"></textarea>
             </div>
           </fieldset>
 
-          <button type="submit" class="primary-btn">生成并发布</button>
+          <button type="submit" class="primary-btn" id="submit-btn">
+            <span class="btn-text">🚀 生成并发布</span>
+            <span class="btn-loader" style="display: none;">
+              <span class="spinner"></span>
+              <span>处理中...</span>
+            </span>
+          </button>
         </form>
       </section>
 

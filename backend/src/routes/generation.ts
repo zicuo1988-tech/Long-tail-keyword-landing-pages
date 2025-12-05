@@ -139,13 +139,14 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
-    updateTaskStatus(taskId, "generating_content", "正在生成 AI 内容和 FAQ...");
+    updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
     const generatedContent = await generateHtmlContent({
       apiKey, // 如果为 undefined，将使用 API Key 管理器
       keyword: payload.keyword,
       pageTitle: finalPageTitle,
       titleType: payload.titleType, // 传递标题类型，用于调整内容风格和FAQ重点
       templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
+      userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
       onStatusUpdate: (message) => {
         // 更新任务状态，但不改变状态类型
         updateTaskStatus(taskId, "generating_content", message);
