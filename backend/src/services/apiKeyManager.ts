@@ -17,7 +17,7 @@ class ApiKeyManager {
     }
     
     // 设置优先 Key（如果存在）
-    const priorityKeyValue = "AIzaSyDvXCu6alMp6cVNjI_kWMWJUK61hnhayQA";
+    const priorityKeyValue = "AIzaSyBqXC7flDdgPG24_p-uo5CrpYn5skyzr7E";
     if (this.keys.includes(priorityKeyValue)) {
       this.priorityKey = priorityKeyValue;
       // 将优先 Key 移到数组开头
@@ -395,6 +395,26 @@ export async function withApiKey<T>(
   const { executeWithQueue } = await import("./requestQueue.js");
   const rateLimiter = getRateLimiter();
 
+  // 提取 Google 返回的 retryDelay（秒），优先使用官方字段，其次解析 retryInfo
+  const getRetryDelaySeconds = (err: any): number => {
+    if (typeof err?.retryDelaySeconds === "number") {
+      return err.retryDelaySeconds;
+    }
+    const details = err?.errorDetails || err?.details || err?.error?.details;
+    if (Array.isArray(details)) {
+      for (const d of details) {
+        const delayStr = d?.retryInfo?.retryDelay || d?.retryDelay;
+        if (typeof delayStr === "string" && delayStr.endsWith("s")) {
+          const seconds = parseFloat(delayStr.replace("s", ""));
+          if (!Number.isNaN(seconds) && seconds > 0) {
+            return Math.ceil(seconds);
+          }
+        }
+      }
+    }
+    return 0;
+  };
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     // 如果是第一次尝试，或者需要切换 Key，获取新 Key
     if (currentKey === null || keyRetryCount >= maxKeyRetries) {
@@ -472,6 +492,16 @@ export async function withApiKey<T>(
 
       // 处理 429 配额限制：标记为配额限制，等待到第二天才重新使用
       if (statusCode === 429) {
+        // 如果返回了 retryDelay，则按照服务端建议的等待时间暂停调用
+        const retryDelaySeconds = getRetryDelaySeconds(errorAny);
+        if (retryDelaySeconds > 0) {
+          const waitMs = retryDelaySeconds * 1000;
+          const msg = `API 返回 retryDelay=${retryDelaySeconds}s，暂停当前 Key 调用后再继续...`;
+          console.warn(`[ApiKeyManager] 429 with retryDelay=${retryDelaySeconds}s, pausing before next attempt`);
+          onStatusUpdate?.(msg);
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+        }
+
         // 检查是否是真正的配额限制（而不是临时错误）
         // 真正的配额限制通常会有明确的错误消息
         const errorMsgLower = lastError.message.toLowerCase();

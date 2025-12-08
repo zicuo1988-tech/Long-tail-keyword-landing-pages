@@ -4,7 +4,7 @@ import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 
 const DEFAULT_MODEL = "gemini-2.5-pro";
 const PRIORITY_MODEL = "gemini-3-pro-preview"; // 优先 Key 使用的模型
-const PRIORITY_KEY = "AIzaSyDvXCu6alMp6cVNjI_kWMWJUK61hnhayQA"; // 优先使用的 API Key
+const PRIORITY_KEY = "AIzaSyBqXC7flDdgPG24_p-uo5CrpYn5skyzr7E"; // 优先使用的 API Key
 const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
 const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）

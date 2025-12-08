@@ -483,7 +483,7 @@ form.addEventListener("submit", async (event) => {
     updateProgress("submitted", `批量生成中：0/${keywords.length}`);
 
     // 并发处理关键词（控制并发数以提高效率）
-    const MAX_CONCURRENT = 3; // 最大并发数（可根据API限制调整）
+    const MAX_CONCURRENT = 1; // 最大并发数：设为1，确保逐个生成
     let successCount = 0;
     let failCount = 0;
     let processingCount = 0;
