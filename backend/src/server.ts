@@ -2,15 +2,66 @@ import dotenv from "dotenv";
 import os from "os";
 import { createApp } from "./app.js";
 import { initializeApiKeyManager } from "./services/apiKeyManager.js";
+import { initializeHistoryStore } from "./state/historyStore.js";
 
 dotenv.config();
 
 // 初始化 API Key 管理器
-const apiKeys = process.env.GOOGLE_API_KEYS || process.env.GOOGLE_API_KEY;
-if (apiKeys) {
+// 支持多种格式：
+// 1. GOOGLE_API_KEYS=key1,key2,key3 (逗号分隔)
+// 2. GOOGLE_API_KEY=key1 (单个key)
+// 3. GOOGLE_API_KEY_1, GOOGLE_API_KEY_2, ... GOOGLE_API_KEY_N (多个独立变量)
+function collectApiKeys(): string[] {
+  const keys: string[] = [];
+  
+  // 方式1: GOOGLE_API_KEYS (逗号分隔)
+  const keysEnv = process.env.GOOGLE_API_KEYS;
+  if (keysEnv) {
+    const parsedKeys = keysEnv.split(",").map(k => k.trim()).filter(Boolean);
+    keys.push(...parsedKeys);
+    console.log(`[server] 从 GOOGLE_API_KEYS 读取 ${parsedKeys.length} 个 API Keys`);
+  }
+  
+  // 方式2: GOOGLE_API_KEY (单个)
+  const singleKey = process.env.GOOGLE_API_KEY;
+  if (singleKey && singleKey.trim()) {
+    keys.push(singleKey.trim());
+    console.log(`[server] 从 GOOGLE_API_KEY 读取 1 个 API Key`);
+  }
+  
+  // 方式3: GOOGLE_API_KEY_1, GOOGLE_API_KEY_2, ... (多个独立变量)
+  let keyIndex = 1;
+  while (true) {
+    const keyVar = process.env[`GOOGLE_API_KEY_${keyIndex}`];
+    if (!keyVar || !keyVar.trim()) {
+      break;
+    }
+    keys.push(keyVar.trim());
+    keyIndex++;
+  }
+  if (keyIndex > 1) {
+    console.log(`[server] 从 GOOGLE_API_KEY_1 到 GOOGLE_API_KEY_${keyIndex - 1} 读取 ${keyIndex - 1} 个 API Keys`);
+  }
+  
+  // 去重
+  const uniqueKeys = Array.from(new Set(keys));
+  if (uniqueKeys.length !== keys.length) {
+    console.log(`[server] 检测到重复的 API Keys，已去重：${keys.length} -> ${uniqueKeys.length}`);
+  }
+  
+  return uniqueKeys;
+}
+
+const apiKeys = collectApiKeys();
+if (apiKeys.length > 0) {
   initializeApiKeyManager(apiKeys);
+  console.log(`[server] ✅ 总共初始化 ${apiKeys.length} 个 API Keys`);
 } else {
-  console.warn("[server] Warning: No GOOGLE_API_KEYS or GOOGLE_API_KEY found in environment variables");
+  console.warn("[server] ⚠️  Warning: No API keys found in environment variables");
+  console.warn("[server] 支持的格式：");
+  console.warn("[server]   - GOOGLE_API_KEYS=key1,key2,key3");
+  console.warn("[server]   - GOOGLE_API_KEY=key1");
+  console.warn("[server]   - GOOGLE_API_KEY_1=key1, GOOGLE_API_KEY_2=key2, ...");
 }
 
 // 启动时进行网络诊断
@@ -40,6 +91,15 @@ app.listen(port, host, async () => {
   console.log(`[server] WordPress AI automation engine listening on ${host}:${port}`);
   console.log(`[server] Local: http://localhost:${port}`);
   console.log(`[server] Network: http://${getLocalIP()}:${port}`);
+  
+  // 初始化历史记录存储（从文件加载）
+  try {
+    await initializeHistoryStore();
+    console.log("[server] ✅ 历史记录存储已初始化");
+  } catch (error) {
+    console.warn("[server] ⚠️  历史记录存储初始化失败:", error);
+  }
+  
   // 异步执行网络诊断，不阻塞服务器启动
   void performNetworkDiagnostics();
 });

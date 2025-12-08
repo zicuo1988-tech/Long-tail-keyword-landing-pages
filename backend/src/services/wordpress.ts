@@ -1189,7 +1189,7 @@ async function fetchWooCommerceProductsByCategory(
     return { products, relatedProducts };
   } catch (error: any) {
     console.warn(
-      `[WordPress] 分类检索失败（${keyword}）:`,
+      `[WordPress] 分类检索失败（${trimmedKeyword}）:`,
       error.response?.status || error.message
     );
     return null;
@@ -1664,14 +1664,19 @@ export async function publishPage({ credentials, title, slug, htmlContent, useEl
             slug: actualSlug,
             content: "", // Elementor 页面内容为空，实际内容存储在 Elementor 元数据中
             status: "publish",
+            // 确保页面可被搜索引擎索引
+            meta: {
+              // SEO相关meta字段
+              _yoast_wpseo_meta_robots_noindex: "0", // 0 = 允许索引，1 = 禁止索引
+              _yoast_wpseo_meta_robots_nofollow: "0", // 0 = 允许跟踪，1 = 禁止跟踪
+              _yoast_wpseo_meta_robots_adv: "", // 高级robots设置（空字符串表示使用默认）
+            },
           };
           
           // 如果设置了URL前缀，在创建页面时直接设置meta字段
           // WordPress端的代码已经注册了_custom_url_prefix字段，可以通过REST API设置
           if (urlPrefix) {
-            pageData.meta = {
-              _custom_url_prefix: urlPrefix,
-            };
+            pageData.meta._custom_url_prefix = urlPrefix;
             console.log(`[WordPress] 📝 在创建页面时设置URL前缀: ${urlPrefix}`);
           }
           
@@ -1811,13 +1816,18 @@ export async function publishPage({ credentials, title, slug, htmlContent, useEl
               rendered: contentToSave,
             },
             status: "publish",
+            // 确保页面可被搜索引擎索引
+            meta: {
+              // SEO相关meta字段
+              _yoast_wpseo_meta_robots_noindex: "0", // 0 = 允许索引，1 = 禁止索引
+              _yoast_wpseo_meta_robots_nofollow: "0", // 0 = 允许跟踪，1 = 禁止跟踪
+              _yoast_wpseo_meta_robots_adv: "", // 高级robots设置（空字符串表示使用默认）
+            },
           };
           
           // 如果设置了URL前缀，在创建页面时直接设置meta字段
           if (urlPrefix) {
-            pageData.meta = {
-              _custom_url_prefix: urlPrefix,
-            };
+            pageData.meta._custom_url_prefix = urlPrefix;
           }
           
           response = await client.post("/pages", pageData);
@@ -1848,13 +1858,18 @@ export async function publishPage({ credentials, title, slug, htmlContent, useEl
             slug: actualSlug,
             content: contentToSave,
             status: "publish",
+            // 确保页面可被搜索引擎索引
+            meta: {
+              // SEO相关meta字段
+              _yoast_wpseo_meta_robots_noindex: "0", // 0 = 允许索引，1 = 禁止索引
+              _yoast_wpseo_meta_robots_nofollow: "0", // 0 = 允许跟踪，1 = 禁止跟踪
+              _yoast_wpseo_meta_robots_adv: "", // 高级robots设置（空字符串表示使用默认）
+            },
           };
           
           // 如果设置了URL前缀，在创建页面时直接设置meta字段
           if (urlPrefix) {
-            pageData.meta = {
-              _custom_url_prefix: urlPrefix,
-            };
+            pageData.meta._custom_url_prefix = urlPrefix;
           }
           
           response = await client.post("/pages", pageData);

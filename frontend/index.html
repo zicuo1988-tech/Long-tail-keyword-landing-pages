@@ -187,7 +187,17 @@
       </section>
 
       <section class="card" id="progress-card">
-        <h2>📊 任务进度</h2>
+        <h2 style="margin-top: 0; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between;">
+          <span>📊 任务进度</span>
+          <div style="display: flex; gap: 0.5rem;">
+            <button type="button" id="pause-task-btn" class="secondary-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; display: none;">
+              ⏸️ 暂停
+            </button>
+            <button type="button" id="resume-task-btn" class="secondary-btn" style="padding: 0.5rem 1rem; font-size: 0.9rem; display: none;">
+              ▶️ 继续
+            </button>
+          </div>
+        </h2>
         
         <!-- 进度条 -->
         <div class="progress-bar-container">

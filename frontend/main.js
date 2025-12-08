@@ -47,6 +47,7 @@ if (document.readyState === "loading") {
 }
 
 let pollingAbortController = null;
+let currentTaskId = null; // 当前任务ID
 
 // 根据模板类型加载对应的模板
 async function loadTemplate(templateType = "template-1") {
@@ -70,6 +71,86 @@ async function loadTemplate(templateType = "template-1") {
 
 // 页面加载时自动加载默认模板
 loadTemplate("template-1");
+
+// 任务控制按钮
+const pauseTaskBtn = document.getElementById("pause-task-btn");
+const resumeTaskBtn = document.getElementById("resume-task-btn");
+
+// 更新任务控制按钮显示状态
+function updateTaskControlButtons(status) {
+  if (!pauseTaskBtn || !resumeTaskBtn) return;
+  
+  // 隐藏所有按钮
+  pauseTaskBtn.style.display = "none";
+  resumeTaskBtn.style.display = "none";
+  
+  // 根据状态显示相应按钮
+  if (status === "paused") {
+    resumeTaskBtn.style.display = "block";
+  } else if (status && status !== "completed" && status !== "failed" && currentTaskId) {
+    pauseTaskBtn.style.display = "block";
+  }
+}
+
+// 暂停任务
+if (pauseTaskBtn) {
+  pauseTaskBtn.addEventListener("click", async () => {
+    if (!currentTaskId) {
+      appendLog("没有正在运行的任务", "error");
+      return;
+    }
+    
+    const backendUrl = backendUrlInput?.value?.trim() || "http://localhost:4000";
+    
+    try {
+      const response = await fetch(`${backendUrl}/api/tasks/${currentTaskId}/pause`, {
+        method: "POST",
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        appendLog("⏸️ 任务已暂停", "info");
+        updateTaskControlButtons("paused");
+      } else {
+        appendLog(`暂停失败: ${result.error || "未知错误"}`, "error");
+      }
+    } catch (error) {
+      console.error("暂停任务失败:", error);
+      appendLog(`暂停任务失败: ${error instanceof Error ? error.message : "网络错误"}`, "error");
+    }
+  });
+}
+
+// 恢复任务
+if (resumeTaskBtn) {
+  resumeTaskBtn.addEventListener("click", async () => {
+    if (!currentTaskId) {
+      appendLog("没有暂停的任务", "error");
+      return;
+    }
+    
+    const backendUrl = backendUrlInput?.value?.trim() || "http://localhost:4000";
+    
+    try {
+      const response = await fetch(`${backendUrl}/api/tasks/${currentTaskId}/resume`, {
+        method: "POST",
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        appendLog("▶️ 任务已恢复，继续处理...", "success");
+        updateTaskControlButtons(result.task?.status || "queued");
+      } else {
+        appendLog(`恢复失败: ${result.error || "未知错误"}`, "error");
+      }
+    } catch (error) {
+      console.error("恢复任务失败:", error);
+      appendLog(`恢复任务失败: ${error instanceof Error ? error.message : "网络错误"}`, "error");
+    }
+  });
+}
 
 // 关键词池功能：显示/隐藏关键词池输入框
 const useKeywordPoolCheckbox = document.querySelector("#useKeywordPool");
@@ -237,6 +318,7 @@ const TASK_STAGES = {
   "fetching_products": { percent: 60, status: "正在获取产品..." },
   "generating_html": { percent: 80, status: "正在生成HTML..." },
   "publishing": { percent: 90, status: "正在发布到WordPress..." },
+  "paused": { percent: 0, status: "任务已暂停" },
   "completed": { percent: 100, status: "任务完成！" },
   "failed": { percent: 0, status: "任务失败" }
 };
@@ -400,19 +482,22 @@ form.addEventListener("submit", async (event) => {
     appendLog(`开始批量生成，共 ${keywords.length} 个关键词`, "info");
     updateProgress("submitted", `批量生成中：0/${keywords.length}`);
 
-    // 循环处理每个关键词
+    // 并发处理关键词（控制并发数以提高效率）
+    const MAX_CONCURRENT = 3; // 最大并发数（可根据API限制调整）
     let successCount = 0;
     let failCount = 0;
+    let processingCount = 0;
+    let completedCount = 0;
 
-    for (let i = 0; i < keywords.length; i++) {
-      const currentKeyword = keywords[i];
-      const templateIndex = i % templateTypes.length;
-      const titleIndex = i % titleTypes.length;
+    // 处理单个关键词的函数
+    async function processKeyword(keyword, index) {
+      const templateIndex = index % templateTypes.length;
+      const titleIndex = index % titleTypes.length;
       const currentTemplate = templateTypes[templateIndex];
       const currentTitleType = titleTypes[titleIndex];
 
       appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
-      appendLog(`处理第 ${i + 1}/${keywords.length} 个关键词: "${currentKeyword}"`, "info");
+      appendLog(`处理第 ${index + 1}/${keywords.length} 个关键词: "${keyword}"`, "info");
       appendLog(`使用模板: ${currentTemplate === "template-1" ? "模板1" : currentTemplate === "template-2" ? "模板2" : "模板3"}`, "info");
       appendLog(`使用标题类型: ${currentTitleType}`, "info");
 
@@ -421,7 +506,7 @@ form.addEventListener("submit", async (event) => {
       const currentTemplateContent = templateTextarea.value.trim();
 
       const payload = {
-        keyword: currentKeyword,
+        keyword: keyword,
         titleType: currentTitleType,
         pageTitle: String(formData.get("pageTitle") ?? "").trim() || undefined,
         userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
@@ -437,7 +522,8 @@ form.addEventListener("submit", async (event) => {
       };
 
       try {
-        updateProgress("submitted", `批量生成中：${i + 1}/${keywords.length} - 正在处理: ${currentKeyword}`);
+        processingCount++;
+        updateProgress("submitted", `批量生成中：${completedCount}/${keywords.length} 已完成，${processingCount} 个处理中 - 当前: ${keyword}`);
 
         const response = await fetch(`${backendUrl}/api/generate-page`, {
           method: "POST",
@@ -452,29 +538,73 @@ form.addEventListener("submit", async (event) => {
 
         const json = await response.json();
         const taskId = json.taskId;
+        currentTaskId = taskId; // 保存当前任务ID
         appendLog(`任务提交成功，等待处理...`, "info");
+        
+        // 显示暂停按钮（批量生成时）
+        if (index === 0) {
+          updateTaskControlButtons("submitted");
+        }
 
         pollingAbortController = new AbortController();
         await pollTaskStatus({ 
           backendUrl, 
           taskId, 
           signal: pollingAbortController.signal,
-          keywordIndex: i + 1,
+          keywordIndex: index + 1,
           totalKeywords: keywords.length
         });
 
         successCount++;
-        appendLog(`✅ 关键词 "${currentKeyword}" 处理完成`, "success");
+        completedCount++;
+        processingCount--;
+        appendLog(`✅ 关键词 "${keyword}" 处理完成`, "success");
+        updateProgress("submitted", `批量生成中：${completedCount}/${keywords.length} 已完成，${processingCount} 个处理中`);
       } catch (error) {
         failCount++;
+        completedCount++;
+        processingCount--;
         console.error(error);
         const errorMessage = error instanceof Error ? error.message : "请求失败";
-        appendLog(`❌ 关键词 "${currentKeyword}" 处理失败: ${errorMessage}`, "error");
-        
-        // 继续处理下一个关键词，不中断整个流程
-        continue;
+        appendLog(`❌ 关键词 "${keyword}" 处理失败: ${errorMessage}`, "error");
+        updateProgress("submitted", `批量生成中：${completedCount}/${keywords.length} 已完成，${processingCount} 个处理中`);
       }
     }
+
+    // 使用并发控制处理所有关键词
+    const processQueue = async () => {
+      const promises = [];
+      let currentIndex = 0;
+
+      while (currentIndex < keywords.length || promises.length > 0) {
+        // 启动新的任务直到达到最大并发数
+        while (promises.length < MAX_CONCURRENT && currentIndex < keywords.length) {
+          const keyword = keywords[currentIndex];
+          const index = currentIndex;
+          currentIndex++;
+          
+          const promise = processKeyword(keyword, index).finally(() => {
+            // 任务完成后从队列中移除
+            const index = promises.indexOf(promise);
+            if (index > -1) {
+              promises.splice(index, 1);
+            }
+          });
+          
+          promises.push(promise);
+        }
+
+        // 等待至少一个任务完成
+        if (promises.length > 0) {
+          await Promise.race(promises);
+        }
+      }
+
+      // 等待所有剩余任务完成
+      await Promise.all(promises);
+    };
+
+    await processQueue();
 
     // 批量处理完成
     appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
@@ -548,8 +678,12 @@ form.addEventListener("submit", async (event) => {
 
     const json = await response.json();
     const taskId = json.taskId;
+    currentTaskId = taskId; // 保存当前任务ID
     appendLog("任务提交成功，正在等待处理...");
     updateProgress("submitted", "任务已提交，等待处理...");
+    
+    // 显示暂停按钮
+    updateTaskControlButtons("submitted");
 
     pollingAbortController = new AbortController();
     await pollTaskStatus({ backendUrl, taskId, signal: pollingAbortController.signal });
@@ -617,20 +751,34 @@ async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalK
         }
       }
       
+      // 更新任务控制按钮状态
+      updateTaskControlButtons(task.status);
+      
       if (task.status !== lastStatus) {
         let logMessage = task.message ?? task.status;
         if (keywordIndex && totalKeywords) {
           logMessage = `[${keywordIndex}/${totalKeywords}] ${logMessage}`;
         }
         appendLog(logMessage);
-        updateProgress(progressStage, keywordIndex && totalKeywords 
-          ? `批量生成中：${keywordIndex}/${totalKeywords} - ${message || task.status}`
-          : message);
+        // 优化批量生成的进度显示
+        if (keywordIndex && totalKeywords) {
+          const progressText = message && message.includes("429") 
+            ? `批量生成中：${keywordIndex}/${totalKeywords} - ${message}`
+            : `批量生成中：${keywordIndex}/${totalKeywords} - ${message || task.status}`;
+          updateProgress(progressStage, progressText);
+        } else {
+          updateProgress(progressStage, message || task.status);
+        }
         lastStatus = task.status;
       }
 
+      // 更新任务控制按钮状态
+      updateTaskControlButtons(task.status);
+      
       if (task.status === "completed") {
         updateProgress("completed", "页面已发布成功！");
+        currentTaskId = null; // 清除当前任务ID
+        updateTaskControlButtons("completed");
         if (task.pageUrl) {
           appendLog("✅ 页面已发布成功!", "success");
           appendLog(`📄 页面 URL: ${task.pageUrl}`, "success", task.pageUrl);
@@ -650,6 +798,8 @@ async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalK
 
       if (task.status === "failed") {
         updateProgress("failed", task.error || "任务失败");
+        currentTaskId = null; // 清除当前任务ID
+        updateTaskControlButtons("failed");
         appendLog(task.error || "任务失败", "error");
         // 任务失败后也刷新历史记录
         setTimeout(() => {
@@ -658,6 +808,12 @@ async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalK
           }
         }, 1000);
         return;
+      }
+      
+      if (task.status === "paused") {
+        updateProgress("paused", "任务已暂停");
+        updateTaskControlButtons("paused");
+        appendLog("⏸️ 任务已暂停", "info");
       }
     } catch (error) {
       if (signal.aborted) return;

@@ -23,6 +23,14 @@ function luxury_life_guides_add_rewrite_rules() {
         'top'
     );
     
+    // 添加重写规则：luxury-life-guides/ -> 重定向到首页或返回200状态（避免404）
+    // 这可以防止 Google 因为目录页面404而无法识别URL结构
+    add_rewrite_rule(
+        '^luxury-life-guides/?$',
+        'index.php?pagename=luxury-life-guides-index',
+        'top'
+    );
+    
     // 添加重写标签（如果需要）
     add_rewrite_tag('%luxury_guide_page%', '([^/]+)');
 }
@@ -63,7 +71,16 @@ function luxury_life_guides_parse_request($wp) {
     // 获取请求的路径
     $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
     
-    // 检查是否是 /luxury-life-guides/ 开头的请求
+    // 处理 /luxury-life-guides/ 目录页面（不带slug的情况）
+    if (preg_match('#^/luxury-life-guides/?$#', $request_uri)) {
+        // 重定向到首页，避免404错误
+        // 这可以防止 Google 因为目录页面404而无法识别URL结构
+        $wp->query_vars['pagename'] = 'luxury-life-guides-index';
+        $wp->query_vars['post_type'] = 'page';
+        return;
+    }
+    
+    // 检查是否是 /luxury-life-guides/{slug}/ 的请求
     if (preg_match('#^/luxury-life-guides/([^/]+)/?#', $request_uri, $matches)) {
         $slug = $matches[1];
         
@@ -92,6 +109,14 @@ add_action('parse_request', 'luxury_life_guides_parse_request', 5);
 // 在模板重定向时确保正确加载页面
 function luxury_life_guides_template_redirect() {
     global $wp_query;
+    
+    // 处理 /luxury-life-guides/ 目录页面请求
+    if (isset($wp_query->query_vars['pagename']) && $wp_query->query_vars['pagename'] === 'luxury-life-guides-index') {
+        // 重定向到首页，避免404错误
+        // 这可以防止 Google 因为目录页面404而无法识别URL结构
+        wp_redirect(home_url('/'), 301);
+        exit;
+    }
     
     // 如果查询变量中有我们设置的page_id，确保能正确加载页面
     if (isset($wp_query->query_vars['page_id'])) {

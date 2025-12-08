@@ -5,6 +5,7 @@ export type TaskStatus =
   | "fetching_products"
   | "rendering_template"
   | "publishing"
+  | "paused"
   | "completed"
   | "failed";
 

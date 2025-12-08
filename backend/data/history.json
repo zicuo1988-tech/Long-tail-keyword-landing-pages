@@ -1,0 +1,30 @@
+[
+  {
+    "id": "d374dd23-34d4-4fd7-a8d5-14c61721622a",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126259",
+    "createdAt": 1765171631551,
+    "updatedAt": 1765171825087,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Smart ring AI analysis",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/smart-ring-ai-analysis-comparison-best-rated/"
+  },
+  {
+    "id": "e9006e20-362e-4723-901f-18b7cdecbf3b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126257",
+    "createdAt": 1765171631545,
+    "updatedAt": 1765171732711,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "AI Ring health insights",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-ai-ring-health-insights-expert-guide/"
+  }
+]

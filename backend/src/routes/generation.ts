@@ -1,5 +1,5 @@
 import express from "express";
-import { createTask, setTaskCompleted, setTaskError, updateTaskStatus } from "../state/taskStore.js";
+import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 const LEARN_MORE_MAP: Record<string, string> = {
   "quantum flip": "https://vertu.com/quantum/",
@@ -147,6 +147,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
+    // 检查是否暂停
+    await waitForTaskResume(taskId);
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
     updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
     const generatedContent = await generateHtmlContent({
       apiKey, // 如果为 undefined，将使用 API Key 管理器
@@ -161,6 +167,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       },
     });
 
+    // 检查是否暂停
+    await waitForTaskResume(taskId);
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
     updateTaskStatus(taskId, "fetching_products", payload.targetCategory ? `正在搜索分类 "${payload.targetCategory}" 下的产品...` : "正在搜索相关产品...");
     let products: ProductSummary[] = [];
     let relatedProducts: ProductSummary[] = [];
@@ -313,6 +325,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`  - 是否包含 "{{" 占位符: ${finalHtml.includes('{{')}`);
     console.log(`  - 是否包含 AI 内容: ${finalHtml.includes(generatedContent.articleContent.substring(0, 50))}`);
 
+    // 检查是否暂停
+    await waitForTaskResume(taskId);
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
     updateTaskStatus(taskId, "publishing", "正在发布 WordPress 页面...");
     // 在slug前面添加 /luxury-life-guides/ 目录前缀
     const slug = `luxury-life-guides/${baseSlug}`;

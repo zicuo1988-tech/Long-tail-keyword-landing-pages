@@ -11,22 +11,22 @@ import {
 export const historyRouter = express.Router();
 
 // 获取所有历史记录
-historyRouter.get("/history", (req, res) => {
+historyRouter.get("/history", async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : undefined;
     const status = req.query.status as "completed" | "failed" | undefined;
     const search = req.query.search as string | undefined;
 
-    let records = getAllHistoryRecords();
+    let records = await getAllHistoryRecords();
 
     // 按状态筛选
     if (status) {
-      records = filterHistoryRecordsByStatus(status);
+      records = await filterHistoryRecordsByStatus(status);
     }
 
     // 搜索
     if (search && search.trim()) {
-      records = searchHistoryRecords(search.trim());
+      records = await searchHistoryRecords(search.trim());
     }
 
     // 限制数量
@@ -49,10 +49,10 @@ historyRouter.get("/history", (req, res) => {
 });
 
 // 获取最近的历史记录
-historyRouter.get("/history/recent", (req, res) => {
+historyRouter.get("/history/recent", async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 50;
-    const records = getRecentHistoryRecords(limit);
+    const records = await getRecentHistoryRecords(limit);
     return res.json({
       success: true,
       count: records.length,
@@ -68,10 +68,10 @@ historyRouter.get("/history/recent", (req, res) => {
 });
 
 // 删除单条历史记录
-historyRouter.delete("/history/:taskId", (req, res) => {
+historyRouter.delete("/history/:taskId", async (req, res) => {
   try {
     const { taskId } = req.params;
-    const deleted = deleteHistoryRecord(taskId);
+    const deleted = await deleteHistoryRecord(taskId);
     if (deleted) {
       return res.json({
         success: true,
@@ -93,9 +93,9 @@ historyRouter.delete("/history/:taskId", (req, res) => {
 });
 
 // 清空所有历史记录
-historyRouter.delete("/history", (req, res) => {
+historyRouter.delete("/history", async (req, res) => {
   try {
-    clearAllHistoryRecords();
+    await clearAllHistoryRecords();
     return res.json({
       success: true,
       message: "所有历史记录已清空",
