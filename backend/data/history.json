@@ -1,5 +1,439 @@
 [
   {
+    "id": "1ac94c3d-af56-44fe-aca2-7dc467402c88",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126317",
+    "createdAt": 1765173637756,
+    "updatedAt": 1765173816567,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Artisan luxury products",
+    "titleType": "review",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-artisan-luxury-products-top-rated-and-reviews/"
+  },
+  {
+    "id": "58a91bc3-e679-4f6a-96a0-c9a6b349510a",
+    "status": "failed",
+    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 57 分钟后（明天）恢复使用。",
+    "createdAt": 1765173770754,
+    "updatedAt": 1765173804734,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Luxury adornments",
+    "titleType": "how-to",
+    "templateType": "template-3",
+    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 57 分钟后（明天）恢复使用。"
+  },
+  {
+    "id": "81100821-2da5-44a6-a262-d7319062d983",
+    "status": "failed",
+    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 57 分钟后（明天）恢复使用。",
+    "createdAt": 1765173694759,
+    "updatedAt": 1765173801750,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Bespoke luxury experiences",
+    "titleType": "commercial",
+    "templateType": "template-2",
+    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 57 分钟后（明天）恢复使用。"
+  },
+  {
+    "id": "443379d9-e6c8-4628-8d11-6c7daa8116dd",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126315",
+    "createdAt": 1765173578756,
+    "updatedAt": 1765173768080,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Prestigious jewelry and watches",
+    "titleType": "informational",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-prestigious-jewelry-and-watches/"
+  },
+  {
+    "id": "b8d71a98-0b6f-4cd0-8bf7-26072a93002a",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126313",
+    "createdAt": 1765173512757,
+    "updatedAt": 1765173694192,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury fashion accessories",
+    "titleType": "purchase",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-fashion-accessories-expert-guide/"
+  },
+  {
+    "id": "c44b937b-5ed9-4ce5-ae6f-a2f02265addc",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126311",
+    "createdAt": 1765173416761,
+    "updatedAt": 1765173637508,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Exclusive luxury collections",
+    "titleType": "most",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-exclusive-luxury-collections/"
+  },
+  {
+    "id": "13e7e481-47c2-471c-a612-08783af379fb",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126309",
+    "createdAt": 1765173352764,
+    "updatedAt": 1765173575910,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Custom luxury gifts",
+    "titleType": "top-ranking",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-custom-luxury-gifts-complete-ranking-list/"
+  },
+  {
+    "id": "ccbcb3d8-2a8d-48c8-a685-a93d28caaab6",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126307",
+    "createdAt": 1765173283760,
+    "updatedAt": 1765173510681,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "High-net-worth luxury items",
+    "titleType": "top",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-high-net-worth-luxury-items/"
+  },
+  {
+    "id": "39482472-5b46-4c7b-9b6e-315c28542e89",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126305",
+    "createdAt": 1765173217760,
+    "updatedAt": 1765173416702,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Exquisite jewelry and watches",
+    "titleType": "best",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-exquisite-jewelry-and-watches-options-top-choices/"
+  },
+  {
+    "id": "2074c638-a154-47fb-891d-c8939530bd37",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126303",
+    "createdAt": 1765173126432,
+    "updatedAt": 1765173350628,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury lifestyle accessories",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-luxury-lifestyle-accessories/"
+  },
+  {
+    "id": "8be4422c-ae28-4c33-a031-25348748c5dd",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126301",
+    "createdAt": 1765173086758,
+    "updatedAt": 1765173281173,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Smart luxury devices",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-smart-luxury-devices-options/"
+  },
+  {
+    "id": "da6cfcad-38c7-4705-81c6-302e8f8786e3",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126299",
+    "createdAt": 1765173012070,
+    "updatedAt": 1765173217549,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury mobile brands",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-mobile-brands-comparison-tech-insights/"
+  },
+  {
+    "id": "1e5443b1-d5fc-4bcc-9d6c-c2eb7488e2ff",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126297",
+    "createdAt": 1765172953239,
+    "updatedAt": 1765173124611,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Artisan smartphone craftsmanship",
+    "titleType": "services-guides",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/artisan-smartphone-craftsmanship-usage-guide-complete-manual/"
+  },
+  {
+    "id": "7a891a78-7e80-4cb5-b289-450477493bd2",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126295",
+    "createdAt": 1765172873004,
+    "updatedAt": 1765173086022,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury phone features",
+    "titleType": "recommendations",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-phone-features-recommendations-top-choices/"
+  },
+  {
+    "id": "01531e3b-2612-4bc3-8cd2-b84e4b6b6728",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126293",
+    "createdAt": 1765172808905,
+    "updatedAt": 1765173010876,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury smartphone innovations",
+    "titleType": "how-to",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-smartphone-innovations/"
+  },
+  {
+    "id": "1dc23ef3-64a7-465b-9ad0-b9a98c37c3b1",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126291",
+    "createdAt": 1765172734760,
+    "updatedAt": 1765172952405,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Tailored smartphone solutions",
+    "titleType": "commercial",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-tailored-smartphone-solutions-selection/"
+  },
+  {
+    "id": "57672fc3-4c2a-4491-ad9c-09ff75b71c3e",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126289",
+    "createdAt": 1765172651819,
+    "updatedAt": 1765172872524,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "High-performance luxury smartphones",
+    "titleType": "review",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-high-performance-luxury-smartphones-top-rated-and-reviews/"
+  },
+  {
+    "id": "c92b32d3-a528-4cc0-9115-08f3731ae37b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126287",
+    "createdAt": 1765172589607,
+    "updatedAt": 1765172807722,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury mobile accessories",
+    "titleType": "informational",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-mobile-accessories/"
+  },
+  {
+    "id": "913a36fe-2074-4940-a336-474f5ed78d6f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126285",
+    "createdAt": 1765172543020,
+    "updatedAt": 1765172734200,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Handcrafted luxury phones",
+    "titleType": "purchase",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-handcrafted-luxury-phones-premium-selection/"
+  },
+  {
+    "id": "a41377c3-bb48-4504-9cbc-3d89ed99e504",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126283",
+    "createdAt": 1765172470755,
+    "updatedAt": 1765172651691,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Bespoke smartphone services",
+    "titleType": "most",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-bespoke-smartphone-services/"
+  },
+  {
+    "id": "16c57397-63e0-47f9-a507-cb7b7ae227b9",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126281",
+    "createdAt": 1765172392772,
+    "updatedAt": 1765172589067,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Smartphone luxury experience",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-smartphone-luxury-experience-list-comprehensive-rankings/"
+  },
+  {
+    "id": "5daa036c-b189-4de7-b874-7f1103b5a542",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126279",
+    "createdAt": 1765172338769,
+    "updatedAt": 1765172540582,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Limited edition smartphones",
+    "titleType": "top",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-limited-edition-smartphones-premium-choices-reviewed/"
+  },
+  {
+    "id": "c683adf1-aea7-433e-b58c-bde553db5313",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126277",
+    "createdAt": 1765172267757,
+    "updatedAt": 1765172469760,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Custom luxury smartphones",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-custom-luxury-smartphones-options-top-choices/"
+  },
+  {
+    "id": "160da15d-66d1-4c42-b093-1faee3e3721b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126275",
+    "createdAt": 1765172178760,
+    "updatedAt": 1765172390620,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury smartphone craftsmanship",
+    "titleType": "expert",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-smartphone-craftsmanship-expert-buying-guide/"
+  },
+  {
+    "id": "ebe4d661-24bb-4f41-a931-dd6e3a58b415",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126273",
+    "createdAt": 1765172113759,
+    "updatedAt": 1765172336965,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Exclusive smartphone designs",
+    "titleType": "comparison",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-exclusive-smartphone-designs-comparison/"
+  },
+  {
+    "id": "2087bae2-af26-46d1-aa03-7eb47e93e392",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126271",
+    "createdAt": 1765172036771,
+    "updatedAt": 1765172265355,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Designer mobile phones",
+    "titleType": "tech-insights",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/designer-mobile-phones-comparison-tech-insights/"
+  },
+  {
+    "id": "8cb45a13-fc63-43a8-80a9-ed3b99bf86e0",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126269",
+    "createdAt": 1765171983056,
+    "updatedAt": 1765172176495,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Premium smartphone features",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-premium-smartphone-features/"
+  },
+  {
+    "id": "677d99b0-558a-4c5b-97e5-55c7021dacd0",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126267",
+    "createdAt": 1765171892843,
+    "updatedAt": 1765172113627,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "High-end mobile devices",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-high-end-mobile-devices-highly-recommended/"
+  },
+  {
+    "id": "13f22bb9-4e12-4273-a48e-3df16aa6a2e2",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126265",
+    "createdAt": 1765171826757,
+    "updatedAt": 1765172035591,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury mobile technology",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-mobile-technology/"
+  },
+  {
+    "id": "f05bcf5b-dbb5-4f29-a40d-14a8d21a232a",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126263",
+    "createdAt": 1765171733814,
+    "updatedAt": 1765171980136,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Elite smartphones",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/authorised-elite-smartphones-retailer/"
+  },
+  {
+    "id": "3cfd8087-8d02-41a5-9ed9-1b0d9342c955",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126261",
+    "createdAt": 1765171631562,
+    "updatedAt": 1765171892328,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "AI sleep tracking ring",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-ai-sleep-tracking-ring/"
+  },
+  {
     "id": "d374dd23-34d4-4fd7-a8d5-14c61721622a",
     "status": "completed",
     "message": "发布成功！页面 ID: 126259",

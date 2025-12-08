@@ -8,11 +8,25 @@ class ApiKeyManager {
   private currentIndex = 0;
   private failedKeys = new Set<string>();
   private quotaLimitedKeys = new Map<string, QuotaLimitInfo>(); // 记录配额限制的 Key 和时间
+  private priorityKey: string | null = null; // 优先使用的 API Key
 
   constructor(keys: string[]) {
     this.keys = keys.filter((key) => key?.trim()).map((key) => key.trim());
     if (this.keys.length === 0) {
       throw new Error("At least one API key is required");
+    }
+    
+    // 设置优先 Key（如果存在）
+    const priorityKeyValue = "AIzaSyDvXCu6alMp6cVNjI_kWMWJUK61hnhayQA";
+    if (this.keys.includes(priorityKeyValue)) {
+      this.priorityKey = priorityKeyValue;
+      // 将优先 Key 移到数组开头
+      const priorityIndex = this.keys.indexOf(priorityKeyValue);
+      if (priorityIndex > 0) {
+        this.keys.splice(priorityIndex, 1);
+        this.keys.unshift(priorityKeyValue);
+      }
+      console.log(`[ApiKeyManager] ✅ 已设置优先 Key: ${priorityKeyValue.substring(0, 20)}...`);
     }
   }
 
@@ -92,11 +106,36 @@ class ApiKeyManager {
       this.failedKeys.clear();
     }
 
+    // 优先使用优先 Key（如果可用）
+    if (this.priorityKey && 
+        !this.failedKeys.has(this.priorityKey) && 
+        this.isQuotaLimitExpired(this.priorityKey)) {
+      console.log(`[ApiKeyManager] 🎯 使用优先 Key: ${this.priorityKey.substring(0, 20)}...`);
+      return this.priorityKey;
+    }
+
+    // 如果优先 Key 不可用，记录原因
+    if (this.priorityKey) {
+      if (this.failedKeys.has(this.priorityKey)) {
+        console.log(`[ApiKeyManager] ⚠️  优先 Key 已失败，使用其他 Key`);
+      } else if (!this.isQuotaLimitExpired(this.priorityKey)) {
+        const remainingSeconds = this.getQuotaLimitRemainingSeconds(this.priorityKey);
+        const remainingHours = Math.ceil(remainingSeconds / 3600);
+        console.log(`[ApiKeyManager] ⚠️  优先 Key 配额受限（剩余 ${remainingHours} 小时），使用其他 Key`);
+      }
+    }
+
     // 找到下一个未失败且未配额限制的 Key
     let attempts = 0;
     while (attempts < this.keys.length * 2) { // 增加尝试次数，因为可能跳过配额限制的 Key
       const key = this.keys[this.currentIndex];
       this.currentIndex = (this.currentIndex + 1) % this.keys.length;
+
+      // 跳过优先 Key（已经在上面检查过了）
+      if (key === this.priorityKey) {
+        attempts++;
+        continue;
+      }
 
       // 检查 Key 是否可用（未失败且配额限制已过期）
       if (!this.failedKeys.has(key) && this.isQuotaLimitExpired(key)) {
@@ -115,6 +154,20 @@ class ApiKeyManager {
 
     // 如果所有 Key 都不可用，返回第一个（已重置失败记录）
     return this.keys[0];
+  }
+  
+  /**
+   * 获取优先 Key（用于模型选择）
+   */
+  getPriorityKey(): string | null {
+    return this.priorityKey;
+  }
+  
+  /**
+   * 检查指定的 Key 是否为优先 Key
+   */
+  isPriorityKey(key: string): boolean {
+    return this.priorityKey === key;
   }
 
   /**
@@ -350,6 +403,27 @@ export async function withApiKey<T>(
     }
 
     try {
+      // 在发送请求前，检查当前 Key 的配额使用率
+      const keyStats = rateLimiter.getKeyStats(currentKey);
+      if (keyStats) {
+        // 如果每小时使用率超过 80%，增加额外延迟
+        if (keyStats.hourlyUsagePercent > 80) {
+          const extraDelay = Math.min(5000, (keyStats.hourlyUsagePercent - 80) * 100); // 最多额外延迟 5 秒
+          if (onStatusUpdate) {
+            onStatusUpdate(`⚠️ 配额使用率较高（${keyStats.hourlyUsagePercent.toFixed(1)}%），增加延迟 ${Math.ceil(extraDelay / 1000)} 秒以保护配额...`);
+          }
+          await new Promise((resolve) => setTimeout(resolve, extraDelay));
+        }
+        
+        // 如果每小时使用率超过 90%，发出警告
+        if (keyStats.hourlyUsagePercent > 90) {
+          console.warn(`[ApiKeyManager] ⚠️  Key ${currentKey.substring(0, 20)}... 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制！`);
+          if (onStatusUpdate) {
+            onStatusUpdate(`⚠️ 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制，将降低请求频率...`);
+          }
+        }
+      }
+      
       // 通过队列执行请求（确保按顺序处理，避免并发）
       const result = await executeWithQueue(
         currentKey,

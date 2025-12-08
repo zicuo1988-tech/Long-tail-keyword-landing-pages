@@ -3,6 +3,8 @@ import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 
 const DEFAULT_MODEL = "gemini-2.5-pro";
+const PRIORITY_MODEL = "gemini-3-pro-preview"; // 优先 Key 使用的模型
+const PRIORITY_KEY = "AIzaSyDvXCu6alMp6cVNjI_kWMWJUK61hnhayQA"; // 优先使用的 API Key
 const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
 const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
@@ -45,12 +47,16 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   const currentMinLength = MIN_ARTICLE_LENGTH;
   const currentMaxLength = isTemplate3 ? 10000 : MAX_ARTICLE_LENGTH; // template-3 允许更长的内容
   
+  // 根据 API Key 选择模型（优先 Key 使用 gemini-3-pro-preview）
+  const isPriorityKey = apiKey === PRIORITY_KEY;
+  const modelName = isPriorityKey ? PRIORITY_MODEL : DEFAULT_MODEL;
+  
   // 初始化 Google AI 客户端
   const genAI = new GoogleGenerativeAI(apiKey);
   
-  // 获取模型实例（根据模板类型调整 maxOutputTokens）
+  // 获取模型实例（根据模板类型和 Key 类型调整 maxOutputTokens）
   const model = genAI.getGenerativeModel({ 
-    model: DEFAULT_MODEL,
+    model: modelName,
     generationConfig: {
       temperature: 0.7,
       topP: 0.95,
@@ -59,7 +65,7 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
     },
   });
 
-  console.log(`[GoogleAI] Using model: ${DEFAULT_MODEL} with SDK`);
+  console.log(`[GoogleAI] Using model: ${modelName} with SDK${isPriorityKey ? ' (优先 Key)' : ''}`);
 
   // 验证内容是否包含中文字符
   function containsChinese(text: string): boolean {
@@ -900,7 +906,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
     try {
       // 创建 FAQ 模型实例（使用较高的 temperature 以生成更多样化、更相关的FAQ）
       const faqModel = genAI.getGenerativeModel({
-        model: DEFAULT_MODEL,
+        model: modelName, // 使用相同的模型（优先 Key 使用 gemini-3-pro-preview）
         generationConfig: {
           temperature: 0.9, // 提高温度以生成更多样化、更自然的FAQ
           topP: 0.95,
@@ -1044,7 +1050,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
       try {
         console.log(`[GoogleAI] Generating comprehensive page description for ${templateType}...`);
         const descModel = genAI.getGenerativeModel({
-          model: DEFAULT_MODEL,
+          model: modelName, // 使用相同的模型（优先 Key 使用 gemini-3-pro-preview）
           generationConfig: {
             temperature: 0.7,
             maxOutputTokens: 300, // 增加token数量以支持更完整的描述
@@ -1198,7 +1204,7 @@ Write the complete description paragraph now:`;
       try {
         console.log(`[GoogleAI] Generating extended content for template-3...`);
         const extendedModel = genAI.getGenerativeModel({
-          model: DEFAULT_MODEL,
+          model: modelName, // 使用相同的模型（优先 Key 使用 gemini-3-pro-preview）
           generationConfig: {
             temperature: 0.8,
             topP: 0.95,
@@ -1361,8 +1367,8 @@ Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul
     // 处理 404 错误（模型不存在）
     if (statusCode === 404 || errorMessage.includes("not found") || errorMessage.includes("404")) {
       statusCode = 404;
-      errorMessage = `模型 ${DEFAULT_MODEL} 不可用。错误信息: ${errorMessage}`;
-      console.error(`[GoogleAI] 模型 ${DEFAULT_MODEL} 不可用，请检查模型名称是否正确`);
+      errorMessage = `模型 ${modelName} 不可用。错误信息: ${errorMessage}`;
+      console.error(`[GoogleAI] 模型 ${modelName} 不可用，请检查模型名称是否正确`);
     }
 
     // 处理 429 配额限制错误（需要特殊处理，提取 retryDelay）
@@ -1853,8 +1859,12 @@ function isArticleRich(html: string, templateType?: string): boolean {
  */
 async function generateTitleWithKey(apiKey: string, keyword: string, titleType?: string): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
+  // 根据 API Key 选择模型（优先 Key 使用 gemini-3-pro-preview）
+  const isPriorityKey = apiKey === PRIORITY_KEY;
+  const modelName = isPriorityKey ? PRIORITY_MODEL : DEFAULT_MODEL;
+  
   const model = genAI.getGenerativeModel({
-    model: DEFAULT_MODEL,
+    model: modelName, // 使用相应的模型
     generationConfig: {
       temperature: 0.9, // 提高温度以增加多样性
       topP: 0.95,
