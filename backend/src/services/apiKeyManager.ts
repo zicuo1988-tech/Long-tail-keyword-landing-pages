@@ -1,6 +1,7 @@
 interface QuotaLimitInfo {
   timestamp: number; // 配额限制的时间戳
   date: string; // 配额限制的日期（YYYY-MM-DD格式）
+  expiresAt: number; // 配额限制的过期时间戳（根据API返回的retryDelaySeconds计算）
 }
 
 class ApiKeyManager {
@@ -31,7 +32,7 @@ class ApiKeyManager {
   }
 
   /**
-   * 检查配额限制是否已过期（是否到了第二天）
+   * 检查配额限制是否已过期（根据API返回的retryDelaySeconds或默认的第二天）
    */
   isQuotaLimitExpired(key: string): boolean {
     const quotaInfo = this.quotaLimitedKeys.get(key);
@@ -39,12 +40,9 @@ class ApiKeyManager {
       return true; // 没有配额限制记录，视为可用
     }
 
-    const today = new Date();
-    const todayDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    
-    // 如果配额限制的日期是今天或更早，说明已经过期（可以重新使用）
-    // 如果配额限制的日期是明天或更晚，说明还在限制期内
-    return quotaInfo.date < todayDate;
+    // 使用 expiresAt 时间戳来判断是否过期
+    const now = Date.now();
+    return now >= quotaInfo.expiresAt;
   }
 
   /**
@@ -57,11 +55,7 @@ class ApiKeyManager {
     }
 
     const now = Date.now();
-    const tomorrow = new Date(quotaInfo.timestamp);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0); // 设置为第二天的 00:00:00
-
-    const remaining = Math.max(0, tomorrow.getTime() - now);
+    const remaining = Math.max(0, quotaInfo.expiresAt - now);
     return Math.ceil(remaining / 1000); // 转换为秒
   }
 
@@ -87,7 +81,7 @@ class ApiKeyManager {
       !this.failedKeys.has(key) && this.isQuotaLimitExpired(key)
     );
 
-    if (availableKeys.length === 0) {
+      if (availableKeys.length === 0) {
       // 检查是否有配额限制的 Key
       const quotaLimitedCount = Array.from(this.quotaLimitedKeys.keys()).length;
       if (quotaLimitedCount > 0) {
@@ -96,8 +90,14 @@ class ApiKeyManager {
         const remainingMinutes = Math.ceil(remainingSeconds / 60);
         const remainingHours = Math.ceil(remainingSeconds / 3600);
         
+        // 根据剩余时间判断是否跨天
+        const quotaInfo = this.quotaLimitedKeys.get(firstQuotaKey);
+        const expiresAtDate = quotaInfo ? new Date(quotaInfo.expiresAt) : null;
+        const isTomorrow = expiresAtDate && expiresAtDate.getDate() !== new Date().getDate();
+        const timeHint = isTomorrow ? "（明天）" : "";
+        
         throw new Error(
-          `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes % 60} 分钟后（明天）恢复使用。`
+          `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes % 60} 分钟后${timeHint}恢复使用。`
         );
       }
 
@@ -180,12 +180,13 @@ class ApiKeyManager {
 
   /**
    * 标记某个 Key 为配额限制（429错误）
-   * 记录时间戳，等待到第二天才重新使用
+   * 根据API返回的retryDelaySeconds设置过期时间，如果没有提供则默认到第二天
    * 
-   * 注意：只有在确认是真正的配额限制时才调用此方法
-   * 避免将临时错误误判为配额限制
+   * @param key API Key
+   * @param isConfirmedQuotaLimit 是否确认是配额限制
+   * @param retryDelaySeconds API返回的重试延迟时间（秒），如果提供则使用此时间设置过期
    */
-  markAsQuotaLimited(key: string, isConfirmedQuotaLimit: boolean = true) {
+  markAsQuotaLimited(key: string, isConfirmedQuotaLimit: boolean = true, retryDelaySeconds?: number) {
     if (!isConfirmedQuotaLimit) {
       // 如果不是确认的配额限制，只标记为失败，不标记为配额限制
       this.markAsFailed(key);
@@ -196,21 +197,40 @@ class ApiKeyManager {
     const date = new Date(now);
     const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     
+    // 计算过期时间：如果提供了retryDelaySeconds，则使用它；否则默认到第二天00:00:00
+    let expiresAt: number;
+    if (retryDelaySeconds && retryDelaySeconds > 0) {
+      // 根据API返回的retryDelaySeconds设置过期时间
+      expiresAt = now + (retryDelaySeconds * 1000);
+      console.log(`[ApiKeyManager] 📌 根据API返回的retryDelay=${retryDelaySeconds}s，设置过期时间为 ${new Date(expiresAt).toLocaleString()}`);
+    } else {
+      // 默认策略：到第二天00:00:00
+      const tomorrow = new Date(date);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      expiresAt = tomorrow.getTime();
+      console.log(`[ApiKeyManager] 📌 未提供retryDelay，使用默认策略：到明天00:00:00`);
+    }
+    
     this.quotaLimitedKeys.set(key, {
       timestamp: now,
       date: dateString,
+      expiresAt: expiresAt,
     });
 
     // 同时从失败列表中移除（配额限制不是永久失败）
     this.failedKeys.delete(key);
 
-    const tomorrow = new Date(date);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    tomorrow.setHours(0, 0, 0, 0);
-    const remainingMs = tomorrow.getTime() - now;
+    const remainingMs = expiresAt - now;
+    const remainingSeconds = Math.ceil(remainingMs / 1000);
     const remainingHours = Math.ceil(remainingMs / (1000 * 60 * 60));
+    const remainingMinutes = Math.ceil((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
 
-    console.warn(`[ApiKeyManager] ⚠️  Key ${key.substring(0, 20)}... 遇到配额限制 (429)，将在 ${remainingHours} 小时后（明天）重新启用`);
+    if (retryDelaySeconds && retryDelaySeconds > 0) {
+      console.warn(`[ApiKeyManager] ⚠️  Key ${key.substring(0, 20)}... 遇到配额限制 (429)，根据API返回的retryDelay，将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后（${new Date(expiresAt).toLocaleString()}）重新启用`);
+    } else {
+      console.warn(`[ApiKeyManager] ⚠️  Key ${key.substring(0, 20)}... 遇到配额限制 (429)，将在 ${remainingHours} 小时后（明天）重新启用`);
+    }
   }
 
   /**
@@ -252,7 +272,15 @@ class ApiKeyManager {
         const remainingSeconds = this.getQuotaLimitRemainingSeconds(key);
         const remainingHours = Math.ceil(remainingSeconds / 3600);
         const remainingMinutes = Math.ceil((remainingSeconds % 3600) / 60);
-        details = `等待 ${remainingHours} 小时 ${remainingMinutes} 分钟后恢复（明天）`;
+        
+        // 根据过期时间判断是否跨天
+        const quotaInfo = this.quotaLimitedKeys.get(key);
+        const expiresAtDate = quotaInfo ? new Date(quotaInfo.expiresAt) : null;
+        const isTomorrow = expiresAtDate && expiresAtDate.getDate() !== new Date().getDate();
+        const timeHint = isTomorrow ? "（明天）" : "";
+        const expiresAtStr = expiresAtDate ? expiresAtDate.toLocaleString() : "";
+        
+        details = `等待 ${remainingHours} 小时 ${remainingMinutes} 分钟后恢复${timeHint}${expiresAtStr ? ` (${expiresAtStr})` : ''}`;
       } else if (this.quotaLimitedKeys.has(key) && this.isQuotaLimitExpired(key)) {
         status = "可用（配额限制已过期）";
         details = "配额限制已过期，可以重新使用";
@@ -490,10 +518,12 @@ export async function withApiKey<T>(
         errorMessage.includes("401") ||
         errorMessage.includes("429");
 
-      // 处理 429 配额限制：标记为配额限制，等待到第二天才重新使用
+      // 处理 429 配额限制：标记为配额限制，根据API返回的retryDelaySeconds设置过期时间
       if (statusCode === 429) {
-        // 如果返回了 retryDelay，则按照服务端建议的等待时间暂停调用
+        // 提取API返回的retryDelay
         const retryDelaySeconds = getRetryDelaySeconds(errorAny);
+        
+        // 如果返回了 retryDelay，则按照服务端建议的等待时间暂停调用
         if (retryDelaySeconds > 0) {
           const waitMs = retryDelaySeconds * 1000;
           const msg = `API 返回 retryDelay=${retryDelaySeconds}s，暂停当前 Key 调用后再继续...`;
@@ -512,9 +542,9 @@ export async function withApiKey<T>(
           errorMsgLower.includes("resource exhausted") ||
           (errorAny as any).retryDelaySeconds !== undefined;
         
-        // 标记当前 Key 为配额限制（等待到第二天）
+        // 标记当前 Key 为配额限制，传递retryDelaySeconds以便根据API实际返回的时间设置过期
         // 如果不是确认的配额限制，只标记为失败，不标记为配额限制
-        manager.markAsQuotaLimited(currentKey, isConfirmedQuotaLimit);
+        manager.markAsQuotaLimited(currentKey, isConfirmedQuotaLimit, retryDelaySeconds > 0 ? retryDelaySeconds : undefined);
         
         // 获取剩余可用 Key 数量
         const availableCount = manager.getAvailableKeyCount();
@@ -567,7 +597,14 @@ export async function withApiKey<T>(
             const remainingHours = Math.ceil(minRemainingSeconds / 3600);
             const remainingMinutes = Math.ceil((minRemainingSeconds % 3600) / 60);
             
-            const errorMessage = `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后（明天）恢复使用。`;
+            // 根据剩余时间判断是否跨天
+            const managerAny2 = manager as any;
+            const quotaInfo = managerAny2.quotaLimitedKeys.get(earliestKey);
+            const expiresAtDate = quotaInfo ? new Date(quotaInfo.expiresAt) : null;
+            const isTomorrow = expiresAtDate && expiresAtDate.getDate() !== new Date().getDate();
+            const timeHint = isTomorrow ? "（明天）" : "";
+            
+            const errorMessage = `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后${timeHint}恢复使用。`;
             console.error(`[ApiKeyManager] ${errorMessage}`);
             onStatusUpdate?.(errorMessage);
             

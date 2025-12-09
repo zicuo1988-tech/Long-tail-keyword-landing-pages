@@ -1,5 +1,1083 @@
 [
   {
+    "id": "f4bb819f-f507-47b6-beae-b7cacc476524",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126615",
+    "createdAt": 1765249370599,
+    "updatedAt": 1765249526302,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "expensive Christmas gifts",
+    "titleType": "comparison",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-expensive-christmas-gifts-comparison/"
+  },
+  {
+    "id": "baabc980-e856-4e05-a337-4010ff928740",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126611",
+    "createdAt": 1765249220597,
+    "updatedAt": 1765249368660,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "corporate Christmas gifts for executives",
+    "titleType": "tech-insights",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/corporate-christmas-gifts-for-executives-comparison-tech-insights/"
+  },
+  {
+    "id": "40bc5b55-b4ba-450c-ad74-b4e944a6b3a3",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126609",
+    "createdAt": 1765249085597,
+    "updatedAt": 1765249217699,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Christmas gifts for ceo / boss",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-christmas-gifts-for-ceo-boss/"
+  },
+  {
+    "id": "8b7e43e3-0dcb-4e8c-99d8-80abb7e31286",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126607",
+    "createdAt": 1765248939603,
+    "updatedAt": 1765249085293,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury Christmas gifts for wife",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-christmas-gifts-for-wife-top-picks/"
+  },
+  {
+    "id": "f05fc106-9e44-49e5-acd2-3ff7808c03a2",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126595",
+    "createdAt": 1765248789603,
+    "updatedAt": 1765248939273,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "unique Christmas gifts for husband",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-unique-christmas-gifts-for-husband/"
+  },
+  {
+    "id": "c2de1ec2-699c-4e50-971d-bee512c6ff4b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126593",
+    "createdAt": 1765248660599,
+    "updatedAt": 1765248788096,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "high-end holiday gift guide 2025",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-high-end-holiday-gift-guide-2025-collection/"
+  },
+  {
+    "id": "49f0ecc1-0c30-4bad-8265-9e5622e27e89",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1765248640686,
+    "updatedAt": 1765248659757,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "exclusive Christmas gifts for her",
+    "titleType": "review",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "14f32617-4efd-4b89-a75e-dace8cb78d22",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126591",
+    "createdAt": 1765248495272,
+    "updatedAt": 1765248640383,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "premium Christmas gifts for men",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-premium-christmas-gifts-for-men/"
+  },
+  {
+    "id": "7f5ee3b7-0dfb-403d-ad11-6f2911202b2e",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126589",
+    "createdAt": 1765248347547,
+    "updatedAt": 1765248493710,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury Christmas gifts",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/buy-luxury-christmas-gifts-official-store/"
+  },
+  {
+    "id": "e813f5bd-1613-4a9d-a3db-9eb5c0a7d25a",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126581",
+    "createdAt": 1765247428599,
+    "updatedAt": 1765247575008,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best smartphone for elderly",
+    "titleType": "informational",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-best-smartphone-for-elderly/"
+  },
+  {
+    "id": "c3e0fafe-0bd9-493f-9f05-081d59639fba",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126579",
+    "createdAt": 1765247281635,
+    "updatedAt": 1765247425658,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best 5g phones",
+    "titleType": "purchase",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-best-5g-phones-official-retailer/"
+  },
+  {
+    "id": "7b006fc1-7b6f-47f1-8339-810d97a46edd",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126577",
+    "createdAt": 1765247137608,
+    "updatedAt": 1765247280225,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "house phones for seniors",
+    "titleType": "most",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-house-phones-for-seniors-best-selling-models/"
+  },
+  {
+    "id": "e7dd569e-0fdf-4e2b-904e-82297118ee73",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126575",
+    "createdAt": 1765246993597,
+    "updatedAt": 1765247135366,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "home phones for seniors",
+    "titleType": "top-ranking",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-home-phones-for-seniors-list-comprehensive-rankings/"
+  },
+  {
+    "id": "548e6719-cfd9-4637-882d-67fd03baf274",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126568",
+    "createdAt": 1765246852599,
+    "updatedAt": 1765246990653,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "good phone for seniors",
+    "titleType": "top",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-good-phone-for-seniors-premium-choices-reviewed/"
+  },
+  {
+    "id": "033c1d95-f394-4e8c-a3a8-7b16bc8cfec8",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126566",
+    "createdAt": 1765246709655,
+    "updatedAt": 1765246850255,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "easy phone for seniors",
+    "titleType": "best",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-easy-phone-for-seniors-top-rated-and-reviews/"
+  },
+  {
+    "id": "081e86b3-b3e3-4dae-8ea6-7d9f3a1fd91d",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126564",
+    "createdAt": 1765246565612,
+    "updatedAt": 1765246707705,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best flip phone for seniors",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-best-flip-phone-for-seniors/"
+  },
+  {
+    "id": "62ea0cfb-195b-4a80-a652-aba6c2d57a8f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126562",
+    "createdAt": 1765246413598,
+    "updatedAt": 1765246564359,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "military phone cases",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/military-phone-cases-comparison-which-is-better/"
+  },
+  {
+    "id": "368c4a4c-fab4-42f8-b0a3-cb65d5f016d6",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126560",
+    "createdAt": 1765246285597,
+    "updatedAt": 1765246413398,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "cell phone with best camera",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/cell-phone-with-best-camera-comparison-tech-insights/"
+  },
+  {
+    "id": "c1294c46-2be2-4506-9a06-e5070da5f0a0",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126558",
+    "createdAt": 1765246143752,
+    "updatedAt": 1765246284142,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best carrier for cell phone",
+    "titleType": "services-guides",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-carrier-for-cell-phone-user-guide/"
+  },
+  {
+    "id": "73fb62aa-4d57-4d10-9393-a7af3e091252",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126556",
+    "createdAt": 1765246003427,
+    "updatedAt": 1765246142352,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "virtual business phone",
+    "titleType": "recommendations",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/virtual-business-phone-recommendations-top-choices/"
+  },
+  {
+    "id": "40b1a84d-77dc-4b3b-804e-84f91fe09804",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126554",
+    "createdAt": 1765245883096,
+    "updatedAt": 1765246002259,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "business phone app",
+    "titleType": "how-to",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-business-phone-app/"
+  },
+  {
+    "id": "293989ef-ac4f-4fd9-ba5a-b483b66acdab",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126552",
+    "createdAt": 1765245714690,
+    "updatedAt": 1765245882692,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "smart health ring",
+    "titleType": "commercial",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-smart-health-ring-selection/"
+  },
+  {
+    "id": "7e31b593-c33e-40f7-bd07-7f91759ca8f5",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126550",
+    "createdAt": 1765245577599,
+    "updatedAt": 1765245714119,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "new folding phone",
+    "titleType": "review",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-new-folding-phone-best-rated/"
+  },
+  {
+    "id": "8d85cbb8-78fe-4c4d-b061-08fe352be200",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126548",
+    "createdAt": 1765245418597,
+    "updatedAt": 1765245577004,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best rugged smartphone",
+    "titleType": "informational",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-best-rugged-smartphone/"
+  },
+  {
+    "id": "a2637740-b111-4160-946a-52de5442fb63",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126546",
+    "createdAt": 1765245278598,
+    "updatedAt": 1765245418546,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best gaming cell phone",
+    "titleType": "purchase",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-best-gaming-cell-phone-expert-guide/"
+  },
+  {
+    "id": "d13e07c8-3abd-4b2e-a1ec-c915267870d5",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126544",
+    "createdAt": 1765245138597,
+    "updatedAt": 1765245276167,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best flip cell phone",
+    "titleType": "most",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-best-flip-cell-phone/"
+  },
+  {
+    "id": "0dac57d9-acb3-41d9-ac7c-b3818ed93ad5",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126542",
+    "createdAt": 1765245014597,
+    "updatedAt": 1765245136345,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "flip phone price",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-flip-phone-price-complete-ranking-list/"
+  },
+  {
+    "id": "9b9cdd0d-023d-4221-9b78-95ad81f0597b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126540",
+    "createdAt": 1765244890595,
+    "updatedAt": 1765245013718,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "small business phones",
+    "titleType": "top",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-small-business-phones/"
+  },
+  {
+    "id": "78f97bdb-8f41-4023-8e24-cd82b1fb8309",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126538",
+    "createdAt": 1765244747595,
+    "updatedAt": 1765244889718,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "phone for business",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-phone-for-business-top-rated-and-reviews/"
+  },
+  {
+    "id": "7b76a14f-9f12-4d00-ac69-22d78895b165",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126536",
+    "createdAt": 1765244618614,
+    "updatedAt": 1765244746289,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "business internet phone",
+    "titleType": "expert",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-business-internet-phone/"
+  },
+  {
+    "id": "4d332ec7-addb-43b6-ac13-6cb7a3c07757",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126534",
+    "createdAt": 1765244469600,
+    "updatedAt": 1765244616897,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "business cell phones",
+    "titleType": "comparison",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/business-cell-phones-comparison-which-is-better/"
+  },
+  {
+    "id": "57c2042c-ecf9-4444-a1a1-84ef8fd46881",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126532",
+    "createdAt": 1765244328623,
+    "updatedAt": 1765244466853,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone charger",
+    "titleType": "tech-insights",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-mobile-phone-charger-comparison-tech-insights/"
+  },
+  {
+    "id": "55731469-98c5-4951-9b89-6b1c2c2d4972",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126530",
+    "createdAt": 1765244201028,
+    "updatedAt": 1765244328369,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best rated smartphone camera",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-best-rated-smartphone-camera/"
+  },
+  {
+    "id": "f422b34f-b3c7-441f-b68d-affd8dffe563",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126528",
+    "createdAt": 1765244048649,
+    "updatedAt": 1765244200821,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "spectrum phone service reviews",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-spectrum-phone-service-reviews-expert-recommendations/"
+  },
+  {
+    "id": "0cfd51f6-b5b4-4d90-8851-31ceb996f5c6",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126526",
+    "createdAt": 1765243920597,
+    "updatedAt": 1765244048364,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "flip phone for seniors",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-flip-phone-for-seniors/"
+  },
+  {
+    "id": "bfcf7601-14ca-434c-87aa-39258d19b0ac",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126524",
+    "createdAt": 1765243777785,
+    "updatedAt": 1765243920469,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "cordless phones for seniors",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-cordless-phones-for-seniors-store/"
+  },
+  {
+    "id": "8e6cc2d9-094b-4ee2-9ce8-f32ded787540",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126522",
+    "createdAt": 1765243631597,
+    "updatedAt": 1765243777148,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best buy unlocked cell phones",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-buy-unlocked-cell-phones-review-top-rated-models/"
+  },
+  {
+    "id": "e409d119-63ec-40b3-a08a-85f2b140e60c",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126520",
+    "createdAt": 1765243475697,
+    "updatedAt": 1765243628751,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best buy prepaid cell phones",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-best-buy-prepaid-cell-phones/"
+  },
+  {
+    "id": "31eb4d05-105b-4bf7-b89a-6decdf9add3b",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126518",
+    "createdAt": 1765243353385,
+    "updatedAt": 1765243474168,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best folding phones",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-best-folding-phones-expert-guide/"
+  },
+  {
+    "id": "91c44b29-a8f9-4229-a3f7-f5a77e43a62d",
+    "status": "failed",
+    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。",
+    "createdAt": 1765192994807,
+    "updatedAt": 1765192994809,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "top business phones",
+    "titleType": "informational",
+    "templateType": "template-3",
+    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。"
+  },
+  {
+    "id": "18c9d0bf-6e75-4634-8fcd-ff827a7a9418",
+    "status": "failed",
+    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。",
+    "createdAt": 1765192994779,
+    "updatedAt": 1765192994781,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "folding cell phone",
+    "titleType": "purchase",
+    "templateType": "template-2",
+    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。"
+  },
+  {
+    "id": "e9696f69-81de-46dc-a451-5c6728de719f",
+    "status": "failed",
+    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。",
+    "createdAt": 1765192925758,
+    "updatedAt": 1765192992452,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "best mobile phone camera",
+    "titleType": "most",
+    "templateType": "template-1",
+    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 5 小时 37 分钟后（明天）恢复使用。"
+  },
+  {
+    "id": "6777fbd3-361d-49fa-b748-17394b62a334",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126482",
+    "createdAt": 1765192839768,
+    "updatedAt": 1765192925116,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mid-range smartphones 2025",
+    "titleType": "top-ranking",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-best-mid-range-smartphones-2025-best-rankings/"
+  },
+  {
+    "id": "dec27400-f667-40f0-ac40-51e7e03d3eb0",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126480",
+    "createdAt": 1765192713759,
+    "updatedAt": 1765192836970,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best flip smartphone",
+    "titleType": "top",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-best-flip-smartphone-picks-premium-selection/"
+  },
+  {
+    "id": "489a11f5-d7cc-4aec-a496-dc9b24f89ca7",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126478",
+    "createdAt": 1765192590771,
+    "updatedAt": 1765192713423,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best budget smartphone",
+    "titleType": "best",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-best-budget-smartphone-quality-guide/"
+  },
+  {
+    "id": "046221b1-bf27-4607-8c11-4e4eb85ff882",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126476",
+    "createdAt": 1765192437758,
+    "updatedAt": 1765192588532,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "cell phone reviews",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-cell-phone-reviews/"
+  },
+  {
+    "id": "818c821a-3fba-4728-9d1d-26fc5ff8ab31",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126474",
+    "createdAt": 1765192293759,
+    "updatedAt": 1765192435639,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "wireless phones for seniors",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/wireless-phones-for-seniors-vs-alternatives/"
+  },
+  {
+    "id": "e63ef76e-7f4c-4349-b97d-928a4e58d5aa",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126472",
+    "createdAt": 1765192107756,
+    "updatedAt": 1765192291246,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best crossbody cell phone purse",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-crossbody-cell-phone-purse-tech-comparison/"
+  },
+  {
+    "id": "37459c02-fa7b-45d3-bc9b-c5e08ae71199",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126470",
+    "createdAt": 1765191963768,
+    "updatedAt": 1765192106101,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone battery charger",
+    "titleType": "services-guides",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-best-cell-phone-battery-charger/"
+  },
+  {
+    "id": "4863e641-5aa9-446f-8e7e-935a2abf1b23",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126468",
+    "createdAt": 1765191838768,
+    "updatedAt": 1765191962493,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best budget cell phone",
+    "titleType": "recommendations",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-best-budget-cell-phone-highly-recommended/"
+  },
+  {
+    "id": "b67c49b6-2005-4517-b3ff-20d7b5beedba",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126466",
+    "createdAt": 1765191706754,
+    "updatedAt": 1765191836022,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "most secure phone",
+    "titleType": "how-to",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-most-secure-phone/"
+  },
+  {
+    "id": "01ee070c-54fb-485f-8ee4-2a410fded5f3",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126464",
+    "createdAt": 1765191549763,
+    "updatedAt": 1765191705556,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone carrier",
+    "titleType": "commercial",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/authorised-best-mobile-phone-carrier-retailer/"
+  },
+  {
+    "id": "8a6037ec-253e-4315-ae6c-c05fb946f2a7",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126462",
+    "createdAt": 1765191423768,
+    "updatedAt": 1765191546909,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone",
+    "titleType": "review",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-mobile-phone-review-top-rated-models/"
+  },
+  {
+    "id": "5b5d9a66-4a0c-48d7-b9c4-ee26ecd6ac78",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126460",
+    "createdAt": 1765191264759,
+    "updatedAt": 1765191422560,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best game mobile phone",
+    "titleType": "informational",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-best-game-mobile-phone/"
+  },
+  {
+    "id": "55b820c6-47c0-4221-ab10-76c3b86c675d",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126458",
+    "createdAt": 1765191124766,
+    "updatedAt": 1765191263078,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best smartphone 2025",
+    "titleType": "purchase",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/buy-best-smartphone-2025-official-store/"
+  },
+  {
+    "id": "a8728f4f-8aee-4a90-aac8-72d6320df1d3",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126456",
+    "createdAt": 1765190980753,
+    "updatedAt": 1765191124571,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone company",
+    "titleType": "most",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-best-cell-phone-company-popular-choices/"
+  },
+  {
+    "id": "0670f659-e6cd-4f63-a1fc-125cc3f194f7",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126454",
+    "createdAt": 1765190827766,
+    "updatedAt": 1765190977888,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone charger",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-best-cell-phone-charger-list-comprehensive-rankings/"
+  },
+  {
+    "id": "e215e594-54f7-446b-83a2-220066e72488",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126452",
+    "createdAt": 1765190668762,
+    "updatedAt": 1765190826851,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone carriers",
+    "titleType": "top",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-best-cell-phone-carriers-premium-choices-reviewed/"
+  },
+  {
+    "id": "49f1991e-cb9b-4343-97e8-e1acc4a9d3ad",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126450",
+    "createdAt": 1765190533767,
+    "updatedAt": 1765190666359,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile flip phone",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-best-mobile-flip-phone-quality-guide/"
+  },
+  {
+    "id": "34f79749-51b5-43fa-a06a-e25556286abf",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126448",
+    "createdAt": 1765190396775,
+    "updatedAt": 1765190533014,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile cell phone",
+    "titleType": "expert",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-best-mobile-cell-phone/"
+  },
+  {
+    "id": "e7c46793-64b3-4599-bdbf-ef7e63d777de",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1765190375755,
+    "updatedAt": 1765190395344,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "best mobile android phone",
+    "titleType": "comparison",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "7bd4d039-f6cc-4adc-b552-eb89754dbef7",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126446",
+    "createdAt": 1765190240752,
+    "updatedAt": 1765190374684,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best fold phones",
+    "titleType": "tech-insights",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-fold-phones-comparison-tech-insights/"
+  },
+  {
+    "id": "21be8ede-2496-482c-90fa-9d67d31a434f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126444",
+    "createdAt": 1765190097754,
+    "updatedAt": 1765190238581,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone providers",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-cell-phone-providers-user-guide/"
+  },
+  {
+    "id": "507716e2-ffaa-4aba-b984-9e570cbbb1b8",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126442",
+    "createdAt": 1765189950769,
+    "updatedAt": 1765190094757,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone companies",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-cell-phone-companies-recommendations-top-choices/"
+  },
+  {
+    "id": "df36870e-7c14-4324-bca5-ec0ee28a99ce",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126440",
+    "createdAt": 1765189761752,
+    "updatedAt": 1765189950286,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "phantom encrypted phone",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-phantom-encrypted-phone/"
+  },
+  {
+    "id": "31417771-796a-41d5-a30c-ad2f578b25f6",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126438",
+    "createdAt": 1765189531755,
+    "updatedAt": 1765189760172,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "flip phones for seniors",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-flip-phones-for-seniors-selection/"
+  },
+  {
+    "id": "df70a517-6df1-49ba-9861-ced21157a838",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126436",
+    "createdAt": 1765189386267,
+    "updatedAt": 1765189530324,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone for elderly",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-best-cell-phone-for-elderly-best-rated/"
+  },
+  {
+    "id": "1729026b-fabf-4a61-af61-4c5b30851ec9",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126434",
+    "createdAt": 1765189225915,
+    "updatedAt": 1765189384624,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mobile phones near me",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-mobile-phones-near-me/"
+  },
+  {
+    "id": "6d31fd43-2cfa-4b68-a257-8dac522fee72",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126432",
+    "createdAt": 1765189091627,
+    "updatedAt": 1765189224091,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone provider",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-best-mobile-phone-provider-premium-selection/"
+  },
+  {
+    "id": "234f9631-d330-4db1-835d-a3d76de66bc1",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126429",
+    "createdAt": 1765187682781,
+    "updatedAt": 1765187829350,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone android",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-best-mobile-phone-android/"
+  },
+  {
+    "id": "7cd6e0f0-8609-419e-af5a-30533f6b6d26",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126427",
+    "createdAt": 1765187528368,
+    "updatedAt": 1765187682318,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best folding phone",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-best-folding-phone-top-picks/"
+  },
+  {
+    "id": "41cc73e1-17b8-4f45-a801-07f7977e194c",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126423",
+    "createdAt": 1765187385958,
+    "updatedAt": 1765187527098,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mobile phone best",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-mobile-phone-best/"
+  },
+  {
+    "id": "aeed00d6-658c-45d7-8e9a-bd09b1d8e55f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126421",
+    "createdAt": 1765187241590,
+    "updatedAt": 1765187384161,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone carrier",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-best-cell-phone-carrier-selection/"
+  },
+  {
+    "id": "46f0f526-5b7b-4965-b76e-52d6d63d3e68",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126417",
+    "createdAt": 1765187069212,
+    "updatedAt": 1765187241127,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "social security phone​",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-social-security-phone-best-rated/"
+  },
+  {
+    "id": "c2df8d58-84b8-41c8-ab19-579b8ec0e5aa",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126415",
+    "createdAt": 1765186922914,
+    "updatedAt": 1765187069073,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "consumer cellular phones for seniors",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-consumer-cellular-phones-for-seniors/"
+  },
+  {
+    "id": "07aa5a57-9767-4005-ae6b-9a158c5f0d00",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126411",
+    "createdAt": 1765186756494,
+    "updatedAt": 1765186922141,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mobile phones and service",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-mobile-phones-and-service-official-retailer/"
+  },
+  {
+    "id": "1cc0df43-b0f4-40fa-be99-54ac4d0da0ea",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126409",
+    "createdAt": 1765186133762,
+    "updatedAt": 1765186295921,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best of mobile phone",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-best-of-mobile-phone/"
+  },
+  {
     "id": "99aefe59-fa74-441e-9a91-30fc96622171",
     "status": "completed",
     "message": "发布成功！页面 ID: 126407",
@@ -403,20 +1481,6 @@
     "keyword": "best mobile phone android",
     "titleType": "commercial",
     "templateType": "template-3",
-    "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 31 分钟后（明天）恢复使用。"
-  },
-  {
-    "id": "e150c433-e282-4ba6-af56-c0ee84b09d70",
-    "status": "failed",
-    "message": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 31 分钟后（明天）恢复使用。",
-    "createdAt": 1765175376596,
-    "updatedAt": 1765175376599,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "best folding phone",
-    "titleType": "review",
-    "templateType": "template-2",
     "error": "所有 API Key 都遇到配额限制。最早可用的 Key 将在 10 小时 31 分钟后（明天）恢复使用。"
   },
   {
