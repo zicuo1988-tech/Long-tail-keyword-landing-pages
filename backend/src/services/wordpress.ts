@@ -199,6 +199,155 @@ function createClient({ url, username, appPassword }: WordpressCredentials) {
   return client;
 }
 
+/**
+ * 根据产品名称列表搜索产品（用于确保内容中提到的产品出现在产品列表中）
+ * @param credentials WordPress 凭证
+ * @param productNames 产品名称列表
+ * @returns 找到的产品列表
+ */
+export async function searchProductsByName(
+  credentials: WordpressCredentials,
+  productNames: string[]
+): Promise<ProductSummary[]> {
+  if (!productNames || productNames.length === 0) {
+    return [];
+  }
+
+  // 准备基础 URL 和代理配置
+  let baseURL = credentials.url.trim();
+  if (!baseURL.startsWith("http://") && !baseURL.startsWith("https://")) {
+    baseURL = `https://${baseURL}`;
+  }
+  baseURL = baseURL.replace(/\/+$/, "");
+
+  const noProxy = process.env.NO_PROXY || "";
+  const wordpressProxy = process.env.WORDPRESS_PROXY || "";
+  let proxyConfig: any = undefined;
+
+  try {
+    const urlObj = new URL(baseURL);
+    const hostname = urlObj.hostname;
+
+    if (noProxy) {
+      const noProxyList = noProxy.split(",").map(d => d.trim());
+      const shouldDisableProxy = noProxyList.some(domain => {
+        return domain === "*" || hostname.includes(domain) || hostname === domain;
+      });
+      if (shouldDisableProxy) {
+        proxyConfig = false;
+      }
+    }
+
+    if (proxyConfig === undefined && wordpressProxy) {
+      try {
+        const proxyUrl = new URL(wordpressProxy);
+        proxyConfig = {
+          protocol: proxyUrl.protocol.replace(":", ""),
+          host: proxyUrl.hostname,
+          port: proxyUrl.port || (proxyUrl.protocol === "https:" ? 443 : 80),
+        };
+      } catch (e) {
+        console.warn(`[WordPress] WORDPRESS_PROXY 配置无效: ${wordpressProxy}`);
+      }
+    }
+  } catch (e) {
+    console.warn(`[WordPress] URL 解析失败: ${baseURL}`);
+  }
+
+  const foundProducts: ProductSummary[] = [];
+  const foundProductIds = new Set<number>();
+
+  // 尝试使用 WooCommerce API
+  if (credentials.consumerKey && credentials.consumerSecret) {
+    try {
+      const client = axios.create({
+        baseURL: `${baseURL}/wp-json/wc/v3`,
+        auth: {
+          username: credentials.consumerKey,
+          password: credentials.consumerSecret,
+        },
+        proxy: proxyConfig,
+        timeout: 30000,
+      });
+
+      // 为每个产品名称搜索
+      for (const productName of productNames) {
+        try {
+          const response = await client.get("/products", {
+            params: {
+              search: productName,
+              per_page: 10,
+              stock_status: "instock",
+            },
+          });
+
+          if (response.data && Array.isArray(response.data)) {
+            const filtered = filterRawProductsByTargetNames(response.data, [productName]);
+            for (const product of parseProductsData(filtered, "WooCommerce")) {
+              if (!foundProductIds.has(product.id)) {
+                foundProducts.push(product);
+                foundProductIds.add(product.id);
+              }
+            }
+          }
+        } catch (error: any) {
+          console.warn(`[WordPress] 搜索产品 "${productName}" 失败:`, error.response?.status || error.message);
+        }
+      }
+    } catch (error: any) {
+      console.warn(`[WordPress] WooCommerce API 搜索失败:`, error.response?.status || error.message);
+    }
+  }
+
+  // 如果 WooCommerce 搜索失败，尝试使用 WordPress 标准 API
+  if (foundProducts.length === 0) {
+    try {
+      const client = axios.create({
+        baseURL: `${baseURL}/wp-json/wp/v2`,
+        auth: {
+          username: credentials.username,
+          password: credentials.appPassword,
+        },
+        proxy: proxyConfig,
+        timeout: 30000,
+      });
+
+      for (const productName of productNames) {
+        try {
+          const response = await client.get("/products", {
+            params: {
+              search: productName,
+              per_page: 10,
+              _embed: true,
+              stock_status: "instock",
+            },
+          });
+
+          if (response.data && Array.isArray(response.data)) {
+            const filtered = filterRawProductsByTargetNames(response.data, [productName]);
+            for (const product of parseProductsData(filtered, "WordPress Standard")) {
+              if (!foundProductIds.has(product.id)) {
+                foundProducts.push(product);
+                foundProductIds.add(product.id);
+              }
+            }
+          }
+        } catch (error: any) {
+          console.warn(`[WordPress] 搜索产品 "${productName}" 失败:`, error.response?.status || error.message);
+        }
+      }
+    } catch (error: any) {
+      console.warn(`[WordPress] WordPress Standard API 搜索失败:`, error.response?.status || error.message);
+    }
+  }
+
+  if (foundProducts.length > 0) {
+    console.log(`[WordPress] ✅ 根据内容中提到的产品名称，找到 ${foundProducts.length} 个产品: ${foundProducts.map(p => p.name).join(", ")}`);
+  }
+
+  return foundProducts;
+}
+
 export async function fetchRelatedProducts(
   credentials: WordpressCredentials,
   keyword: string,

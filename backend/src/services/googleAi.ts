@@ -1429,6 +1429,77 @@ Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul
   }
 }
 
+// 所有已知的产品名称列表
+const ALL_KNOWN_PRODUCTS = [
+  "Agent Q",
+  "Quantum Flip",
+  "Metavertu Max",
+  "Metavertu Curve",
+  "Metavertu",
+  "iVERTU",
+  "Signature S",
+  "Signature S+",
+  "Signature V",
+  "Signature Cobra",
+  "Meta Ring",
+  "AI Diamond Ring",
+  "AI Meta Ring",
+  "Grand Watch",
+  "Metawatch",
+  "Phantom Earbuds",
+  "OWS Earbuds",
+];
+
+/**
+ * 从内容中提取提到的所有产品名称
+ * @param content 要检查的内容
+ * @returns 提到的产品名称数组
+ */
+export function extractMentionedProductsFromContent(content: string): string[] {
+  if (!content) return [];
+
+  const contentLower = content.toLowerCase();
+  const mentionedProducts: string[] = [];
+
+  // 按长度从长到短排序，优先匹配更长的产品名称（避免部分匹配问题）
+  const sortedProducts = [...ALL_KNOWN_PRODUCTS].sort((a, b) => b.length - a.length);
+
+  for (const product of sortedProducts) {
+    const productLower = product.toLowerCase();
+    // 使用单词边界匹配，确保是完整的产品名称
+    // 例如："Metavertu" 应该匹配 "Metavertu Max" 或 "Metavertu"，但不应该匹配 "Metavertu Curve" 中的部分
+    const productWords = productLower.split(/\s+/);
+    const firstWord = productWords[0];
+    
+    // 检查内容中是否包含完整的产品名称
+    if (contentLower.includes(productLower)) {
+      // 避免重复添加（如果已经添加了更长的产品名称，跳过较短的）
+      const isAlreadyIncluded = mentionedProducts.some(existing => {
+        const existingLower = existing.toLowerCase();
+        return existingLower.includes(productLower) || productLower.includes(existingLower);
+      });
+      
+      if (!isAlreadyIncluded) {
+        mentionedProducts.push(product);
+      }
+    } else if (productWords.length > 1 && contentLower.includes(firstWord)) {
+      // 对于多词产品，如果第一个词匹配，也考虑添加（但要更谨慎）
+      // 例如：如果内容提到 "Metavertu"，但没有明确提到 "Metavertu Max"，我们仍然添加 "Metavertu"
+      const isAlreadyIncluded = mentionedProducts.some(existing => {
+        const existingLower = existing.toLowerCase();
+        return existingLower.startsWith(firstWord) || firstWord.startsWith(existingLower.split(/\s+/)[0]);
+      });
+      
+      if (!isAlreadyIncluded && product === "Metavertu") {
+        // 对于 "Metavertu" 这个通用名称，如果提到但没提到具体型号，也添加
+        mentionedProducts.push(product);
+      }
+    }
+  }
+
+  return mentionedProducts;
+}
+
 // 验证内容是否包含与关键词无关的产品
 function validateContentRelevance(
   content: string,
@@ -1442,29 +1513,8 @@ function validateContentRelevance(
   const relevantProductsLower = relevantProducts.map((p) => p.toLowerCase());
   const keywordLower = keyword.toLowerCase();
 
-  // 检查是否提到了其他产品（不在相关产品列表中）
-  const allKnownProducts = [
-    "Agent Q",
-    "Quantum Flip",
-    "Metavertu Max",
-    "Metavertu Curve",
-    "Metavertu",
-    "iVERTU",
-    "Signature S",
-    "Signature S+",
-    "Signature V",
-    "Signature Cobra",
-    "Meta Ring",
-    "AI Diamond Ring",
-    "AI Meta Ring",
-    "Grand Watch",
-    "Metawatch",
-    "Phantom Earbuds",
-    "OWS Earbuds",
-  ];
-
   const mentionedProducts: string[] = [];
-  for (const product of allKnownProducts) {
+  for (const product of ALL_KNOWN_PRODUCTS) {
     const productLower = product.toLowerCase();
     // 检查内容中是否提到该产品
     if (

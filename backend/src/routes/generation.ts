@@ -1,6 +1,8 @@
 import express from "express";
 import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
+import { extractMentionedProductsFromContent } from "../services/googleAi.js";
+import { searchProductsByName } from "../services/wordpress.js";
 const LEARN_MORE_MAP: Record<string, string> = {
   "quantum flip": "https://vertu.com/quantum/",
   "metavertu 1 curve": "https://vertu.com/metavertu-curve/",
@@ -56,7 +58,7 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
   });
 }
 import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
-import { fetchRelatedProducts, publishPage } from "../services/wordpress.js";
+import { fetchRelatedProducts, publishPage, searchProductsByName } from "../services/wordpress.js";
 import { renderTemplate } from "../services/templateRenderer.js";
 import { createSlug } from "../utils/slug.js";
 
@@ -192,6 +194,60 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       updateTaskStatus(taskId, "fetching_products", "获取产品失败，继续发布页面（不包含产品列表）...");
       products = [];
       relatedProducts = [];
+    }
+
+    // 优化：确保内容中提到的产品也出现在产品列表中
+    try {
+      // 从生成的内容中提取提到的产品
+      const allContent = `${generatedContent.articleContent} ${generatedContent.extendedContent || ""} ${generatedContent.faqItems.map(f => `${f.question} ${f.answer}`).join(" ")}`;
+      const mentionedProducts = extractMentionedProductsFromContent(allContent);
+      
+      if (mentionedProducts.length > 0) {
+        console.log(`[task ${taskId}] 内容中提到的产品: ${mentionedProducts.join(", ")}`);
+        
+        // 检查这些产品是否已经在产品列表中
+        const existingProductNames = new Set(
+          [...products, ...relatedProducts].map(p => p.name.toLowerCase())
+        );
+        
+        const missingProducts = mentionedProducts.filter(
+          productName => !existingProductNames.has(productName.toLowerCase())
+        );
+        
+        if (missingProducts.length > 0) {
+          console.log(`[task ${taskId}] 内容中提到的产品但不在产品列表中，正在搜索: ${missingProducts.join(", ")}`);
+          updateTaskStatus(taskId, "fetching_products", `正在搜索内容中提到的产品: ${missingProducts.join(", ")}...`);
+          
+          // 从 WordPress 中搜索这些产品
+          const foundProducts = await searchProductsByName(payload.wordpress, missingProducts);
+          
+          if (foundProducts.length > 0) {
+            // 将找到的产品添加到产品列表的开头（优先显示）
+            const processedFoundProducts = attachCategoryLinks(
+              attachLearnMoreLinks(foundProducts),
+              siteBaseUrl
+            );
+            
+            // 去重：移除已存在的产品（按ID）
+            const existingProductIds = new Set([...products, ...relatedProducts].map(p => p.id));
+            const newProducts = processedFoundProducts.filter(p => !existingProductIds.has(p.id));
+            
+            // 将内容中提到的产品添加到列表开头，优先显示
+            products = [...newProducts, ...products];
+            
+            console.log(`[task ${taskId}] ✅ 已将内容中提到的 ${newProducts.length} 个产品添加到产品列表: ${newProducts.map(p => p.name).join(", ")}`);
+            updateTaskStatus(taskId, "fetching_products", `找到 ${products.length} 个相关产品（包含内容中提到的产品）`);
+          } else {
+            console.log(`[task ${taskId}] ⚠️ 未在 WordPress 中找到内容中提到的产品: ${missingProducts.join(", ")}`);
+          }
+        } else {
+          console.log(`[task ${taskId}] ✅ 内容中提到的产品已全部在产品列表中`);
+        }
+      }
+    } catch (error) {
+      // 如果提取或搜索产品失败，记录警告但继续执行
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      console.warn(`[task ${taskId}] 提取或搜索内容中提到的产品失败，继续执行:`, errorMsg);
     }
 
     // 随机打乱产品数组，确保每次生成都是随机的

@@ -1,5 +1,257 @@
 [
   {
+    "id": "e2336095-cdc2-484b-a80d-ef4f50b1d350",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765258830964,
+    "updatedAt": 1765258858517,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury smart watches",
+    "titleType": "top-ranking",
+    "templateType": "template-3",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "b2c71cc4-2b4d-4d6c-adcb-8fc0b88ff31f",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257571499,
+    "updatedAt": 1765257630275,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "vertu mobile price list",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "e521d20c-8cec-423d-b5c0-32881a3aa880",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257511054,
+    "updatedAt": 1765257570286,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "most expensive phone in the world",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "eec04c3f-1bc5-4d27-b546-62d19640682a",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257450557,
+    "updatedAt": 1765257510190,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "best network mobile phone",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "69cac29f-5f60-4ef8-8653-c3fa131d784e",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257391558,
+    "updatedAt": 1765257450396,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "vertu phone price",
+    "titleType": "review",
+    "templateType": "template-3",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "02779e73-57fd-4fef-bfba-8319a424fcf3",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257333596,
+    "updatedAt": 1765257390300,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "vertu mobile price in pakistan",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "c2e364d3-935f-44d2-96f1-4c19f45961b4",
+    "status": "failed",
+    "message": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key.",
+    "createdAt": 1765257303888,
+    "updatedAt": 1765257330524,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "vertu phone price in bangladesh",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "error": "[HTTP 403] [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-preview:generateContent: [403 Forbidden] Your API key was reported as leaked. Please use another API key."
+  },
+  {
+    "id": "e7537c05-6d71-462e-85a0-789447ef4e71",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126639",
+    "createdAt": 1765251922603,
+    "updatedAt": 1765252040910,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Christmas gift guide for the tech enthusiast",
+    "titleType": "services-guides",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/christmas-gift-guide-for-the-tech-enthusiast-usage-guide-complete-manual/"
+  },
+  {
+    "id": "3eb104ed-956a-44d3-a7b2-2fd90a71390e",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126637",
+    "createdAt": 1765251784603,
+    "updatedAt": 1765251922512,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "collector's edition phone gift",
+    "titleType": "recommendations",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/collectors-edition-phone-gift-recommendations-top-choices/"
+  },
+  {
+    "id": "089d1bbe-7af1-4fdc-beb8-4b8509641722",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126635",
+    "createdAt": 1765251601596,
+    "updatedAt": 1765251783282,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury sunglasses gift set",
+    "titleType": "how-to",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-sunglasses-gift-set/"
+  },
+  {
+    "id": "c9d8df53-54fd-4a24-94c8-4ba4e647a890",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126633",
+    "createdAt": 1765251442604,
+    "updatedAt": 1765251600833,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "high-end headphones Christmas present",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-high-end-headphones-christmas-present-selection/"
+  },
+  {
+    "id": "a44bf9df-e293-40ab-b319-4dd2c6809674",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126631",
+    "createdAt": 1765251233608,
+    "updatedAt": 1765251440770,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "unique smart ring gift idea",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/unique-smart-ring-gift-idea-comparison-best-rated/"
+  },
+  {
+    "id": "c6d2f393-a65d-4d04-80b1-f771be648bb7",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126629",
+    "createdAt": 1765251069615,
+    "updatedAt": 1765251231894,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "designer leather bags for Christmas",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-designer-leather-bags-for-christmas/"
+  },
+  {
+    "id": "54c87ccd-1a13-40da-90a7-b0733e2b7037",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126627",
+    "createdAt": 1765250933632,
+    "updatedAt": 1765251066908,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Premium smart watch for Christmas",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-premium-smart-watch-for-christmas-expert-guide/"
+  },
+  {
+    "id": "2b341103-4249-41ab-bb84-a1a45e63cbb5",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126623",
+    "createdAt": 1765249947518,
+    "updatedAt": 1765250081477,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best tech gifts Christmas 2025",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-best-tech-gifts-christmas-2025-complete-ranking-list/"
+  },
+  {
+    "id": "5b2aa28a-7eb9-4dcd-b8d6-ca5fdc6570e8",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126621",
+    "createdAt": 1765249805196,
+    "updatedAt": 1765249945563,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury phone Christmas gift",
+    "titleType": "top",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-phone-christmas-gift-picks-premium-selection/"
+  },
+  {
+    "id": "2869c582-0d3f-4873-a24f-1b68d8764f99",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126619",
+    "createdAt": 1765249662779,
+    "updatedAt": 1765249803546,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "ultimate Christmas gift list",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-ultimate-christmas-gift-list-quality-and-performance-guide/"
+  },
+  {
+    "id": "d5bcaaef-9208-4cbc-b452-baae1dc5a32f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 126617",
+    "createdAt": 1765249526676,
+    "updatedAt": 1765249661667,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Christmas gifts for the man who has everything",
+    "titleType": "expert",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/christmas-gifts-for-the-man-who-has-everything-expert-buying-guide/"
+  },
+  {
     "id": "f4bb819f-f507-47b6-beae-b7cacc476524",
     "status": "completed",
     "message": "发布成功！页面 ID: 126615",
