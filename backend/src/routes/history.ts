@@ -7,6 +7,7 @@ import {
   deleteHistoryRecord,
   clearAllHistoryRecords,
 } from "../state/historyStore.js";
+import { sanitizeSensitive } from "../utils/sanitize.js";
 
 export const historyRouter = express.Router();
 
@@ -37,7 +38,7 @@ historyRouter.get("/history", async (req, res) => {
     return res.json({
       success: true,
       count: records.length,
-      records,
+      records: sanitizeSensitive(records),
     });
   } catch (error) {
     console.error("[History] Error fetching history:", error);
@@ -52,7 +53,7 @@ historyRouter.get("/history", async (req, res) => {
 historyRouter.get("/history/recent", async (req, res) => {
   try {
     const limit = req.query.limit ? parseInt(String(req.query.limit), 10) : 50;
-    const records = await getRecentHistoryRecords(limit);
+    const records = sanitizeSensitive(await getRecentHistoryRecords(limit));
     return res.json({
       success: true,
       count: records.length,

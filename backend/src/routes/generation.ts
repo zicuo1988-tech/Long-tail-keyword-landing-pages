@@ -187,6 +187,29 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       } else {
         updateTaskStatus(taskId, "fetching_products", `找到 ${products.length} 个相关产品`);
       }
+
+      // 如果内容/关键词涉及手机但列表里没手机类目，补充拉取手机产品，避免页面突兀
+      const keywordLower = payload.keyword.toLowerCase();
+      const contentSuggestsPhone =
+        /phone|mobile|smartphone|fold|flip|hinge|camera\s+phone|best phone/i.test(payload.keyword) ||
+        generatedContent.articleContent.toLowerCase().includes("phone");
+      const hasPhoneProduct = products.some(
+        (p) =>
+          (p.category?.toLowerCase().includes("phone") || p.name.toLowerCase().includes("phone")) ||
+          (p.categorySlug?.includes("phone") ?? false)
+      );
+      if (contentSuggestsPhone && !hasPhoneProduct) {
+        try {
+          updateTaskStatus(taskId, "fetching_products", "未找到手机产品，尝试补充手机类目...");
+          const phoneResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, "phones");
+          const phoneProducts = attachCategoryLinks(attachLearnMoreLinks(phoneResult.products), siteBaseUrl);
+          // 只取前4个作为补充，避免过多
+          products = [...phoneProducts.slice(0, 4), ...products];
+          updateTaskStatus(taskId, "fetching_products", `已补充 ${phoneProducts.length} 个手机产品`);
+        } catch (e) {
+          console.warn("[task %s] 补充手机类目失败: %s", taskId, e);
+        }
+      }
     } catch (error) {
       // 如果获取产品失败（如 WooCommerce 未安装），记录警告但继续执行
       const errorMsg = error instanceof Error ? error.message : String(error);

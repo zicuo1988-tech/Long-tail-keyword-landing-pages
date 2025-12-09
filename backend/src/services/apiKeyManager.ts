@@ -7,19 +7,32 @@ interface QuotaLimitInfo {
 class ApiKeyManager {
   private keys: string[] = [];
   private currentIndex = 0;
-  private failedKeys = new Set<string>();
+  private failedKeys = new Set<string>(); // 临时失败的 Key（可以重试）
+  private permanentlyFailedKeys = new Set<string>(); // 永久失败的 Key（如泄露的 Key，不再使用）
   private quotaLimitedKeys = new Map<string, QuotaLimitInfo>(); // 记录配额限制的 Key 和时间
   private priorityKey: string | null = null; // 优先使用的 API Key
 
   constructor(keys: string[]) {
-    this.keys = keys.filter((key) => key?.trim()).map((key) => key.trim());
+    // 验证并过滤 API Keys
+    this.keys = keys
+      .filter((key) => key?.trim())
+      .map((key) => key.trim())
+      .filter((key) => {
+        // 验证 API Key 格式（Google API Key 通常以 AIza 开头，长度约 39 字符）
+        if (!this.isValidApiKeyFormat(key)) {
+          console.warn(`[ApiKeyManager] ⚠️  跳过无效的 API Key 格式: ${key.substring(0, 10)}...`);
+          return false;
+        }
+        return true;
+      });
+    
     if (this.keys.length === 0) {
-      throw new Error("At least one API key is required");
+      throw new Error("At least one valid API key is required");
     }
     
-    // 设置优先 Key（如果存在）
-    const priorityKeyValue = "AIzaSyBqXC7flDdgPG24_p-uo5CrpYn5skyzr7E";
-    if (this.keys.includes(priorityKeyValue)) {
+    // 设置优先 Key（从环境变量读取，避免硬编码）
+    const priorityKeyValue = process.env.GOOGLE_API_PRIORITY_KEY?.trim();
+    if (priorityKeyValue && this.isValidApiKeyFormat(priorityKeyValue) && this.keys.includes(priorityKeyValue)) {
       this.priorityKey = priorityKeyValue;
       // 将优先 Key 移到数组开头
       const priorityIndex = this.keys.indexOf(priorityKeyValue);
@@ -27,8 +40,40 @@ class ApiKeyManager {
         this.keys.splice(priorityIndex, 1);
         this.keys.unshift(priorityKeyValue);
       }
-      console.log(`[ApiKeyManager] ✅ 已设置优先 Key: ${priorityKeyValue.substring(0, 20)}...`);
+      console.log(`[ApiKeyManager] ✅ 已设置优先 Key: ${this.maskApiKey(priorityKeyValue)}`);
+    } else if (priorityKeyValue) {
+      console.warn(`[ApiKeyManager] ⚠️  环境变量 GOOGLE_API_PRIORITY_KEY 指定的 Key 不在可用 Key 列表中`);
     }
+  }
+
+  /**
+   * 验证 API Key 格式
+   * Google API Key 通常以 AIza 开头，长度约 39 字符
+   */
+  private isValidApiKeyFormat(key: string): boolean {
+    if (!key || key.length < 30 || key.length > 100) {
+      return false;
+    }
+    // Google API Key 通常以 AIza 开头
+    if (!key.startsWith("AIza")) {
+      return false;
+    }
+    // 检查是否包含非法字符（只允许字母、数字、下划线、连字符）
+    if (!/^[A-Za-z0-9_-]+$/.test(key)) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * 掩码 API Key（只显示前10个字符和后4个字符，中间用...代替）
+   * 用于日志输出，防止泄露
+   */
+  maskApiKey(key: string): string {
+    if (!key || key.length <= 14) {
+      return "***";
+    }
+    return `${key.substring(0, 10)}...${key.substring(key.length - 4)}`;
   }
 
   /**
@@ -72,13 +117,15 @@ class ApiKeyManager {
     for (const [key, quotaInfo] of this.quotaLimitedKeys.entries()) {
       if (this.isQuotaLimitExpired(key)) {
         this.quotaLimitedKeys.delete(key);
-        console.log(`[ApiKeyManager] 配额限制已过期，Key ${key.substring(0, 20)}... 可以重新使用`);
+        console.log(`[ApiKeyManager] 配额限制已过期，Key ${this.maskApiKey(key)} 可以重新使用`);
       }
     }
 
     // 如果所有 Key 都失败了或配额受限，检查是否可以重置
     const availableKeys = this.keys.filter(key => 
-      !this.failedKeys.has(key) && this.isQuotaLimitExpired(key)
+      !this.failedKeys.has(key) && 
+      !this.permanentlyFailedKeys.has(key) && 
+      this.isQuotaLimitExpired(key)
     );
 
       if (availableKeys.length === 0) {
@@ -109,8 +156,9 @@ class ApiKeyManager {
     // 优先使用优先 Key（如果可用）
     if (this.priorityKey && 
         !this.failedKeys.has(this.priorityKey) && 
+        !this.permanentlyFailedKeys.has(this.priorityKey) && 
         this.isQuotaLimitExpired(this.priorityKey)) {
-      console.log(`[ApiKeyManager] 🎯 使用优先 Key: ${this.priorityKey.substring(0, 20)}...`);
+      console.log(`[ApiKeyManager] 🎯 使用优先 Key: ${this.maskApiKey(this.priorityKey)}`);
       return this.priorityKey;
     }
 
@@ -137,8 +185,16 @@ class ApiKeyManager {
         continue;
       }
 
-      // 检查 Key 是否可用（未失败且配额限制已过期）
-      if (!this.failedKeys.has(key) && this.isQuotaLimitExpired(key)) {
+      // 跳过永久失败的 Key
+      if (this.permanentlyFailedKeys.has(key)) {
+        attempts++;
+        continue;
+      }
+
+      // 检查 Key 是否可用（未失败、未永久失败且配额限制已过期）
+      if (!this.failedKeys.has(key) && 
+          !this.permanentlyFailedKeys.has(key) && 
+          this.isQuotaLimitExpired(key)) {
         return key;
       }
 
@@ -146,7 +202,7 @@ class ApiKeyManager {
       if (this.quotaLimitedKeys.has(key) && !this.isQuotaLimitExpired(key)) {
         const remainingSeconds = this.getQuotaLimitRemainingSeconds(key);
         const remainingHours = Math.ceil(remainingSeconds / 3600);
-        console.log(`[ApiKeyManager] 跳过配额受限的 Key ${key.substring(0, 20)}... (剩余 ${remainingHours} 小时)`);
+        console.log(`[ApiKeyManager] 跳过配额受限的 Key ${this.maskApiKey(key)} (剩余 ${remainingHours} 小时)`);
       }
 
       attempts++;
@@ -171,11 +227,31 @@ class ApiKeyManager {
   }
 
   /**
-   * 标记某个 Key 为失败
+   * 标记某个 Key 为失败（临时失败，可以重试）
    */
   markAsFailed(key: string) {
     this.failedKeys.add(key);
-    console.warn(`[ApiKeyManager] Marked key as failed: ${key.substring(0, 20)}...`);
+    console.warn(`[ApiKeyManager] Marked key as failed (temporary): ${this.maskApiKey(key)}`);
+  }
+
+  /**
+   * 标记某个 Key 为永久失败（如泄露的 Key，不再使用）
+   */
+  markAsPermanentlyFailed(key: string, reason: string = "永久失败") {
+    this.permanentlyFailedKeys.add(key);
+    // 同时从临时失败列表中移除（如果存在）
+    this.failedKeys.delete(key);
+    // 从配额限制列表中移除（如果存在）
+    this.quotaLimitedKeys.delete(key);
+    console.error(`[ApiKeyManager] ⛔ Key ${this.maskApiKey(key)} 已标记为永久失败: ${reason}`);
+    console.error(`[ApiKeyManager] ⛔ 该 Key 将不再使用，请更换新的 API Key`);
+  }
+
+  /**
+   * 检查 Key 是否永久失败
+   */
+  isPermanentlyFailed(key: string): boolean {
+    return this.permanentlyFailedKeys.has(key);
   }
 
   /**
@@ -227,9 +303,9 @@ class ApiKeyManager {
     const remainingMinutes = Math.ceil((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
 
     if (retryDelaySeconds && retryDelaySeconds > 0) {
-      console.warn(`[ApiKeyManager] ⚠️  Key ${key.substring(0, 20)}... 遇到配额限制 (429)，根据API返回的retryDelay，将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后（${new Date(expiresAt).toLocaleString()}）重新启用`);
+      console.warn(`[ApiKeyManager] ⚠️  Key ${this.maskApiKey(key)} 遇到配额限制 (429)，根据API返回的retryDelay，将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后（${new Date(expiresAt).toLocaleString()}）重新启用`);
     } else {
-      console.warn(`[ApiKeyManager] ⚠️  Key ${key.substring(0, 20)}... 遇到配额限制 (429)，将在 ${remainingHours} 小时后（明天）重新启用`);
+      console.warn(`[ApiKeyManager] ⚠️  Key ${this.maskApiKey(key)} 遇到配额限制 (429)，将在 ${remainingHours} 小时后（明天）重新启用`);
     }
   }
 
@@ -240,7 +316,7 @@ class ApiKeyManager {
   clearQuotaLimit(key: string) {
     if (this.quotaLimitedKeys.has(key)) {
       this.quotaLimitedKeys.delete(key);
-      console.log(`[ApiKeyManager] ✅ 已清除 Key ${key.substring(0, 20)}... 的配额限制标记`);
+      console.log(`[ApiKeyManager] ✅ 已清除 Key ${this.maskApiKey(key)} 的配额限制标记`);
     }
   }
 
@@ -260,11 +336,14 @@ class ApiKeyManager {
     const statuses: Array<{ key: string; status: string; details?: string }> = [];
     
     for (const key of this.keys) {
-      const keyPreview = key.substring(0, 20) + "...";
+      const keyPreview = this.maskApiKey(key);
       let status = "可用";
       let details: string | undefined;
       
-      if (this.failedKeys.has(key)) {
+      if (this.permanentlyFailedKeys.has(key)) {
+        status = "永久失败";
+        details = "API Key 已泄露或永久失效，请更换新的 API Key";
+      } else if (this.failedKeys.has(key)) {
         status = "失败";
         details = "临时失败，会重试";
       } else if (this.quotaLimitedKeys.has(key) && !this.isQuotaLimitExpired(key)) {
@@ -296,21 +375,34 @@ class ApiKeyManager {
 
   /**
    * 重置失败记录（可选：定期重置）
+   * 注意：不会重置永久失败的 Key
    */
   resetFailedKeys() {
     const count = this.failedKeys.size;
     this.failedKeys.clear();
     if (count > 0) {
-      console.log(`[ApiKeyManager] ✅ 已清除 ${count} 个失败标记`);
+      console.log(`[ApiKeyManager] ✅ 已清除 ${count} 个临时失败标记（永久失败的 Key 不会被清除）`);
     }
   }
 
   /**
-   * 获取当前可用的 Key 数量（排除失败和配额限制的 Key）
+   * 清除永久失败标记（手动操作，谨慎使用）
+   */
+  clearPermanentlyFailedKey(key: string) {
+    if (this.permanentlyFailedKeys.has(key)) {
+      this.permanentlyFailedKeys.delete(key);
+      console.log(`[ApiKeyManager] ⚠️ 已清除 Key ${this.maskApiKey(key)} 的永久失败标记（请确保该 Key 已更换）`);
+    }
+  }
+
+  /**
+   * 获取当前可用的 Key 数量（排除失败、永久失败和配额限制的 Key）
    */
   getAvailableKeyCount(): number {
     return this.keys.filter(key => 
-      !this.failedKeys.has(key) && this.isQuotaLimitExpired(key)
+      !this.failedKeys.has(key) && 
+      !this.permanentlyFailedKeys.has(key) && 
+      this.isQuotaLimitExpired(key)
     ).length;
   }
 
@@ -451,23 +543,32 @@ export async function withApiKey<T>(
     }
 
     try {
-      // 在发送请求前，检查当前 Key 的配额使用率
+      // 在发送请求前，检查当前 Key 的配额使用率（预防配额限制）
       const keyStats = rateLimiter.getKeyStats(currentKey);
       if (keyStats) {
-        // 如果每小时使用率超过 80%，增加额外延迟
-        if (keyStats.hourlyUsagePercent > 80) {
-          const extraDelay = Math.min(5000, (keyStats.hourlyUsagePercent - 80) * 100); // 最多额外延迟 5 秒
+        // 如果每小时使用率超过 70%，增加额外延迟（提前预防）
+        if (keyStats.hourlyUsagePercent > 70) {
+          const extraDelay = Math.min(10000, (keyStats.hourlyUsagePercent - 70) * 200); // 最多额外延迟 10 秒
           if (onStatusUpdate) {
-            onStatusUpdate(`⚠️ 配额使用率较高（${keyStats.hourlyUsagePercent.toFixed(1)}%），增加延迟 ${Math.ceil(extraDelay / 1000)} 秒以保护配额...`);
+            onStatusUpdate(`⚠️ 配额使用率较高（${keyStats.hourlyUsagePercent.toFixed(1)}%），增加延迟 ${Math.ceil(extraDelay / 1000)} 秒以预防配额限制...`);
           }
+          console.warn(`[ApiKeyManager] ⚠️  Key ${manager.maskApiKey(currentKey)} 配额使用率 ${keyStats.hourlyUsagePercent.toFixed(1)}%，增加延迟 ${Math.ceil(extraDelay / 1000)} 秒预防配额限制`);
           await new Promise((resolve) => setTimeout(resolve, extraDelay));
         }
         
-        // 如果每小时使用率超过 90%，发出警告
-        if (keyStats.hourlyUsagePercent > 90) {
-          console.warn(`[ApiKeyManager] ⚠️  Key ${currentKey.substring(0, 20)}... 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制！`);
+        // 如果每小时使用率超过 85%，发出严重警告并自动切换到其他 Key（预防配额限制）
+        if (keyStats.hourlyUsagePercent > 85) {
+          console.warn(`[ApiKeyManager] ⚠️  Key ${manager.maskApiKey(currentKey)} 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制！`);
           if (onStatusUpdate) {
-            onStatusUpdate(`⚠️ 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制，将降低请求频率...`);
+            onStatusUpdate(`⚠️ 配额使用率已达 ${keyStats.hourlyUsagePercent.toFixed(1)}%，接近限制，将切换到其他 Key 以预防配额限制...`);
+          }
+          // 如果有其他可用 Key，切换到下一个 Key
+          const availableCount = manager.getAvailableKeyCount();
+          if (availableCount > 1) {
+            console.warn(`[ApiKeyManager] 🔄 预防性切换：Key ${manager.maskApiKey(currentKey)} 配额使用率过高，切换到其他 Key`);
+            currentKey = null;
+            keyRetryCount = 0;
+            continue;
           }
         }
       }
@@ -518,6 +619,52 @@ export async function withApiKey<T>(
         errorMessage.includes("401") ||
         errorMessage.includes("429");
 
+      // 优先处理 403 错误：检查是否是 API Key 泄露
+      if (statusCode === 403) {
+        const errorMsgLower = lastError.message.toLowerCase();
+        const isLeakedKey = 
+          errorMsgLower.includes("leaked") ||
+          errorMsgLower.includes("reported as leaked") ||
+          errorMsgLower.includes("api key was reported");
+        
+        if (isLeakedKey && currentKey) {
+          // API Key 泄露，标记为永久失败，不再使用
+          manager.markAsPermanentlyFailed(currentKey, "API Key 已泄露，请更换新的 API Key");
+          
+          const availableCount = manager.getAvailableKeyCount();
+          if (availableCount > 0) {
+            // 如果有其他可用的 Key，立即切换到下一个 Key
+            const switchMessage = `⚠️ API Key 已泄露 (403)，已标记为永久失败，切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
+            console.error(`[ApiKeyManager] ⛔ API Key leaked (403), marked as permanently failed, switching to next key (attempt ${attempt + 1}/${maxRetries})`);
+            onStatusUpdate?.(switchMessage);
+            currentKey = null;
+            keyRetryCount = 0;
+            if (attempt < maxRetries - 1) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+            continue;
+          } else {
+            // 如果所有 Key 都泄露或失败，抛出错误
+            const errorMsg = `所有 API Key 都不可用。至少有一个 Key 已泄露，请更换新的 API Key。`;
+            console.error(`[ApiKeyManager] ⛔ ${errorMsg}`);
+            onStatusUpdate?.(errorMsg);
+            throw new Error(errorMsg);
+          }
+        } else if (currentKey) {
+          // 其他 403 错误（如权限问题），标记为临时失败
+          manager.markAsFailed(currentKey);
+          const switchMessage = `API Key 权限错误 (403)，正在切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
+          console.warn(`[ApiKeyManager] API key permission error (403), trying next key (attempt ${attempt + 1}/${maxRetries})`);
+          onStatusUpdate?.(switchMessage);
+          currentKey = null;
+          keyRetryCount = 0;
+          if (attempt < maxRetries - 1) {
+            await new Promise((resolve) => setTimeout(resolve, 500));
+          }
+          continue;
+        }
+      }
+
       // 处理 429 配额限制：标记为配额限制，根据API返回的retryDelaySeconds设置过期时间
       if (statusCode === 429) {
         // 提取API返回的retryDelay
@@ -535,86 +682,30 @@ export async function withApiKey<T>(
         // 检查是否是真正的配额限制（而不是临时错误）
         // 真正的配额限制通常会有明确的错误消息
         const errorMsgLower = lastError.message.toLowerCase();
-        const isConfirmedQuotaLimit = 
+        const hasQuotaKeywords = 
           errorMsgLower.includes("quota") ||
           errorMsgLower.includes("rate limit") ||
           errorMsgLower.includes("too many requests") ||
-          errorMsgLower.includes("resource exhausted") ||
-          (errorAny as any).retryDelaySeconds !== undefined;
+          errorMsgLower.includes("resource exhausted");
         
-        // 标记当前 Key 为配额限制，传递retryDelaySeconds以便根据API实际返回的时间设置过期
-        // 如果不是确认的配额限制，只标记为失败，不标记为配额限制
-        manager.markAsQuotaLimited(currentKey, isConfirmedQuotaLimit, retryDelaySeconds > 0 ? retryDelaySeconds : undefined);
+        // 优化：区分短时间 retryDelay（临时限流）和长时间配额限制
+        // 如果 retryDelay 小于 1 小时（3600秒），视为临时限流，等待后重试，不标记为配额限制
+        // 如果 retryDelay 大于等于 1 小时，或明确提到配额，视为真正的配额限制
+        const isShortTermRateLimit = retryDelaySeconds > 0 && retryDelaySeconds < 3600;
+        const isConfirmedQuotaLimit = 
+          hasQuotaKeywords ||
+          (retryDelaySeconds > 0 && retryDelaySeconds >= 3600) ||
+          (!retryDelaySeconds && hasQuotaKeywords);
         
-        // 获取剩余可用 Key 数量
-        const availableCount = manager.getAvailableKeyCount();
-        
-        // 显示诊断信息
-        const keyStatuses = manager.getKeyStatuses();
-        console.log(`[ApiKeyManager] 📊 API Key 状态诊断:`);
-        keyStatuses.forEach((status, idx) => {
-          console.log(`[ApiKeyManager]   Key ${idx + 1}: ${status.key} - ${status.status}${status.details ? ` (${status.details})` : ''}`);
-        });
-        console.log(`[ApiKeyManager]   可用 Key 数量: ${availableCount}/${manager['keys'].length}`);
-        
-        if (availableCount > 0) {
-          // 如果有其他可用的 Key，立即切换到下一个 Key（不等待）
-          const switchMessage = `API 配额限制 (429)，Key 已标记为配额限制（${isConfirmedQuotaLimit ? '明天恢复' : '临时失败'}），立即切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
-          console.warn(`[ApiKeyManager] Quota exceeded (429), marking key as ${isConfirmedQuotaLimit ? 'quota limited' : 'failed'}, switching to next key (attempt ${attempt + 1}/${maxRetries})`);
-          onStatusUpdate?.(switchMessage);
-          currentKey = null;
-          keyRetryCount = 0;
-          if (attempt < maxRetries - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
-          }
-          continue;
-        } else {
-          // 如果所有 Key 都配额受限，计算最早可用的时间
-          // 使用类型断言访问私有属性
-          const managerAny = manager as any;
-          const quotaLimitedKeysMap = managerAny.quotaLimitedKeys as Map<string, QuotaLimitInfo>;
-          const allKeys = managerAny.keys as string[];
-          
-          // 找到所有配额受限且未过期的 Key
-          const quotaLimitedKeys = allKeys.filter(key => {
-            const quotaInfo = quotaLimitedKeysMap.get(key);
-            return quotaInfo && !manager.isQuotaLimitExpired(key);
-          });
-          
-          if (quotaLimitedKeys.length > 0) {
-            // 找到最早可用的 Key（剩余时间最短的）
-            let earliestKey = quotaLimitedKeys[0];
-            let minRemainingSeconds = manager.getQuotaLimitRemainingSeconds(earliestKey);
-            
-            for (const key of quotaLimitedKeys) {
-              const remaining = manager.getQuotaLimitRemainingSeconds(key);
-              if (remaining < minRemainingSeconds) {
-                minRemainingSeconds = remaining;
-                earliestKey = key;
-              }
-            }
-            
-            const remainingHours = Math.ceil(minRemainingSeconds / 3600);
-            const remainingMinutes = Math.ceil((minRemainingSeconds % 3600) / 60);
-            
-            // 根据剩余时间判断是否跨天
-            const managerAny2 = manager as any;
-            const quotaInfo = managerAny2.quotaLimitedKeys.get(earliestKey);
-            const expiresAtDate = quotaInfo ? new Date(quotaInfo.expiresAt) : null;
-            const isTomorrow = expiresAtDate && expiresAtDate.getDate() !== new Date().getDate();
-            const timeHint = isTomorrow ? "（明天）" : "";
-            
-            const errorMessage = `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后${timeHint}恢复使用。`;
-            console.error(`[ApiKeyManager] ${errorMessage}`);
-            onStatusUpdate?.(errorMessage);
-            
-            // 抛出错误，让调用者知道需要等待
-            throw new Error(errorMessage);
-          } else {
-            // 如果没有配额限制记录，说明是其他问题，继续原有逻辑
-            manager.markAsFailed(currentKey);
-            const switchMessage = `当前 API Key 配额已用完 (429)，正在切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
-            console.warn(`[ApiKeyManager] API key quota exceeded (429), trying next key (attempt ${attempt + 1}/${maxRetries})`);
+        if (isShortTermRateLimit) {
+          // 短时间限流（小于1小时），等待后重试，不标记为配额限制
+          console.log(`[ApiKeyManager] 检测到短时间限流 (retryDelay=${retryDelaySeconds}s < 1小时)，等待后重试，不标记为配额限制`);
+          // 不调用 markAsQuotaLimited，只等待后继续
+          const availableCount = manager.getAvailableKeyCount();
+          if (availableCount > 0) {
+            // 如果有其他可用的 Key，切换到下一个 Key
+            const switchMessage = `API 临时限流 (429, ${retryDelaySeconds}s)，切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
+            console.warn(`[ApiKeyManager] Short-term rate limit (429, ${retryDelaySeconds}s), switching to next key (attempt ${attempt + 1}/${maxRetries})`);
             onStatusUpdate?.(switchMessage);
             currentKey = null;
             keyRetryCount = 0;
@@ -622,11 +713,112 @@ export async function withApiKey<T>(
               await new Promise((resolve) => setTimeout(resolve, 500));
             }
             continue;
+          } else {
+            // 如果没有其他 Key，等待后重试当前 Key
+            const waitMessage = `API 临时限流 (429)，等待 ${retryDelaySeconds} 秒后重试...`;
+            console.warn(`[ApiKeyManager] Short-term rate limit (429), waiting ${retryDelaySeconds}s before retry`);
+            onStatusUpdate?.(waitMessage);
+            await new Promise((resolve) => setTimeout(resolve, retryDelaySeconds * 1000));
+            keyRetryCount++;
+            if (keyRetryCount < maxKeyRetries) {
+              continue;
+            } else if (currentKey) {
+              // 重试次数用完，标记为临时失败
+              manager.markAsFailed(currentKey);
+              currentKey = null;
+              keyRetryCount = 0;
+              if (attempt < maxRetries - 1) {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+              }
+              continue;
+            }
+          }
+        } else if (currentKey) {
+          // 真正的配额限制，标记为配额限制
+          manager.markAsQuotaLimited(currentKey, isConfirmedQuotaLimit, retryDelaySeconds > 0 ? retryDelaySeconds : undefined);
+          
+          // 获取剩余可用 Key 数量
+          const availableCount = manager.getAvailableKeyCount();
+          
+          // 显示诊断信息
+          const keyStatuses = manager.getKeyStatuses();
+          console.log(`[ApiKeyManager] 📊 API Key 状态诊断:`);
+          keyStatuses.forEach((status, idx) => {
+            console.log(`[ApiKeyManager]   Key ${idx + 1}: ${status.key} - ${status.status}${status.details ? ` (${status.details})` : ''}`);
+          });
+          console.log(`[ApiKeyManager]   可用 Key 数量: ${availableCount}/${manager['keys'].length}`);
+          
+          if (availableCount > 0) {
+            // 如果有其他可用的 Key，立即切换到下一个 Key（不等待）
+            const switchMessage = `API 配额限制 (429)，Key 已标记为配额限制（${isConfirmedQuotaLimit ? '明天恢复' : '临时失败'}），立即切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
+            console.warn(`[ApiKeyManager] Quota exceeded (429), marking key as ${isConfirmedQuotaLimit ? 'quota limited' : 'failed'}, switching to next key (attempt ${attempt + 1}/${maxRetries})`);
+            onStatusUpdate?.(switchMessage);
+            currentKey = null;
+            keyRetryCount = 0;
+            if (attempt < maxRetries - 1) {
+              await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+            continue;
+          } else {
+            // 如果所有 Key 都配额受限，计算最早可用的时间
+            // 使用类型断言访问私有属性
+            const managerAny = manager as any;
+            const quotaLimitedKeysMap = managerAny.quotaLimitedKeys as Map<string, QuotaLimitInfo>;
+            const allKeys = managerAny.keys as string[];
+            
+            // 找到所有配额受限且未过期的 Key
+            const quotaLimitedKeys = allKeys.filter(key => {
+              const quotaInfo = quotaLimitedKeysMap.get(key);
+              return quotaInfo && !manager.isQuotaLimitExpired(key);
+            });
+            
+            if (quotaLimitedKeys.length > 0) {
+              // 找到最早可用的 Key（剩余时间最短的）
+              let earliestKey = quotaLimitedKeys[0];
+              let minRemainingSeconds = manager.getQuotaLimitRemainingSeconds(earliestKey);
+              
+              for (const key of quotaLimitedKeys) {
+                const remaining = manager.getQuotaLimitRemainingSeconds(key);
+                if (remaining < minRemainingSeconds) {
+                  minRemainingSeconds = remaining;
+                  earliestKey = key;
+                }
+              }
+              
+              const remainingHours = Math.ceil(minRemainingSeconds / 3600);
+              const remainingMinutes = Math.ceil((minRemainingSeconds % 3600) / 60);
+              
+              // 根据剩余时间判断是否跨天
+              const managerAny2 = manager as any;
+              const quotaInfo = managerAny2.quotaLimitedKeys.get(earliestKey);
+              const expiresAtDate = quotaInfo ? new Date(quotaInfo.expiresAt) : null;
+              const isTomorrow = expiresAtDate && expiresAtDate.getDate() !== new Date().getDate();
+              const timeHint = isTomorrow ? "（明天）" : "";
+              
+              const errorMessage = `所有 API Key 都遇到配额限制。最早可用的 Key 将在 ${remainingHours} 小时 ${remainingMinutes} 分钟后${timeHint}恢复使用。`;
+              console.error(`[ApiKeyManager] ${errorMessage}`);
+              onStatusUpdate?.(errorMessage);
+              
+              // 抛出错误，让调用者知道需要等待
+              throw new Error(errorMessage);
+            } else if (currentKey) {
+              // 如果没有配额限制记录，说明是其他问题，继续原有逻辑
+              manager.markAsFailed(currentKey);
+              const switchMessage = `当前 API Key 配额已用完 (429)，正在切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
+              console.warn(`[ApiKeyManager] API key quota exceeded (429), trying next key (attempt ${attempt + 1}/${maxRetries})`);
+              onStatusUpdate?.(switchMessage);
+              currentKey = null;
+              keyRetryCount = 0;
+              if (attempt < maxRetries - 1) {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+              }
+              continue;
+            }
           }
         }
       }
 
-      if (isApiKeyError || isQuotaOrPermissionError) {
+      if ((isApiKeyError || isQuotaOrPermissionError) && currentKey) {
         manager.markAsFailed(currentKey);
         const switchMessage = `当前 API Key 不可用 (${statusCode})，正在切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
         console.warn(`[ApiKeyManager] API key failed (${statusCode || "unknown"}), trying next key (attempt ${attempt + 1}/${maxRetries})`);

@@ -14,10 +14,10 @@ interface KeyUsageRecord {
 class RateLimiter {
   private keyUsageMap = new Map<string, KeyUsageRecord>();
   
-  // 配置参数（非常保守的设置，避免触发配额限制）
-  private readonly MIN_REQUEST_INTERVAL_MS = 5000; // 最小请求间隔：5秒（更保守，避免配额限制）
-  private readonly MAX_REQUESTS_PER_MINUTE = 6; // 每分钟最多6个请求（非常保守，避免配额限制）
-  private readonly MAX_REQUESTS_PER_HOUR = 200; // 每小时最多200个请求（非常保守，避免配额限制）
+  // 配置参数（更严格，进一步规避配额/风控）
+  private readonly MIN_REQUEST_INTERVAL_MS = 7000; // 最小请求间隔：7秒
+  private readonly MAX_REQUESTS_PER_MINUTE = 4;    // 每分钟最多4个请求
+  private readonly MAX_REQUESTS_PER_HOUR = 120;    // 每小时最多120个请求
   private readonly WINDOW_SIZE_MS = 60000; // 时间窗口：60秒
   private readonly HOUR_WINDOW_SIZE_MS = 3600000; // 小时时间窗口：3600秒
 

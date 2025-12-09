@@ -1,5 +1,6 @@
 import express from "express";
 import { getTask, pauseTask, resumeTask } from "../state/taskStore.js";
+import { sanitizeSensitive } from "../utils/sanitize.js";
 
 export const tasksRouter = express.Router();
 
@@ -12,7 +13,7 @@ tasksRouter.get("/tasks/:taskId", (req, res) => {
       message: "任务不存在或已过期。任务在内存中存储，服务器重启后会丢失。"
     });
   }
-  return res.json(task);
+  return res.json(sanitizeSensitive(task));
 });
 
 /**

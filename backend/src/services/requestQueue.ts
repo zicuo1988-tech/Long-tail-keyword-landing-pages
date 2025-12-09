@@ -91,8 +91,10 @@ class RequestQueue {
         }
 
         // 请求之间添加延迟（避免频率过高）
-        // 延迟时间由频率限制器控制，这里增加额外延迟以确保安全
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        // 延迟时间由频率限制器控制，这里增加额外延迟 + 抖动以确保安全
+        const baseDelayMs = 1000; // 基础 1 秒
+        const jitterMs = 200 + Math.floor(Math.random() * 300); // 200-500ms 抖动
+        await new Promise((resolve) => setTimeout(resolve, baseDelayMs + jitterMs));
       }
     } finally {
       // 标记为处理完成

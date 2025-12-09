@@ -3,8 +3,6 @@ import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 
 const DEFAULT_MODEL = "gemini-2.5-pro";
-const PRIORITY_MODEL = "gemini-3-pro-preview"; // 优先 Key 使用的模型
-const PRIORITY_KEY = "AIzaSyBqXC7flDdgPG24_p-uo5CrpYn5skyzr7E"; // 优先使用的 API Key
 const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
 const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
@@ -47,9 +45,8 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   const currentMinLength = MIN_ARTICLE_LENGTH;
   const currentMaxLength = isTemplate3 ? 10000 : MAX_ARTICLE_LENGTH; // template-3 允许更长的内容
   
-  // 根据 API Key 选择模型（优先 Key 使用 gemini-3-pro-preview）
-  const isPriorityKey = apiKey === PRIORITY_KEY;
-  const modelName = isPriorityKey ? PRIORITY_MODEL : DEFAULT_MODEL;
+  // 统一使用稳定模型，避免 preview 模型触发更多限流
+  const modelName = DEFAULT_MODEL;
   
   // 初始化 Google AI 客户端
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -65,7 +62,7 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
     },
   });
 
-  console.log(`[GoogleAI] Using model: ${modelName} with SDK${isPriorityKey ? ' (优先 Key)' : ''}`);
+  console.log(`[GoogleAI] Using model: ${modelName} with SDK`);
 
   // 验证内容是否包含中文字符
   function containsChinese(text: string): boolean {
@@ -1909,9 +1906,8 @@ function isArticleRich(html: string, templateType?: string): boolean {
  */
 async function generateTitleWithKey(apiKey: string, keyword: string, titleType?: string): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
-  // 根据 API Key 选择模型（优先 Key 使用 gemini-3-pro-preview）
-  const isPriorityKey = apiKey === PRIORITY_KEY;
-  const modelName = isPriorityKey ? PRIORITY_MODEL : DEFAULT_MODEL;
+  // 标题生成同样统一使用稳定模型
+  const modelName = DEFAULT_MODEL;
   
   const model = genAI.getGenerativeModel({
     model: modelName, // 使用相应的模型
