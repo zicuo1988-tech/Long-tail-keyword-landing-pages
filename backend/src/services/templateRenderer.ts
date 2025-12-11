@@ -10,6 +10,27 @@ Handlebars.registerHelper("truncateText", (text: string | undefined, maxLength: 
   }
   return `${trimmed.substring(0, maxLength).trim()}...`;
 });
+// Helper to check if a tag is duplicate/redundant with "On Sale"
+Handlebars.registerHelper("isDuplicateSaleTag", (tag: string | undefined, onSale: boolean | undefined) => {
+  if (!tag || !onSale) return false;
+  const tagLower = tag.toLowerCase().trim();
+  // 检查 tag 是否与 "On Sale" 重复（不区分大小写）
+  const saleKeywords = ["sale", "on sale", "onsale", "discount", "promotion", "promo", "special offer", "special price"];
+  return saleKeywords.some(keyword => tagLower === keyword || tagLower.includes(keyword));
+});
+// Helper to get unique tags (filter out duplicates when onSale is true)
+Handlebars.registerHelper("getUniqueTags", (tag: string | undefined, onSale: boolean | undefined) => {
+  if (!tag) return [];
+  const tagLower = tag.toLowerCase().trim();
+  // 如果产品在售且 tag 与 sale 相关，返回空数组（避免重复）
+  if (onSale) {
+    const saleKeywords = ["sale", "on sale", "onsale", "discount", "promotion", "promo", "special offer", "special price"];
+    if (saleKeywords.some(keyword => tagLower === keyword || tagLower.includes(keyword))) {
+      return [];
+    }
+  }
+  return [tag];
+});
 // Helper for JSON escaping in structured data
 Handlebars.registerHelper("jsonEscape", (text: string | undefined) => {
   if (!text) return "";
@@ -32,6 +53,32 @@ Handlebars.registerHelper("isNotEmpty", (str: any) => {
   return false;
 });
 
+export interface ComparisonItem {
+  name: string;
+  feature: string;
+  price: string;
+  material?: string; // 材质
+  keyFeature?: string; // 核心特色
+  display?: string; // 显示屏
+  battery?: string; // 电池
+  conciergeService?: string; // Ruby Key管家服务（内部产品的核心优势）
+  conciergeServiceLink?: string; // Ruby Key服务页面链接
+  isExternal?: boolean; // 是否为外部产品
+  externalUrl?: string; // 外部产品链接（如果有）
+  productLink?: string; // 内部产品链接（如果有）
+}
+
+export interface InternalLink {
+  title: string;
+  url: string;
+}
+
+export interface ExternalLink {
+  title: string;
+  url: string;
+  description?: string; // 可选：链接描述
+}
+
 export interface RenderTemplateInput {
   templateContent: string;
   pageTitle: string;
@@ -39,6 +86,7 @@ export interface RenderTemplateInput {
   metaDescription?: string; // SEO meta description
   metaKeywords?: string; // SEO meta keywords
   pageUrl?: string; // 页面URL（用于canonical和Open Graph）
+  pageImage?: string; // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
   aiContent: string;
   extendedContent?: string; // 扩展内容（用于模板3的第二部分）
   products: ProductSummary[];
@@ -46,6 +94,11 @@ export interface RenderTemplateInput {
   relatedProducts: ProductSummary[];
   faqItems: FAQItem[];
   faqCategoryLink?: string;
+  // 模板4新增字段
+  topProducts?: ProductSummary[]; // Top Picks产品（前3个）
+  comparisonItems?: ComparisonItem[]; // 对比表数据
+  internalLinks?: InternalLink[]; // 内链数据
+  externalLinks?: ExternalLink[]; // 外链数据
 }
 
 export function renderTemplate({
@@ -55,6 +108,7 @@ export function renderTemplate({
   metaDescription,
   metaKeywords,
   pageUrl,
+  pageImage,
   aiContent,
   extendedContent,
   products,
@@ -62,6 +116,10 @@ export function renderTemplate({
   relatedProducts,
   faqItems,
   faqCategoryLink,
+  topProducts = [],
+  comparisonItems = [],
+  internalLinks = [],
+  externalLinks = [],
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
 
@@ -141,12 +199,111 @@ export function renderTemplate({
     console.warn(`[TemplateRenderer] ⚠️ Extended content is empty or undefined`);
   }
 
+  // 生成 ItemList 结构化数据（用于 Top Picks）
+  let itemListStructuredData = "";
+  if (topProducts && topProducts.length > 0) {
+    try {
+      const itemListSchema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Top Picks",
+        "itemListElement": topProducts.map((product, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "item": {
+            "@type": "Product",
+            "name": product.name.replace(/<[^>]*>/g, "").trim(),
+            "url": product.link || "",
+            "image": product.imageUrl || "",
+            "offers": product.price ? {
+              "@type": "Offer",
+              "price": product.price.replace(/[^0-9.]/g, ""),
+              "priceCurrency": "USD"
+            } : undefined
+          }
+        }))
+      };
+      itemListStructuredData = JSON.stringify(itemListSchema, null, 2);
+    } catch (error) {
+      console.warn(`[TemplateRenderer] Failed to generate ItemList structured data:`, error);
+    }
+  }
+
+  // 生成 Product 结构化数据（用于对比表，SEO优化：包含丰富的产品属性）
+  let productStructuredData = "";
+  if (comparisonItems && comparisonItems.length > 0) {
+    try {
+      const productSchemas = comparisonItems.map(item => {
+        const baseSchema: any = {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": item.name.replace(/<[^>]*>/g, "").trim(),
+          "description": item.feature.replace(/<[^>]*>/g, "").trim(),
+        };
+        
+        // 添加价格信息
+        if (item.price && item.price !== "Price on request") {
+          const priceMatch = item.price.match(/[\d,]+/);
+          if (priceMatch) {
+            baseSchema.offers = {
+              "@type": "Offer",
+              "price": priceMatch[0].replace(/,/g, ""),
+              "priceCurrency": "USD",
+              "availability": "https://schema.org/InStock"
+            };
+          }
+        }
+        
+        // 添加额外属性（SEO优化：丰富的产品信息）
+        if (item.material) {
+          baseSchema.material = item.material;
+        }
+        if (item.keyFeature) {
+          baseSchema.additionalProperty = baseSchema.additionalProperty || [];
+          baseSchema.additionalProperty.push({
+            "@type": "PropertyValue",
+            "name": "Key Feature",
+            "value": item.keyFeature
+          });
+        }
+        if (item.display && item.display !== "N/A") {
+          baseSchema.additionalProperty = baseSchema.additionalProperty || [];
+          baseSchema.additionalProperty.push({
+            "@type": "PropertyValue",
+            "name": "Display",
+            "value": item.display
+          });
+        }
+        if (item.battery && item.battery !== "N/A") {
+          baseSchema.additionalProperty = baseSchema.additionalProperty || [];
+          baseSchema.additionalProperty.push({
+            "@type": "PropertyValue",
+            "name": "Battery/Power",
+            "value": item.battery
+          });
+        }
+        
+        // 如果是外部产品，添加外部链接
+        if (item.isExternal && item.externalUrl) {
+          baseSchema.url = item.externalUrl;
+        }
+        
+        return baseSchema;
+      }).filter(schema => schema !== null);
+      
+      productStructuredData = JSON.stringify(productSchemas, null, 2);
+    } catch (error) {
+      console.warn(`[TemplateRenderer] Failed to generate Product structured data:`, error);
+    }
+  }
+
   const rendered = template({
     PAGE_TITLE: pageTitle,
     PAGE_DESCRIPTION: pageDescription || "", // 页面描述（用于模板2和模板3）
     META_DESCRIPTION: metaDescription || pageDescription || "", // SEO meta description
     META_KEYWORDS: metaKeywords || "", // SEO meta keywords
     PAGE_URL: pageUrl || "", // 页面URL（用于canonical和Open Graph）
+    PAGE_IMAGE: pageImage || "", // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
     DATE_PUBLISHED: datePublished, // 发布日期（ISO格式）
     DATE_MODIFIED: dateModified, // 修改日期（ISO格式）
     ARTICLE_STRUCTURED_DATA: new Handlebars.SafeString(articleStructuredData), // Article结构化数据
@@ -158,6 +315,13 @@ export function renderTemplate({
     relatedProducts, // 第三排产品
     faqItems,
     faqCategoryLink,
+    // 模板4新增字段
+    topProducts: topProducts || [], // Top Picks产品
+    comparisonItems: comparisonItems || [], // 对比表数据
+    internalLinks: internalLinks || [], // 内链数据
+    externalLinks: externalLinks || [], // 外链数据
+    ITEMLIST_STRUCTURED_DATA: itemListStructuredData ? new Handlebars.SafeString(itemListStructuredData) : "", // ItemList结构化数据
+    PRODUCT_STRUCTURED_DATA: productStructuredData ? new Handlebars.SafeString(productStructuredData) : "", // Product结构化数据
   });
 
   // 调试日志：检查渲染结果

@@ -45,6 +45,9 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   const currentMinLength = MIN_ARTICLE_LENGTH;
   const currentMaxLength = isTemplate3 ? 10000 : MAX_ARTICLE_LENGTH; // template-3 允许更长的内容
   
+  // 获取当前年份（动态，避免硬编码）
+  const currentYear = new Date().getFullYear();
+  
   // 统一使用稳定模型，避免 preview 模型触发更多限流
   const modelName = DEFAULT_MODEL;
   
@@ -231,6 +234,18 @@ CRITICAL REQUIREMENTS:
 - NO fabricated information, NO assumptions, NO external knowledge beyond the knowledge base
 - Content MUST be COMPLETE - every section must be fully written, no incomplete sentences or cut-off content
 
+CRITICAL: KEYWORD-CONTENT TOPIC MATCHING (MANDATORY):
+- The content MUST be about "${keyword}" and ONLY about "${keyword}" or directly related topics
+- If the keyword is about "watches" or "timepieces" → content MUST be about watches, NOT phones
+- If the keyword is about "phones" or "mobile phones" → content MUST be about phones, NOT watches
+- If the keyword is about "rings" → content MUST be about rings, NOT phones or watches
+- If the keyword is about "earbuds" → content MUST be about earbuds, NOT phones or watches
+- DO NOT write about unrelated product categories - this is a CRITICAL SEO requirement
+- The page title is "${pageTitle}" - your content MUST match this title's topic exactly
+- If the title mentions "watches" but you write about "phones", this is a SEVERE error that will hurt SEO
+- If the title mentions "phones" but you write about "watches", this is a SEVERE error that will hurt SEO
+- ALWAYS verify: Does my content match the keyword "${keyword}" and title "${pageTitle}"? If not, rewrite it.
+
 BRITISH ENGLISH REQUIREMENTS (CRITICAL - MUST FOLLOW):
 1. SPELLING (British English only):
    - Use "colour" NOT "color"
@@ -315,10 +330,23 @@ BRITISH ENGLISH REQUIREMENTS (CRITICAL - MUST FOLLOW):
    - Use "..." (ellipsis) with spaces: "word . . . word" (though modern British English often uses "word...word")
 
 5. DATE AND TIME FORMAT:
-   - Use "day month year": "25 December 2024" NOT "December 25, 2024"
-   - Use "25/12/2024" NOT "12/25/2024"
+   - Use "day month year": "25 December ${currentYear}" NOT "December 25, ${currentYear}"
+   - Use "25/12/${currentYear}" NOT "12/25/${currentYear}"
    - Use "half past three" NOT "three-thirty" (in spoken form)
    - Use "quarter to" and "quarter past" NOT "quarter of" or "quarter after"
+   
+CRITICAL: YEAR AND DATE ACCURACY (MANDATORY):
+- The current year is ${currentYear} (as of the content generation date)
+- ONLY mention specific years if they are explicitly stated in the knowledge base
+- If the knowledge base does NOT contain a specific year, use the current year (${currentYear}) or avoid mentioning specific years
+- DO NOT use outdated years (e.g., ${currentYear - 1} or earlier) unless explicitly stated in the knowledge base
+- If you must reference a time period, use relative terms like "current", "latest", "recent" instead of hardcoded years
+- Examples:
+  * WRONG: "Best Luxury Phones 2024" (if knowledge base doesn't mention 2024 and it's now ${currentYear})
+  * CORRECT: "Best Luxury Phones ${currentYear}" or "Best Luxury Phones" (without year)
+  * WRONG: "A 2024 Evaluation" (if knowledge base doesn't mention 2024 and it's now ${currentYear})
+  * CORRECT: "A ${currentYear} Evaluation" or "A Current Evaluation"
+- This ensures content remains accurate and doesn't appear outdated
 
 EXAMPLES OF BRITISH vs AMERICAN ENGLISH:
 - BRITISH: "The team are travelling to the centre of London to organise a programme."
@@ -508,6 +536,22 @@ ${relevantProducts.length > 0
 - If "${keyword}" relates to laptops/notebooks/computers, discuss VERTU's approach to luxury technology, craftsmanship, and premium devices
 - Do NOT mention specific product names unless they are directly related to "${keyword}"
 - Keep content general and relevant to the keyword, focusing on VERTU's brand values and luxury technology positioning`
+    : (keyword.toLowerCase().includes("watch") || keyword.toLowerCase().includes("timepiece") || keyword.toLowerCase().includes("horology") || keyword.toLowerCase().includes("chronograph"))
+    ? `- CRITICAL: The keyword "${keyword}" is about WATCHES/TIMEPIECES
+- You MUST write about watches (Grand Watch, Metawatch) ONLY
+- DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.) - they are NOT relevant to "${keyword}"
+- DO NOT mention rings, earbuds, or other product categories
+- Focus ONLY on watch-related products and features from the knowledge base`
+    : (keyword.toLowerCase().includes("ring") || keyword.toLowerCase().includes("jewellery") || keyword.toLowerCase().includes("jewelry"))
+    ? `- CRITICAL: The keyword "${keyword}" is about RINGS/JEWELLERY
+- You MUST write about rings (Meta Ring, AI Diamond Ring, AI Meta Ring) ONLY
+- DO NOT mention phones, watches, earbuds, or other product categories
+- Focus ONLY on ring-related products and features from the knowledge base`
+    : (keyword.toLowerCase().includes("earbud") || keyword.toLowerCase().includes("earphone") || keyword.toLowerCase().includes("audio"))
+    ? `- CRITICAL: The keyword "${keyword}" is about EARBUDS/AUDIO
+- You MUST write about earbuds (Phantom Earbuds, OWS Earbuds) ONLY
+- DO NOT mention phones, watches, rings, or other product categories
+- Focus ONLY on earbud-related products and features from the knowledge base`
     : `- Focus on VERTU brand and general luxury mobile phone features relevant to "${keyword}"
 - Do NOT mention specific product names unless they are directly related to "${keyword}"
 - Keep content general and relevant to the keyword only`}
@@ -524,6 +568,11 @@ ABSOLUTE PROHIBITIONS:
 - DO NOT fabricate product comparisons or features
 - If a product is not in the knowledge base, do NOT mention it at all
 - If information is missing from the knowledge base, skip it entirely rather than making assumptions
+- CRITICAL: If keyword is about "watches" → DO NOT mention phones, rings, earbuds
+- CRITICAL: If keyword is about "phones" → DO NOT mention watches, rings, earbuds
+- CRITICAL: If keyword is about "rings" → DO NOT mention phones, watches, earbuds
+- CRITICAL: If keyword is about "earbuds" → DO NOT mention phones, watches, rings
+- This is a SEVERE SEO violation if content topic does not match keyword topic
 
 CONTENT ENRICHMENT GUIDELINES:
 - Use the knowledge base data extensively to create rich, detailed descriptions
@@ -1000,6 +1049,12 @@ The previous attempt was incomplete, too long, or did not follow the required BR
     // 验证生成的内容是否包含知识库外的产品信息
     validateContentAgainstKnowledgeBase(finalArticleContent, knownProducts, "article content");
     
+    // 验证内容主题是否与关键词/标题匹配（SEO关键验证）
+    validateContentTopicMatch(finalArticleContent, keyword, pageTitle, "article content");
+    
+    // 验证内容中的年份信息是否准确（避免过时年份）
+    validateYearAccuracy(finalArticleContent, currentYear, "article content");
+    
     // 验证内容是否包含与关键词无关的产品
     if (relevantProducts.length > 0) {
       validateContentRelevance(finalArticleContent, relevantProducts, keyword, "article content");
@@ -1039,9 +1094,9 @@ The previous attempt was incomplete, too long, or did not follow the required BR
       }
     });
 
-    // 生成页面描述（仅用于模板2和模板3，生成完整的描述段落）
+    // 生成页面描述（用于模板2、模板3和模板4，生成完整的描述段落）
     let pageDescription = "";
-    const needsFullDescription = templateType === "template-2" || templateType === "template-3";
+    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4";
     
     if (needsFullDescription) {
       try {
@@ -1127,7 +1182,7 @@ Write the complete description paragraph now:`;
         }
       }
     } else {
-      // 如果不是模板2或3，pageDescription保持为空字符串（模板1不需要描述）
+      // 如果不是模板2、3或4，pageDescription保持为空字符串（模板1不需要描述）
       pageDescription = "";
     }
     
@@ -1497,6 +1552,126 @@ export function extractMentionedProductsFromContent(content: string): string[] {
   return mentionedProducts;
 }
 
+/**
+ * 验证内容主题是否与关键词/标题匹配（SEO关键验证）
+ * 确保内容不会偏离主题（如关键词是手表但内容写手机）
+ */
+function validateContentTopicMatch(
+  content: string,
+  keyword: string,
+  pageTitle: string,
+  contentType: string
+): void {
+  if (!content || !keyword || !pageTitle) return;
+
+  const contentLower = content.toLowerCase();
+  const keywordLower = keyword.toLowerCase();
+  const titleLower = pageTitle.toLowerCase();
+
+  // 定义产品类别关键词
+  const productCategoryKeywords = {
+    watch: ["watch", "timepiece", "horology", "chronograph", "wristwatch", "grand watch", "metawatch"],
+    phone: ["phone", "mobile", "smartphone", "handset", "device", "agent q", "quantum flip", "metavertu", "signature", "ivertu"],
+    ring: ["ring", "jewellery", "jewelry", "diamond ring", "meta ring"],
+    earbud: ["earbud", "earphone", "earphones", "audio", "phantom", "ows"],
+  };
+
+  // 检测关键词属于哪个类别
+  const detectCategory = (text: string): string[] => {
+    const categories: string[] = [];
+    for (const [category, keywords] of Object.entries(productCategoryKeywords)) {
+      if (keywords.some(kw => text.includes(kw))) {
+        categories.push(category);
+      }
+    }
+    return categories;
+  };
+
+  const keywordCategories = detectCategory(keywordLower);
+  const titleCategories = detectCategory(titleLower);
+  const contentCategories = detectCategory(contentLower);
+
+  // 检查内容是否偏离主题
+  const isTopicMismatch = (keywordCats: string[], contentCats: string[]): boolean => {
+    if (keywordCats.length === 0) return false; // 无法确定类别，跳过检查
+    
+    // 如果关键词是手表，但内容提到手机（且没有提到手表）
+    if (keywordCats.includes("watch") && contentCats.includes("phone") && !contentCats.includes("watch")) {
+      return true;
+    }
+    // 如果关键词是手机，但内容提到手表（且没有提到手机）
+    if (keywordCats.includes("phone") && contentCats.includes("watch") && !contentCats.includes("phone")) {
+      return true;
+    }
+    // 如果关键词是手表，但内容提到戒指（且没有提到手表）
+    if (keywordCats.includes("watch") && contentCats.includes("ring") && !contentCats.includes("watch")) {
+      return true;
+    }
+    // 如果关键词是手机，但内容提到戒指（且没有提到手机）
+    if (keywordCats.includes("phone") && contentCats.includes("ring") && !contentCats.includes("phone")) {
+      return true;
+    }
+    // 如果关键词是手表，但内容提到耳机（且没有提到手表）
+    if (keywordCats.includes("watch") && contentCats.includes("earbud") && !contentCats.includes("watch")) {
+      return true;
+    }
+    // 如果关键词是手机，但内容提到耳机（且没有提到手机）
+    if (keywordCats.includes("phone") && contentCats.includes("earbud") && !contentCats.includes("phone")) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // 检查关键词-内容匹配
+  if (isTopicMismatch(keywordCategories, contentCategories)) {
+    console.error(
+      `[GoogleAI] ⛔ SEVERE SEO ERROR: ${contentType} topic does NOT match keyword "${keyword}"!`
+    );
+    console.error(
+      `[GoogleAI] ⛔ Keyword category: ${keywordCategories.join(", ") || "unknown"}`
+    );
+    console.error(
+      `[GoogleAI] ⛔ Content category: ${contentCategories.join(", ") || "unknown"}`
+    );
+    console.error(
+      `[GoogleAI] ⛔ This is a CRITICAL SEO violation - content must match keyword topic!`
+    );
+    console.error(
+      `[GoogleAI] ⛔ Content preview: ${content.substring(0, 300)}...`
+    );
+  }
+
+  // 检查标题-内容匹配
+  if (titleCategories.length > 0 && isTopicMismatch(titleCategories, contentCategories)) {
+    console.error(
+      `[GoogleAI] ⛔ SEVERE SEO ERROR: ${contentType} topic does NOT match page title "${pageTitle}"!`
+    );
+    console.error(
+      `[GoogleAI] ⛔ Title category: ${titleCategories.join(", ") || "unknown"}`
+    );
+    console.error(
+      `[GoogleAI] ⛔ Content category: ${contentCategories.join(", ") || "unknown"}`
+    );
+    console.error(
+      `[GoogleAI] ⛔ This is a CRITICAL SEO violation - content must match page title topic!`
+    );
+  }
+
+  // 检查内容是否包含关键词的主要词汇
+  const keywordWords = keywordLower.split(/\s+/).filter(w => w.length > 3);
+  const hasKeywordWords = keywordWords.length > 0 && keywordWords.some(word => contentLower.includes(word));
+  
+  if (!hasKeywordWords && keywordWords.length > 0) {
+    console.warn(
+      `[GoogleAI] ⚠️ WARNING: ${contentType} may not contain key words from keyword "${keyword}"`
+    );
+    console.warn(
+      `[GoogleAI] ⚠️ Expected words: ${keywordWords.join(", ")}`
+    );
+  }
+}
+
 // 验证内容是否包含与关键词无关的产品
 function validateContentRelevance(
   content: string,
@@ -1587,6 +1762,59 @@ function validateContentAgainstKnowledgeBase(
         `[GoogleAI] WARNING: ${contentType} mentions "${product}" which is not in the authorised product list`
       );
     }
+  }
+}
+
+/**
+ * 验证内容中的年份信息是否准确（避免过时年份）
+ */
+function validateYearAccuracy(
+  content: string,
+  currentYear: number,
+  contentType: string
+): void {
+  if (!content) return;
+
+  // 匹配4位数字年份（1900-2099）
+  const yearPattern = /\b(19|20)\d{2}\b/g;
+  const matches = content.match(yearPattern);
+  
+  if (!matches) return; // 没有年份信息，跳过检查
+
+  const uniqueYears = Array.from(new Set(matches.map(m => parseInt(m, 10))));
+  const outdatedYears: number[] = [];
+  const futureYears: number[] = [];
+
+  for (const year of uniqueYears) {
+    // 检查是否比当前年份早1年以上（允许当前年份和去年）
+    if (year < currentYear - 1) {
+      outdatedYears.push(year);
+    }
+    // 检查是否比当前年份晚（未来年份，可能是错误）
+    if (year > currentYear) {
+      futureYears.push(year);
+    }
+  }
+
+  if (outdatedYears.length > 0) {
+    console.warn(
+      `[GoogleAI] ⚠️ WARNING: ${contentType} contains potentially outdated years: ${outdatedYears.join(", ")} (current year: ${currentYear})`
+    );
+    console.warn(
+      `[GoogleAI] ⚠️ These years may make the content appear outdated. Consider using current year (${currentYear}) or removing specific years unless they are explicitly stated in the knowledge base.`
+    );
+    console.warn(
+      `[GoogleAI] ⚠️ Content preview: ${content.substring(0, 500)}...`
+    );
+  }
+
+  if (futureYears.length > 0) {
+    console.warn(
+      `[GoogleAI] ⚠️ WARNING: ${contentType} contains future years: ${futureYears.join(", ")} (current year: ${currentYear})`
+    );
+    console.warn(
+      `[GoogleAI] ⚠️ These years may be incorrect. Please verify if they are explicitly stated in the knowledge base.`
+    );
   }
 }
 
@@ -1683,7 +1911,7 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
       productNames: ["Meta Ring", "AI Diamond Ring", "AI Meta Ring"],
     },
     {
-      keywords: ["watch", "horology", "timepiece", "chronograph", "grand watch"],
+      keywords: ["watch", "watches", "horology", "timepiece", "chronograph", "grand watch", "smart watch", "smartwatch", "luxury watch", "luxury watches"],
       productNames: ["Grand Watch", "Metawatch"],
     },
     {
@@ -1715,8 +1943,18 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
     }
   }
 
-  // 通过关键词提示匹配
-  for (const hint of productKeywordHints) {
+  // 通过关键词提示匹配（按优先级排序：手表、戒指、耳机等特定类别优先于手机）
+  // 重新排序：特定类别（手表、戒指、耳机）优先匹配，避免手机关键词误匹配
+  const sortedHints = [...productKeywordHints].sort((a, b) => {
+    // 手表、戒指、耳机等特定类别优先
+    const aIsSpecific = a.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
+    const bIsSpecific = b.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
+    if (aIsSpecific && !bIsSpecific) return -1;
+    if (!aIsSpecific && bIsSpecific) return 1;
+    return 0;
+  });
+  
+  for (const hint of sortedHints) {
     const matchesKeyword = hint.keywords.some((kw) => keywordLower.includes(kw.toLowerCase()));
     if (matchesKeyword) {
       // 如果产品列表为空（如笔记本电脑），表示该类别产品将从WordPress动态获取
@@ -1727,10 +1965,19 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
         return []; // 返回空数组，表示没有特定产品匹配，使用通用内容
       }
       
+      console.log(`[GoogleAI] Keyword "${keyword}" matches category: ${hint.keywords.join(", ")} → Products: ${hint.productNames.join(", ")}`);
+      
       for (const productName of hint.productNames) {
         if (knownProducts.includes(productName) && !relevantProducts.includes(productName)) {
           relevantProducts.push(productName);
         }
+      }
+      
+      // 如果匹配到特定类别（手表、戒指、耳机），立即返回，避免继续匹配其他类别
+      const isSpecificCategory = hint.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
+      if (isSpecificCategory && relevantProducts.length > 0) {
+        console.log(`[GoogleAI] Keyword "${keyword}" matched specific category, returning relevant products: ${relevantProducts.join(", ")}`);
+        return relevantProducts;
       }
     }
   }
@@ -1846,6 +2093,71 @@ function stripHtmlTags(html: string): string {
   return html.replace(/<[^>]*>/g, " ");
 }
 
+/**
+ * 将标题格式化为Title Case（首字母大写格式，符合SEO文章标题规范）
+ * Title Case规则：
+ * - 每个重要单词首字母大写
+ * - 第一个和最后一个单词总是大写
+ * - 短连接词（a, an, the, and, or, but, in, on, at, to, for, of, with等）不大写（除非是首尾单词）
+ */
+function formatTitleCase(title: string): string {
+  if (!title || title.trim().length === 0) {
+    return title;
+  }
+  
+  // 定义不需要大写的短词（除非是首尾单词）
+  const shortWords = new Set([
+    "a", "an", "and", "as", "at", "but", "by", "for", "from", "in", "into", "nor",
+    "of", "on", "or", "the", "to", "with", "up", "so", "yet"
+  ]);
+  
+  // 分割标题为单词
+  const words = title.trim().split(/\s+/);
+  
+  // 处理每个单词
+  const formattedWords = words.map((word, index) => {
+    const isFirstWord = index === 0;
+    const isLastWord = index === words.length - 1;
+    const wordLower = word.toLowerCase();
+    
+    // 移除标点符号，保留原始格式
+    const hasPunctuation = /[.,:;!?\-—–]/.test(word);
+    const punctuation = word.match(/[.,:;!?\-—–]+/g) || [];
+    const cleanWord = word.replace(/[.,:;!?\-—–]+/g, "");
+    const cleanWordLower = cleanWord.toLowerCase();
+    
+    // 如果单词包含连字符（如"AI-Powered"），需要分别处理每个部分
+    if (cleanWord.includes("-")) {
+      const parts = cleanWord.split("-");
+      const formattedParts = parts.map(part => {
+        const partLower = part.toLowerCase();
+        if (shortWords.has(partLower) && !isFirstWord && !isLastWord) {
+          return partLower;
+        }
+        return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+      });
+      return formattedParts.join("-") + (punctuation.join("") || "");
+    }
+    
+    // 处理品牌名和专有名词（保持原样，如果已经是大写）
+    if (cleanWord === cleanWord.toUpperCase() && cleanWord.length > 1) {
+      // 可能是品牌名或缩写（如"VERTU", "AI", "SEO"）
+      return word;
+    }
+    
+    // 处理短词
+    if (shortWords.has(cleanWordLower) && !isFirstWord && !isLastWord) {
+      return cleanWordLower + (punctuation.join("") || "");
+    }
+    
+    // 其他单词：首字母大写，其余小写
+    const formatted = cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1).toLowerCase();
+    return formatted + (punctuation.join("") || "");
+  });
+  
+  return formattedWords.join(" ");
+}
+
 function isArticleRich(html: string, templateType?: string): boolean {
   const plainText = stripHtmlTags(html).replace(/\s+/g, " ").trim();
   
@@ -1906,6 +2218,10 @@ function isArticleRich(html: string, templateType?: string): boolean {
  */
 async function generateTitleWithKey(apiKey: string, keyword: string, titleType?: string): Promise<string> {
   const genAI = new GoogleGenerativeAI(apiKey);
+  
+  // 获取当前年份（动态，避免硬编码）
+  const currentYear = new Date().getFullYear();
+  
   // 标题生成同样统一使用稳定模型
   const modelName = DEFAULT_MODEL;
   
@@ -1953,6 +2269,8 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
 
   // 根据标题类型生成对应的备用标题
   const getFallbackTitleByType = (keyword: string, type?: string): string => {
+    let fallbackTitle: string;
+    
     if (!type || !titleTypeMap[type]) {
       // 如果没有指定类型，随机选择一个
       // 注意：避免使用 "Best Prices" 和语法错误
@@ -1969,13 +2287,12 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `Top ${keyword}: Premium Choices Reviewed`,
         `Most Popular ${keyword}: Best-Selling Models`,
       ];
-      return allFallbacks[Math.floor(Math.random() * allFallbacks.length)];
-    }
-
-    // 根据类型生成对应的备用标题
-    // 注意：避免使用 "Shop for where to buy" 这种语法错误
-    // 避免使用 "Best Prices" 这种不符合奢侈品牌的表达
-    const typeFallbacks: Record<string, string[]> = {
+      fallbackTitle = allFallbacks[Math.floor(Math.random() * allFallbacks.length)];
+    } else {
+      // 根据类型生成对应的备用标题
+      // 注意：避免使用 "Shop for where to buy" 这种语法错误
+      // 避免使用 "Best Prices" 这种不符合奢侈品牌的表达
+      const typeFallbacks: Record<string, string[]> = {
       "purchase": [
         `Buy ${keyword} - Official Store`,
         `Purchase ${keyword} - Premium Selection`,
@@ -2062,22 +2379,61 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
       ],
     };
 
-    const fallbacks = typeFallbacks[type] || typeFallbacks["best"];
-    return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+      const fallbacks = typeFallbacks[type] || typeFallbacks["best"];
+      fallbackTitle = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+    }
+    
+    // 应用Title Case格式化
+    return formatTitleCase(fallbackTitle);
   };
 
   const titlePrompt = `Generate a diverse, SEO-friendly page title in British English for the keyword "${keyword}".
 
-CRITICAL REQUIREMENTS:
+CRITICAL SEO REQUIREMENTS:
 - You MUST write in British English (UK English) ONLY - this is non-negotiable
 - You MUST NOT include any Chinese characters, words, or phrases
 - You MUST NOT use American English spelling, grammar, or vocabulary
 - The title should be a ${selectedType} title
-- The title MUST include the exact keyword "${keyword}"
+- The title MUST include the exact keyword "${keyword}" - preferably at the beginning or early in the title for maximum SEO impact
 - The title should be SEO-friendly, compelling, and natural-sounding
-- Keep it concise (maximum 65 characters recommended, but can be slightly longer if needed for clarity)
+- OPTIMAL LENGTH: 50-60 characters (this is the ideal length for search engine result pages - SERPs)
+- Maximum 70 characters (beyond this, search engines may truncate the title in search results)
+- Place the primary keyword near the beginning of the title for better SEO ranking
+- Use natural language that users would actually search for
+- Include action words or value propositions when appropriate
 - Use British English spelling and vocabulary (e.g., "colour", "realise", "centre", "organise", "mobile phone", "shop", "whilst")
 - Be creative and vary the title style - don't always use the same format
+
+CRITICAL: TITLE CASE FORMATTING (MANDATORY):
+- The title MUST be formatted in Title Case (also known as Headline Case)
+- Title Case means: Capitalize the first letter of each major word
+- Major words include: nouns, verbs, adjectives, adverbs, pronouns, and subordinating conjunctions
+- Always capitalize the first and last word of the title, regardless of their type
+- Words that should NOT be capitalized (unless they are the first or last word):
+  * Articles: "a", "an", "the"
+  * Short prepositions: "at", "by", "for", "in", "of", "on", "to", "up", "as", "but", "or", "nor"
+  * Short conjunctions: "and", "or", "but", "nor", "so", "yet"
+- Examples of Title Case:
+  * CORRECT: "Best Luxury Phones: Complete Guide to Premium Devices"
+  * CORRECT: "How to Choose the Best Mobile Phone for Business"
+  * CORRECT: "Top 10 Most Secure Cell Phones: Rankings and Reviews"
+  * WRONG: "best luxury phones: complete guide to premium devices" (all lowercase)
+  * WRONG: "BEST LUXURY PHONES: COMPLETE GUIDE" (all uppercase)
+  * WRONG: "Best luxury phones: complete guide to premium devices" (inconsistent)
+- Brand names and proper nouns should always be capitalized: "VERTU", "iPhone", "Samsung"
+- Numbers and abbreviations should follow standard capitalization rules
+
+CRITICAL: YEAR ACCURACY (MANDATORY):
+- The current year is ${currentYear} (as of the content generation date)
+- ONLY include a specific year in the title if it is explicitly relevant and accurate
+- If including a year, use the current year (${currentYear}) or avoid mentioning specific years
+- DO NOT use outdated years (e.g., ${currentYear - 1} or earlier) unless explicitly required
+- Prefer titles without specific years when possible (e.g., "Best Luxury Phones" instead of "Best Luxury Phones 2024")
+- Examples:
+  * WRONG: "Best Luxury Phones 2024" (if it's now ${currentYear} and 2024 is outdated)
+  * CORRECT: "Best Luxury Phones ${currentYear}" or "Best Luxury Phones" (without year)
+  * WRONG: "A 2024 Evaluation" (if it's now ${currentYear} and 2024 is outdated)
+  * CORRECT: "A ${currentYear} Evaluation" or "A Current Evaluation"
 
 BRITISH ENGLISH REQUIREMENTS (CRITICAL):
 - Use British spelling: "colour", "realise", "centre", "organise", "customise", "optimise", "recognise", "favour", "behaviour", "honour", "labour", "defence", "travelling", "cancelled", "labelled", "modelling", "programme", "cheque", "tyre", "aluminium", "sulphur", "grey", "whilst", "amongst"
@@ -2117,7 +2473,7 @@ EXAMPLES OF GOOD TITLES (Natural, Not SEO Machine Text):
 - "The VERTU Online Shopping Experience" (natural, comprehensive)
 - "Why Shop at VERTU Official?" (natural question users ask)
 - "Complete Guide to Luxury Phones: Everything You Need to Know" (natural guide format)
-- "Best Luxury Phones 2024: Top Rated Models Compared" (natural comparison)
+- "Best Luxury Phones ${currentYear}: Top Rated Models Compared" (natural comparison, uses current year)
 - "How to Choose the Best Luxury Phone: Expert Buying Guide" (natural how-to)
 - "Top-rated Luxury Phones: Expert Recommendations" (natural recommendation)
 - "Premium Luxury Phones - Handcrafted Collection" (natural, premium)
@@ -2166,9 +2522,34 @@ Output only the title text, nothing else. No quotes, no explanations, just the t
       console.log(`[GoogleAI] 使用备用标题（类型: ${titleType || '随机'}）: ${fallbackTitle}`);
       return fallbackTitle;
     }
+    
+    // SEO优化：验证标题长度（50-60字符最佳，最多70字符）
+    const titleLength = cleanedTitle.length;
+    if (titleLength > 70) {
+      console.warn(`[GoogleAI] ⚠️ SEO WARNING: Title is too long (${titleLength} characters). Search engines may truncate it in SERPs. Optimal length: 50-60 characters.`);
+    } else if (titleLength >= 50 && titleLength <= 60) {
+      console.log(`[GoogleAI] ✅ SEO OPTIMAL: Title length is perfect (${titleLength} characters) for search engine result pages.`);
+    } else if (titleLength < 30) {
+      console.warn(`[GoogleAI] ⚠️ SEO WARNING: Title is too short (${titleLength} characters). Consider adding more descriptive terms for better SEO visibility.`);
+    } else {
+      console.log(`[GoogleAI] ℹ️ Title length: ${titleLength} characters (acceptable, but 50-60 is optimal).`);
+    }
+    
+    // SEO优化：检查关键词位置（关键词在标题前部更有利于SEO）
+    const keywordPosition = cleanedTitle.toLowerCase().indexOf(keyword.toLowerCase());
+    if (keywordPosition === 0) {
+      console.log(`[GoogleAI] ✅ SEO OPTIMAL: Keyword "${keyword}" is at the beginning of the title - maximum SEO impact.`);
+    } else if (keywordPosition > 0 && keywordPosition <= 20) {
+      console.log(`[GoogleAI] ✅ SEO GOOD: Keyword "${keyword}" is in the first part of the title (position ${keywordPosition}) - good for SEO ranking.`);
+    } else if (keywordPosition > 20) {
+      console.warn(`[GoogleAI] ⚠️ SEO WARNING: Keyword "${keyword}" appears late in the title (position ${keywordPosition}). Consider moving it earlier for better SEO ranking.`);
+    }
 
-    console.log(`[GoogleAI] Generated title: ${cleanedTitle}`);
-    return cleanedTitle;
+    // SEO优化：规范化标题格式为Title Case（首字母大写格式）
+    const titleCasedTitle = formatTitleCase(cleanedTitle);
+    
+    console.log(`[GoogleAI] Generated title: ${titleCasedTitle}`);
+    return titleCasedTitle;
   } catch (error: any) {
     console.error(`[GoogleAI] Error generating title:`, error);
     // 如果生成失败，使用对应类型的备用标题
