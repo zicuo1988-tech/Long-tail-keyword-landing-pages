@@ -172,6 +172,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     // 如果页面标题为空，根据长尾词和选择的标题类型自动生成标题
     let finalPageTitle = payload.pageTitle?.trim() || "";
     if (!finalPageTitle) {
+      // 在生成标题之前检查暂停状态
+      await waitForTaskResume(taskId);
+      if (isTaskPaused(taskId)) {
+        return; // 任务已暂停，退出
+      }
+      
       const titleTypeName = payload.titleType 
         ? `标题类型: ${payload.titleType}`
         : "随机标题类型";
@@ -182,9 +188,19 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           keyword: payload.keyword,
           titleType: payload.titleType,
           onStatusUpdate: (message) => {
-            updateTaskStatus(taskId, "generating_title", message);
+            // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
+            if (!isTaskPaused(taskId)) {
+              updateTaskStatus(taskId, "generating_title", message);
+            }
           },
+          shouldAbort: () => isTaskPaused(taskId), // 传递暂停检查回调
         });
+        
+        // 生成标题后立即检查暂停状态
+        if (isTaskPaused(taskId)) {
+          return; // 任务已暂停，丢弃结果并退出
+        }
+        
         updateTaskStatus(taskId, "generating_title", `已生成标题: ${finalPageTitle}`);
         console.log(`[task ${taskId}] Generated page title: ${finalPageTitle}`);
       } catch (error) {
@@ -222,6 +238,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     }
     
     updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
+    
+    // 在生成内容之前再次检查暂停状态
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
     const generatedContent = await generateHtmlContent({
       apiKey, // 如果为 undefined，将使用 API Key 管理器
       keyword: payload.keyword,
@@ -230,13 +252,21 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
       userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
       onStatusUpdate: (message) => {
-        // 更新任务状态，但不改变状态类型
-        updateTaskStatus(taskId, "generating_content", message);
+        // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
+        if (!isTaskPaused(taskId)) {
+          // 更新任务状态，但不改变状态类型
+          updateTaskStatus(taskId, "generating_content", message);
+        }
       },
+      shouldAbort: () => isTaskPaused(taskId), // 传递暂停检查回调
     });
 
-    // 检查是否暂停
-    await waitForTaskResume(taskId);
+    // 生成内容后立即检查暂停状态
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，丢弃结果并退出
+    }
+    
+    // 在获取产品之前检查暂停状态
     if (isTaskPaused(taskId)) {
       return; // 任务已暂停，退出
     }
@@ -246,6 +276,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     let relatedProducts: ProductSummary[] = [];
     try {
       const productResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, payload.targetCategory);
+      
+      // 获取产品后立即检查暂停状态
+      if (isTaskPaused(taskId)) {
+        return; // 任务已暂停，退出
+      }
       products = attachCategoryLinks(attachLearnMoreLinks(productResult.products), siteBaseUrl);
       relatedProducts = attachCategoryLinks(attachLearnMoreLinks(productResult.relatedProducts), siteBaseUrl);
       
@@ -260,9 +295,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
                               keywordLower.includes("handcrafted") || keywordLower.includes("artisan");
       
       if (isLuxuryKeyword || products.length < 3) {
+        // 在补充产品之前检查暂停状态
+        if (isTaskPaused(taskId)) {
+          return; // 任务已暂停，退出
+        }
+        
         try {
           updateTaskStatus(taskId, "fetching_products", "检测到奢华关键词，补充 bespoke 分类产品...");
           const bespokeResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, "bespoke");
+          
+          // 补充产品后立即检查暂停状态
+          if (isTaskPaused(taskId)) {
+            return; // 任务已暂停，退出
+          }
+          
           const bespokeProducts = attachCategoryLinks(attachLearnMoreLinks(bespokeResult.products), siteBaseUrl);
           const prioritizedBespoke = prioritizeLatestProducts(bespokeProducts);
           
@@ -298,9 +344,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           (p.categorySlug?.includes("phone") ?? false)
       );
       if (contentSuggestsPhone && !hasPhoneProduct) {
+        // 在补充手机产品之前检查暂停状态
+        if (isTaskPaused(taskId)) {
+          return; // 任务已暂停，退出
+        }
+        
         try {
           updateTaskStatus(taskId, "fetching_products", "未找到手机产品，尝试补充手机类目...");
           const phoneResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, "phones");
+          
+          // 补充手机产品后立即检查暂停状态
+          if (isTaskPaused(taskId)) {
+            return; // 任务已暂停，退出
+          }
+          
           const phoneProducts = attachCategoryLinks(attachLearnMoreLinks(phoneResult.products), siteBaseUrl);
           // 只取前4个作为补充，避免过多，并应用优先级排序
           const prioritizedPhoneProducts = prioritizeLatestProducts(phoneProducts);
@@ -338,11 +395,21 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         );
         
         if (missingProducts.length > 0) {
+          // 在搜索产品之前检查暂停状态
+          if (isTaskPaused(taskId)) {
+            return; // 任务已暂停，退出
+          }
+          
           console.log(`[task ${taskId}] 内容中提到的产品但不在产品列表中，正在搜索: ${missingProducts.join(", ")}`);
           updateTaskStatus(taskId, "fetching_products", `正在搜索内容中提到的产品: ${missingProducts.join(", ")}...`);
           
           // 从 WordPress 中搜索这些产品
           const foundProducts = await searchProductsByName(payload.wordpress, missingProducts);
+          
+          // 搜索产品后立即检查暂停状态
+          if (isTaskPaused(taskId)) {
+            return; // 任务已暂停，退出
+          }
           
           if (foundProducts.length > 0) {
             // 将找到的产品添加到产品列表的开头（优先显示）
@@ -477,9 +544,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     const baseSlug = createSlug(finalPageTitle) || createSlug(payload.keyword) || `page-${Date.now()}`;
     const expectedPageUrl = `${siteBaseUrl}/luxury-life-guides/${baseSlug}/`;
 
-    // 为模板4生成封面图URL（基于页面标题生成）
+    // 为模板4和模板5生成封面图URL（基于页面标题生成）
     let pageImageUrl = "";
-    if (payload.templateType === "template-4") {
+    if (payload.templateType === "template-4" || payload.templateType === "template-5") {
       // 生成封面图URL，格式：https://vertu-website-oss.vertu.com/2025/12/screencapture-vertu-luxury-life-guides-{slug}-scaled.jpg
       const currentDate = new Date();
       const year = currentDate.getFullYear();
@@ -487,11 +554,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 使用baseSlug生成图片文件名（保持连字符格式）
       const imageSlug = baseSlug;
       pageImageUrl = `https://vertu-website-oss.vertu.com/${year}/${month}/screencapture-vertu-luxury-life-guides-${imageSlug}-scaled.jpg`;
-      console.log(`[task ${taskId}] ✅ 模板4封面图URL已生成: ${pageImageUrl}`);
+      console.log(`[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL已生成: ${pageImageUrl}`);
     }
 
-    // 为模板4准备特殊数据
+    // 为模板4和模板5准备特殊数据
     const isTemplate4 = payload.templateType === "template-4";
+    const isTemplate5 = payload.templateType === "template-5";
     let topProducts: ProductSummary[] = [];
     let comparisonItems: Array<{ 
       name: string; 
@@ -510,7 +578,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     let internalLinks: Array<{ title: string; url: string }> = [];
     let externalLinks: Array<{ title: string; url: string; description?: string }> = [];
 
-    if (isTemplate4) {
+    if (isTemplate4 || isTemplate5) {
       // 提前声明 keywordLower，避免在后续代码中使用时出现初始化错误
       const keywordLower = payload.keyword.toLowerCase();
       
@@ -1369,7 +1437,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageUrl: expectedPageUrl, // 页面URL（用于canonical和Open Graph）
       pageImage: pageImageUrl, // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
       aiContent: generatedContent.articleContent,
-      extendedContent: generatedContent.extendedContent, // 扩展内容（用于模板3的第二部分）
+      extendedContent: generatedContent.extendedContent, // 扩展内容（用于模板3/4/5的第二部分）
       products: productsRow1, // 第一排产品（已优化，排除Top Picks中的产品，避免重复）
       productsRow2: productsRow2, // 第二排产品（最多4个）
       relatedProducts: productsRow3, // 第三排产品（最多4个）
@@ -1399,6 +1467,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return; // 任务已暂停，退出
     }
     
+    // 在发布页面之前再次检查暂停状态
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
     updateTaskStatus(taskId, "publishing", "正在发布 WordPress 页面...");
     // 在slug前面添加 /luxury-life-guides/ 目录前缀
     const slug = `luxury-life-guides/${baseSlug}`;
@@ -1409,6 +1482,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       htmlContent: finalHtml,
       useElementor: payload.useElementor ?? true,
     });
+
+    // 发布页面后立即检查暂停状态
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
 
     // 获取页面 URL
     const pageUrl = page?.link ?? page?.guid?.rendered ?? page?.guid?.raw;

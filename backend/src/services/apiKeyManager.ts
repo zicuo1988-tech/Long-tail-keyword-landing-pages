@@ -502,7 +502,8 @@ export function getApiKeyManager(): ApiKeyManager {
 export async function withApiKey<T>(
   operation: (key: string) => Promise<T>,
   maxRetries = 5,
-  onStatusUpdate?: (message: string) => void
+  onStatusUpdate?: (message: string) => void,
+  shouldAbort?: () => boolean // 可选的检查是否应该中止的回调（用于暂停功能）
 ): Promise<T> {
   const manager = getApiKeyManager();
   let lastError: Error | null = null;
@@ -514,6 +515,20 @@ export async function withApiKey<T>(
   const { waitForRateLimit, getRateLimiter } = await import("./rateLimiter.js");
   const { executeWithQueue } = await import("./requestQueue.js");
   const rateLimiter = getRateLimiter();
+
+  // 辅助函数：分段等待并检查暂停状态
+  const waitWithAbortCheck = async (ms: number): Promise<void> => {
+    const checkInterval = 500;
+    let remainingMs = ms;
+    while (remainingMs > 0) {
+      if (shouldAbort && shouldAbort()) {
+        throw new Error("任务已暂停");
+      }
+      const waitTime = Math.min(checkInterval, remainingMs);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+      remainingMs -= waitTime;
+    }
+  };
 
   // 提取 Google 返回的 retryDelay（秒），优先使用官方字段，其次解析 retryInfo
   const getRetryDelaySeconds = (err: any): number => {
@@ -553,7 +568,7 @@ export async function withApiKey<T>(
             onStatusUpdate(`⚠️ 配额使用率较高（${keyStats.hourlyUsagePercent.toFixed(1)}%），增加延迟 ${Math.ceil(extraDelay / 1000)} 秒以预防配额限制...`);
           }
           console.warn(`[ApiKeyManager] ⚠️  Key ${manager.maskApiKey(currentKey)} 配额使用率 ${keyStats.hourlyUsagePercent.toFixed(1)}%，增加延迟 ${Math.ceil(extraDelay / 1000)} 秒预防配额限制`);
-          await new Promise((resolve) => setTimeout(resolve, extraDelay));
+          await waitWithAbortCheck(extraDelay);
         }
         
         // 如果每小时使用率超过 85%，发出严重警告并自动切换到其他 Key（预防配额限制）
@@ -578,7 +593,12 @@ export async function withApiKey<T>(
         currentKey,
         async (key: string) => {
           // 在发送请求前，检查频率限制并等待（如果需要）
-          await waitForRateLimit(key, onStatusUpdate);
+          await waitForRateLimit(key, onStatusUpdate, shouldAbort);
+          
+          // 检查是否应该中止（暂停）
+          if (shouldAbort && shouldAbort()) {
+            throw new Error("任务已暂停");
+          }
           
           // 执行操作
           const operationResult = await operation(key);
@@ -588,7 +608,8 @@ export async function withApiKey<T>(
           
           return operationResult;
         },
-        0 // 默认优先级
+        0, // 默认优先级
+        shouldAbort // 传递暂停检查回调
       );
       
       // 成功时重置重试计数
@@ -619,6 +640,15 @@ export async function withApiKey<T>(
         errorMessage.includes("401") ||
         errorMessage.includes("429");
 
+      // 优先处理 400 地理位置限制错误：这不是 API Key 问题，切换 Key 无法解决
+      if (statusCode === 400 && (errorMessage.includes("user location is not supported") || errorMessage.includes("location is not supported"))) {
+        // 地理位置限制错误，直接抛出，不要尝试切换 Key（切换 Key 不会解决问题）
+        const locationErrorMsg = `地理位置限制错误 (400)：您所在的地理位置不支持使用 Google Gemini API。切换 API Key 无法解决此问题，请配置代理服务器或部署到支持的地区。`;
+        console.error(`[ApiKeyManager] ⛔ ${locationErrorMsg}`);
+        onStatusUpdate?.(locationErrorMsg);
+        throw new Error(locationErrorMsg);
+      }
+
       // 优先处理 403 错误：检查是否是 API Key 泄露
       if (statusCode === 403) {
         const errorMsgLower = lastError.message.toLowerCase();
@@ -640,7 +670,7 @@ export async function withApiKey<T>(
             currentKey = null;
             keyRetryCount = 0;
             if (attempt < maxRetries - 1) {
-              await new Promise((resolve) => setTimeout(resolve, 500));
+              await waitWithAbortCheck(500);
             }
             continue;
           } else {
@@ -659,7 +689,7 @@ export async function withApiKey<T>(
           currentKey = null;
           keyRetryCount = 0;
           if (attempt < maxRetries - 1) {
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await waitWithAbortCheck(500);
           }
           continue;
         }
@@ -676,7 +706,7 @@ export async function withApiKey<T>(
           const msg = `API 返回 retryDelay=${retryDelaySeconds}s，暂停当前 Key 调用后再继续...`;
           console.warn(`[ApiKeyManager] 429 with retryDelay=${retryDelaySeconds}s, pausing before next attempt`);
           onStatusUpdate?.(msg);
-          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          await waitWithAbortCheck(waitMs);
         }
 
         // 检查是否是真正的配额限制（而不是临时错误）
@@ -710,7 +740,7 @@ export async function withApiKey<T>(
             currentKey = null;
             keyRetryCount = 0;
             if (attempt < maxRetries - 1) {
-              await new Promise((resolve) => setTimeout(resolve, 500));
+              await waitWithAbortCheck(500);
             }
             continue;
           } else {
@@ -718,7 +748,7 @@ export async function withApiKey<T>(
             const waitMessage = `API 临时限流 (429)，等待 ${retryDelaySeconds} 秒后重试...`;
             console.warn(`[ApiKeyManager] Short-term rate limit (429), waiting ${retryDelaySeconds}s before retry`);
             onStatusUpdate?.(waitMessage);
-            await new Promise((resolve) => setTimeout(resolve, retryDelaySeconds * 1000));
+            await waitWithAbortCheck(retryDelaySeconds * 1000);
             keyRetryCount++;
             if (keyRetryCount < maxKeyRetries) {
               continue;
@@ -728,7 +758,7 @@ export async function withApiKey<T>(
               currentKey = null;
               keyRetryCount = 0;
               if (attempt < maxRetries - 1) {
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await waitWithAbortCheck(500);
               }
               continue;
             }
@@ -738,7 +768,7 @@ export async function withApiKey<T>(
           manager.markAsQuotaLimited(currentKey, isConfirmedQuotaLimit, retryDelaySeconds > 0 ? retryDelaySeconds : undefined);
           
           // 获取剩余可用 Key 数量
-          const availableCount = manager.getAvailableKeyCount();
+          const availableKeyCount = manager.getAvailableKeyCount();
           
           // 显示诊断信息
           const keyStatuses = manager.getKeyStatuses();
@@ -746,9 +776,9 @@ export async function withApiKey<T>(
           keyStatuses.forEach((status, idx) => {
             console.log(`[ApiKeyManager]   Key ${idx + 1}: ${status.key} - ${status.status}${status.details ? ` (${status.details})` : ''}`);
           });
-          console.log(`[ApiKeyManager]   可用 Key 数量: ${availableCount}/${manager['keys'].length}`);
+          console.log(`[ApiKeyManager]   可用 Key 数量: ${availableKeyCount}/${manager['keys'].length}`);
           
-          if (availableCount > 0) {
+          if (availableKeyCount > 0) {
             // 如果有其他可用的 Key，立即切换到下一个 Key（不等待）
             const switchMessage = `API 配额限制 (429)，Key 已标记为配额限制（${isConfirmedQuotaLimit ? '明天恢复' : '临时失败'}），立即切换到下一个 Key (${attempt + 1}/${maxRetries})...`;
             console.warn(`[ApiKeyManager] Quota exceeded (429), marking key as ${isConfirmedQuotaLimit ? 'quota limited' : 'failed'}, switching to next key (attempt ${attempt + 1}/${maxRetries})`);
@@ -756,7 +786,7 @@ export async function withApiKey<T>(
             currentKey = null;
             keyRetryCount = 0;
             if (attempt < maxRetries - 1) {
-              await new Promise((resolve) => setTimeout(resolve, 500));
+              await waitWithAbortCheck(500);
             }
             continue;
           } else {
@@ -810,7 +840,7 @@ export async function withApiKey<T>(
               currentKey = null;
               keyRetryCount = 0;
               if (attempt < maxRetries - 1) {
-                await new Promise((resolve) => setTimeout(resolve, 500));
+                await waitWithAbortCheck(500);
               }
               continue;
             }
@@ -827,7 +857,7 @@ export async function withApiKey<T>(
         keyRetryCount = 0;
         // 切换 Key 时稍作延迟
         if (attempt < maxRetries - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await waitWithAbortCheck(500);
         }
         continue;
       }
@@ -839,7 +869,7 @@ export async function withApiKey<T>(
         const retryMessage = `Google AI API 服务暂时不可用 (${statusCode})，${Math.ceil(delayMs / 1000)}秒后自动重试 (${keyRetryCount}/${maxKeyRetries})...`;
         console.warn(`[ApiKeyManager] Retryable error (${statusCode}), retrying with same key after ${delayMs}ms (key retry ${keyRetryCount}/${maxKeyRetries}, total attempt ${attempt + 1}/${maxRetries})`);
         onStatusUpdate?.(retryMessage);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        await waitWithAbortCheck(delayMs);
         continue;
       }
 

@@ -238,16 +238,23 @@ export function getRateLimiter(): RateLimiter {
  * 等待直到可以发送请求
  * @param key API Key
  * @param onWaitUpdate 等待状态更新回调
+ * @param shouldAbort 可选的检查是否应该中止的回调（用于暂停功能）
  */
 export async function waitForRateLimit(
   key: string,
-  onWaitUpdate?: (message: string) => void
+  onWaitUpdate?: (message: string) => void,
+  shouldAbort?: () => boolean
 ): Promise<void> {
   const limiter = getRateLimiter();
   let checkCount = 0;
   const maxChecks = 100; // 最多检查100次（防止无限循环）
 
   while (checkCount < maxChecks) {
+    // 检查是否应该中止（暂停）
+    if (shouldAbort && shouldAbort()) {
+      throw new Error("任务已暂停");
+    }
+    
     const result = limiter.canMakeRequest(key);
     
     if (result.allowed) {
@@ -266,7 +273,18 @@ export async function waitForRateLimit(
     
     console.log(`[RateLimiter] ⏳ Key ${key.substring(0, 20)}... ${reason}，需要等待 ${waitSeconds} 秒（防止配额限制）`);
     
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
+    // 分段等待，每500ms检查一次暂停状态
+    const checkInterval = 500;
+    let remainingMs = waitMs;
+    while (remainingMs > 0) {
+      if (shouldAbort && shouldAbort()) {
+        throw new Error("任务已暂停");
+      }
+      const waitTime = Math.min(checkInterval, remainingMs);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+      remainingMs -= waitTime;
+    }
+    
     checkCount++;
   }
 

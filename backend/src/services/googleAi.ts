@@ -13,10 +13,11 @@ export interface GenerateContentOptions {
   keyword: string;
   pageTitle: string;
   titleType?: string; // 标题类型：用于调整内容风格和FAQ重点
-  templateType?: string; // 模板类型：template-1, template-2, template-3（template-3无字数限制）
+  templateType?: string; // 模板类型：template-1, template-2, template-3/4/5（3/4/5长内容模式，无严格字数上限）
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   knowledgeBaseContent?: string;
   onStatusUpdate?: (message: string) => void; // 可选：状态更新回调
+  shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
 }
 
 export interface GenerateTitleOptions {
@@ -24,11 +25,12 @@ export interface GenerateTitleOptions {
   keyword: string;
   titleType?: string; // 标题类型：purchase, informational, review, commercial, how-to, recommendations, services-guides, tech-insights, comparison, expert, best, top, most
   onStatusUpdate?: (message: string) => void;
+  shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
 }
 
 export interface GeneratedContent {
   articleContent: string;
-  extendedContent?: string; // 扩展内容（用于模板3的第二部分，不重复）
+  extendedContent?: string; // 扩展内容（用于模板3/4/5的第二部分，不重复，附在末尾）
   pageDescription?: string; // 页面描述（用于模板2和模板3）
   metaDescription?: string; // SEO meta description (150-160 characters)
   metaKeywords?: string; // SEO meta keywords (comma-separated)
@@ -40,10 +42,14 @@ export interface GeneratedContent {
  */
 async function generateWithKey(apiKey: string, keyword: string, pageTitle: string, titleType?: string, templateType?: string, userPrompt?: string, knowledgeBaseContent?: string): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
-  // template-3 无字数限制
+  // template-3/4/5 为长内容模式，无严格字数上限
   const isTemplate3 = templateType === "template-3";
+  const isTemplate4 = templateType === "template-4";
+  const isTemplate5 = templateType === "template-5";
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5;
+  const isTemplate4Or5 = isTemplate4 || isTemplate5;
   const currentMinLength = MIN_ARTICLE_LENGTH;
-  const currentMaxLength = isTemplate3 ? 10000 : MAX_ARTICLE_LENGTH; // template-3 允许更长的内容
+  const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH; // 模板3/4/5 允许更长的内容
   
   // 获取当前年份（动态，避免硬编码）
   const currentYear = new Date().getFullYear();
@@ -61,7 +67,7 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
       temperature: 0.7,
       topP: 0.95,
       topK: 40,
-      maxOutputTokens: isTemplate3 ? 8192 : 4096, // template-3 允许更长的内容
+      maxOutputTokens: isLongFormTemplate ? 8192 : 4096, // 模板3/4/5 允许更长的内容
     },
   });
 
@@ -222,7 +228,16 @@ IMPORTANT: While following the user's direction, you MUST still:
 - Match the selected title type style`
     : "";
 
-  const articlePrompt = `You are an expert SEO content strategist specialising in concise, high-value content. Write a BRIEF, SEO-optimised article about "${keyword}" that directly answers the user's search query without unnecessary length.
+  const articlePrompt = `You are an expert SEO content strategist specialising in high-value content. ${isLongFormTemplate ? "Write a COMPREHENSIVE, DETAILED article" : "Write a BRIEF, SEO-optimised article"} about "${keyword}" that directly answers the user's search query${isLongFormTemplate ? ", providing richer depth while remaining factual and tightly aligned to the title" : " without unnecessary length"}.
+
+TITLE-INTENT LOCK (CRITICAL):
+- The page title is "${pageTitle}". ALL content must stay tightly aligned to this title and its core intent.
+- Do NOT drift into unrelated themes (e.g., craftsmanship, materials, or other product categories) unless explicitly relevant to the title.
+- If the title is about rankings/features/minimalist smart phones, focus on ranking logic, feature explanations, user benefits, and why each feature matters for minimalist smart phones.
+- If the title/keyword is about wearables, hearables, or watches (e.g., "wearable", "hearable", "earbud", "watch", "timepiece"), DO NOT deep-dive into phone hardware. You may mention Agent Q / Quantum Flip at most once as a control hub/context link, but keep it to one short sentence and return immediately to the wearable/hearable/watch topic.
+- Brand naming rule: ONLY use "VERTU" in headings/phrasing if the title或keyword明确包含 "VERTU"；否则保持中性表达（写 "wearables" 而不是 "VERTU wearables"），避免强行加品牌前缀。
+- Use knowledge base facts only when they are relevant to the title intent; ignore irrelevant KB parts.
+- It is BETTER to add new, relevant, factual detail that fits the title than to include off-topic KB snippets.
 
 ${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}${userPromptSection}
 
@@ -581,8 +596,9 @@ CONTENT ENRICHMENT GUIDELINES:
 - Create engaging narratives around the verified facts from the knowledge base
 - Use varied sentence structures and descriptive language while staying factual
 - Connect different aspects of the knowledge base to create comprehensive content
+- Only include knowledge base facts that are directly relevant to the title intent; drop anything that feels off-topic or forced.
 
-OUTPUT FORMAT (BRIEF, COMPLETE, SEO-Optimised HTML):
+OUTPUT FORMAT (${isLongFormTemplate ? "COMPREHENSIVE" : "BRIEF"}, COMPLETE, SEO-Optimised HTML):
 - Output only valid HTML with proper semantic structure
 - IMPORTANT: Do NOT use <h1> tags - the page already has one H1 (the page title)
 - Use semantic HTML tags: <h2> (for main heading and subheadings), <p>, <ol>, <li>
@@ -598,7 +614,7 @@ OUTPUT FORMAT (BRIEF, COMPLETE, SEO-Optimised HTML):
 - Ensure the main H2 heading includes "${keyword}" naturally
 - Use H2 tags for all headings (main heading and question-based subheadings)
 - Keep HTML clean and semantic for better SEO crawling
-- Total content must be between ${currentMinLength} and ${currentMaxLength} characters${isTemplate3 ? " (no strict limit for template-3)" : " (one screen)"}
+- Total content must be at least ${currentMinLength} characters${isLongFormTemplate ? " (no strict upper limit for templates 3/4/5; provide as much factual, title-aligned detail as needed)" : ` and no more than ${currentMaxLength} characters (one screen)`}
 
 EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REFINED TONE):
 <h2>Where to Buy a ${keyword} - Expert Guide</h2>
@@ -625,7 +641,7 @@ EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REF
 NOTE: Notice the proper use of articles (a/an/the) throughout, and the refined, professional tone (private butler, not salesperson).
 
 IMPORTANT: 
-- Keep total word count between 400-600 words
+${isLongFormTemplate ? "- No hard word limit: prioritise depth, completeness, and factual richness while staying tightly aligned to the title and keyword\n- Aim to cover the topic thoroughly so readers do not need to look elsewhere" : "- Keep total word count between 400-600 words"}
 - Every sentence must be complete
 - No incomplete thoughts or cut-off content
 - Focus on directly answering the keyword question`;
@@ -1041,10 +1057,18 @@ The previous attempt was incomplete, too long, or did not follow the required BR
     }
     
     // 最终清理：确保没有任何 markdown 代码块标记残留
-    const finalArticleContent = articleText
+    let finalArticleContent = articleText
       .replace(/```[a-z]*\s*/gi, "") // 移除所有 ```language 格式
       .replace(/```\s*/g, "") // 移除所有剩余的 ```
       .trim();
+
+    // 如果内容尾部没有句号/问号/感叹号，补一段收束句，避免被截断
+    if (!/[.!?]\s*<\/p>\s*$/.test(finalArticleContent) && !/[.!?]\s*$/.test(finalArticleContent)) {
+      const closing = pageTitle && pageTitle.trim().length > 0
+        ? `This guide provides a complete view of ${pageTitle}, helping you make an informed decision.`
+        : `This guide provides a complete view of ${keyword}, helping you make an informed decision.`;
+      finalArticleContent = `${finalArticleContent}<p>${closing}</p>`;
+    }
 
     // 验证生成的内容是否包含知识库外的产品信息
     validateContentAgainstKnowledgeBase(finalArticleContent, knownProducts, "article content");
@@ -1094,22 +1118,28 @@ The previous attempt was incomplete, too long, or did not follow the required BR
       }
     });
 
-    // 生成页面描述（用于模板2、模板3和模板4，生成完整的描述段落）
+    // 生成页面描述（用于模板2、模板3、模板4和模板5，生成完整的描述段落）
     let pageDescription = "";
-    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4";
+    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4" || templateType === "template-5";
     
     if (needsFullDescription) {
       try {
         console.log(`[GoogleAI] Generating comprehensive page description for ${templateType}...`);
+        // 模板4和模板5需要更长的描述（400-600字符），其他模板保持200-300字符
+        const targetMinLength = isTemplate4Or5 ? 400 : 200;
+        const targetMaxLength = isTemplate4Or5 ? 600 : 300;
+        const maxOutputTokens = isTemplate4Or5 ? 600 : 300;
+        const sentenceCount = isTemplate4Or5 ? "6-8 sentences" : "3-5 sentences";
+        
         const descModel = genAI.getGenerativeModel({
           model: modelName, // 使用相同的模型（优先 Key 使用 gemini-3-pro-preview）
           generationConfig: {
             temperature: 0.7,
-            maxOutputTokens: 300, // 增加token数量以支持更完整的描述
+            maxOutputTokens: maxOutputTokens,
           },
         });
         
-        const descPrompt = `You are an expert SEO content writer. Write a COMPREHENSIVE, COMPLETE description paragraph (3-5 sentences, 200-300 characters) for a page about "${keyword}" with title "${pageTitle}".
+        const descPrompt = `You are an expert SEO content writer and user engagement specialist. Write a COMPREHENSIVE, DETAILED description paragraph (${sentenceCount}, ${targetMinLength}-${targetMaxLength} characters) for a page about "${keyword}" with title "${pageTitle}".
 
 CRITICAL REQUIREMENTS:
 - You MUST write in British English (UK English) ONLY - this is non-negotiable
@@ -1117,80 +1147,122 @@ CRITICAL REQUIREMENTS:
 - You MUST NOT use American English spelling, grammar, or vocabulary
 - Use British English spelling: "colour", "realise", "centre", "organise", "customise", "optimise", "recognise", "favour", "behaviour", "honour", "labour", "defence", "travelling", "cancelled", "labelled", "modelling", "programme", "cheque", "tyre", "aluminium", "sulphur", "grey", "whilst", "amongst"
 - Use British vocabulary: "mobile phone" NOT "cell phone", "shop" NOT "store", "lift" NOT "elevator", "flat" NOT "apartment", "petrol" NOT "gas", "pavement" NOT "sidewalk", "trousers" NOT "pants", "biscuit" NOT "cookie", "crisps" NOT "chips", "post" NOT "mail", "queue" NOT "line", "holiday" NOT "vacation", "autumn" NOT "fall", "rubbish" NOT "trash", "bin" NOT "trash can", "car park" NOT "parking lot", "motorway" NOT "highway", "roundabout" NOT "traffic circle", "chemist" NOT "pharmacy", "high street" NOT "main street"
-- Write a COMPLETE paragraph (3-5 sentences), NOT just 2 sentences
-- The description should be comprehensive and informative
+- Write a COMPLETE, DETAILED paragraph (${sentenceCount}), NOT just 2-3 sentences
+- The description MUST be STRONGLY RELATED to the page title "${pageTitle}" - extract key concepts, themes, and value propositions from the title
+- The description should be comprehensive, informative, and provide substantial value to readers
 - Include the keyword "${keyword}" naturally in the first sentence
-- Provide key value propositions and benefits
-- Mention specific features or advantages from the knowledge base
-- Be engaging and compelling
+- Extract and incorporate key terms from the title "${pageTitle}" throughout the description
+- Provide detailed value propositions, benefits, and unique selling points
+- Mention specific features, advantages, or insights from the knowledge base
+- Include relevant context, use cases, or applications
+- Be engaging, compelling, and persuasive
 - NO HTML tags, just plain text
 
-DESCRIPTION STRUCTURE:
-1. First sentence: Introduce the topic with the keyword "${keyword}" and main value proposition
-2. Second sentence: Highlight key benefits or features
-3. Third sentence: Provide additional details or advantages
-4. Fourth sentence (optional): Mention specific use cases or applications
-5. Fifth sentence (optional): Conclude with a compelling call-to-action or summary
+SEO & USER RETENTION OBJECTIVES:
+- Hook readers immediately with a compelling opening that directly addresses their search intent
+- Build trust and credibility by demonstrating deep knowledge and expertise
+- Create curiosity and interest to encourage users to continue reading the full page
+- Use natural language that matches how users search and think about "${keyword}"
+- Include semantic variations and related terms to improve SEO relevance
+- Address potential user questions or concerns implicitly
+- Create a sense of value and urgency that motivates continued engagement
+- Use persuasive language that highlights unique benefits and differentiators
 
-TARGET LENGTH: 200-300 characters (comprehensive but not too long)
+DESCRIPTION STRUCTURE (${sentenceCount}):
+1. First sentence: Introduce the topic with the keyword "${keyword}" and directly reference the title "${pageTitle}" - establish strong connection and hook the reader
+2. Second sentence: Extract key themes from the title and highlight primary value propositions that address user needs
+3. Third sentence: Provide detailed benefits or features related to the title's focus, emphasising what makes this valuable
+4. Fourth sentence: Expand on specific advantages, use cases, or applications mentioned in or implied by the title
+5. Fifth sentence: Add additional context, insights, or details that strengthen the connection to the title and build credibility
+${isTemplate4Or5 ? `6. Sixth sentence: Provide more depth on specific aspects relevant to the title, addressing potential user questions
+7. Seventh sentence: Mention practical considerations, expert insights, or unique differentiators that create value
+8. Eighth sentence (optional): Conclude with a compelling summary that reinforces the title's value proposition and encourages engagement` : `6. Sixth sentence (optional): Conclude with a compelling call-to-action or summary that encourages continued reading`}
 
-Knowledge base context: ${knowledgeBaseContent ? knowledgeBaseContent.substring(0, 1000) : "N/A"}
+TITLE ANALYSIS:
+- Analyze the page title: "${pageTitle}"
+- Identify key concepts: ${pageTitle.split(' ').filter(w => w.length > 3).slice(0, 5).join(', ')}
+- Extract value propositions from the title
+- Ensure every sentence reinforces or relates to the title's main message
+- Consider what user intent the title represents and address it directly
 
-Write the complete description paragraph now:`;
+TARGET LENGTH: ${targetMinLength}-${targetMaxLength} characters (${isTemplate4Or5 ? 'comprehensive and detailed, designed to engage and retain users' : 'comprehensive but concise'})
+
+Knowledge base context: ${knowledgeBaseContent ? knowledgeBaseContent.substring(0, isTemplate4Or5 ? 1500 : 1000) : "N/A"}
+
+Write the complete, detailed description paragraph now. Make sure it is STRONGLY RELATED to the title "${pageTitle}", provides substantial value, and effectively engages users to continue reading:`;
 
         const descResult = await descModel.generateContent(descPrompt);
         const descResponse = await descResult.response;
         pageDescription = descResponse.text().trim();
         
         // 验证并优化描述长度
-        if (pageDescription.length < 150) {
-          console.warn(`[GoogleAI] Page description is too short (${pageDescription.length} chars), expected 200-300 chars`);
-        } else if (pageDescription.length > 400) {
-          // 如果太长，截取前350个字符并添加省略号
-          pageDescription = pageDescription.substring(0, 350).trim() + "...";
-          console.warn(`[GoogleAI] Page description was too long, truncated to 350 characters`);
+        if (pageDescription.length < targetMinLength) {
+          console.warn(`[GoogleAI] Page description is too short (${pageDescription.length} chars), expected ${targetMinLength}-${targetMaxLength} chars`);
+        } else if (pageDescription.length > targetMaxLength + 100) {
+          // 如果太长，截取前(targetMaxLength-50)个字符并添加省略号
+          const truncateLength = targetMaxLength - 50;
+          pageDescription = pageDescription.substring(0, truncateLength).trim() + "...";
+          console.warn(`[GoogleAI] Page description was too long, truncated to ${truncateLength} characters`);
         }
         
         // 验证内容质量
         validateContent(pageDescription, "page description");
         
         console.log(`[GoogleAI] Generated comprehensive page description: ${pageDescription.length} characters`);
-      } catch (error) {
-        console.warn(`[GoogleAI] Failed to generate comprehensive page description:`, error);
-        // 如果生成失败，尝试从文章内容提取更长的段落
-        try {
-          const firstTwoParagraphs = finalArticleContent.match(/<p[^>]*>([\s\S]*?)<\/p>/gi);
-          if (firstTwoParagraphs && firstTwoParagraphs.length > 0) {
-            let extractedDesc = "";
-            for (let i = 0; i < Math.min(2, firstTwoParagraphs.length); i++) {
-              const paraText = stripHtmlTags(firstTwoParagraphs[i]).trim();
-              extractedDesc += paraText + " ";
+        } catch (error) {
+          console.warn(`[GoogleAI] Failed to generate comprehensive page description:`, error);
+          // 如果生成失败，尝试从文章内容提取更长的段落
+          try {
+            const paragraphCount = isTemplate4Or5 ? 3 : 2; // 模板4和模板5提取更多段落
+            const firstParagraphs = finalArticleContent.match(/<p[^>]*>([\s\S]*?)<\/p>/gi);
+            if (firstParagraphs && firstParagraphs.length > 0) {
+              let extractedDesc = "";
+              for (let i = 0; i < Math.min(paragraphCount, firstParagraphs.length); i++) {
+                const paraText = stripHtmlTags(firstParagraphs[i]).trim();
+                extractedDesc += paraText + " ";
+              }
+              extractedDesc = extractedDesc.trim();
+              // 根据模板类型限制长度
+              const maxExtractLength = isTemplate4Or5 ? 550 : 300;
+              if (extractedDesc.length > maxExtractLength) {
+                extractedDesc = extractedDesc.substring(0, maxExtractLength).trim() + "...";
+              }
+              pageDescription = extractedDesc;
+              console.log(`[GoogleAI] Extracted page description from article content: ${pageDescription.length} characters`);
+            } else {
+              // 生成备用描述，模板4和模板5需要更详细
+              if (isTemplate4Or5) {
+                pageDescription = `Discover ${keyword} - Our comprehensive guide to "${pageTitle}" provides in-depth analysis, expert recommendations, and detailed insights. Explore key features, benefits, and practical considerations to help you make informed decisions. Whether you're seeking premium quality, cutting-edge technology, or exceptional value, this guide covers everything you need to know about ${keyword}.`;
+              } else {
+                pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
+              }
             }
-            extractedDesc = extractedDesc.trim();
-            // 限制在300字符左右
-            if (extractedDesc.length > 300) {
-              extractedDesc = extractedDesc.substring(0, 300).trim() + "...";
+          } catch (extractError) {
+            console.warn(`[GoogleAI] Failed to extract description from article:`, extractError);
+            // 生成备用描述，模板4和模板5需要更详细
+            if (isTemplate4Or5) {
+              pageDescription = `Discover ${keyword} - Our comprehensive guide to "${pageTitle}" provides in-depth analysis, expert recommendations, and detailed insights. Explore key features, benefits, and practical considerations to help you make informed decisions. Whether you're seeking premium quality, cutting-edge technology, or exceptional value, this guide covers everything you need to know about ${keyword}.`;
+            } else {
+              pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
             }
-            pageDescription = extractedDesc;
-            console.log(`[GoogleAI] Extracted page description from article content: ${pageDescription.length} characters`);
-          } else {
-            pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
           }
-        } catch (extractError) {
-          console.warn(`[GoogleAI] Failed to extract description from article:`, extractError);
-          pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
         }
-      }
     } else {
-      // 如果不是模板2、3或4，pageDescription保持为空字符串（模板1不需要描述）
+      // 如果不是模板2、3、4或5，pageDescription保持为空字符串（模板1不需要描述）
       pageDescription = "";
     }
     
-    // 确保模板2和3一定有描述（如果还是空，使用默认值）
+    // 确保模板2、3、4和5一定有描述（如果还是空，使用默认值）
     if (needsFullDescription) {
       if (!pageDescription || pageDescription.trim().length === 0) {
         console.warn(`[GoogleAI] ⚠️ Page description is empty for ${templateType}, using default comprehensive description`);
-        pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
+        // 模板4和模板5需要更详细的默认描述
+        if (isTemplate4Or5) {
+          pageDescription = `Discover ${keyword} - Our comprehensive guide to "${pageTitle}" provides in-depth analysis, expert recommendations, and detailed insights. Explore key features, benefits, and practical considerations to help you make informed decisions. Whether you're seeking premium quality, cutting-edge technology, or exceptional value, this guide covers everything you need to know about ${keyword}.`;
+        } else {
+          pageDescription = `Discover ${keyword} - Expert guide with comprehensive information, detailed recommendations, and valuable insights to help you make informed decisions.`;
+        }
+        console.log(`[GoogleAI] ✅ Page description generated for ${templateType}: ${pageDescription.length} characters`);
       } else {
         console.log(`[GoogleAI] ✅ Page description generated for ${templateType}: ${pageDescription.length} characters`);
       }
@@ -1250,11 +1322,11 @@ Write the complete description paragraph now:`;
       metaKeywords = keyword + ", buy, guide, review, best, luxury";
     }
 
-    // 为模板3生成扩展内容（第二部分，不重复）
+    // 为模板3/4/5生成扩展内容（第二部分，不重复，放在页面末尾）
     let extendedContent = "";
-    if (isTemplate3) {
+    if (isLongFormTemplate) {
       try {
-        console.log(`[GoogleAI] Generating extended content for template-3...`);
+        console.log(`[GoogleAI] Generating extended content for ${templateType}...`);
         const extendedModel = genAI.getGenerativeModel({
           model: modelName, // 使用相同的模型（优先 Key 使用 gemini-3-pro-preview）
           generationConfig: {
@@ -1265,7 +1337,7 @@ Write the complete description paragraph now:`;
           },
         });
 
-        const extendedPrompt = `You are an expert SEO content writer. Write an EXTENDED, COMPREHENSIVE content section (different from the main content) about "${keyword}" with title "${pageTitle}".
+        const extendedPrompt = `You are an expert SEO content writer. Write an EXTENDED, COMPREHENSIVE content section (different from the main content) about "${keyword}" with title "${pageTitle}". Place this section AFTER the main content to provide additional value.
 
 CRITICAL REQUIREMENTS:
 - You MUST write in British English (UK English) only
@@ -1275,6 +1347,7 @@ CRITICAL REQUIREMENTS:
 - Use British English spelling (e.g., "colour", "realise", "centre", "organise")
 - ALL product information MUST come EXCLUSIVELY from the knowledge base provided below
 - NO fabricated information, NO assumptions, NO external knowledge beyond the knowledge base
+- Maintain strong alignment with the page title and keyword; avoid unrelated tangents
 
 CONTENT FOCUS (choose one or combine):
 - Advanced features and technical details
@@ -1421,6 +1494,34 @@ Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul
       statusCode = 404;
       errorMessage = `模型 ${modelName} 不可用。错误信息: ${errorMessage}`;
       console.error(`[GoogleAI] 模型 ${modelName} 不可用，请检查模型名称是否正确`);
+    }
+
+    // 处理 400 地理位置限制错误（User location is not supported）
+    if (statusCode === 400 && (errorMessage.includes("User location is not supported") || errorMessage.includes("location is not supported"))) {
+      statusCode = 400;
+      errorMessage = `地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。
+
+可能的原因：
+1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内
+2. 网络请求被识别为来自不支持的地区
+
+解决方案：
+1. 【推荐】配置代理服务器（VPN/代理）：
+   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量
+   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890
+   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）
+
+2. 使用支持的地区：
+   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）
+   - 或使用云服务商提供的代理服务
+
+3. 检查网络环境：
+   - 确认您的网络可以访问 Google 服务
+   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接
+
+注意：切换 API Key 无法解决此问题，这是地理位置限制。`;
+      console.error(`[GoogleAI] 地理位置限制错误：用户所在地区不支持使用 Google Gemini API`);
+      // 这不是 API Key 错误，所以不设置 isApiKeyError = true
     }
 
     // 处理 429 配额限制错误（需要特殊处理，提取 retryDelay）
@@ -1887,6 +1988,19 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
 
   const keywordLower = keyword.toLowerCase().trim();
   const relevantProducts: string[] = [];
+  const isPhoneKeyword = /\b(phone|phones|smartphone|smart phone|cellphone|cell phone|mobile)\b/i.test(keyword);
+  const isWatchKeyword = /(watch|watches|timepiece|horology|chronograph)/i.test(keyword);
+  const isRingKeyword = /\b(ring|jewellery|jewelry|jewel)\b/i.test(keyword);
+  const isEarbudKeyword = /(earbud|earbuds|earphone|earphones|audio|hearable|hearables|headphone)/i.test(keyword);
+  const isWearableBroadKeyword = /(wearable|wearables|wearable device|smart wearable)/i.test(keyword);
+
+  const productMatchesCategory = (product: string, category: "watch" | "ring" | "earbud"): boolean => {
+    const nameLower = product.toLowerCase();
+    if (category === "watch") return /(watch|timepiece|horology|chronograph|grand watch|metawatch)/i.test(nameLower);
+    if (category === "ring") return /(ring|jewellery|jewelry|meta ring|diamond)/i.test(nameLower);
+    if (category === "earbud") return /(earbud|earbuds|earphone|earphones|audio|ows|phantom)/i.test(nameLower);
+    return false;
+  };
 
   // 产品关键词匹配规则
   const productKeywordHints: Array<{ keywords: string[]; productNames: string[] }> = [
@@ -1945,7 +2059,16 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
 
   // 通过关键词提示匹配（按优先级排序：手表、戒指、耳机等特定类别优先于手机）
   // 重新排序：特定类别（手表、戒指、耳机）优先匹配，避免手机关键词误匹配
-  const sortedHints = [...productKeywordHints].sort((a, b) => {
+  const sortedHints = [...productKeywordHints]
+    // 如果是 watch/ring/earbud 精确类目且不是广义可穿戴，则只保留对应类目提示
+    .filter((hint) => {
+      if (isWearableBroadKeyword) return true;
+      if (isWatchKeyword) return hint.keywords.some(kw => /(watch|watches|timepiece|horology|chronograph)/i.test(kw));
+      if (isRingKeyword) return hint.keywords.some(kw => /(ring|jewellery|jewelry|diamond)/i.test(kw));
+      if (isEarbudKeyword) return hint.keywords.some(kw => /(earbud|earbuds|earphone|earphones|audio|ows|phantom)/i.test(kw));
+      return true;
+    })
+    .sort((a, b) => {
     // 手表、戒指、耳机等特定类别优先
     const aIsSpecific = a.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
     const bIsSpecific = b.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
@@ -1974,11 +2097,27 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
       }
       
       // 如果匹配到特定类别（手表、戒指、耳机），立即返回，避免继续匹配其他类别
-      const isSpecificCategory = hint.keywords.some(kw => ["watch", "watches", "ring", "earbud"].includes(kw.toLowerCase()));
+      const isSpecificCategory = hint.keywords.some(kw => ["watch", "watches", "ring", "earbud", "earbuds"].includes(kw.toLowerCase()));
       if (isSpecificCategory && relevantProducts.length > 0) {
         console.log(`[GoogleAI] Keyword "${keyword}" matched specific category, returning relevant products: ${relevantProducts.join(", ")}`);
         return relevantProducts;
       }
+    }
+  }
+
+  // 类目精确过滤：非广义可穿戴时，只保留对应类目产品，避免混入其他品类
+  if (!isWearableBroadKeyword) {
+    if (isWatchKeyword) {
+      const filtered = relevantProducts.filter(p => productMatchesCategory(p, "watch"));
+      if (filtered.length > 0) return filtered;
+    }
+    if (isRingKeyword) {
+      const filtered = relevantProducts.filter(p => productMatchesCategory(p, "ring"));
+      if (filtered.length > 0) return filtered;
+    }
+    if (isEarbudKeyword) {
+      const filtered = relevantProducts.filter(p => productMatchesCategory(p, "earbud"));
+      if (filtered.length > 0) return filtered;
     }
   }
 
@@ -2163,11 +2302,14 @@ function isArticleRich(html: string, templateType?: string): boolean {
   
   // 根据模板类型设置内容长度限制
   const isTemplate3 = templateType === "template-3";
+  const isTemplate4 = templateType === "template-4";
+  const isTemplate5 = templateType === "template-5";
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5;
   const currentMinLength = MIN_ARTICLE_LENGTH;
-  const currentMaxLength = isTemplate3 ? 10000 : MAX_ARTICLE_LENGTH;
+  const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH;
   
   // 检查内容长度
-  const isWithinLength = plainText.length >= currentMinLength && (isTemplate3 || plainText.length <= currentMaxLength);
+  const isWithinLength = plainText.length >= currentMinLength && (isLongFormTemplate || plainText.length <= currentMaxLength);
   
   // 检查内容是否完整（没有未完成的句子）
   // 检查是否以句号、问号或感叹号结尾，或者以</p>、</li>、</h2>等标签结尾
@@ -2559,7 +2701,7 @@ Output only the title text, nothing else. No quotes, no explanations, just the t
   }
 }
 
-export async function generatePageTitle({ apiKey, keyword, titleType, onStatusUpdate }: GenerateTitleOptions): Promise<string> {
+export async function generatePageTitle({ apiKey, keyword, titleType, onStatusUpdate, shouldAbort }: GenerateTitleOptions): Promise<string> {
   if (apiKey) {
     return generateTitleWithKey(apiKey, keyword, titleType);
   }
@@ -2567,11 +2709,12 @@ export async function generatePageTitle({ apiKey, keyword, titleType, onStatusUp
   return withApiKey(
     (key) => generateTitleWithKey(key, keyword, titleType),
     3, // maxRetries (标题生成失败影响较小，重试次数可以少一些)
-    onStatusUpdate
+    onStatusUpdate,
+    shouldAbort // 传递暂停检查回调
   );
 }
 
-export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate }: GenerateContentOptions): Promise<GeneratedContent> {
+export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate, shouldAbort }: GenerateContentOptions): Promise<GeneratedContent> {
   // 如果提供了 apiKey，直接使用（向后兼容）
   if (apiKey) {
     return generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE);
@@ -2581,6 +2724,7 @@ export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleTyp
   return withApiKey(
     (key) => generateWithKey(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE),
     5, // maxRetries
-    onStatusUpdate // 传递状态更新回调
+    onStatusUpdate, // 传递状态更新回调
+    shouldAbort // 传递暂停检查回调
   );
 }

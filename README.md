@@ -307,6 +307,8 @@ GOOGLE_AI_API_KEYS=key1,key2,key3
 DEFAULT_MODEL=gemini-2.5-pro
 
 # 代理配置（可选）
+# 注意：GoogleGenerativeAI SDK 可能不会自动使用这些环境变量
+# 如果遇到 "User location is not supported" 错误，需要配置系统级代理
 HTTP_PROXY=http://proxy.example.com:8080
 HTTPS_PROXY=http://proxy.example.com:8080
 NO_PROXY=localhost,127.0.0.1
@@ -351,9 +353,29 @@ WOOCOMMERCE_CONSUMER_SECRET=cs_xxxxx
 
 - **网络错误**：清晰的错误消息和故障排除步骤
 - **API 错误**：详细的错误消息和重试逻辑
+- **地理位置限制错误 (400)**：当用户所在地区不支持 Google Gemini API 时，提供清晰的错误提示和解决方案
 - **WordPress 错误**：针对认证和发布问题的特定错误消息
 - **验证错误**：客户端和服务器端验证
 - **产品搜索错误**：优雅降级，即使产品搜索失败也能继续生成页面
+
+### 地理位置限制错误处理
+
+如果遇到 `User location is not supported for the API use` 错误（400），这表示您所在的地理位置不支持使用 Google Gemini API。解决方案：
+
+1. **配置代理服务器**（推荐）：
+   ```env
+   HTTP_PROXY=http://127.0.0.1:7890
+   HTTPS_PROXY=http://127.0.0.1:7890
+   ```
+   注意：GoogleGenerativeAI SDK 可能不会自动使用环境变量中的代理，您可能需要：
+   - 使用系统级代理（如 Clash、V2Ray 等）
+   - 或使用支持代理的 HTTP 客户端包装
+
+2. **部署到支持的地区**：
+   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）
+
+3. **使用云服务商的代理服务**：
+   - 通过云服务商提供的代理服务访问 Google API
 
 ## 🔒 安全特性
 

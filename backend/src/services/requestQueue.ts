@@ -11,6 +11,7 @@ interface QueuedRequest<T> {
   reject: (error: Error) => void;
   priority?: number; // 优先级（数字越大优先级越高，默认 0）
   timestamp: number; // 入队时间
+  shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
 }
 
 class RequestQueue {
@@ -24,7 +25,8 @@ class RequestQueue {
   async enqueue<T>(
     key: string,
     operation: (key: string) => Promise<T>,
-    priority: number = 0
+    priority: number = 0,
+    shouldAbort?: () => boolean // 可选的检查是否应该中止的回调（用于暂停功能）
   ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       // 检查队列是否已满
@@ -43,6 +45,7 @@ class RequestQueue {
         reject,
         priority,
         timestamp: Date.now(),
+        shouldAbort,
       };
 
       // 加入队列（按优先级排序）
@@ -82,6 +85,12 @@ class RequestQueue {
           break;
         }
 
+        // 检查是否应该中止（暂停）
+        if (request.shouldAbort && request.shouldAbort()) {
+          request.reject(new Error("任务已暂停"));
+          continue;
+        }
+
         try {
           // 执行请求
           const result = await request.operation(request.key);
@@ -94,7 +103,25 @@ class RequestQueue {
         // 延迟时间由频率限制器控制，这里增加额外延迟 + 抖动以确保安全
         const baseDelayMs = 1000; // 基础 1 秒
         const jitterMs = 200 + Math.floor(Math.random() * 300); // 200-500ms 抖动
-        await new Promise((resolve) => setTimeout(resolve, baseDelayMs + jitterMs));
+        const totalDelayMs = baseDelayMs + jitterMs;
+        
+        // 分段等待，每500ms检查一次暂停状态
+        const checkInterval = 500;
+        let remainingMs = totalDelayMs;
+        while (remainingMs > 0) {
+          if (request.shouldAbort && request.shouldAbort()) {
+            // 如果暂停，不继续处理队列中的其他请求
+            break;
+          }
+          const waitTime = Math.min(checkInterval, remainingMs);
+          await new Promise((resolve) => setTimeout(resolve, waitTime));
+          remainingMs -= waitTime;
+        }
+        
+        // 如果已暂停，停止处理队列
+        if (request.shouldAbort && request.shouldAbort()) {
+          break;
+        }
       }
     } finally {
       // 标记为处理完成
@@ -232,9 +259,10 @@ export function getRequestQueue(): RequestQueue {
 export async function executeWithQueue<T>(
   key: string,
   operation: (key: string) => Promise<T>,
-  priority: number = 0
+  priority: number = 0,
+  shouldAbort?: () => boolean // 可选的检查是否应该中止的回调（用于暂停功能）
 ): Promise<T> {
   const queue = getRequestQueue();
-  return queue.enqueue(key, operation, priority);
+  return queue.enqueue(key, operation, priority, shouldAbort);
 }
 

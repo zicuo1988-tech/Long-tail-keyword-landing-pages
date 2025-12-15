@@ -55,12 +55,21 @@ async function loadTemplate(templateType = "template-1") {
     const templateFile = templateType === "template-1" ? "default-template.html" : 
                          templateType === "template-2" ? "template-2.html" : 
                          templateType === "template-3" ? "template-3.html" :
-                         "template-4.html";
+                         templateType === "template-4" ? "template-4.html" :
+                         templateType === "template-5" ? "template-5.html" :
+                         "default-template.html";
     const response = await fetch(templateFile);
     if (response.ok) {
       const templateContent = await response.text();
       templateTextarea.value = templateContent;
-      appendLog(`已自动加载${templateType === "template-1" ? "模板1" : templateType === "template-2" ? "模板2" : templateType === "template-3" ? "模板3" : "模板4"}`);
+      const templateNames = {
+        "template-1": "模板1",
+        "template-2": "模板2",
+        "template-3": "模板3",
+        "template-4": "模板4",
+        "template-5": "模板5"
+      };
+      appendLog(`已自动加载${templateNames[templateType] || templateType}`);
     } else {
       console.warn(`无法加载${templateFile}，请手动上传模板文件`);
     }
