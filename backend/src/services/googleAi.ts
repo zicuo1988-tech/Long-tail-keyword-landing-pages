@@ -86,6 +86,39 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
     }
   }
 
+  // 简单的带抖动重试（用于官方429/配额限流）
+  const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+  async function requestWithRetry<T>(
+    fn: () => Promise<T>,
+    label: string,
+    maxRetries = 3,
+    baseDelay = 1200
+  ): Promise<T> {
+    let attempt = 0;
+    while (true) {
+      try {
+        return await fn();
+      } catch (err: any) {
+        attempt += 1;
+        const status = err?.status || err?.code;
+        const message = err?.message || "";
+        const is429 =
+          status === 429 ||
+          /too many requests/i.test(message) ||
+          /resource has been exhausted/i.test(message) ||
+          /quota/i.test(message) ||
+          /RESOURCE_EXHAUSTED/i.test(message);
+        if (!is429 || attempt > maxRetries) {
+          console.warn(`[GoogleAI] ${label} request failed (attempt ${attempt}/${maxRetries}):`, message || err);
+          throw err;
+        }
+        const delay = baseDelay * Math.pow(2, attempt - 1) + Math.floor(Math.random() * 300);
+        console.warn(`[GoogleAI] ${label} hit 429/quota (attempt ${attempt}), retrying in ${delay}ms...`);
+        await sleep(delay);
+      }
+    }
+  }
+
   // 生成文章内容的提示词
   const kbContent = (knowledgeBaseContent && knowledgeBaseContent.trim()) || KNOWLEDGE_BASE;
   
@@ -95,7 +128,34 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   // 根据关键词匹配相关产品（只提及与关键词相关的产品）
   const relevantProducts = extractRelevantProductsFromKeyword(keyword, knownProducts);
   
+  // 检测性别和目标受众
+  const combinedText = `${keyword.toLowerCase()} ${pageTitle.toLowerCase()}`;
+  const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || 
+                      combinedText.includes("men") || combinedText.includes("men's") ||
+                      combinedText.includes("male") || combinedText.includes("gift for him") ||
+                      combinedText.includes("for him") || combinedText.includes("his");
+  const isWomenTarget = combinedText.includes("妻子") || combinedText.includes("wife") ||
+                        combinedText.includes("women") || combinedText.includes("women's") ||
+                        combinedText.includes("ladies") || combinedText.includes("lady") ||
+                        combinedText.includes("female") || combinedText.includes("gift for her") ||
+                        combinedText.includes("for her") || combinedText.includes("her");
+  
+  // 检测产品类型
+  const isPhoneKeyword = keyword.toLowerCase().includes("phone") || keyword.toLowerCase().includes("smartphone") || 
+                         keyword.toLowerCase().includes("mobile") || keyword.toLowerCase().includes("cell") ||
+                         pageTitle.toLowerCase().includes("phone") || pageTitle.toLowerCase().includes("smartphone") ||
+                         pageTitle.toLowerCase().includes("mobile") || pageTitle.toLowerCase().includes("cell");
+  
   console.log(`[GoogleAI] Keyword: "${keyword}"`);
+  console.log(`[GoogleAI] Page Title: "${pageTitle}"`);
+  if (isMenTarget) {
+    console.log(`[GoogleAI] Target audience: Men/Husband (will filter out women's products)`);
+  } else if (isWomenTarget) {
+    console.log(`[GoogleAI] Target audience: Women/Wife (will filter out men's products)`);
+  }
+  if (isPhoneKeyword) {
+    console.log(`[GoogleAI] Product type: Phone (will prioritize phone products)`);
+  }
   console.log(`[GoogleAI] Relevant products matched: ${relevantProducts.length > 0 ? relevantProducts.join(", ") : "None - will use general VERTU content"}`);
   console.log(`[GoogleAI] Title type: ${titleType || 'not specified'} - content will be tailored to match this type`);
   if (userPrompt && userPrompt.trim()) {
@@ -238,6 +298,20 @@ TITLE-INTENT LOCK (CRITICAL):
 - Brand naming rule: ONLY use "VERTU" in headings/phrasing if the title或keyword明确包含 "VERTU"；否则保持中性表达（写 "wearables" 而不是 "VERTU wearables"），避免强行加品牌前缀。
 - Use knowledge base facts only when they are relevant to the title intent; ignore irrelevant KB parts.
 - It is BETTER to add new, relevant, factual detail that fits the title than to include off-topic KB snippets.
+
+GENDER AND TARGET AUDIENCE MATCHING (CRITICAL):
+- If the title/keyword mentions "husband", "men", "men's", "male", "for him", "gift for him" → content MUST focus on products suitable for MEN/HUSBANDS, NOT women's products
+- If the title/keyword mentions "wife", "women", "women's", "ladies", "female", "for her", "gift for her" → content MUST focus on products suitable for WOMEN/WIVES, NOT men's products
+- DO NOT recommend women's products (e.g., women's bags, ladies' accessories) when the title is about gifts for husbands/men
+- DO NOT recommend men's products when the title is about gifts for wives/women
+- Product recommendations MUST match the target audience specified in the title
+
+PRODUCT TYPE MATCHING (CRITICAL):
+- If the title/keyword explicitly mentions "phone", "smartphone", "mobile phone" → content MUST focus on PHONE products, NOT watches, rings, or bags
+- If the title/keyword explicitly mentions "watch", "timepiece" → content MUST focus on WATCH products, NOT phones
+- If the title/keyword explicitly mentions "ring", "jewellery" → content MUST focus on RING products, NOT phones or watches
+- If the title/keyword explicitly mentions "earbud", "earphone" → content MUST focus on EARBUD products, NOT phones or watches
+- Product recommendations MUST match the product type specified in the title/keyword
 
 ${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}${userPromptSection}
 
@@ -544,32 +618,60 @@ TRUTHFULNESS REQUIREMENTS:
 - All product names, prices, specifications, and features MUST match the knowledge base exactly
 
 RELEVANT PRODUCTS FOR THIS KEYWORD "${keyword}" (you MUST focus ONLY on these products - do NOT mention other unrelated products):
-${relevantProducts.length > 0 
-  ? relevantProducts.map(p => `- ${p}`).join('\n')
-  : (keyword.toLowerCase().includes("laptop") || keyword.toLowerCase().includes("notebook") || keyword.toLowerCase().includes("computer") || keyword.toLowerCase().includes("pc"))
-    ? `- Focus on VERTU brand and luxury technology products relevant to "${keyword}"
+${(() => {
+  // 构建产品推荐约束
+  let productGuidance = "";
+  
+  // 性别约束
+  if (isMenTarget && !isWomenTarget) {
+    productGuidance += `- CRITICAL: The title/keyword is about gifts for HUSBANDS/MEN
+- You MUST recommend products suitable for MEN/HUSBANDS ONLY
+- DO NOT recommend women's products (e.g., women's bags, ladies' accessories, women's jewellery)
+- Focus on products that men/husbands would appreciate (phones, watches, men's accessories)\n`;
+  } else if (isWomenTarget && !isMenTarget) {
+    productGuidance += `- CRITICAL: The title/keyword is about gifts for WIVES/WOMEN
+- You MUST recommend products suitable for WOMEN/WIVES ONLY
+- DO NOT recommend men's products
+- Focus on products that women/wives would appreciate\n`;
+  }
+  
+  // 产品类型约束
+  if (isPhoneKeyword) {
+    productGuidance += `- CRITICAL: The title/keyword explicitly mentions PHONES/SMARTPHONES
+- You MUST recommend PHONE products ONLY (Agent Q, Quantum Flip, Metavertu, etc.)
+- DO NOT recommend watches, rings, bags, or other non-phone products
+- Focus ONLY on phone-related products from the knowledge base\n`;
+  }
+  
+  if (relevantProducts.length > 0) {
+    return productGuidance + relevantProducts.map(p => `- ${p}`).join('\n');
+  } else if (keyword.toLowerCase().includes("laptop") || keyword.toLowerCase().includes("notebook") || keyword.toLowerCase().includes("computer") || keyword.toLowerCase().includes("pc")) {
+    return productGuidance + `- Focus on VERTU brand and luxury technology products relevant to "${keyword}"
 - If "${keyword}" relates to laptops/notebooks/computers, discuss VERTU's approach to luxury technology, craftsmanship, and premium devices
 - Do NOT mention specific product names unless they are directly related to "${keyword}"
-- Keep content general and relevant to the keyword, focusing on VERTU's brand values and luxury technology positioning`
-    : (keyword.toLowerCase().includes("watch") || keyword.toLowerCase().includes("timepiece") || keyword.toLowerCase().includes("horology") || keyword.toLowerCase().includes("chronograph"))
-    ? `- CRITICAL: The keyword "${keyword}" is about WATCHES/TIMEPIECES
+- Keep content general and relevant to the keyword, focusing on VERTU's brand values and luxury technology positioning`;
+  } else if (keyword.toLowerCase().includes("watch") || keyword.toLowerCase().includes("timepiece") || keyword.toLowerCase().includes("horology") || keyword.toLowerCase().includes("chronograph")) {
+    return productGuidance + `- CRITICAL: The keyword "${keyword}" is about WATCHES/TIMEPIECES
 - You MUST write about watches (Grand Watch, Metawatch) ONLY
 - DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.) - they are NOT relevant to "${keyword}"
 - DO NOT mention rings, earbuds, or other product categories
-- Focus ONLY on watch-related products and features from the knowledge base`
-    : (keyword.toLowerCase().includes("ring") || keyword.toLowerCase().includes("jewellery") || keyword.toLowerCase().includes("jewelry"))
-    ? `- CRITICAL: The keyword "${keyword}" is about RINGS/JEWELLERY
+- Focus ONLY on watch-related products and features from the knowledge base`;
+  } else if (keyword.toLowerCase().includes("ring") || keyword.toLowerCase().includes("jewellery") || keyword.toLowerCase().includes("jewelry")) {
+    return productGuidance + `- CRITICAL: The keyword "${keyword}" is about RINGS/JEWELLERY
 - You MUST write about rings (Meta Ring, AI Diamond Ring, AI Meta Ring) ONLY
 - DO NOT mention phones, watches, earbuds, or other product categories
-- Focus ONLY on ring-related products and features from the knowledge base`
-    : (keyword.toLowerCase().includes("earbud") || keyword.toLowerCase().includes("earphone") || keyword.toLowerCase().includes("audio"))
-    ? `- CRITICAL: The keyword "${keyword}" is about EARBUDS/AUDIO
+- Focus ONLY on ring-related products and features from the knowledge base`;
+  } else if (keyword.toLowerCase().includes("earbud") || keyword.toLowerCase().includes("earphone") || keyword.toLowerCase().includes("audio")) {
+    return productGuidance + `- CRITICAL: The keyword "${keyword}" is about EARBUDS/AUDIO
 - You MUST write about earbuds (Phantom Earbuds, OWS Earbuds) ONLY
 - DO NOT mention phones, watches, rings, or other product categories
-- Focus ONLY on earbud-related products and features from the knowledge base`
-    : `- Focus on VERTU brand and general luxury mobile phone features relevant to "${keyword}"
+- Focus ONLY on earbud-related products and features from the knowledge base`;
+  } else {
+    return productGuidance + `- Focus on VERTU brand and general luxury mobile phone features relevant to "${keyword}"
 - Do NOT mention specific product names unless they are directly related to "${keyword}"
-- Keep content general and relevant to the keyword only`}
+- Keep content general and relevant to the keyword only`;
+  }
+})()}
 
 AUTHORISED PRODUCT NAMES (complete list - for reference only, but you MUST focus on relevant products above):
 ${knownProducts.map(p => `- ${p}`).join('\n')}
@@ -850,7 +952,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
 10. Focus on directly answering the keyword question - eliminate unnecessary content
 11. Every sentence must be complete and add value - no filler content`;
 
-      const articleResult = await model.generateContent(promptToUse);
+      const articleResult = await requestWithRetry(() => model.generateContent(promptToUse), "article.generateContent");
       const articleResponse = await articleResult.response;
       articleText = articleResponse.text() || "";
 
@@ -1191,7 +1293,7 @@ Knowledge base context: ${knowledgeBaseContent ? knowledgeBaseContent.substring(
 
 Write the complete, detailed description paragraph now. Make sure it is STRONGLY RELATED to the title "${pageTitle}", provides substantial value, and effectively engages users to continue reading:`;
 
-        const descResult = await descModel.generateContent(descPrompt);
+        const descResult = await requestWithRetry(() => descModel.generateContent(descPrompt), "description.generateContent");
         const descResponse = await descResult.response;
         pageDescription = descResponse.text().trim();
         
@@ -1370,7 +1472,7 @@ ${kbContent.substring(0, 3000)}
 
 Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul>, <li>). Do NOT include H1 tags.`;
 
-        const extendedResult = await extendedModel.generateContent(extendedPrompt);
+        const extendedResult = await requestWithRetry(() => extendedModel.generateContent(extendedPrompt), "extended.generateContent");
         const extendedResponse = await extendedResult.response;
         extendedContent = extendedResponse.text().trim();
 

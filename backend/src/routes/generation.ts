@@ -284,13 +284,107 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       products = attachCategoryLinks(attachLearnMoreLinks(productResult.products), siteBaseUrl);
       relatedProducts = attachCategoryLinks(attachLearnMoreLinks(productResult.relatedProducts), siteBaseUrl);
       
+      // SEO优化：根据关键词和标题过滤相关产品
+      const keywordLower = payload.keyword.toLowerCase();
+      const pageTitleLower = (payload.pageTitle || "").toLowerCase();
+      const combinedText = `${keywordLower} ${pageTitleLower}`;
+      
+      // 检测性别和目标受众
+      const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || 
+                          combinedText.includes("men") || combinedText.includes("men's") ||
+                          combinedText.includes("male") || combinedText.includes("gift for him") ||
+                          combinedText.includes("for him") || combinedText.includes("his");
+      const isWomenTarget = combinedText.includes("妻子") || combinedText.includes("wife") ||
+                            combinedText.includes("women") || combinedText.includes("women's") ||
+                            combinedText.includes("ladies") || combinedText.includes("lady") ||
+                            combinedText.includes("female") || combinedText.includes("gift for her") ||
+                            combinedText.includes("for her") || combinedText.includes("her");
+      
+      // 检测产品类型
+      const isPhoneKeyword = keywordLower.includes("phone") || keywordLower.includes("smartphone") || 
+                            keywordLower.includes("mobile") || keywordLower.includes("cell") ||
+                            pageTitleLower.includes("phone") || pageTitleLower.includes("smartphone") ||
+                            pageTitleLower.includes("mobile") || pageTitleLower.includes("cell");
+      const isWatchKeyword = keywordLower.includes("watch") || keywordLower.includes("timepiece") ||
+                            pageTitleLower.includes("watch") || pageTitleLower.includes("timepiece");
+      const isRingKeyword = keywordLower.includes("ring") || keywordLower.includes("jewellery") ||
+                           keywordLower.includes("jewelry") || pageTitleLower.includes("ring") ||
+                           pageTitleLower.includes("jewellery") || pageTitleLower.includes("jewelry");
+      const isEarbudKeyword = keywordLower.includes("earbud") || keywordLower.includes("earphone") ||
+                              keywordLower.includes("audio") || keywordLower.includes("headphone") ||
+                              pageTitleLower.includes("earbud") || pageTitleLower.includes("earphone");
+      
+      // 过滤相关产品的函数
+      const filterProductsByRelevance = (productList: ProductSummary[]): ProductSummary[] => {
+        return productList.filter(product => {
+          const productName = product.name.toLowerCase();
+          const productCategory = (product.category || "").toLowerCase();
+          
+          // 性别过滤
+          if (isMenTarget && !isWomenTarget) {
+            if (productName.includes("women") || productName.includes("women's") ||
+                productName.includes("ladies") || productName.includes("lady") ||
+                productName.includes("female") || productCategory.includes("women") ||
+                productCategory.includes("ladies")) {
+              return false;
+            }
+          }
+          if (isWomenTarget && !isMenTarget) {
+            if (productName.includes("men") || productName.includes("men's") ||
+                productName.includes("male") || productCategory.includes("men") ||
+                productCategory.includes("male")) {
+              return false;
+            }
+          }
+          
+          // 产品类型过滤
+          if (isPhoneKeyword) {
+            return productName.includes("phone") || productName.includes("smartphone") ||
+                   productName.includes("mobile") || productName.includes("agent") ||
+                   productName.includes("quantum") || productName.includes("metavertu") ||
+                   productName.includes("ivertu") || productName.includes("signature") ||
+                   productCategory.includes("phone");
+          } else if (isWatchKeyword) {
+            return productName.includes("watch") || productName.includes("timepiece") ||
+                   productName.includes("grand") || productName.includes("meta") ||
+                   productCategory.includes("watch");
+          } else if (isRingKeyword) {
+            return productName.includes("ring") || productName.includes("jewellery") ||
+                   productName.includes("jewelry") || productName.includes("diamond") ||
+                   productName.includes("aura") || productCategory.includes("ring");
+          } else if (isEarbudKeyword) {
+            return productName.includes("earbud") || productName.includes("earphone") ||
+                   productName.includes("audio") || productName.includes("headphone") ||
+                   productName.includes("ows") || productCategory.includes("earbud");
+          }
+          
+          return true; // 如果没有明确的产品类型要求，保留所有产品
+        });
+      };
+      
+      // 应用过滤
+      products = filterProductsByRelevance(products);
+      relatedProducts = filterProductsByRelevance(relatedProducts);
+      
       // 优化：优先推荐最新款产品（Agent Q, Quantum Flip, Metavertu Max等）
       products = prioritizeLatestProducts(products);
       relatedProducts = prioritizeLatestProducts(relatedProducts);
       
+      console.log(`[task ${taskId}] SEO产品过滤结果:`);
+      console.log(`  - 关键词: ${payload.keyword}`);
+      console.log(`  - 页面标题: ${payload.pageTitle || "未指定"}`);
+      if (isMenTarget) console.log(`  - 目标受众: 男性/丈夫`);
+      if (isWomenTarget) console.log(`  - 目标受众: 女性/妻子`);
+      if (isPhoneKeyword) console.log(`  - 产品类型: 手机`);
+      if (isWatchKeyword) console.log(`  - 产品类型: 手表`);
+      if (isRingKeyword) console.log(`  - 产品类型: 戒指`);
+      if (isEarbudKeyword) console.log(`  - 产品类型: 耳机`);
+      console.log(`  - 过滤后主产品数: ${products.length}`);
+      console.log(`  - 过滤后相关产品数: ${relatedProducts.length}`);
+      
       // 针对奢华产品系列，补充 bespoke 分类的产品
-      const keywordLower = payload.keyword.toLowerCase();
-      const isLuxuryKeyword = keywordLower.includes("luxury") || keywordLower.includes("premium") || 
+      // keywordLower 已在上面声明（第288行），直接使用
+      const isLuxuryKeyword = keywordLower.includes("luxury") || keywordLower.includes("premium") ||
                               keywordLower.includes("bespoke") || keywordLower.includes("exclusive") ||
                               keywordLower.includes("handcrafted") || keywordLower.includes("artisan");
       
@@ -376,7 +470,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       relatedProducts = [];
     }
 
-    // 优化：确保内容中提到的产品也出现在产品列表中
+    // SEO优化：确保内容中提到的产品也出现在产品列表中，且与关键词相关
     try {
       // 从生成的内容中提取提到的产品
       const allContent = `${generatedContent.articleContent} ${generatedContent.extendedContent || ""} ${generatedContent.faqItems.map(f => `${f.question} ${f.answer}`).join(" ")}`;
@@ -385,12 +479,65 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       if (mentionedProducts.length > 0) {
         console.log(`[task ${taskId}] 内容中提到的产品: ${mentionedProducts.join(", ")}`);
         
+        // SEO过滤：只搜索与关键词相关的产品
+        // 注意：这里的变量名与上面的不同，因为它们在独立的 try 块内
+        const keywordLowerForFilter = payload.keyword.toLowerCase();
+        const pageTitleLower = (payload.pageTitle || "").toLowerCase();
+        const combinedText = `${keywordLowerForFilter} ${pageTitleLower}`;
+        
+        // 检测产品类型和性别
+        const isPhoneKeywordForFilter = combinedText.includes("phone") || combinedText.includes("smartphone") || combinedText.includes("mobile");
+        const isWatchKeywordForFilter = combinedText.includes("watch") || combinedText.includes("timepiece");
+        const isRingKeywordForFilter = combinedText.includes("ring") || combinedText.includes("jewellery") || combinedText.includes("jewelry");
+        const isEarbudKeywordForFilter = combinedText.includes("earbud") || combinedText.includes("earphone") || combinedText.includes("audio");
+        const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || combinedText.includes("men") || combinedText.includes("men's");
+        const isWomenTarget = combinedText.includes("妻子") || combinedText.includes("wife") || combinedText.includes("women") || combinedText.includes("women's");
+        
+        // 过滤：只保留与关键词相关的产品
+        const relevantMentionedProducts = mentionedProducts.filter(productName => {
+          const nameLower = productName.toLowerCase();
+          
+          // 性别过滤
+          if (isMenTarget && !isWomenTarget) {
+            if (nameLower.includes("women") || nameLower.includes("women's") || nameLower.includes("ladies") || nameLower.includes("lady")) {
+              return false;
+            }
+          }
+          if (isWomenTarget && !isMenTarget) {
+            if (nameLower.includes("men") || nameLower.includes("men's") || nameLower.includes("male")) {
+              return false;
+            }
+          }
+          
+          // 产品类型过滤
+          if (isPhoneKeywordForFilter) {
+            return nameLower.includes("phone") || nameLower.includes("agent") || nameLower.includes("quantum") || 
+                   nameLower.includes("metavertu") || nameLower.includes("ivertu") || nameLower.includes("signature");
+          } else if (isWatchKeywordForFilter) {
+            return nameLower.includes("watch") || nameLower.includes("timepiece") || nameLower.includes("grand");
+          } else if (isRingKeywordForFilter) {
+            return nameLower.includes("ring") || nameLower.includes("jewellery") || nameLower.includes("jewelry") || nameLower.includes("diamond");
+          } else if (isEarbudKeywordForFilter) {
+            return nameLower.includes("earbud") || nameLower.includes("earphone") || nameLower.includes("audio") || nameLower.includes("ows");
+          }
+          
+          // 如果没有明确的产品类型要求，检查是否包含关键词
+          if (keywordLowerForFilter && nameLower.includes(keywordLowerForFilter)) {
+            return true;
+          }
+          
+          // 默认保留（如果没有明确的过滤条件）
+          return true;
+        });
+        
+        console.log(`[task ${taskId}] SEO过滤后的相关产品: ${relevantMentionedProducts.join(", ")}`);
+        
         // 检查这些产品是否已经在产品列表中
         const existingProductNames = new Set(
           [...products, ...relatedProducts].map(p => p.name.toLowerCase())
         );
         
-        const missingProducts = mentionedProducts.filter(
+        const missingProducts = relevantMentionedProducts.filter(
           productName => !existingProductNames.has(productName.toLowerCase())
         );
         
@@ -450,12 +597,61 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return shuffled;
     }
 
-    // 将产品数组分组，每组4个，确保不重复
-    function getUniqueProductGroups(allProducts: ProductSummary[], numGroups: number, productsPerGroup: number = 4): ProductSummary[][] {
+    // 将产品数组分组，每组4个，确保不重复，优先显示与关键词相关的产品
+    function getUniqueProductGroups(allProducts: ProductSummary[], numGroups: number, productsPerGroup: number = 4, keyword: string = "", pageTitle: string = ""): ProductSummary[][] {
       if (allProducts.length === 0) return [];
       
-      // 随机打乱所有产品
-      const shuffled = shuffleArray(allProducts);
+      // SEO优化：根据关键词相关性对产品进行排序
+      const keywordLower = keyword.toLowerCase();
+      const pageTitleLower = (pageTitle || "").toLowerCase();
+      const combinedText = `${keywordLower} ${pageTitleLower}`;
+      
+      // 计算产品相关性得分
+      const scoredProducts = allProducts.map(product => {
+        let score = 0;
+        const productName = product.name.toLowerCase();
+        const productCategory = (product.category || "").toLowerCase();
+        
+        // 产品名称包含关键词
+        if (keywordLower && productName.includes(keywordLower)) {
+          score += 10;
+        }
+        
+        // 产品分类包含关键词
+        if (keywordLower && productCategory.includes(keywordLower)) {
+          score += 5;
+        }
+        
+        // 标题中明确提到的产品类型匹配
+        if (combinedText.includes("phone") || combinedText.includes("smartphone")) {
+          if (productName.includes("phone") || productName.includes("agent") || productName.includes("quantum") || productName.includes("metavertu")) {
+            score += 8;
+          }
+        }
+        if (combinedText.includes("watch") || combinedText.includes("timepiece")) {
+          if (productName.includes("watch")) {
+            score += 8;
+          }
+        }
+        if (combinedText.includes("ring")) {
+          if (productName.includes("ring")) {
+            score += 8;
+          }
+        }
+        if (combinedText.includes("earbud") || combinedText.includes("earphone")) {
+          if (productName.includes("earbud") || productName.includes("earphone")) {
+            score += 8;
+          }
+        }
+        
+        return { product, score };
+      });
+      
+      // 按相关性得分排序（得分高的在前）
+      scoredProducts.sort((a, b) => b.score - a.score);
+      
+      // 提取排序后的产品列表
+      const sortedProducts = scoredProducts.map(item => item.product);
       
       const groups: ProductSummary[][] = [];
       const usedProductIds = new Set<number>();
@@ -463,10 +659,10 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       for (let groupIndex = 0; groupIndex < numGroups; groupIndex++) {
         const group: ProductSummary[] = [];
         let attempts = 0;
-        const maxAttempts = shuffled.length * 2; // 防止无限循环
+        const maxAttempts = sortedProducts.length * 2; // 防止无限循环
         
         while (group.length < productsPerGroup && attempts < maxAttempts) {
-          for (const product of shuffled) {
+          for (const product of sortedProducts) {
             if (group.length >= productsPerGroup) break;
             
             // 如果产品未被使用，添加到当前组
@@ -476,10 +672,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             }
           }
           
-          // 如果当前组还没满，但所有产品都已使用，则重新打乱并允许重复使用
+          // 如果当前组还没满，但所有产品都已使用，则允许重复使用（但优先使用未使用的）
           if (group.length < productsPerGroup) {
-            // 允许重复使用产品（但优先使用未使用的）
-            for (const product of shuffleArray(allProducts)) {
+            for (const product of sortedProducts) {
               if (group.length >= productsPerGroup) break;
               if (!group.some(p => p.id === product.id)) {
                 group.push(product);
@@ -496,9 +691,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return groups;
     }
 
-    // 为三个产品区域准备不同的产品列表（每排4个，不重复）
+    // 为三个产品区域准备不同的产品列表（每排4个，不重复，优先显示与关键词相关的产品）
     const allProducts = [...products, ...relatedProducts];
-    const productGroups = getUniqueProductGroups(allProducts, 3, 4);
+    const productGroups = getUniqueProductGroups(allProducts, 3, 4, payload.keyword, payload.pageTitle || "");
     
     // 第一排产品（product-section）
     let productsRow1 = productGroups[0] || [];
@@ -581,19 +776,47 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     if (isTemplate4 || isTemplate5) {
       // 提前声明 keywordLower，避免在后续代码中使用时出现初始化错误
       const keywordLower = payload.keyword.toLowerCase();
+      const pageTitleLower = (payload.pageTitle || "").toLowerCase();
+      const combinedText = `${keywordLower} ${pageTitleLower}`;
+      
+      // 检测性别关键词
+      const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || 
+                          combinedText.includes("men") || combinedText.includes("men's") ||
+                          combinedText.includes("male") || combinedText.includes("gift for him") ||
+                          combinedText.includes("for him") || combinedText.includes("his");
+      const isWomenTarget = combinedText.includes("妻子") || combinedText.includes("wife") ||
+                            combinedText.includes("women") || combinedText.includes("women's") ||
+                            combinedText.includes("ladies") || combinedText.includes("lady") ||
+                            combinedText.includes("female") || combinedText.includes("gift for her") ||
+                            combinedText.includes("for her") || combinedText.includes("her");
+      
+      // 检测产品类型关键词（同时检查关键词和标题）
+      const isPhoneKeyword = keywordLower.includes("phone") || keywordLower.includes("smartphone") || 
+                            keywordLower.includes("mobile") || keywordLower.includes("cell") ||
+                            pageTitleLower.includes("phone") || pageTitleLower.includes("smartphone") ||
+                            pageTitleLower.includes("mobile") || pageTitleLower.includes("cell");
+      const isWatchKeyword = keywordLower.includes("watch") || keywordLower.includes("timepiece") ||
+                            pageTitleLower.includes("watch") || pageTitleLower.includes("timepiece");
+      const isRingKeyword = keywordLower.includes("ring") || keywordLower.includes("jewellery") ||
+                           keywordLower.includes("jewelry") || pageTitleLower.includes("ring") ||
+                           pageTitleLower.includes("jewellery") || pageTitleLower.includes("jewelry");
+      const isEarbudKeyword = keywordLower.includes("earbud") || keywordLower.includes("earphone") ||
+                              keywordLower.includes("audio") || keywordLower.includes("headphone") ||
+                              pageTitleLower.includes("earbud") || pageTitleLower.includes("earphone");
       
       // 产品相关性过滤函数：确保产品与关键词相关
       const filterRelevantProducts = (products: ProductSummary[]): ProductSummary[] => {
         const relevantKeywords: string[] = [];
         
-        // 根据关键词类型确定相关产品关键词
-        if (keywordLower.includes("phone") || keywordLower.includes("smartphone") || keywordLower.includes("mobile") || keywordLower.includes("cell")) {
+        // 根据关键词类型确定相关产品关键词（优先匹配明确的产品类型）
+        if (isPhoneKeyword) {
+          // 明确提到手机：只推荐手机产品
           relevantKeywords.push("phone", "smartphone", "mobile", "cell", "agent", "quantum", "metavertu", "ivertu", "signature");
-        } else if (keywordLower.includes("watch") || keywordLower.includes("timepiece")) {
+        } else if (isWatchKeyword) {
           relevantKeywords.push("watch", "timepiece", "grand", "meta");
-        } else if (keywordLower.includes("ring") || keywordLower.includes("jewellery") || keywordLower.includes("jewelry")) {
+        } else if (isRingKeyword) {
           relevantKeywords.push("ring", "jewellery", "jewelry", "meta ring", "aura", "diamond");
-        } else if (keywordLower.includes("earbud") || keywordLower.includes("earphone") || keywordLower.includes("audio") || keywordLower.includes("headphone")) {
+        } else if (isEarbudKeyword) {
           relevantKeywords.push("earbud", "earphone", "audio", "headphone", "ows");
         } else if (keywordLower.includes("security") || keywordLower.includes("secure") || keywordLower.includes("privacy")) {
           // 安全相关关键词：优先手机产品
@@ -607,6 +830,27 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           const productName = product.name.toLowerCase();
           const productCategory = (product.category || "").toLowerCase();
           
+          // 性别过滤：如果明确针对男性，过滤掉女士产品
+          if (isMenTarget && !isWomenTarget) {
+            // 过滤掉明确标注为女士的产品
+            if (productName.includes("women") || productName.includes("women's") ||
+                productName.includes("ladies") || productName.includes("lady") ||
+                productName.includes("female") || productCategory.includes("women") ||
+                productCategory.includes("ladies")) {
+              return false;
+            }
+          }
+          
+          // 性别过滤：如果明确针对女性，过滤掉男士产品
+          if (isWomenTarget && !isMenTarget) {
+            // 过滤掉明确标注为男士的产品
+            if (productName.includes("men") || productName.includes("men's") ||
+                productName.includes("male") || productCategory.includes("men") ||
+                productCategory.includes("male")) {
+              return false;
+            }
+          }
+          
           // 检查产品名称或分类是否包含相关关键词
           return relevantKeywords.some(keyword => 
             productName.includes(keyword.toLowerCase()) || 
@@ -619,6 +863,21 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       const relevantProductsRow1 = filterRelevantProducts(productsRow1);
       console.log(`[task ${taskId}] 产品相关性过滤:`);
       console.log(`  - 关键词: ${payload.keyword}`);
+      console.log(`  - 页面标题: ${payload.pageTitle || "未指定"}`);
+      if (isMenTarget) {
+        console.log(`  - 目标受众: 男性/丈夫 (已过滤女士产品)`);
+      } else if (isWomenTarget) {
+        console.log(`  - 目标受众: 女性/妻子 (已过滤男士产品)`);
+      }
+      if (isPhoneKeyword) {
+        console.log(`  - 产品类型: 手机 (优先推荐手机产品)`);
+      } else if (isWatchKeyword) {
+        console.log(`  - 产品类型: 手表`);
+      } else if (isRingKeyword) {
+        console.log(`  - 产品类型: 戒指`);
+      } else if (isEarbudKeyword) {
+        console.log(`  - 产品类型: 耳机`);
+      }
       console.log(`  - 第一排原始产品数: ${productsRow1.length}`);
       console.log(`  - 过滤后相关产品数: ${relevantProductsRow1.length}`);
       if (productsRow1.length > relevantProductsRow1.length) {
@@ -1089,23 +1348,56 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       comparisonItems = [...comparisonItems, ...externalComparisons.slice(0, 3)];
 
       // 内链: 只使用真实存在的链接（产品分类、官方页面、产品详情页等）
-      // keywordLower 已在上面声明，这里直接使用
+      // keywordLower, isPhoneKeyword, isWatchKeyword, isRingKeyword, isEarbudKeyword 已在上面声明（第777-802行），这里直接使用
       
-      // 基于产品分类生成内链（这些是真实存在的分类页面）
+      // SEO优化：基于产品分类生成内链（优先显示与关键词相关的分类）
       const categoryLinks: Array<{ title: string; url: string }> = [];
       const uniqueCategories = new Set<string>();
+      
+      // 优先收集与关键词相关的分类链接
+      const relevantCategoryLinks: Array<{ title: string; url: string }> = [];
+      const otherCategoryLinks: Array<{ title: string; url: string }> = [];
       
       // 从所有产品中收集分类（只使用真实的产品分类链接）
       [...productsRow1, ...productsRow2, ...productsRow3].forEach(product => {
         if (product.categoryLink && product.categoryLink.startsWith("http") && !uniqueCategories.has(product.categoryLink)) {
           uniqueCategories.add(product.categoryLink);
           const categoryName = product.category || "Products";
-          categoryLinks.push({
+          const categoryLower = categoryName.toLowerCase();
+          const categoryLinkLower = product.categoryLink.toLowerCase();
+          
+          const linkItem = {
             title: `Shop ${categoryName}`,
             url: product.categoryLink
-          });
+          };
+          
+          // 检查分类是否与关键词相关
+          let isRelevant = false;
+          if (isPhoneKeyword && (categoryLower.includes("phone") || categoryLinkLower.includes("phone"))) {
+            isRelevant = true;
+          } else if (isWatchKeyword && (categoryLower.includes("watch") || categoryLinkLower.includes("watch"))) {
+            isRelevant = true;
+          } else if (isRingKeyword && (categoryLower.includes("ring") || categoryLower.includes("jewellery") || categoryLinkLower.includes("ring"))) {
+            isRelevant = true;
+          } else if (isEarbudKeyword && (categoryLower.includes("earbud") || categoryLower.includes("earphone") || categoryLower.includes("audio") || categoryLinkLower.includes("earbud"))) {
+            isRelevant = true;
+          } else if (keywordLower && (categoryLower.includes(keywordLower) || categoryLinkLower.includes(keywordLower))) {
+            isRelevant = true;
+          }
+          
+          if (isRelevant) {
+            relevantCategoryLinks.push(linkItem);
+          } else {
+            otherCategoryLinks.push(linkItem);
+          }
         }
       });
+      
+      // 优先添加相关分类链接，然后添加其他分类链接（最多2个）
+      categoryLinks.push(...relevantCategoryLinks.slice(0, 2));
+      if (categoryLinks.length < 2) {
+        categoryLinks.push(...otherCategoryLinks.slice(0, 2 - categoryLinks.length));
+      }
       
       // 使用真实存在的官方页面链接（不生成假设的页面）
       const officialLinks: Array<{ title: string; url: string }> = [];
