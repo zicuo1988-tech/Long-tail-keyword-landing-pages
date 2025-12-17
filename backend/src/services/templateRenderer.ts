@@ -52,6 +52,11 @@ Handlebars.registerHelper("isNotEmpty", (str: any) => {
   }
   return false;
 });
+// Helper to limit array length
+Handlebars.registerHelper("limit", (array: any[] | undefined, limit: number) => {
+  if (!array || !Array.isArray(array)) return [];
+  return array.slice(0, limit);
+});
 
 export interface ComparisonItem {
   name: string;
@@ -79,6 +84,25 @@ export interface ExternalLink {
   description?: string; // 可选：链接描述
 }
 
+// 模板6新增：参考文献接口
+export interface Reference {
+  author?: string; // 作者
+  year?: string; // 年份
+  title?: string; // 标题
+  publication?: string; // 出版物/期刊
+  url?: string; // 链接
+  doi?: string; // DOI
+}
+
+// 模板6新增：外部权威资源接口
+export interface ExternalResource {
+  title: string; // 资源标题
+  url: string; // 资源链接
+  description?: string; // 资源描述
+  type?: string; // 资源类型（如：Academic Paper, Industry Report, News Article等）
+  source?: string; // 来源（如：Nature, Forbes, IEEE等）
+}
+
 export interface RenderTemplateInput {
   templateContent: string;
   pageTitle: string;
@@ -99,6 +123,9 @@ export interface RenderTemplateInput {
   comparisonItems?: ComparisonItem[]; // 对比表数据
   internalLinks?: InternalLink[]; // 内链数据
   externalLinks?: ExternalLink[]; // 外链数据
+  // 模板6新增字段
+  references?: Reference[]; // 参考文献列表
+  externalResources?: ExternalResource[]; // 外部权威资源列表
 }
 
 export function renderTemplate({
@@ -120,6 +147,8 @@ export function renderTemplate({
   comparisonItems = [],
   internalLinks = [],
   externalLinks = [],
+  references = [],
+  externalResources = [],
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
 
@@ -297,6 +326,33 @@ export function renderTemplate({
     }
   }
 
+  // 生成 Citations 结构化数据（模板6：参考文献）
+  let citationsStructuredData = "";
+  if (references && references.length > 0) {
+    try {
+      const citationsSchema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": pageTitle,
+        "citation": references.map(ref => {
+          const citation: any = {
+            "@type": "CreativeWork"
+          };
+          if (ref.title) citation.name = ref.title;
+          if (ref.author) citation.author = { "@type": "Person", "name": ref.author };
+          if (ref.year) citation.datePublished = ref.year;
+          if (ref.publication) citation.publisher = { "@type": "Organization", "name": ref.publication };
+          if (ref.url) citation.url = ref.url;
+          if (ref.doi) citation.identifier = `https://doi.org/${ref.doi}`;
+          return citation;
+        })
+      };
+      citationsStructuredData = JSON.stringify(citationsSchema, null, 2);
+    } catch (error) {
+      console.warn(`[TemplateRenderer] Failed to generate Citations structured data:`, error);
+    }
+  }
+
   const rendered = template({
     PAGE_TITLE: pageTitle,
     PAGE_DESCRIPTION: pageDescription || "", // 页面描述（用于模板2和模板3）
@@ -305,6 +361,7 @@ export function renderTemplate({
     PAGE_URL: pageUrl || "", // 页面URL（用于canonical和Open Graph）
     PAGE_IMAGE: pageImage || "", // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
     DATE_PUBLISHED: datePublished, // 发布日期（ISO格式）
+    CURRENT_DATE: new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }), // 当前日期（用于模板6底部显示）
     DATE_MODIFIED: dateModified, // 修改日期（ISO格式）
     ARTICLE_STRUCTURED_DATA: new Handlebars.SafeString(articleStructuredData), // Article结构化数据
     FAQ_STRUCTURED_DATA: new Handlebars.SafeString(faqStructuredData), // FAQ结构化数据
@@ -322,6 +379,10 @@ export function renderTemplate({
     externalLinks: externalLinks || [], // 外链数据
     ITEMLIST_STRUCTURED_DATA: itemListStructuredData ? new Handlebars.SafeString(itemListStructuredData) : "", // ItemList结构化数据
     PRODUCT_STRUCTURED_DATA: productStructuredData ? new Handlebars.SafeString(productStructuredData) : "", // Product结构化数据
+    // 模板6新增字段
+    references: references || [], // 参考文献列表
+    externalResources: externalResources || [], // 外部权威资源列表
+    CITATIONS_STRUCTURED_DATA: citationsStructuredData ? new Handlebars.SafeString(citationsStructuredData) : "", // Citations结构化数据
   });
 
   // 调试日志：检查渲染结果

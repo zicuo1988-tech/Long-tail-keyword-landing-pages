@@ -1,5 +1,117 @@
 [
   {
+    "id": "38307f84-193e-4492-9925-95a3414c38a2",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127738",
+    "createdAt": 1765875594856,
+    "updatedAt": 1765875766089,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "exclusive luxury mobile phone offers",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-exclusive-luxury-mobile-phone-offers-list-comprehensive-rankings/"
+  },
+  {
+    "id": "41fcd67b-f844-4bd1-a5ad-2e805dae8520",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127735",
+    "createdAt": 1765873260630,
+    "updatedAt": 1765873382731,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "most unique Christmas gifts for men",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-most-unique-christmas-gifts-for-men-list-comprehensive-rankings/"
+  },
+  {
+    "id": "9f97dac1-f1b9-4a6d-b27a-2ef0205b14e6",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127699",
+    "createdAt": 1765871928013,
+    "updatedAt": 1765872121542,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury christmas gifts",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-christmas-gifts-complete-ranking-list-2/"
+  },
+  {
+    "id": "5ccfe14d-2d1e-4533-8c76-8c9e78ebc511",
+    "status": "failed",
+    "message": "[HTTP 429] API 配额限制 (429)：已达到请求频率限制。建议等待 60 秒后重试，或切换到下一个 API Key。",
+    "createdAt": 1765869272758,
+    "updatedAt": 1765869987276,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury christmas gifts",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "error": "[HTTP 429] API 配额限制 (429)：已达到请求频率限制。建议等待 60 秒后重试，或切换到下一个 API Key。"
+  },
+  {
+    "id": "3ce836a7-9277-44c3-b94c-0c12bb6d10ef",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127638",
+    "createdAt": 1765868565265,
+    "updatedAt": 1765868729512,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury corporate christmas gifts ideas",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-corporate-christmas-gifts-ideas-rankings-top-list/"
+  },
+  {
+    "id": "ed59edd5-1728-4ef6-a235-0fde4bd4359f",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127632",
+    "createdAt": 1765866487443,
+    "updatedAt": 1765866723513,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "smart ring with health monitoring features luxury",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-smart-ring-with-health-monitoring-features-luxury-list-comprehensive-rankings/"
+  },
+  {
+    "id": "d0174180-7bce-492e-b184-f6fffb707ce6",
+    "status": "failed",
+    "message": "Parse error on line 1516:\n...       {{#if @index < 5}}              \n-----------------------^\nExpecting 'CLOSE_RAW_BLOCK', 'CLOSE', 'CLOSE_UNESCAPED', 'OPEN_SEXPR', 'CLOSE_SEXPR', 'ID', 'OPEN_BLOCK_PARAMS', 'STRING', 'NUMBER', 'BOOLEAN', 'UNDEFINED', 'NULL', 'DATA', 'SEP', got 'INVALID'",
+    "createdAt": 1765866222025,
+    "updatedAt": 1765866359866,
+    "details": {
+      "previousStatus": "rendering_template"
+    },
+    "keyword": "smart ring with health monitoring features luxury",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "error": "Parse error on line 1516:\n...       {{#if @index < 5}}              \n-----------------------^\nExpecting 'CLOSE_RAW_BLOCK', 'CLOSE', 'CLOSE_UNESCAPED', 'OPEN_SEXPR', 'CLOSE_SEXPR', 'ID', 'OPEN_BLOCK_PARAMS', 'STRING', 'NUMBER', 'BOOLEAN', 'UNDEFINED', 'NULL', 'DATA', 'SEP', got 'INVALID'"
+  },
+  {
+    "id": "c9ee556d-bdab-40ed-8513-61b902a0be04",
+    "status": "completed",
+    "message": "发布成功！页面 ID: 127627",
+    "createdAt": 1765865217884,
+    "updatedAt": 1765865374877,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury smartwatch for men christmas gift",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-smartwatch-for-men-christmas-gift-rankings-top-list/"
+  },
+  {
     "id": "89c3314e-9b6b-437e-a4bf-6cbc98809d68",
     "status": "completed",
     "message": "发布成功！页面 ID: 127624",

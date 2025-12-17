@@ -57,6 +57,7 @@ async function loadTemplate(templateType = "template-1") {
                          templateType === "template-3" ? "template-3.html" :
                          templateType === "template-4" ? "template-4.html" :
                          templateType === "template-5" ? "template-5.html" :
+                         templateType === "template-6" ? "template-6.html" :
                          "default-template.html";
     const response = await fetch(templateFile);
     if (response.ok) {
@@ -67,7 +68,8 @@ async function loadTemplate(templateType = "template-1") {
         "template-2": "模板2",
         "template-3": "模板3",
         "template-4": "模板4",
-        "template-5": "模板5"
+        "template-5": "模板5",
+        "template-6": "模板6"
       };
       appendLog(`已自动加载${templateNames[templateType] || templateType}`);
     } else {
@@ -482,7 +484,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     // 定义模板和标题类型循环数组
-    const templateTypes = ["template-1", "template-2", "template-3", "template-4", "template-5"];
+    const templateTypes = ["template-1", "template-2", "template-3", "template-4", "template-5", "template-6"];
     const titleTypes = [
       "purchase", "informational", "review", "commercial", "how-to",
       "recommendations", "services-guides", "tech-insights", "comparison",
@@ -508,7 +510,7 @@ form.addEventListener("submit", async (event) => {
 
       appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
       appendLog(`处理第 ${index + 1}/${keywords.length} 个关键词: "${keyword}"`, "info");
-      appendLog(`使用模板: ${currentTemplate === "template-1" ? "模板1" : currentTemplate === "template-2" ? "模板2" : currentTemplate === "template-3" ? "模板3" : currentTemplate === "template-4" ? "模板4" : currentTemplate === "template-5" ? "模板5" : "未知模板"}`, "info");
+      appendLog(`使用模板: ${currentTemplate === "template-1" ? "模板1" : currentTemplate === "template-2" ? "模板2" : currentTemplate === "template-3" ? "模板3" : currentTemplate === "template-4" ? "模板4" : currentTemplate === "template-5" ? "模板5" : currentTemplate === "template-6" ? "模板6" : "未知模板"}`, "info");
       appendLog(`使用标题类型: ${currentTitleType}`, "info");
 
       // 加载对应的模板
@@ -945,7 +947,7 @@ async function loadHistory() {
               <strong>标题类型:</strong> ${record.titleType || "N/A"}
             </span>
             <span class="history-item-meta-item">
-              <strong>模板:</strong> ${record.templateType === "template-1" ? "模板1" : record.templateType === "template-2" ? "模板2" : record.templateType === "template-3" ? "模板3" : record.templateType === "template-4" ? "模板4" : record.templateType === "template-5" ? "模板5" : "N/A"}
+              <strong>模板:</strong> ${record.templateType === "template-1" ? "模板1" : record.templateType === "template-2" ? "模板2" : record.templateType === "template-3" ? "模板3" : record.templateType === "template-4" ? "模板4" : record.templateType === "template-5" ? "模板5" : record.templateType === "template-6" ? "模板6" : "N/A"}
             </span>
             <span class="history-item-meta-item">
               <strong>生成时间:</strong> ${dateStr}

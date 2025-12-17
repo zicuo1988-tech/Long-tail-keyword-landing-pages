@@ -593,7 +593,8 @@ export async function withApiKey<T>(
         currentKey,
         async (key: string) => {
           // 在发送请求前，检查频率限制并等待（如果需要）
-          await waitForRateLimit(key, onStatusUpdate, shouldAbort);
+          // 注意：在 apiKeyManager 层面不知道具体使用的模型，传递 undefined 使用默认限流参数
+          await waitForRateLimit(key, undefined, onStatusUpdate, shouldAbort);
           
           // 检查是否应该中止（暂停）
           if (shouldAbort && shouldAbort()) {

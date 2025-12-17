@@ -2,7 +2,36 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 
+// 多模型配置：支持多个模型轮换，降低限流风险
+// 注意：只包含当前API版本确实可用的模型
+const AVAILABLE_MODELS = [
+  "gemini-2.5-pro",      // 主要模型：高质量，适合复杂任务
+  "gemini-2.0-flash",    // 快速模型：配额更高，适合简单任务
+] as const;
+
 const DEFAULT_MODEL = "gemini-2.5-pro";
+const FALLBACK_MODELS = ["gemini-2.0-flash"]; // 只保留确实可用的备选模型
+
+// 模型选择策略：根据任务复杂度选择模型
+function selectModel(templateType?: string, isComplexTask: boolean = false): string {
+  // 模板6需要高质量内容，优先使用pro模型
+  if (templateType === "template-6") {
+    return "gemini-2.5-pro";
+  }
+  
+  // 长内容模板（3/4/5）使用pro模型
+  if (templateType === "template-3" || templateType === "template-4" || templateType === "template-5") {
+    return "gemini-2.5-pro";
+  }
+  
+  // 复杂任务使用pro模型
+  if (isComplexTask) {
+    return "gemini-2.5-pro";
+  }
+  
+  // 简单任务使用flash模型（配额更高，速度更快）
+  return "gemini-2.0-flash";
+}
 const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
 const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
@@ -38,15 +67,25 @@ export interface GeneratedContent {
 }
 
 /**
- * 使用官方 SDK 生成内容
+ * 使用官方 SDK 生成内容（支持模型轮换，降低限流风险）
  */
-async function generateWithKey(apiKey: string, keyword: string, pageTitle: string, titleType?: string, templateType?: string, userPrompt?: string, knowledgeBaseContent?: string): Promise<GeneratedContent> {
+async function generateWithKey(
+  apiKey: string, 
+  keyword: string, 
+  pageTitle: string, 
+  titleType?: string, 
+  templateType?: string, 
+  userPrompt?: string, 
+  knowledgeBaseContent?: string,
+  preferredModel?: string // 可选：指定优先使用的模型
+): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
   // template-3/4/5 为长内容模式，无严格字数上限
   const isTemplate3 = templateType === "template-3";
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
-  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5;
+  const isTemplate6 = templateType === "template-6";
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
   const isTemplate4Or5 = isTemplate4 || isTemplate5;
   const currentMinLength = MIN_ARTICLE_LENGTH;
   const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH; // 模板3/4/5 允许更长的内容
@@ -54,24 +93,32 @@ async function generateWithKey(apiKey: string, keyword: string, pageTitle: strin
   // 获取当前年份（动态，避免硬编码）
   const currentYear = new Date().getFullYear();
   
-  // 统一使用稳定模型，避免 preview 模型触发更多限流
-  const modelName = DEFAULT_MODEL;
+  // 智能模型选择：根据任务复杂度选择最佳模型，降低限流风险
+  // 如果指定了preferredModel，优先使用（用于模型轮换）
+  const isComplexTask = isLongFormTemplate || !!userPrompt || keyword.length > 50;
+  let modelName = preferredModel || selectModel(templateType, isComplexTask);
   
   // 初始化 Google AI 客户端
   const genAI = new GoogleGenerativeAI(apiKey);
   
-  // 获取模型实例（根据模板类型和 Key 类型调整 maxOutputTokens）
+  // 获取模型实例（根据模板类型和模型类型调整 maxOutputTokens）
+  // Flash模型通常有更高的配额限制，但输出token可能更少
+  const isFlashModel = modelName.includes("flash");
+  const maxOutputTokens = isLongFormTemplate 
+    ? 8192 // 长内容模板使用8192
+    : 4096; // 简单任务使用4096
+  
   const model = genAI.getGenerativeModel({ 
     model: modelName,
     generationConfig: {
       temperature: 0.7,
       topP: 0.95,
       topK: 40,
-      maxOutputTokens: isLongFormTemplate ? 8192 : 4096, // 模板3/4/5 允许更长的内容
+      maxOutputTokens: maxOutputTokens,
     },
   });
 
-  console.log(`[GoogleAI] Using model: ${modelName} with SDK`);
+  console.log(`[GoogleAI] Using model: ${modelName} (${isFlashModel ? 'Flash - 高配额，适合简单任务' : 'Pro - 高质量，适合复杂任务'}) with SDK`);
 
   // 验证内容是否包含中文字符
   function containsChinese(text: string): boolean {
@@ -1222,7 +1269,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
 
     // 生成页面描述（用于模板2、模板3、模板4和模板5，生成完整的描述段落）
     let pageDescription = "";
-    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4" || templateType === "template-5";
+    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4" || templateType === "template-5" || templateType === "template-6";
     
     if (needsFullDescription) {
       try {
@@ -1591,11 +1638,13 @@ Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul
       console.error(`[GoogleAI] 网络连接失败，错误详情:`, error);
     }
 
-    // 处理 404 错误（模型不存在）
-    if (statusCode === 404 || errorMessage.includes("not found") || errorMessage.includes("404")) {
+    // 处理 404 错误（模型不存在或不可用）
+    if (statusCode === 404 || errorMessage.includes("not found") || errorMessage.includes("404") || errorMessage.includes("is not found")) {
       statusCode = 404;
       errorMessage = `模型 ${modelName} 不可用。错误信息: ${errorMessage}`;
-      console.error(`[GoogleAI] 模型 ${modelName} 不可用，请检查模型名称是否正确`);
+      console.error(`[GoogleAI] 模型 ${modelName} 不可用（404），将自动切换到其他可用模型`);
+      // 标记为API Key错误，以便触发模型轮换
+      isApiKeyError = true;
     }
 
     // 处理 400 地理位置限制错误（User location is not supported）
@@ -2406,7 +2455,8 @@ function isArticleRich(html: string, templateType?: string): boolean {
   const isTemplate3 = templateType === "template-3";
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
-  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5;
+  const isTemplate6 = templateType === "template-6";
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
   const currentMinLength = MIN_ARTICLE_LENGTH;
   const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH;
   
@@ -2816,15 +2866,97 @@ export async function generatePageTitle({ apiKey, keyword, titleType, onStatusUp
   );
 }
 
+/**
+ * 带模型轮换的内容生成（429错误时自动切换模型）
+ */
+async function generateWithModelRotation(
+  apiKey: string,
+  keyword: string,
+  pageTitle: string,
+  titleType?: string,
+  templateType?: string,
+  userPrompt?: string,
+  knowledgeBaseContent?: string,
+  onStatusUpdate?: (message: string) => void,
+  attemptedModels: string[] = []
+): Promise<GeneratedContent> {
+  const isTemplate3 = templateType === "template-3";
+  const isTemplate4 = templateType === "template-4";
+  const isTemplate5 = templateType === "template-5";
+  const isTemplate6 = templateType === "template-6";
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
+  const isComplexTask = isLongFormTemplate || !!userPrompt || keyword.length > 50;
+  
+  // 选择模型（优先使用未尝试过的模型）
+  let modelName = selectModel(templateType, isComplexTask);
+  
+  // 如果当前模型已尝试过，选择下一个可用模型
+  if (attemptedModels.includes(modelName)) {
+    const availableModels = isComplexTask 
+      ? AVAILABLE_MODELS.filter(m => !m.includes("flash") && !attemptedModels.includes(m))
+      : AVAILABLE_MODELS.filter(m => !attemptedModels.includes(m));
+    
+    if (availableModels.length > 0) {
+      modelName = availableModels[0];
+      console.log(`[GoogleAI] 模型 ${attemptedModels[attemptedModels.length - 1]} 遇到限流，切换到模型: ${modelName}`);
+      onStatusUpdate?.(`模型限流，切换到 ${modelName}...`);
+    } else {
+      // 所有模型都尝试过了，使用第一个模型
+      modelName = AVAILABLE_MODELS[0];
+      console.warn(`[GoogleAI] 所有模型都已尝试，使用默认模型: ${modelName}`);
+    }
+  }
+  
+  // 在发送请求前，根据模型类型等待限流（优化：不同模型有不同的限流参数）
+  try {
+    const { waitForRateLimit } = await import("./rateLimiter.js");
+    await waitForRateLimit(apiKey, modelName, onStatusUpdate);
+  } catch (rateLimitError) {
+    // 如果限流等待失败（如任务暂停），抛出错误
+    throw rateLimitError;
+  }
+  
+  try {
+    return await generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, modelName);
+  } catch (error: any) {
+    const statusCode = error?.statusCode || 0;
+    const errorMessage = error?.message || "";
+    
+    // 检查是否是404错误（模型不可用）
+    const is404 = statusCode === 404 || errorMessage.includes("404") || errorMessage.includes("not found") || errorMessage.includes("is not found");
+    
+    // 检查是否是429错误（配额限制）
+    const is429 = statusCode === 429 || errorMessage.includes("429") || errorMessage.includes("quota") || errorMessage.includes("Too Many Requests");
+    
+    // 如果是404或429错误，且还有未尝试的模型，切换到下一个模型
+    if ((is404 || is429) && attemptedModels.length < AVAILABLE_MODELS.length - 1) {
+      const newAttemptedModels = [...attemptedModels, modelName];
+      const errorType = is404 ? "不可用(404)" : "限流(429)";
+      console.log(`[GoogleAI] 模型 ${modelName} 遇到${errorType}，尝试下一个模型... (已尝试: ${newAttemptedModels.join(", ")})`);
+      onStatusUpdate?.(`模型 ${modelName} ${is404 ? "不可用" : "限流"}，切换到下一个模型...`);
+      
+      // 等待一小段时间后重试
+      await new Promise(resolve => setTimeout(resolve, is404 ? 1000 : 2000));
+      
+      return generateWithModelRotation(
+        apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate, newAttemptedModels
+      );
+    }
+    
+    // 如果不是404/429错误，或所有模型都已尝试，抛出错误
+    throw error;
+  }
+}
+
 export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate, shouldAbort }: GenerateContentOptions): Promise<GeneratedContent> {
-  // 如果提供了 apiKey，直接使用（向后兼容）
+  // 如果提供了 apiKey，直接使用（向后兼容）+ 模型轮换
   if (apiKey) {
-    return generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE);
+    return generateWithModelRotation(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate);
   }
 
-  // 否则使用 API Key 管理器（支持多 Key 轮换和故障转移）
+  // 否则使用 API Key 管理器（支持多 Key 轮换和故障转移）+ 模型轮换
   return withApiKey(
-    (key) => generateWithKey(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE),
+    (key) => generateWithModelRotation(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate),
     5, // maxRetries
     onStatusUpdate, // 传递状态更新回调
     shouldAbort // 传递暂停检查回调

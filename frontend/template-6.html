@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{PAGE_TITLE}}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{META_DESCRIPTION}}" />
+    <meta name="keywords" content="{{META_KEYWORDS}}" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="VERTU" />
+    <link rel="canonical" href="{{PAGE_URL}}" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="{{PAGE_URL}}" />
+    <meta property="og:title" content="{{PAGE_TITLE}}" />
+    <meta property="og:description" content="{{META_DESCRIPTION}}" />
+    {{#if (isNotEmpty PAGE_IMAGE)}}
+    <meta property="og:image" content="{{PAGE_IMAGE}}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="{{PAGE_TITLE}}" />
+    {{/if}}
+    <meta property="og:site_name" content="VERTU" />
+    <meta property="og:locale" content="en_GB" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{PAGE_TITLE}}" />
+    <meta name="twitter:description" content="{{META_DESCRIPTION}}" />
+    {{#if (isNotEmpty PAGE_IMAGE)}}
+    <meta name="twitter:image" content="{{PAGE_IMAGE}}" />
+    <meta name="twitter:image:alt" content="{{PAGE_TITLE}}" />
+    {{/if}}
+    
+    <!-- Structured Data (Schema.org JSON-LD) -->
+    {{#if ARTICLE_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{ARTICLE_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    
+    <!-- FAQPage Structured Data -->
+    {{#if FAQ_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{FAQ_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    {{#if ITEMLIST_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{ITEMLIST_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    {{#if PRODUCT_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{PRODUCT_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    
+    <!-- Citations Structured Data -->
+    {{#if CITATIONS_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{CITATIONS_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    
+    <!-- BreadcrumbList Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://vertu.com"
+      }, {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://vertu.com/blog"
+      }, {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "{{PAGE_TITLE}}",
+        "item": "{{PAGE_URL}}"
+      }]
+    }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Arial", sans-serif;
+            background-color: #f5f5f5;
+            color: #000000;
+            line-height: 1.6;
+            background: #fff;
+        }
+
+        .container {
+            margin: 0 auto;
+        }
+
+        .content-container {
+            background-color: #ffffff;
+            padding-left: 160px;
+            padding-right: 160px;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        h2{
+            font-size: 1.2rem !important;
+        }
+
+        /* Hero Section - 首屏优化 */
+        .hero-section {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: #ffffff;
+            padding: 80px 160px;
+            text-align: center;
+            position: relative;
+            overflow: visible;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            overflow: visible;
+        }
+        .ast-container{
+            max-width: 100% !important; 
+            padding-right: unset !important;
+            padding-left: unset !important;
+        }
+        .hero-title {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+            line-height: 1.8;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            padding: 0 20px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
+            display: block;
+            min-height: auto;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .cta-primary {
+            background-color: #ffffff;
+            color: #000000;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid #ffffff;
+        }
+
+        .cta-primary:hover {
+            background-color: transparent;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .cta-secondary {
+            background-color: transparent;
+            color: #ffffff;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 2px solid #ffffff;
+        }
+
+        .cta-secondary:hover {
+            background-color: #ffffff;
+            color: #000000;
+            transform: translateY(-2px);
+        }
+
+        /* Trust Badges - 信任元素 */
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 60px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .trust-badge-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .trust-badge-text {
+            font-size: 14px;
+            opacity: 0.8;
+            text-align: center;
+        }
+
+        /* Quick Stats - 快速统计 */
+        .quick-stats {
+            background: #f8f8f8;
+            padding: 40px 160px;
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #000000;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* Product Section - 产品展示区域 */
+        .product-section {
+            padding: 50px 80px;
+            background-color: #F2F2F2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .product-section2 {
+            padding: 50px 80px;
+            background-color: #F2F2F2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .product-header {
+            margin-bottom: 30px;
+            max-width: 1760px;
+            width: 100%;
+        }
+
+        .product-title {
+            font-size: 32px;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .products-grid {
+            display: flex;
+            justify-content: center;
+            gap: 26px;
+            max-width: 1760px;
+            width: 100%;
+        }
+
+        .product-card {
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            width: 100%;
+            max-width: 425px;
+            box-sizing: border-box;
+            display: block;
+            background: #ffffff;
+            padding: 20px;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-labels {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .product-tag {
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 500;
+            background-color: #ecf0f1;
+            color: #333;
+        }
+
+        .product-tag.hot {
+            background-color: #e74c3c;
+            color: #ffffff;
+        }
+
+        .product-tag.new {
+            background-color: #27ae60;
+            color: #ffffff;
+        }
+
+        .product-card-img-wrap {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .product-image-link {
+            display: block;
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image-link img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover .product-image-link img {
+            transform: scale(1.05);
+        }
+
+        .woocommerce-loop-product__title {
+            font-size: 16px;
+            font-weight: 400;
+            color: #333;
+            margin: 0 0 10px 0;
+            line-height: 1.4;
+            text-align: left !important;
+            overflow: hidden;
+        }
+
+        .product-title-link {
+            color: #333;
+            text-decoration: none;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+        .product-title-link:hover {
+            color: #000;
+            text-decoration: underline;
+        }
+
+        .price {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+
+        .woocommerce-Price-amount {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .original-price {
+            font-size: 12px;
+            color: #95a5a6;
+            text-decoration: line-through;
+            margin-left: 8px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .btn-group .button,
+        .btn-group .learn-more {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 20px;
+            border: 2px solid #000 !important;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            line-height: 1.2;
+            box-sizing: border-box;
+        }
+
+        .btn-group .button {
+            background-color: #000000;
+            color: white;
+        }
+
+        .btn-group .button:hover {
+            background-color: #ffffff !important;
+            color: black !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-group .learn-more {
+            background-color: white;
+            color: #000000;
+        }
+
+        .btn-group .learn-more:hover {
+            background-color: #000000;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* References Section - 参考文献部分 */
+        .references-section {
+            background-color: #ffffff;
+            padding: 60px 160px;
+            margin-top: 40px;
+            border-top: 2px solid #e6e6e6;
+        }
+
+        .references-title {
+            font-size: 28px !important;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #111;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+
+        .references-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .reference-item {
+            margin-bottom: 20px;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.8;
+        }
+
+        .reference-number {
+            position: absolute;
+            left: 0;
+            font-weight: 600;
+            color: #000;
+            z-index: 0;
+        }
+
+        .reference-content {
+            color: #333;
+            position: relative;
+            z-index: 1;
+        }
+
+        .reference-content a,
+        .reference-link {
+            color: #0066cc !important;
+            text-decoration: underline !important;
+            border-bottom: 1px solid #0066cc;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: inline-block;
+            font-weight: 500;
+        }
+
+        .reference-content a:hover,
+        .reference-link:hover {
+            color: #0052a3 !important;
+            border-bottom: 2px solid #0052a3;
+            text-decoration: underline !important;
+            background-color: rgba(0, 102, 204, 0.05);
+        }
+
+        .reference-content a:active,
+        .reference-link:active {
+            color: #003d7a !important;
+        }
+
+        .reference-content a:visited,
+        .reference-link:visited {
+            color: #551a8b !important;
+        }
+
+        .reference-author {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .reference-year {
+            color: #666;
+            font-style: italic;
+        }
+
+        /* External Resources Section - 外部资源部分 */
+        .external-resources-section {
+            background-color: #f8f8f8;
+            padding: 60px 160px;
+            margin-top: 40px;
+        }
+
+        .resources-title {
+            font-size: 28px !important;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #111;
+            text-align: center;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 30px;
+        }
+
+        .resource-card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e6e6e6;
+            transition: all 0.3s ease;
+        }
+
+        .resource-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .resource-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .resource-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #111;
+        }
+
+        .resource-title a {
+            color: #111;
+            text-decoration: none;
+        }
+
+        .resource-title a:hover {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+
+        .resource-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .resource-source {
+            font-size: 12px;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Related Resources Section - 相关资源推荐 */
+        .related-resources-section {
+            background-color: #ffffff;
+            padding: 60px 160px;
+            margin-top: 40px;
+        }
+
+        .related-resources-title {
+            font-size: 28px !important;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #111;
+            text-align: center;
+        }
+
+        /* Links Section - 链接部分 */
+        .links-section {
+            background-color: #ffffff;
+            padding: 40px 160px;
+            margin-top: 40px;
+        }
+
+        .links-title {
+            font-size: 24px !important;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #111;
+        }
+
+        .links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .links-list li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .links-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #666;
+        }
+
+        .links-list a {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .links-list a:hover {
+            text-decoration: underline;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            padding: 80px 0 120px;
+            background: #ffffff;
+        }
+
+        .faq-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .faq-title {
+            text-align: center;
+            font-size: 28px !important;
+            font-weight: 700;
+            margin-bottom: 36px;
+            color: #111;
+        }
+
+        .accordion {
+            border-top: 1px solid #e6e6e6;
+            width: 100%;
+        }
+
+        .accordion-item {
+            border-bottom: 1px solid #e6e6e6;
+            padding: 18px 0;
+        }
+
+        .accordion-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            cursor: pointer;
+        }
+
+        .accordion-question {
+            font-size: 18px;
+            color: #111;
+        }
+
+        .accordion-icon {
+            font-size: 20px;
+            color: #111;
+            line-height: 1;
+        }
+
+        .accordion-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.7;
+            margin-top: 0;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.35s ease, opacity 0.35s ease, margin-top 0.35s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            opacity: 1;
+            margin-top: 12px;
+        }
+
+        .accordion-item .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-icon {
+            transform: rotate(45deg);
+        }
+
+        /* Social Share - 社交分享 */
+        .social-share {
+            padding: 40px 160px;
+            background: #f8f8f8;
+            text-align: center;
+            border-top: 1px solid #e6e6e6;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .social-share-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .social-share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .social-share-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 2px solid;
+        }
+
+        .social-share-btn.facebook {
+            background: #1877f2;
+            color: #ffffff;
+            border-color: #1877f2;
+        }
+
+        .social-share-btn.twitter {
+            background: #1da1f2;
+            color: #ffffff;
+            border-color: #1da1f2;
+        }
+
+        .social-share-btn.linkedin {
+            background: #0077b5;
+            color: #ffffff;
+            border-color: #0077b5;
+        }
+
+        .social-share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            padding: 60px 160px;
+            background: #ffffff;
+        }
+
+        .comparison-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            border: 1px solid #e6e6e6;
+        }
+
+        .comparison-table thead {
+            background-color: #f8f8f8;
+        }
+
+        .comparison-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .comparison-table tr:hover {
+            background-color: #fafafa;
+        }
+
+        /* SEO Bottom Section - 底部SEO优化内容区域 */
+        .seo-bottom-section {
+            background-color: #f8f8f8;
+            padding: 60px 160px;
+            margin-top: 40px;
+            border-top: 1px solid #e6e6e6;
+        }
+
+        .seo-bottom-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .seo-bottom-block {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .seo-bottom-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #000;
+        }
+
+        .seo-bottom-links,
+        .seo-bottom-resources,
+        .seo-bottom-products {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .seo-bottom-links li,
+        .seo-bottom-resources li,
+        .seo-bottom-products li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .seo-bottom-links li::before,
+        .seo-bottom-resources li::before,
+        .seo-bottom-products li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .seo-bottom-links a,
+        .seo-bottom-resources a,
+        .seo-bottom-products a {
+            color: #111;
+            text-decoration: none;
+            font-size: 15px;
+            line-height: 1.6;
+            transition: color 0.3s ease;
+        }
+
+        .seo-bottom-links a:hover,
+        .seo-bottom-resources a:hover,
+        .seo-bottom-products a:hover {
+            color: #0066cc;
+            text-decoration: underline;
+        }
+
+        .seo-bottom-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .seo-bottom-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .resource-source-badge {
+            font-size: 12px;
+            color: #999;
+            margin-left: 8px;
+            font-style: italic;
+        }
+
+        .seo-bottom-content time {
+            font-weight: 600;
+            color: #000;
+        }
+
+        /* Post-Share SEO Enhancement Section - 分享后SEO增强区域 */
+        .post-share-section {
+            background-color: #ffffff;
+            padding: 60px 160px;
+            margin-top: 0;
+            border-top: none;
+            clear: both;
+        }
+
+        .post-share-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .post-share-block {
+            background-color: #ffffff;
+            padding: 30px;
+            border: 1px solid #e6e6e6;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .post-share-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .post-share-description {
+            display: none; /* 移除描述文字，纯文本展示 */
+        }
+
+        .post-share-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .post-share-links li {
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .post-share-links li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .post-share-links a {
+            color: #111;
+            text-decoration: underline;
+            font-size: 15px;
+            line-height: 1.8;
+            transition: color 0.3s ease;
+        }
+
+        .post-share-links a:hover {
+            color: #0066cc;
+        }
+
+        .post-share-links .resource-source-badge {
+            font-size: 12px;
+            color: #999;
+            margin-left: 6px;
+            font-style: italic;
+        }
+
+        .post-share-trust {
+            background-color: #ffffff;
+        }
+
+        .post-share-trust-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .post-share-trust-list li {
+            margin-bottom: 16px;
+            padding-left: 24px;
+            position: relative;
+            font-size: 15px;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .post-share-trust-list li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #0066cc;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .post-share-content {
+            background-color: #ffffff;
+        }
+
+        .post-share-content-text {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .post-share-references-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .post-share-references-list li {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .post-share-references-list li:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .post-share-references-list li strong {
+            color: #111;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .post-share-trust-list li strong {
+            color: #111;
+            font-weight: 600;
+        }
+
+        /* Product Title Full Display */
+        .woocommerce-loop-product__title {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .product-title-link {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .content-container,
+            .hero-section,
+            .quick-stats,
+            .references-section,
+            .external-resources-section,
+            .related-resources-section,
+            .links-section,
+            .comparison-section,
+            .seo-bottom-section,
+            .post-share-section {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+            
+            .seo-bottom-container,
+            .post-share-container {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 30px;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+            
+            .hero-subtitle {
+                max-width: 100%;
+                padding: 0 20px;
+                line-height: 1.7;
+            }
+            
+            .hero-section {
+                padding: 70px 40px;
+            }
+            
+            .hero-content {
+                padding: 0 10px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* 按钮自适应优化 - 中等屏幕 */
+            .btn-group {
+                gap: 8px;
+            }
+            
+            .btn-group .button,
+            .btn-group .learn-more {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+        }
+        
+        /* 平板设备优化 (768px - 1024px) */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .btn-group {
+                gap: 10px;
+            }
+            
+            .btn-group .button,
+            .btn-group .learn-more {
+                padding: 12px 18px;
+                font-size: 14px;
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-container,
+            .hero-section,
+            .quick-stats,
+            .references-section,
+            .external-resources-section,
+            .related-resources-section,
+            .links-section,
+            .comparison-section {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .comparison-table {
+                font-size: 12px;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 8px;
+            }
+            
+            .seo-bottom-section,
+            .post-share-section {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .seo-bottom-container,
+            .post-share-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .seo-bottom-block,
+            .post-share-block {
+                padding: 20px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+                padding: 0 20px;
+                line-height: 1.7;
+                max-width: 100%;
+                white-space: normal;
+                overflow: visible;
+                text-overflow: clip;
+                display: block;
+                min-height: auto;
+            }
+            
+            .hero-content {
+                padding: 0 10px;
+            }
+            
+            .hero-section {
+                padding: 60px 20px;
+            }
+
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 按钮自适应优化 - 移动端 */
+            .btn-group {
+                flex-direction: row;
+                gap: 8px;
+                width: 100%;
+            }
+            
+            .btn-group .button,
+            .btn-group .learn-more {
+                flex: 1;
+                padding: 12px 12px;
+                font-size: 13px;
+                min-width: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+        
+        /* 小屏幕手机优化 (最大480px) */
+        @media (max-width: 480px) {
+            .btn-group {
+                gap: 6px;
+            }
+            
+            .btn-group .button,
+            .btn-group .learn-more {
+                padding: 10px 8px;
+                font-size: 12px;
+                letter-spacing: -0.3px;
+            }
+        }
+        
+        /* 超小屏幕优化 (最大360px) */
+        @media (max-width: 360px) {
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn-group .button,
+            .btn-group .learn-more {
+                width: 100%;
+                padding: 12px 16px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">{{PAGE_TITLE}}</h1>
+            {{#if PAGE_DESCRIPTION}}
+            <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
+            {{/if}}
+            <div class="hero-cta">
+                <a href="#products" class="cta-primary">Shop Now</a>
+                <a href="#comparison" class="cta-secondary">Compare Products</a>
+            </div>
+        </div>
+    </section>
+
+ 
+
+    {{#if topProducts.length}}
+    <!-- Top Picks Section -->
+    <section id="products" class="product-section">
+        <div class="product-header">
+            <h2 class="product-title">Top Picks</h2>
+        </div>
+        <div class="products-grid">
+            {{#each topProducts}}
+            <div class="product-card lazy-load lazy-loaded" data-product-id="{{this.id}}">
+                {{#if this.onSale}}
+                <div class="card-labels">
+                    <span class="product-tag hot">On Sale</span>
+                    {{#if this.tag}}
+                        {{#unless (isDuplicateSaleTag this.tag this.onSale)}}
+                        <span class="product-tag">{{this.tag}}</span>
+                        {{/unless}}
+                    {{/if}}
+                </div>
+                {{else}}
+                    {{#if this.tag}}
+                    <div class="card-labels">
+                        <span class="product-tag">{{this.tag}}</span>
+                    </div>
+                    {{/if}}
+                {{/if}}
+
+                <div class="product-card-img-wrap">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                        {{#if this.imageUrl}}
+                        <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{else}}
+                        <img width="600" height="600" src="https://via.placeholder.com/600x600?text=No+Image" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{/if}}
+                    </a>
+                </div>
+
+                <h2 class="woocommerce-loop-product__title">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
+                </h2>
+
+                <span class="price">
+                    {{#if this.price}}
+                        {{#if this.isPriceRange}}From {{/if}}<span class="woocommerce-Price-amount amount"><bdi>{{this.price}}</bdi></span>
+                        {{#if this.onSale}}
+                            {{#if this.originalPrice}}
+                                {{#if this.isPriceRange}}
+                                    <span class="original-price">From {{this.originalPrice}}</span>
+                                {{else}}
+                                    <span class="original-price">{{this.originalPrice}}</span>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    {{else}}
+                        Price available on store
+                    {{/if}}
+                </span>
+
+                <div class="btn-group">
+                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    {{/if}}
+
+    <!-- Content Section -->
+    <div class="content-container">
+        <div class="content">
+            {{{AI_GENERATED_CONTENT}}}
+        </div>
+    </div>
+
+    {{#if comparisonItems.length}}
+    <!-- Comparison Section -->
+    <section class="comparison-section" id="comparison">
+        <h2 class="comparison-title">Comparison at a Glance</h2>
+        <p style="margin-bottom: 16px; color: #666; font-size: 14px; text-align: center;">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
+        <div class="table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Category</th>
+                        <th>Material</th>
+                        <th>Key Feature</th>
+                        <th>Display/Size</th>
+                        <th>Battery/Power</th>
+                        <th>Concierge Service</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each comparisonItems}}
+                    <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
+                        <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
+                            {{#if this.externalUrl}}
+                                <a href="{{this.externalUrl}}" target="_blank" rel="noopener noreferrer nofollow" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                                <span style="color: #999; font-size: 12px; margin-left: 4px;">(External)</span>
+                            {{else if this.productLink}}
+                                <a href="{{this.productLink}}" target="_blank" rel="noopener noreferrer" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                            {{else}}
+                                {{this.name}}
+                            {{/if}}
+                        </td>
+                        <td>{{this.feature}}</td>
+                        <td>{{#if this.material}}{{this.material}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if this.keyFeature}}{{this.keyFeature}}{{else}}Premium{{/if}}</td>
+                        <td>{{#if this.display}}{{this.display}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if this.battery}}{{this.battery}}{{else}}N/A{{/if}}</td>
+                        <td style="{{#unless this.isExternal}}font-weight: 600; color: #d32f2f;{{/unless}}">
+                            {{#if this.conciergeService}}
+                                {{#if this.conciergeServiceLink}}
+                                    <a href="{{this.conciergeServiceLink}}" target="_blank" rel="noopener noreferrer" style="color: #d32f2f; text-decoration: underline; font-weight: 600;">{{this.conciergeService}}</a>
+                                {{else}}
+                                    <span style="color: #d32f2f; font-weight: 600;">{{this.conciergeService}}</span>
+                                {{/if}}
+                            {{else}}
+                                <span style="color: #999;">N/A</span>
+                            {{/if}}
+                        </td>
+                        <td style="font-weight: 500;">{{this.price}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic; text-align: center;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
+    </section>
+    {{/if}}
+
+    {{#if references.length}}
+    <!-- References Section - 参考文献部分 -->
+    <section class="references-section">
+        <h2 class="references-title">References</h2>
+        <ol class="references-list">
+            {{#each references}}
+            <li class="reference-item">
+                <span class="reference-number">{{@index}}</span>
+                <div class="reference-content">
+                    {{#if this.author}}
+                    <span class="reference-author">{{this.author}}</span>
+                    {{#if this.year}}<span class="reference-year"> ({{this.year}})</span>{{/if}}.
+                    {{/if}}
+                    {{#if this.title}}
+                    <em>{{this.title}}</em>.
+                    {{/if}}
+                    {{#if this.publication}}
+                    {{this.publication}}.
+                    {{/if}}
+                    {{#if this.url}}
+                    <a href="{{this.url}}" target="_blank" rel="noopener noreferrer nofollow" class="reference-link">{{#if this.title}}{{this.title}}{{else}}{{this.url}}{{/if}}</a>
+                    {{/if}}
+                    {{#if this.doi}}
+                    DOI: <a href="https://doi.org/{{this.doi}}" target="_blank" rel="noopener noreferrer nofollow" class="reference-link">{{this.doi}}</a>
+                    {{/if}}
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+    </section>
+    {{/if}}
+
+    {{#if externalResources.length}}
+    <!-- External Resources Section - 外部权威资源 -->
+    <section class="external-resources-section">
+        <h2 class="resources-title">External Resources & Further Reading</h2>
+        <div class="resources-grid">
+            {{#each externalResources}}
+            <div class="resource-card">
+                {{#if this.type}}
+                <div class="resource-type">{{this.type}}</div>
+                {{/if}}
+                <h3 class="resource-title">
+                    <a href="{{this.url}}" target="_blank" rel="noopener noreferrer nofollow">{{this.title}}</a>
+                </h3>
+                {{#if this.description}}
+                <p class="resource-description">{{this.description}}</p>
+                {{/if}}
+                {{#if this.source}}
+                <div class="resource-source">Source: {{this.source}}</div>
+                {{/if}}
+            </div>
+            {{/each}}
+        </div>
+    </section>
+    {{/if}}
+
+    {{#if products.length}}
+    <!-- Product Section -->
+    <div class="product-section">
+        <div class="products-grid">
+            {{#each products}}
+            <div class="product-card lazy-load lazy-loaded" data-product-id="{{this.id}}">
+                {{#if this.onSale}}
+                <div class="card-labels">
+                    <span class="product-tag hot">On Sale</span>
+                    {{#if this.tag}}
+                        {{#unless (isDuplicateSaleTag this.tag this.onSale)}}
+                        <span class="product-tag">{{this.tag}}</span>
+                        {{/unless}}
+                    {{/if}}
+                </div>
+                {{else}}
+                    {{#if this.tag}}
+                    <div class="card-labels">
+                        <span class="product-tag">{{this.tag}}</span>
+                    </div>
+                    {{/if}}
+                {{/if}}
+
+                <div class="product-card-img-wrap">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                        {{#if this.imageUrl}}
+                        <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{else}}
+                        <img width="600" height="600" src="https://via.placeholder.com/600x600?text=No+Image" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{/if}}
+                    </a>
+                </div>
+
+                <h2 class="woocommerce-loop-product__title">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
+                </h2>
+
+                <span class="price">
+                    {{#if this.price}}
+                        {{#if this.isPriceRange}}From {{/if}}<span class="woocommerce-Price-amount amount"><bdi>{{this.price}}</bdi></span>
+                        {{#if this.onSale}}
+                            {{#if this.originalPrice}}
+                                {{#if this.isPriceRange}}
+                                    <span class="original-price">From {{this.originalPrice}}</span>
+                                {{else}}
+                                    <span class="original-price">{{this.originalPrice}}</span>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    {{else}}
+                        Price available on store
+                    {{/if}}
+                </span>
+
+                <div class="btn-group">
+                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if internalLinks.length}}
+    <!-- Internal Links -->
+    <div class="links-section">
+        <h2 class="links-title">Related Guides</h2>
+        <ul class="links-list">
+            {{#each internalLinks}}
+            <li><a href="{{this.url}}" target="_blank" rel="noopener noreferrer">{{this.title}}</a></li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+
+    {{#if externalLinks.length}}
+    <!-- External Links -->
+    <div class="links-section">
+        <h2 class="links-title">External Resources</h2>
+        <ul class="links-list">
+            {{#each externalLinks}}
+            <li>
+                <a href="{{this.url}}" target="_blank" rel="noopener noreferrer nofollow">{{this.title}}</a>
+                {{#if this.description}}
+                <span style="display: block; color: #666; font-size: 14px; margin-top: 4px; padding-left: 0;">{{this.description}}</span>
+                {{/if}}
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+
+    {{#if productsRow2.length}}
+    <!-- Product Section 2 -->
+    <div class="product-section2">
+        <div class="products-grid">
+            {{#each productsRow2}}
+            <div class="product-card lazy-load lazy-loaded" data-product-id="{{this.id}}">
+                {{#if this.onSale}}
+                <div class="card-labels">
+                    <span class="product-tag hot">On Sale</span>
+                    {{#if this.tag}}
+                        {{#unless (isDuplicateSaleTag this.tag this.onSale)}}
+                        <span class="product-tag">{{this.tag}}</span>
+                        {{/unless}}
+                    {{/if}}
+                </div>
+                {{else}}
+                    {{#if this.tag}}
+                    <div class="card-labels">
+                        <span class="product-tag">{{this.tag}}</span>
+                    </div>
+                    {{/if}}
+                {{/if}}
+
+                <div class="product-card-img-wrap">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                        {{#if this.imageUrl}}
+                        <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{else}}
+                        <img width="600" height="600" src="https://via.placeholder.com/600x600?text=No+Image" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                        {{/if}}
+                    </a>
+                </div>
+
+                <h2 class="woocommerce-loop-product__title">
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
+                </h2>
+
+                <span class="price">
+                    {{#if this.price}}
+                        {{#if this.isPriceRange}}From {{/if}}<span class="woocommerce-Price-amount amount"><bdi>{{this.price}}</bdi></span>
+                        {{#if this.onSale}}
+                            {{#if this.originalPrice}}
+                                {{#if this.isPriceRange}}
+                                    <span class="original-price">From {{this.originalPrice}}</span>
+                                {{else}}
+                                    <span class="original-price">{{this.originalPrice}}</span>
+                                {{/if}}
+                            {{/if}}
+                        {{/if}}
+                    {{else}}
+                        Price available on store
+                    {{/if}}
+                </span>
+
+                <div class="btn-group">
+                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if faqItems.length}}
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="faq-container">
+            <h2 class="faq-title">FAQ</h2>
+            <div class="accordion">
+                {{#each faqItems}}
+                <div class="accordion-item{{#if @first}} open{{/if}}">
+                    <div class="accordion-header">
+                        <div class="accordion-question">{{this.question}}</div>
+                        <div class="accordion-icon">+</div>
+                    </div>
+                    <div class="accordion-content">
+                        {{this.answer}}
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </section>
+    {{/if}}
+
+    <!-- SEO-Enhanced Bottom Content Section -->
+    <section class="seo-bottom-section">
+        <div class="seo-bottom-container">
+            <!-- Author/Expert Information -->
+            <div class="seo-bottom-block">
+                <h3 class="seo-bottom-title">About This Guide</h3>
+                <div class="seo-bottom-content">
+                    <p>This comprehensive guide has been meticulously researched and compiled by VERTU's expert team to provide you with authoritative information about {{PAGE_TITLE}}. Our content is regularly reviewed and updated to ensure accuracy and relevance.</p>
+                    <p style="margin-top: 12px; font-size: 14px; color: #666;">
+                        <strong>Last Updated:</strong> <time datetime="{{CURRENT_DATE}}">{{CURRENT_DATE}}</time>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Additional Resources - 外部权威资源 -->
+            {{#if externalResources.length}}
+            <div class="seo-bottom-block">
+                <h3 class="seo-bottom-title">Additional Resources</h3>
+                <p class="seo-bottom-description">For further reading and authoritative information, we recommend exploring these trusted resources:</p>
+                <ul class="seo-bottom-resources">
+                    {{#each externalResources}}
+                    <li>
+                        <a href="{{this.url}}" target="_blank" rel="noopener noreferrer nofollow">{{this.title}}</a>
+                        {{#if this.source}}
+                        <span class="resource-source-badge">({{this.source}})</span>
+                        {{/if}}
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+
+            <!-- Featured Products - 精选产品 -->
+            {{#if topProducts.length}}
+            <div class="seo-bottom-block">
+                <h3 class="seo-bottom-title">Featured Products</h3>
+                <ul class="seo-bottom-products">
+                    {{#each (limit topProducts 5)}}
+                    <li>
+                        <a href="{{this.link}}" rel="internal">{{this.name}}</a>
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        </div>
+    </section>
+
+    <!-- Social Share -->
+    <section class="social-share">
+        <div class="social-share-title">Share this guide</div>
+        <div class="social-share-buttons">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{PAGE_URL}}" target="_blank" rel="noopener noreferrer" class="social-share-btn facebook">
+                Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{PAGE_URL}}&text={{PAGE_TITLE}}" target="_blank" rel="noopener noreferrer" class="social-share-btn twitter">
+                Twitter
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{PAGE_URL}}" target="_blank" rel="noopener noreferrer" class="social-share-btn linkedin">
+                LinkedIn
+            </a>
+        </div>
+    </section>
+
+    <!-- Post-Share SEO Enhancement Section - 分享后SEO增强区域（内容参考和信任信号） -->
+    <section class="post-share-section">
+        <div class="post-share-container">
+            <!-- Why Trust VERTU - 信任与权威信号 -->
+            <div class="post-share-block post-share-trust">
+                <h3 class="post-share-title">Why Trust VERTU</h3>
+                <ul class="post-share-trust-list">
+                    <li>
+                        <strong>Expert Curation:</strong> Our guides are compiled by industry experts with years of experience in luxury technology.
+                    </li>
+                    <li>
+                        <strong>Unbiased Reviews:</strong> We provide honest, comprehensive reviews based on extensive research and testing.
+                    </li>
+                    <li>
+                        <strong>Authoritative Sources:</strong> All information is verified against official sources and industry standards.
+                    </li>
+                    <li>
+                        <strong>Regular Updates:</strong> Content is regularly reviewed and updated to ensure accuracy and relevance.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Research Methodology - 研究方法论 -->
+            <div class="post-share-block post-share-content">
+                <h3 class="post-share-title">Research Methodology</h3>
+                <ul class="post-share-trust-list">
+                    <li>
+                        <strong>Comprehensive Analysis:</strong> Our research combines industry reports, academic studies, and expert insights to provide a holistic view.
+                    </li>
+                    <li>
+                        <strong>Data Verification:</strong> All technical specifications and claims are cross-referenced with official manufacturer sources.
+                    </li>
+                    <li>
+                        <strong>Expert Consultation:</strong> Content is reviewed by luxury technology specialists and industry professionals.
+                    </li>
+                    <li>
+                        <strong>Continuous Monitoring:</strong> We track market trends and product updates to maintain content accuracy.
+                    </li>
+                </ul>
+            </div>
+
+            <!-- External References - 外部参考资源 -->
+            {{#if externalResources.length}}
+            <div class="post-share-block post-share-content">
+                <h3 class="post-share-title">External References</h3>
+                <p class="post-share-content-text" style="font-size: 14px; color: #666; margin-bottom: 16px; line-height: 1.6;">
+                    This guide references authoritative sources and industry research to ensure accuracy and credibility.
+                </p>
+                <ul class="post-share-references-list">
+                    {{#each (limit externalResources 4)}}
+                    <li>
+                        <strong>{{this.title}}</strong>
+                        {{#if this.source}}
+                        <span style="color: #999; font-size: 13px;">({{this.source}})</span>
+                        {{/if}}
+                        {{#if this.description}}
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">{{this.description}}</div>
+                        {{/if}}
+                    </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+
+            <!-- Content Disclaimer - 内容声明 -->
+            <div class="post-share-block post-share-content">
+                <h3 class="post-share-title">Content Disclaimer</h3>
+                <ul class="post-share-trust-list">
+                    <li>
+                        <strong>Editorial Independence:</strong> Our content is created independently and reflects our honest assessment of products and services.
+                    </li>
+                    <li>
+                        <strong>Product Information:</strong> Specifications, prices, and availability are subject to change. Please verify current information on official websites.
+                    </li>
+                    <li>
+                        <strong>No Endorsement:</strong> Mention of specific products or brands does not constitute endorsement unless explicitly stated.
+                    </li>
+                    <li>
+                        <strong>Last Updated:</strong> This content was last reviewed on <time datetime="{{CURRENT_DATE}}">{{CURRENT_DATE}}</time>.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Smooth scroll functionality
+        (function() {
+            'use strict';
+            
+            function initSmoothScroll() {
+                var links = document.querySelectorAll('a[href^="#"]');
+                links.forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        var targetId = this.getAttribute('href');
+                        if (targetId === '#') return;
+                        
+                        var target = document.querySelector(targetId);
+                        if (target) {
+                            e.preventDefault();
+                            target.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }
+                    });
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSmoothScroll);
+            } else {
+                initSmoothScroll();
+            }
+            
+            setTimeout(function() {
+                initSmoothScroll();
+            }, 200);
+            
+            if (typeof MutationObserver !== 'undefined') {
+                var observer = new MutationObserver(function(mutations) {
+                    var hasNewLinks = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.addedNodes.length > 0) {
+                            mutation.addedNodes.forEach(function(node) {
+                                if (node.nodeType === 1) {
+                                    var links = node.querySelectorAll ? node.querySelectorAll('a[href^="#"]') : [];
+                                    if (links.length > 0) {
+                                        hasNewLinks = true;
+                                    }
+                                }
+                            });
+                        }
+                    });
+                    if (hasNewLinks) {
+                        initSmoothScroll();
+                    }
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+            }
+        })();
+        
+        // Accordion functionality
+        (function() {
+            'use strict';
+            
+            function initAccordion() {
+                var items = document.querySelectorAll('.accordion .accordion-item');
+                if (!items.length) {
+                    setTimeout(initAccordion, 100);
+                    return;
+                }
+
+                var setContentState = function (content, isOpen) {
+                    if (!content) return;
+                    if (isOpen) {
+                        content.style.maxHeight = content.scrollHeight + 'px';
+                        content.style.opacity = '1';
+                        content.style.marginTop = '12px';
+                    } else {
+                        content.style.maxHeight = '0px';
+                        content.style.opacity = '0';
+                        content.style.marginTop = '0px';
+                    }
+                };
+
+                items.forEach(function (item) {
+                    var header = item.querySelector('.accordion-header');
+                    var content = item.querySelector('.accordion-content');
+                    if (!header || !content) return;
+
+                    setContentState(content, item.classList.contains('open'));
+
+                    var newHeader = header.cloneNode(true);
+                    header.parentNode.replaceChild(newHeader, header);
+                    header = newHeader;
+
+                    header.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        var isOpen = item.classList.contains('open');
+                        item.classList.toggle('open');
+                        setContentState(content, !isOpen);
+
+                        items.forEach(function (other) {
+                            if (other === item) return;
+                            other.classList.remove('open');
+                            var otherContent = other.querySelector('.accordion-content');
+                            if (otherContent) {
+                                setContentState(otherContent, false);
+                            }
+                        });
+                    });
+                });
+
+                window.addEventListener('resize', function () {
+                    items.forEach(function (item) {
+                        if (!item.classList.contains('open')) return;
+                        var content = item.querySelector('.accordion-content');
+                        if (content) {
+                            content.style.maxHeight = content.scrollHeight + 'px';
+                        }
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initAccordion);
+            } else {
+                initAccordion();
+            }
+            
+            setTimeout(initAccordion, 50);
+        })();
+    </script>
+</body>
+</html>
+
