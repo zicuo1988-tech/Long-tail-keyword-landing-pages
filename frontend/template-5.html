@@ -1508,7 +1508,7 @@
                 {{/if}}
 
                 <div class="product-card-img-wrap">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                    <a href="{{this.link}}" class="product-image-link">
                         {{#if this.imageUrl}}
                         <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
                         {{else}}
@@ -1518,7 +1518,7 @@
                 </div>
 
                 <h2 class="woocommerce-loop-product__title">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link">{{truncateText this.name 40}}</a>
+                    <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
                 </h2>
 
                 <span class="price">
@@ -1539,8 +1539,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                    <a class="button" href="{{this.link}}">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
                 </div>
             </div>
             {{/each}}
@@ -1572,10 +1572,10 @@
                     <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
                         <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
                             {{#if this.externalUrl}}
-                                <a href="{{this.externalUrl}}" target="_blank" rel="noopener noreferrer nofollow" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                                <a href="{{this.externalUrl}}" target="_blank" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
                                 <span style="color: #999; font-size: 12px; margin-left: 4px;">(External)</span>
                             {{else if this.productLink}}
-                                <a href="{{this.productLink}}" target="_blank" rel="noopener noreferrer" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                                <a href="{{this.productLink}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
                             {{else}}
                                 {{this.name}}
                             {{/if}}
@@ -1588,7 +1588,7 @@
                         <td style="{{#unless this.isExternal}}font-weight: 600; color: #d32f2f;{{/unless}}">
                             {{#if this.conciergeService}}
                                 {{#if this.conciergeServiceLink}}
-                                    <a href="{{this.conciergeServiceLink}}" target="_blank" rel="noopener noreferrer" style="color: #d32f2f; text-decoration: underline; font-weight: 600;">{{this.conciergeService}}</a>
+                                    <a href="{{this.conciergeServiceLink}}" style="color: #d32f2f; text-decoration: underline; font-weight: 600;">{{this.conciergeService}}</a>
                                 {{else}}
                                     <span style="color: #d32f2f; font-weight: 600;">{{this.conciergeService}}</span>
                                 {{/if}}
@@ -1630,7 +1630,7 @@
                 {{/if}}
 
                 <div class="product-card-img-wrap">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                    <a href="{{this.link}}" class="product-image-link">
                         {{#if this.imageUrl}}
                         <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
                         {{else}}
@@ -1640,7 +1640,7 @@
                 </div>
 
                 <h2 class="woocommerce-loop-product__title">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link">{{truncateText this.name 40}}</a>
+                    <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
                 </h2>
 
                 <span class="price">
@@ -1661,8 +1661,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                    <a class="button" href="{{this.link}}">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
                 </div>
             </div>
             {{/each}}
@@ -1683,7 +1683,7 @@
         <h2 class="links-title">Related Guides</h2>
         <ul class="links-list">
             {{#each internalLinks}}
-            <li><a href="{{this.url}}" target="_blank" rel="noopener noreferrer">{{this.title}}</a></li>
+            <li><a href="{{this.url}}">{{this.title}}</a></li>
             {{/each}}
         </ul>
     </div>
@@ -1696,7 +1696,7 @@
         <ul class="links-list">
             {{#each externalLinks}}
             <li>
-                <a href="{{this.url}}" target="_blank" rel="noopener noreferrer nofollow">{{this.title}}</a>
+                <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                 {{#if this.description}}
                 <span style="display: block; color: #666; font-size: 14px; margin-top: 4px; padding-left: 0;">{{this.description}}</span>
                 {{/if}}
@@ -1730,7 +1730,7 @@
                 {{/if}}
 
                 <div class="product-card-img-wrap">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-image-link">
+                    <a href="{{this.link}}" class="product-image-link">
                         {{#if this.imageUrl}}
                         <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
                         {{else}}
@@ -1740,7 +1740,7 @@
                 </div>
 
                 <h2 class="woocommerce-loop-product__title">
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer" class="product-title-link">{{truncateText this.name 40}}</a>
+                    <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
                 </h2>
 
                 <span class="price">
@@ -1761,8 +1761,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}" target="_blank" rel="noopener noreferrer">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}" target="_blank" rel="noopener noreferrer">Learn more</a>
+                    <a class="button" href="{{this.link}}">Buy now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
                 </div>
             </div>
             {{/each}}
@@ -1796,13 +1796,13 @@
     <section class="social-share">
         <div class="social-share-title">Share this guide</div>
         <div class="social-share-buttons">
-            <a href="https://www.facebook.com/sharer/sharer.php?u={{PAGE_URL}}" target="_blank" rel="noopener noreferrer" class="social-share-btn facebook">
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{PAGE_URL}}" target="_blank" rel="noopener" class="social-share-btn facebook">
                 <span>Facebook</span>
             </a>
-            <a href="https://twitter.com/intent/tweet?url={{PAGE_URL}}&text={{PAGE_TITLE}}" target="_blank" rel="noopener noreferrer" class="social-share-btn twitter">
+            <a href="https://twitter.com/intent/tweet?url={{PAGE_URL}}&text={{PAGE_TITLE}}" target="_blank" rel="noopener" class="social-share-btn twitter">
                 <span>Twitter</span>
             </a>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{PAGE_URL}}" target="_blank" rel="noopener noreferrer" class="social-share-btn linkedin">
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{PAGE_URL}}" target="_blank" rel="noopener" class="social-share-btn linkedin">
                 <span>LinkedIn</span>
             </a>
         </div>

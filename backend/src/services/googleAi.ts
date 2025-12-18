@@ -2401,48 +2401,64 @@ function formatTitleCase(title: string): string {
     "of", "on", "or", "the", "to", "with", "up", "so", "yet"
   ]);
   
-  // 分割标题为单词
+  // 分割标题为单词（按空格分割）
   const words = title.trim().split(/\s+/);
   
   // 处理每个单词
   const formattedWords = words.map((word, index) => {
     const isFirstWord = index === 0;
     const isLastWord = index === words.length - 1;
-    const wordLower = word.toLowerCase();
     
-    // 移除标点符号，保留原始格式
-    const hasPunctuation = /[.,:;!?\-—–]/.test(word);
-    const punctuation = word.match(/[.,:;!?\-—–]+/g) || [];
-    const cleanWord = word.replace(/[.,:;!?\-—–]+/g, "");
-    const cleanWordLower = cleanWord.toLowerCase();
-    
-    // 如果单词包含连字符（如"AI-Powered"），需要分别处理每个部分
-    if (cleanWord.includes("-")) {
+    // 检查单词是否包含连字符（如"Long-Battery", "AI-Powered"）
+    if (word.includes("-")) {
+      // 分离尾部标点符号（如 "Long-Battery:" 中的冒号）
+      const trailingPunctuationMatch = word.match(/([.,:;!?]+)$/);
+      const trailingPunctuation = trailingPunctuationMatch ? trailingPunctuationMatch[0] : "";
+      const cleanWord = word.replace(/([.,:;!?]+)$/, ""); // 移除尾部标点
+      
+      // 分割连字符词
       const parts = cleanWord.split("-");
-      const formattedParts = parts.map(part => {
+      const formattedParts = parts.map((part, partIndex) => {
         const partLower = part.toLowerCase();
-        if (shortWords.has(partLower) && !isFirstWord && !isLastWord) {
+        // 只有非首尾部分的短词才小写
+        const isFirstPart = partIndex === 0 && isFirstWord;
+        const isLastPart = partIndex === parts.length - 1 && isLastWord;
+        
+        if (shortWords.has(partLower) && !isFirstPart && !isLastPart) {
           return partLower;
         }
+        
+        // 检查是否是全大写缩写（如 "AI", "SEO"）
+        if (part === part.toUpperCase() && part.length > 1 && /^[A-Z]+$/.test(part)) {
+          return part; // 保持全大写
+        }
+        
+        // 首字母大写，其余小写
         return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
       });
-      return formattedParts.join("-") + (punctuation.join("") || "");
+      return formattedParts.join("-") + trailingPunctuation;
     }
     
-    // 处理品牌名和专有名词（保持原样，如果已经是大写）
-    if (cleanWord === cleanWord.toUpperCase() && cleanWord.length > 1) {
+    // 分离尾部标点符号
+    const trailingPunctuationMatch = word.match(/([.,:;!?\-—–]+)$/);
+    const trailingPunctuation = trailingPunctuationMatch ? trailingPunctuationMatch[0] : "";
+    const cleanWord = word.replace(/([.,:;!?\-—–]+)$/, ""); // 移除尾部标点
+    const cleanWordLower = cleanWord.toLowerCase();
+    
+    // 处理品牌名和专有名词（保持原样，如果已经是全大写）
+    if (cleanWord === cleanWord.toUpperCase() && cleanWord.length > 1 && /^[A-Z]+$/.test(cleanWord)) {
       // 可能是品牌名或缩写（如"VERTU", "AI", "SEO"）
       return word;
     }
     
     // 处理短词
     if (shortWords.has(cleanWordLower) && !isFirstWord && !isLastWord) {
-      return cleanWordLower + (punctuation.join("") || "");
+      return cleanWordLower + trailingPunctuation;
     }
     
     // 其他单词：首字母大写，其余小写
     const formatted = cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1).toLowerCase();
-    return formatted + (punctuation.join("") || "");
+    return formatted + trailingPunctuation;
   });
   
   return formattedWords.join(" ");
@@ -2561,6 +2577,18 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
     console.log(`[GoogleAI] 随机选择标题类型`);
   }
 
+  // 辅助函数：检查关键词是否已包含某个前缀词
+  const keywordContainsPrefix = (keyword: string, ...prefixes: string[]): boolean => {
+    const keywordLower = keyword.toLowerCase().trim();
+    return prefixes.some(prefix => {
+      const prefixLower = prefix.toLowerCase();
+      // 检查关键词是否以该前缀开头（单词边界）
+      return keywordLower.startsWith(prefixLower + " ") || 
+             keywordLower === prefixLower ||
+             keywordLower.startsWith(prefixLower + "-");
+    });
+  };
+  
   // 根据标题类型生成对应的备用标题
   const getFallbackTitleByType = (keyword: string, type?: string): string => {
     let fallbackTitle: string;
@@ -2571,27 +2599,28 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
       const allFallbacks = [
         `Buy ${keyword} - Official Store`,
         `Complete Guide to ${keyword}`,
-        `Best ${keyword} - Top Rated & Reviews`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} - Top Rated & Reviews` : `Best ${keyword} - Top Rated & Reviews`,
         `${keyword} - Expert Buying Guide`,
-        `How to Choose the Best ${keyword}`,
-        `Top-rated ${keyword}: Expert Recommendations`,
+        keywordContainsPrefix(keyword, "best") ? `How to Choose ${keyword}` : `How to Choose the Best ${keyword}`,
+        keywordContainsPrefix(keyword, "top", "top-rated") ? `${keyword}: Expert Recommendations` : `Top-rated ${keyword}: Expert Recommendations`,
         `${keyword} Usage Guide: Complete Manual`,
         `${keyword} Comparison: Tech Insights`,
         `Premium ${keyword}: Quality & Performance Guide`,
-        `Top ${keyword}: Premium Choices Reviewed`,
-        `Most Popular ${keyword}: Best-Selling Models`,
+        keywordContainsPrefix(keyword, "top") ? `${keyword}: Premium Choices Reviewed` : `Top ${keyword}: Premium Choices Reviewed`,
+        keywordContainsPrefix(keyword, "most", "most popular") ? `${keyword}: Best-Selling Models` : `Most Popular ${keyword}: Best-Selling Models`,
       ];
       fallbackTitle = allFallbacks[Math.floor(Math.random() * allFallbacks.length)];
     } else {
       // 根据类型生成对应的备用标题
       // 注意：避免使用 "Shop for where to buy" 这种语法错误
       // 避免使用 "Best Prices" 这种不符合奢侈品牌的表达
+      // 避免重复词：如果关键词已包含 "Best", "Top", "Most"，则不再添加
       const typeFallbacks: Record<string, string[]> = {
       "purchase": [
         `Buy ${keyword} - Official Store`,
         `Purchase ${keyword} - Premium Selection`,
         `Shop ${keyword} - Official Retailer`,
-        `Find the Best ${keyword} - Expert Guide`,
+        keywordContainsPrefix(keyword, "best") ? `Find ${keyword} - Expert Guide` : `Find the Best ${keyword} - Expert Guide`,
       ],
       "informational": [
         `Complete Guide to ${keyword}`,
@@ -2600,10 +2629,10 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `All You Need to Know About ${keyword}`,
       ],
       "review": [
-        `Best ${keyword} - Top Rated & Reviews`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} - Top Rated & Reviews` : `Best ${keyword} - Top Rated & Reviews`,
         `${keyword} Review: Top Rated Models`,
-        `Top 10 ${keyword} - Best Rated`,
-        `${keyword} Comparison: Best Rated`,
+        keywordContainsPrefix(keyword, "top", "best") ? `${keyword} - Highly Rated` : `Top 10 ${keyword} - Best Rated`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} Comparison: Highly Rated` : `${keyword} Comparison: Best Rated`,
       ],
       "commercial": [
         `Premium ${keyword} Collection`,
@@ -2612,16 +2641,16 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `Authorised ${keyword} Retailer`,
       ],
       "how-to": [
-        `How to Choose the Best ${keyword}`,
+        keywordContainsPrefix(keyword, "best") ? `How to Choose ${keyword}` : `How to Choose the Best ${keyword}`,
         `How to Find ${keyword}`,
         `How to Select ${keyword}`,
         `How to Buy ${keyword}`,
       ],
       "recommendations": [
-        `Top-rated ${keyword}: Expert Recommendations`,
-        `Recommended ${keyword}: Top Picks`,
-        `Best Rated ${keyword}: Highly Recommended`,
-        `${keyword} Recommendations: Top Choices`,
+        keywordContainsPrefix(keyword, "top", "top-rated") ? `${keyword}: Expert Recommendations` : `Top-rated ${keyword}: Expert Recommendations`,
+        keywordContainsPrefix(keyword, "top") ? `Recommended ${keyword}: Picks` : `Recommended ${keyword}: Top Picks`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword}: Highly Recommended` : `Best Rated ${keyword}: Highly Recommended`,
+        keywordContainsPrefix(keyword, "top") ? `${keyword} Recommendations: Choices` : `${keyword} Recommendations: Top Choices`,
       ],
       "services-guides": [
         `${keyword} Usage Guide: Complete Manual`,
@@ -2638,7 +2667,7 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
       "comparison": [
         `${keyword} Comparison: Which is Better`,
         `${keyword} vs Alternatives`,
-        `Best ${keyword} Comparison`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} Comparison` : `Best ${keyword} Comparison`,
         `Comparing ${keyword} Options`,
       ],
       "expert": [
@@ -2648,28 +2677,28 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
         `In-Depth Analysis of ${keyword}`,
       ],
       "best": [
-        `Best ${keyword}: Quality & Performance Guide`,
-        `Best ${keyword} - Top Rated & Reviews`,
-        `Best Rated ${keyword}: Quality Guide`,
-        `Best ${keyword} Options: Top Choices`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword}: Quality & Performance Guide` : `Best ${keyword}: Quality & Performance Guide`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} - Top Rated & Reviews` : `Best ${keyword} - Top Rated & Reviews`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword}: Quality Guide` : `Best Rated ${keyword}: Quality Guide`,
+        keywordContainsPrefix(keyword, "best") ? `${keyword} Options: Top Choices` : `Best ${keyword} Options: Top Choices`,
       ],
       "top": [
-        `Top ${keyword}: Premium Choices Reviewed`,
-        `Top Rated ${keyword}`,
-        `Top ${keyword} Picks: Premium Selection`,
-        `Top Quality ${keyword}: Expert Review`,
+        keywordContainsPrefix(keyword, "top") ? `${keyword}: Premium Choices Reviewed` : `Top ${keyword}: Premium Choices Reviewed`,
+        keywordContainsPrefix(keyword, "top") ? `${keyword} - Highly Rated` : `Top Rated ${keyword}`,
+        keywordContainsPrefix(keyword, "top") ? `${keyword} Picks: Premium Selection` : `Top ${keyword} Picks: Premium Selection`,
+        keywordContainsPrefix(keyword, "top") ? `Quality ${keyword}: Expert Review` : `Top Quality ${keyword}: Expert Review`,
       ],
       "top-ranking": [
-        `Top 10 ${keyword}: Complete Ranking List`,
-        `Top 5 ${keyword}: Best Rankings`,
-        `${keyword} Rankings: Top List`,
-        `Top ${keyword} List: Comprehensive Rankings`,
+        keywordContainsPrefix(keyword, "top", "best") ? `${keyword}: Complete Ranking List` : `Top 10 ${keyword}: Complete Ranking List`,
+        keywordContainsPrefix(keyword, "top", "best") ? `${keyword}: Rankings` : `Top 5 ${keyword}: Best Rankings`,
+        `${keyword} Rankings: Comprehensive List`,
+        keywordContainsPrefix(keyword, "top", "best") ? `${keyword} List: Complete Rankings` : `Top ${keyword} List: Comprehensive Rankings`,
       ],
       "most": [
-        `Most Popular ${keyword}: Best-Selling Models`,
-        `Most Recommended ${keyword}`,
-        `Most Trusted ${keyword}`,
-        `Most Valued ${keyword}: Popular Choices`,
+        keywordContainsPrefix(keyword, "most", "most popular") ? `${keyword}: Best-Selling Models` : `Most Popular ${keyword}: Best-Selling Models`,
+        keywordContainsPrefix(keyword, "most") ? `${keyword} - Highly Recommended` : `Most Recommended ${keyword}`,
+        keywordContainsPrefix(keyword, "most") ? `${keyword} - Highly Trusted` : `Most Trusted ${keyword}`,
+        keywordContainsPrefix(keyword, "most") ? `${keyword}: Popular Choices` : `Most Valued ${keyword}: Popular Choices`,
       ],
     };
 

@@ -3,6 +3,39 @@ import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPau
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 import { extractMentionedProductsFromContent } from "../services/googleAi.js";
 import { searchProductsByName } from "../services/wordpress.js";
+/**
+ * 智能判断链接是否需要加 nofollow
+ * 根据链接类型和性质决定 rel 属性
+ * 
+ * @param linkType - 链接类型：'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' | undefined
+ * @param url - 链接URL（可选，用于额外判断）
+ * @returns 返回应该使用的 rel 属性值
+ */
+function getRelAttribute(linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc', url?: string): string {
+  // 默认：权威来源和竞品对比不加 nofollow
+  if (!linkType || linkType === 'authoritative' || linkType === 'competitor') {
+    return 'noopener'; // 只加 noopener，不加 nofollow
+  }
+  
+  // 商业合作：加 sponsored
+  if (linkType === 'commercial') {
+    return 'noopener sponsored';
+  }
+  
+  // 联盟链接：加 nofollow
+  if (linkType === 'affiliate') {
+    return 'noopener nofollow';
+  }
+  
+  // 用户生成内容：加 ugc nofollow
+  if (linkType === 'ugc') {
+    return 'noopener ugc nofollow';
+  }
+  
+  // 默认：只加 noopener（保守策略，不加 nofollow）
+  return 'noopener';
+}
+
 const LEARN_MORE_MAP: Record<string, string> = {
   "quantum flip": "https://vertu.com/quantum/",
   "metavertu 1 curve": "https://vertu.com/metavertu-curve/",
@@ -320,7 +353,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           const productName = product.name.toLowerCase();
           const productCategory = (product.category || "").toLowerCase();
           
-          // 性别过滤
+          // 性别过滤（仅在没有指定分类时应用，或总是应用）
           if (isMenTarget && !isWomenTarget) {
             if (productName.includes("women") || productName.includes("women's") ||
                 productName.includes("ladies") || productName.includes("lady") ||
@@ -337,7 +370,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             }
           }
           
-          // 产品类型过滤
+          // 产品类型过滤（仅在没有指定分类时应用）
+          // 如果用户指定了分类，跳过基于关键词的产品类型过滤，因为用户已经明确了想要的产品
           if (isPhoneKeyword) {
             return productName.includes("phone") || productName.includes("smartphone") ||
                    productName.includes("mobile") || productName.includes("agent") ||
@@ -363,8 +397,44 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       };
       
       // 应用过滤
-      products = filterProductsByRelevance(products);
-      relatedProducts = filterProductsByRelevance(relatedProducts);
+      // 重要：如果用户指定了产品分类，不要应用基于关键词的产品类型过滤
+      // 因为用户已经明确了想要显示的产品分类
+      if (payload.targetCategory && payload.targetCategory.trim()) {
+        console.log(`[task ${taskId}] ⚠️ 用户指定了产品分类 "${payload.targetCategory}"，跳过基于关键词的产品类型过滤`);
+        // 只应用性别过滤（如果有的话）
+        if (isMenTarget || isWomenTarget) {
+          const applyGenderFilter = (productList: ProductSummary[]): ProductSummary[] => {
+            return productList.filter(product => {
+              const productName = product.name.toLowerCase();
+              const productCategory = (product.category || "").toLowerCase();
+              
+              if (isMenTarget && !isWomenTarget) {
+                if (productName.includes("women") || productName.includes("women's") ||
+                    productName.includes("ladies") || productName.includes("lady") ||
+                    productName.includes("female") || productCategory.includes("women") ||
+                    productCategory.includes("ladies")) {
+                  return false;
+                }
+              }
+              if (isWomenTarget && !isMenTarget) {
+                if (productName.includes("men") || productName.includes("men's") ||
+                    productName.includes("male") || productCategory.includes("men") ||
+                    productCategory.includes("male")) {
+                  return false;
+                }
+              }
+              return true;
+            });
+          };
+          products = applyGenderFilter(products);
+          relatedProducts = applyGenderFilter(relatedProducts);
+        }
+        // 否则保留所有产品，不做任何过滤
+      } else {
+        // 没有指定分类，应用正常的关键词过滤
+        products = filterProductsByRelevance(products);
+        relatedProducts = filterProductsByRelevance(relatedProducts);
+      }
       
       // 优化：优先推荐最新款产品（Agent Q, Quantum Flip, Metavertu Max等）
       products = prioritizeLatestProducts(products);
@@ -373,14 +443,18 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       console.log(`[task ${taskId}] SEO产品过滤结果:`);
       console.log(`  - 关键词: ${payload.keyword}`);
       console.log(`  - 页面标题: ${payload.pageTitle || "未指定"}`);
+      console.log(`  - 指定分类: ${payload.targetCategory || "未指定"}`);
       if (isMenTarget) console.log(`  - 目标受众: 男性/丈夫`);
       if (isWomenTarget) console.log(`  - 目标受众: 女性/妻子`);
-      if (isPhoneKeyword) console.log(`  - 产品类型: 手机`);
-      if (isWatchKeyword) console.log(`  - 产品类型: 手表`);
-      if (isRingKeyword) console.log(`  - 产品类型: 戒指`);
-      if (isEarbudKeyword) console.log(`  - 产品类型: 耳机`);
+      if (isPhoneKeyword) console.log(`  - 检测到产品类型: 手机`);
+      if (isWatchKeyword) console.log(`  - 检测到产品类型: 手表`);
+      if (isRingKeyword) console.log(`  - 检测到产品类型: 戒指`);
+      if (isEarbudKeyword) console.log(`  - 检测到产品类型: 耳机`);
       console.log(`  - 过滤后主产品数: ${products.length}`);
       console.log(`  - 过滤后相关产品数: ${relatedProducts.length}`);
+      if (products.length > 0) {
+        console.log(`  - 主产品列表: [${products.slice(0, 10).map(p => p.name).join(", ")}${products.length > 10 ? ", ..." : ""}]`);
+      }
       
       // 针对奢华产品系列，补充 bespoke 分类的产品
       // keywordLower 已在上面声明（第288行），直接使用
@@ -776,7 +850,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     
     // 模板6：提前声明参考文献和外部权威资源（确保作用域正确）
     let references: Array<{ author?: string; year?: string; title?: string; publication?: string; url?: string; doi?: string }> = [];
-    let externalResources: Array<{ title: string; url: string; description?: string; type?: string; source?: string }> = [];
+    let externalResources: Array<{ title: string; url: string; description?: string; type?: string; source?: string; linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' }> = [];
 
     if (isTemplate4 || isTemplate5 || isTemplate6) {
       // 提前声明 keywordLower，避免在后续代码中使用时出现初始化错误
@@ -865,9 +939,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       };
       
       // 过滤第一排产品，确保与关键词相关
-      const relevantProductsRow1 = filterRelevantProducts(productsRow1);
+      // 如果用户指定了产品分类，跳过关键词过滤
+      const relevantProductsRow1 = payload.targetCategory && payload.targetCategory.trim() 
+        ? productsRow1  // 保留用户指定分类的所有产品
+        : filterRelevantProducts(productsRow1);  // 否则应用关键词过滤
+      
       console.log(`[task ${taskId}] 产品相关性过滤:`);
       console.log(`  - 关键词: ${payload.keyword}`);
+      if (payload.targetCategory && payload.targetCategory.trim()) {
+        console.log(`  - ⚠️ 用户指定了分类 "${payload.targetCategory}"，跳过关键词过滤`);
+      }
       console.log(`  - 页面标题: ${payload.pageTitle || "未指定"}`);
       if (isMenTarget) {
         console.log(`  - 目标受众: 男性/丈夫 (已过滤女士产品)`);
@@ -893,8 +974,13 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 如果过滤后产品不足，尝试从其他排补充
       let allRelevantProducts = [...relevantProductsRow1];
       if (allRelevantProducts.length < 3) {
-        const relevantProductsRow2 = filterRelevantProducts(productsRow2);
-        const relevantProductsRow3 = filterRelevantProducts(productsRow3);
+        // 如果用户指定了产品分类，跳过关键词过滤
+        const relevantProductsRow2 = payload.targetCategory && payload.targetCategory.trim()
+          ? productsRow2  // 保留用户指定分类的所有产品
+          : filterRelevantProducts(productsRow2);  // 否则应用关键词过滤
+        const relevantProductsRow3 = payload.targetCategory && payload.targetCategory.trim()
+          ? productsRow3  // 保留用户指定分类的所有产品
+          : filterRelevantProducts(productsRow3);  // 否则应用关键词过滤
         allRelevantProducts = [...allRelevantProducts, ...relevantProductsRow2, ...relevantProductsRow3];
         // 去重（按ID）
         const uniqueProducts = Array.from(new Map(allRelevantProducts.map(p => [p.id, p])).values());
@@ -1470,7 +1556,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
       // 外链: 指向第三方权威网站（SEO最佳实践：外链应该指向其他权威网站，而不是自己的网站）
       // 注意：这些是真实存在的第三方权威网站链接，用于SEO和内容可信度
-      const externalLinksList: Array<{ title: string; url: string; description?: string }> = [];
+      // linkType: 'authoritative' = 权威来源（不加nofollow）, 'commercial' = 商业合作（加nofollow/sponsored）, 'affiliate' = 联盟链接（加nofollow）
+      const externalLinksList: Array<{ title: string; url: string; description?: string; linkType?: 'authoritative' | 'commercial' | 'affiliate' }> = [];
       
       // 根据关键词类型添加相关的第三方权威网站外链
       if (keywordLower.includes("watch") || keywordLower.includes("timepiece")) {
@@ -1479,37 +1566,44 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           { 
             title: "Luxury Watch Guide - Forbes", 
             url: "https://www.forbes.com/sites/forbes-personal-shopper/2024/01/15/best-luxury-watches/",
-            description: "Expert insights on luxury timepieces from Forbes"
+            description: "Expert insights on luxury timepieces from Forbes",
+            linkType: "authoritative" as const
           },
           { 
             title: "Watch Reviews - Hodinkee", 
             url: "https://www.hodinkee.com/",
-            description: "Authoritative watch reviews and industry news"
+            description: "Authoritative watch reviews and industry news",
+            linkType: "authoritative" as const
           },
           { 
             title: "Luxury Timepieces - Robb Report", 
             url: "https://robbreport.com/tag/watches/",
-            description: "Luxury watch coverage from Robb Report"
+            description: "Luxury watch coverage from Robb Report",
+            linkType: "authoritative" as const
           },
           { 
             title: "Watch Guide - WatchTime", 
             url: "https://www.watchtime.com/",
-            description: "Comprehensive watch reviews and industry insights"
+            description: "Comprehensive watch reviews and industry insights",
+            linkType: "authoritative" as const
           },
           { 
             title: "Luxury Watches - GQ", 
             url: "https://www.gq.com/tag/watches",
-            description: "Luxury watch trends and expert reviews"
+            description: "Luxury watch trends and expert reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Timepiece Reviews - Revolution", 
             url: "https://revolutionwatch.com/",
-            description: "Expert watch reviews and horology insights"
+            description: "Expert watch reviews and horology insights",
+            linkType: "authoritative" as const
           },
           { 
             title: "Watch Guide - A Blog to Watch", 
             url: "https://www.ablogtowatch.com/",
-            description: "Independent watch reviews and industry news"
+            description: "Independent watch reviews and industry news",
+            linkType: "authoritative" as const
           }
         ];
         
@@ -1523,52 +1617,62 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           { 
             title: "Smartphone Reviews - TechCrunch", 
             url: "https://techcrunch.com/tag/smartphones/",
-            description: "Latest smartphone technology news and reviews"
+            description: "Latest smartphone technology news and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Mobile Device Guide - CNET", 
             url: "https://www.cnet.com/tech/mobile/",
-            description: "Comprehensive mobile device reviews and comparisons"
+            description: "Comprehensive mobile device reviews and comparisons",
+            linkType: "authoritative" as const
           },
           { 
             title: "Luxury Tech - The Verge", 
             url: "https://www.theverge.com/",
-            description: "Technology news and reviews from The Verge"
+            description: "Technology news and reviews from The Verge",
+            linkType: "authoritative" as const
           },
           { 
             title: "Phone Reviews - TechRadar", 
             url: "https://www.techradar.com/news/phone-and-communications",
-            description: "Expert smartphone reviews and buying guides"
+            description: "Expert smartphone reviews and buying guides",
+            linkType: "authoritative" as const
           },
           { 
             title: "Mobile Reviews - Wired", 
             url: "https://www.wired.com/tag/mobile/",
-            description: "In-depth mobile technology analysis and reviews"
+            description: "In-depth mobile technology analysis and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Smartphone Guide - GSM Arena", 
             url: "https://www.gsmarena.com/",
-            description: "Comprehensive smartphone specifications and reviews"
+            description: "Comprehensive smartphone specifications and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Android Authority", 
             url: "https://www.androidauthority.com/",
-            description: "Android news, reviews, and expert analysis"
+            description: "Android news, reviews, and expert analysis",
+            linkType: "authoritative" as const
           },
           { 
             title: "Phone Reviews - Tom's Guide", 
             url: "https://www.tomsguide.com/phones",
-            description: "Expert phone reviews and buying advice"
+            description: "Expert phone reviews and buying advice",
+            linkType: "authoritative" as const
           },
           { 
             title: "Mobile Tech - Digital Trends", 
             url: "https://www.digitaltrends.com/mobile/",
-            description: "Latest mobile technology trends and reviews"
+            description: "Latest mobile technology trends and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Phone Reviews - Pocket-lint", 
             url: "https://www.pocket-lint.com/phones/",
-            description: "Smartphone reviews and technology insights"
+            description: "Smartphone reviews and technology insights",
+            linkType: "authoritative" as const
           }
         ];
         
@@ -1582,32 +1686,38 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           { 
             title: "Jewelry Guide - Vogue", 
             url: "https://www.vogue.com/tag/jewelry",
-            description: "Luxury jewelry trends and guides from Vogue"
+            description: "Luxury jewelry trends and guides from Vogue",
+            linkType: "authoritative" as const
           },
           { 
             title: "Fine Jewelry - Harper's Bazaar", 
             url: "https://www.harpersbazaar.com/fashion/jewelry/",
-            description: "Expert jewelry coverage from Harper's Bazaar"
+            description: "Expert jewelry coverage from Harper's Bazaar",
+            linkType: "authoritative" as const
           },
           { 
             title: "Smart Jewelry - Wired", 
             url: "https://www.wired.com/tag/wearables/",
-            description: "Technology insights on smart jewelry and wearables"
+            description: "Technology insights on smart jewelry and wearables",
+            linkType: "authoritative" as const
           },
           { 
             title: "Jewelry Trends - Elle", 
             url: "https://www.elle.com/jewelry/",
-            description: "Latest jewelry trends and style guides"
+            description: "Latest jewelry trends and style guides",
+            linkType: "authoritative" as const
           },
           { 
             title: "Luxury Jewelry - Town & Country", 
             url: "https://www.townandcountrymag.com/style/jewelry",
-            description: "Luxury jewelry coverage and expert insights"
+            description: "Luxury jewelry coverage and expert insights",
+            linkType: "authoritative" as const
           },
           { 
             title: "Wearable Tech - TechCrunch", 
             url: "https://techcrunch.com/tag/wearables/",
-            description: "Smart jewelry and wearable technology news"
+            description: "Smart jewelry and wearable technology news",
+            linkType: "authoritative" as const
           }
         ];
         
@@ -1621,37 +1731,44 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           { 
             title: "Audio Reviews - What Hi-Fi?", 
             url: "https://www.whathifi.com/",
-            description: "Expert audio equipment reviews and buying guides"
+            description: "Expert audio equipment reviews and buying guides",
+            linkType: "authoritative" as const
           },
           { 
             title: "Headphone Guide - SoundGuys", 
             url: "https://www.soundguys.com/",
-            description: "In-depth audio product reviews and comparisons"
+            description: "In-depth audio product reviews and comparisons",
+            linkType: "authoritative" as const
           },
           { 
             title: "Premium Audio - TechRadar", 
             url: "https://www.techradar.com/audio",
-            description: "Latest audio technology news and reviews"
+            description: "Latest audio technology news and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Audio Reviews - CNET", 
             url: "https://www.cnet.com/audio/",
-            description: "Comprehensive audio product reviews and comparisons"
+            description: "Comprehensive audio product reviews and comparisons",
+            linkType: "authoritative" as const
           },
           { 
             title: "Headphone Reviews - Wired", 
             url: "https://www.wired.com/tag/headphones/",
-            description: "Expert headphone reviews and buying advice"
+            description: "Expert headphone reviews and buying advice",
+            linkType: "authoritative" as const
           },
           { 
             title: "Audio Tech - The Verge", 
             url: "https://www.theverge.com/audio",
-            description: "Latest audio technology news and reviews"
+            description: "Latest audio technology news and reviews",
+            linkType: "authoritative" as const
           },
           { 
             title: "Headphone Guide - Rtings", 
             url: "https://www.rtings.com/headphones",
-            description: "Detailed headphone measurements and reviews"
+            description: "Detailed headphone measurements and reviews",
+            linkType: "authoritative" as const
           }
         ];
         
@@ -1665,17 +1782,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           { 
             title: "Luxury Lifestyle - Forbes", 
             url: "https://www.forbes.com/lifestyle/",
-            description: "Luxury lifestyle insights and expert opinions"
+            description: "Luxury lifestyle insights and expert opinions",
+            linkType: "authoritative" as const
           },
           { 
             title: "Tech Reviews - The Verge", 
             url: "https://www.theverge.com/reviews",
-            description: "Comprehensive technology reviews and analysis"
+            description: "Comprehensive technology reviews and analysis",
+            linkType: "authoritative" as const
           },
           { 
             title: "Luxury Goods - Robb Report", 
             url: "https://robbreport.com/",
-            description: "Authoritative coverage of luxury products and services"
+            description: "Authoritative coverage of luxury products and services",
+            linkType: "authoritative" as const
           }
         );
       }
@@ -1696,21 +1816,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               year: String(currentYear - 1),
               title: "Mobile Device Security Guidelines",
               publication: "National Institute of Standards and Technology",
-              url: "https://www.nist.gov/cyberframework"
+              url: "https://www.nist.gov/cyberframework",
+              linkType: "authoritative" as const
             },
             {
               author: "MIT Technology Review",
               year: String(currentYear - 1),
               title: "The Future of Smartphone Technology",
               publication: "MIT Technology Review",
-              url: "https://www.technologyreview.com/tag/smartphones/"
+              url: "https://www.technologyreview.com/tag/smartphones/",
+              linkType: "authoritative" as const
             },
             {
               author: "IEEE Communications Society",
               year: String(currentYear - 2),
               title: "Mobile Security and Privacy Research",
               publication: "IEEE Communications Magazine",
-              url: "https://www.comsoc.org/publications/magazines"
+              url: "https://www.comsoc.org/publications/magazines",
+              linkType: "authoritative" as const
             }
           ];
         } else if (isWatchKeyword) {
@@ -1720,21 +1843,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               year: String(currentYear - 1),
               title: "Luxury Watch Market Analysis and Trends",
               publication: "Forbes",
-              url: "https://www.forbes.com/sites/forbes-personal-shopper/2024/01/15/best-luxury-watches/"
+              url: "https://www.forbes.com/sites/forbes-personal-shopper/2024/01/15/best-luxury-watches/",
+              linkType: "authoritative" as const
             },
             {
               author: "Hodinkee Editorial Team",
               year: String(currentYear - 1),
               title: "Comprehensive Guide to Luxury Timepieces",
               publication: "Hodinkee",
-              url: "https://www.hodinkee.com/"
+              url: "https://www.hodinkee.com/",
+              linkType: "authoritative" as const
             },
             {
               author: "McKinsey & Company",
               year: String(currentYear - 1),
               title: "Luxury Watch Industry Report",
               publication: "McKinsey Global Institute",
-              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024"
+              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024",
+              linkType: "authoritative" as const
             }
           ];
         } else if (isRingKeyword) {
@@ -1744,14 +1870,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               year: String(currentYear - 1),
               title: "Smart Ring Technology and Health Monitoring",
               publication: "Wearable Technology Review",
-              url: "https://www.wareable.com/smart-rings"
+              url: "https://www.wareable.com/smart-rings",
+              linkType: "authoritative" as const
             },
             {
               author: "TechCrunch Editorial",
               year: String(currentYear - 1),
               title: "The Evolution of Smart Ring Devices",
               publication: "TechCrunch",
-              url: "https://techcrunch.com/tag/wearables/"
+              url: "https://techcrunch.com/tag/wearables/",
+              linkType: "authoritative" as const
             }
           ];
         } else if (isEarbudKeyword) {
@@ -1761,14 +1889,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               year: String(currentYear - 1),
               title: "Premium Audio Technology Analysis",
               publication: "CNET",
-              url: "https://www.cnet.com/audio/"
+              url: "https://www.cnet.com/audio/",
+              linkType: "authoritative" as const
             },
             {
               author: "The Verge",
               year: String(currentYear - 1),
               title: "Wireless Audio Technology Trends",
               publication: "The Verge",
-              url: "https://www.theverge.com/audio"
+              url: "https://www.theverge.com/audio",
+              linkType: "authoritative" as const
             }
           ];
         } else {
@@ -1779,21 +1909,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               year: String(currentYear - 1),
               title: "Luxury Technology Market Analysis",
               publication: "Harvard Business Review",
-              url: "https://hbr.org/topic/technology"
+              url: "https://hbr.org/topic/technology",
+              linkType: "authoritative" as const
             },
             {
               author: "McKinsey & Company",
               year: String(currentYear - 1),
               title: "Luxury Goods Market Report",
               publication: "McKinsey Global Institute",
-              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024"
+              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024",
+              linkType: "authoritative" as const
             },
             {
               author: "Forbes Contributors",
               year: String(currentYear - 1),
               title: "Premium Technology Trends and Insights",
               publication: "Forbes",
-              url: "https://www.forbes.com/innovation/"
+              url: "https://www.forbes.com/innovation/",
+              linkType: "authoritative" as const
             }
           ];
         }
@@ -1806,21 +1939,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               url: "https://www.nist.gov/publications/mobile-security",
               description: "National Institute of Standards and Technology guidelines on mobile device security",
               type: "Government Report",
-              source: "NIST"
+              source: "NIST",
+              linkType: "authoritative" as const
             },
             {
               title: "Smartphone Technology Trends - MIT Technology Review",
               url: "https://www.technologyreview.com/tag/smartphones/",
               description: "Latest research and analysis on smartphone technology from MIT",
               type: "Academic Publication",
-              source: "MIT Technology Review"
+              source: "MIT Technology Review",
+              linkType: "authoritative" as const
             },
             {
               title: "Mobile Device Privacy Study - Stanford University",
               url: "https://www.stanford.edu/research/mobile-privacy",
               description: "Academic research on mobile device privacy and data protection",
               type: "Academic Paper",
-              source: "Stanford University"
+              source: "Stanford University",
+              linkType: "authoritative" as const
             }
           ];
         } else if (isWatchKeyword) {
@@ -1830,14 +1966,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               url: "https://www.mckinsey.com/industries/luxury-watches",
               description: "Industry analysis and market insights on luxury timepieces",
               type: "Industry Report",
-              source: "McKinsey & Company"
+              source: "McKinsey & Company",
+              linkType: "authoritative" as const
             },
             {
               title: "Horological Research - British Horological Institute",
               url: "https://www.bhi.co.uk/research",
               description: "Academic research and historical analysis of timepiece technology",
               type: "Academic Resource",
-              source: "British Horological Institute"
+              source: "British Horological Institute",
+              linkType: "authoritative" as const
             }
           ];
         } else {
@@ -1848,14 +1986,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               url: "https://hbr.org/topic/luxury-technology",
               description: "Business analysis and insights on luxury technology markets",
               type: "Business Publication",
-              source: "Harvard Business Review"
+              source: "Harvard Business Review",
+              linkType: "authoritative" as const
             },
             {
               title: "Premium Product Research - Wharton School",
               url: "https://www.wharton.upenn.edu/research/premium-products",
               description: "Academic research on premium product markets and consumer behavior",
               type: "Academic Research",
-              source: "Wharton School"
+              source: "Wharton School",
+              linkType: "authoritative" as const
             }
           ];
         }

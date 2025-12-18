@@ -58,6 +58,38 @@ Handlebars.registerHelper("limit", (array: any[] | undefined, limit: number) => 
   return array.slice(0, limit);
 });
 
+/**
+ * 智能判断链接的 rel 属性
+ * 根据链接类型决定是否加 nofollow
+ * 
+ * @param linkType - 链接类型：'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' | undefined
+ * @returns 返回应该使用的 rel 属性值
+ */
+Handlebars.registerHelper("getRelAttribute", (linkType?: string) => {
+  // 默认：权威来源和竞品对比不加 nofollow
+  if (!linkType || linkType === 'authoritative' || linkType === 'competitor') {
+    return 'noopener'; // 只加 noopener，不加 nofollow
+  }
+  
+  // 商业合作：加 sponsored
+  if (linkType === 'commercial') {
+    return 'noopener sponsored';
+  }
+  
+  // 联盟链接：加 nofollow
+  if (linkType === 'affiliate') {
+    return 'noopener nofollow';
+  }
+  
+  // 用户生成内容：加 ugc nofollow
+  if (linkType === 'ugc') {
+    return 'noopener ugc nofollow';
+  }
+  
+  // 默认：只加 noopener（保守策略，不加 nofollow）
+  return 'noopener';
+});
+
 export interface ComparisonItem {
   name: string;
   feature: string;
@@ -82,6 +114,7 @@ export interface ExternalLink {
   title: string;
   url: string;
   description?: string; // 可选：链接描述
+  linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc'; // 链接类型，用于智能判断是否加 nofollow
 }
 
 // 模板6新增：参考文献接口
@@ -92,12 +125,14 @@ export interface Reference {
   publication?: string; // 出版物/期刊
   url?: string; // 链接
   doi?: string; // DOI
+  linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc'; // 链接类型，用于智能判断是否加 nofollow
 }
 
 // 模板6新增：外部权威资源接口
 export interface ExternalResource {
   title: string; // 资源标题
   url: string; // 资源链接
+  linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc'; // 链接类型，用于智能判断是否加 nofollow
   description?: string; // 资源描述
   type?: string; // 资源类型（如：Academic Paper, Industry Report, News Article等）
   source?: string; // 来源（如：Nature, Forbes, IEEE等）
