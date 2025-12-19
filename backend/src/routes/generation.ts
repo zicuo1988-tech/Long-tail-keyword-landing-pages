@@ -458,7 +458,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       
       // 针对奢华产品系列，补充 bespoke 分类的产品
       // keywordLower 已在上面声明（第288行），直接使用
-      const isLuxuryKeyword = keywordLower.includes("luxury") || keywordLower.includes("premium") ||
+      const isLuxuryKeyword = keywordLower.includes("luxury") || keywordLower.includes("premium") || 
                               keywordLower.includes("bespoke") || keywordLower.includes("exclusive") ||
                               keywordLower.includes("handcrafted") || keywordLower.includes("artisan");
       
@@ -503,15 +503,23 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
       // 如果内容/关键词涉及手机但列表里没手机类目，补充拉取手机产品，避免页面突兀
       // 注意：keywordLower 已在上面声明，这里直接使用
+      // 重要：如果关键词明确是 ring/watch/earbud，不要补充手机产品
+      const isRingKeywordForPhoneCheck = keywordLower.includes("ring") || keywordLower.includes("jewellery") || keywordLower.includes("jewelry");
+      const isWatchKeywordForPhoneCheck = keywordLower.includes("watch") || keywordLower.includes("timepiece");
+      const isEarbudKeywordForPhoneCheck = keywordLower.includes("earbud") || keywordLower.includes("earphone") || keywordLower.includes("audio");
+      const isSpecificCategoryKeyword = isRingKeywordForPhoneCheck || isWatchKeywordForPhoneCheck || isEarbudKeywordForPhoneCheck;
+      
       const contentSuggestsPhone =
-        /phone|mobile|smartphone|fold|flip|hinge|camera\s+phone|best phone/i.test(payload.keyword) ||
-        generatedContent.articleContent.toLowerCase().includes("phone");
+        !isSpecificCategoryKeyword && ( // 只有在不是特定类别关键词时才检查
+          /phone|mobile|smartphone|fold|flip|hinge|camera\s+phone|best phone/i.test(payload.keyword) ||
+          generatedContent.articleContent.toLowerCase().includes("phone")
+        );
       const hasPhoneProduct = products.some(
         (p) =>
           (p.category?.toLowerCase().includes("phone") || p.name.toLowerCase().includes("phone")) ||
           (p.categorySlug?.includes("phone") ?? false)
       );
-      if (contentSuggestsPhone && !hasPhoneProduct) {
+      if (contentSuggestsPhone && !hasPhoneProduct && !isSpecificCategoryKeyword) {
         // 在补充手机产品之前检查暂停状态
         if (isTaskPaused(taskId)) {
           return; // 任务已暂停，退出
@@ -598,6 +606,34 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           // 如果没有明确的产品类型要求，检查是否包含关键词
           if (keywordLowerForFilter && nameLower.includes(keywordLowerForFilter)) {
             return true;
+          }
+          
+          // 重要：如果关键词是特定类别（ring/watch/earbud），但产品不匹配该类别，应该过滤掉
+          // 例如："smart ring" 关键词不应该保留 "Agent Q" 产品
+          if (isRingKeywordForFilter) {
+            // 如果是 ring 关键词，只保留 ring 相关产品
+            if (!nameLower.includes("ring") && !nameLower.includes("jewellery") && !nameLower.includes("jewelry") && !nameLower.includes("diamond")) {
+              return false;
+            }
+          }
+          if (isWatchKeywordForFilter) {
+            // 如果是 watch 关键词，只保留 watch 相关产品
+            if (!nameLower.includes("watch") && !nameLower.includes("timepiece")) {
+              return false;
+            }
+          }
+          if (isEarbudKeywordForFilter) {
+            // 如果是 earbud 关键词，只保留 earbud 相关产品
+            if (!nameLower.includes("earbud") && !nameLower.includes("earphone") && !nameLower.includes("audio") && !nameLower.includes("ows")) {
+              return false;
+            }
+          }
+          if (isPhoneKeywordForFilter) {
+            // 如果是 phone 关键词，只保留 phone 相关产品
+            if (!nameLower.includes("phone") && !nameLower.includes("agent") && !nameLower.includes("quantum") && 
+                !nameLower.includes("metavertu") && !nameLower.includes("ivertu") && !nameLower.includes("signature")) {
+              return false;
+            }
           }
           
           // 默认保留（如果没有明确的过滤条件）
@@ -847,7 +883,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     }> = [];
     let internalLinks: Array<{ title: string; url: string }> = [];
     let externalLinks: Array<{ title: string; url: string; description?: string }> = [];
-    
+
     // 模板6：提前声明参考文献和外部权威资源（确保作用域正确）
     let references: Array<{ author?: string; year?: string; title?: string; publication?: string; url?: string; doi?: string }> = [];
     let externalResources: Array<{ title: string; url: string; description?: string; type?: string; source?: string; linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' }> = [];

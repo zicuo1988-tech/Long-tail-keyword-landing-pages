@@ -515,30 +515,30 @@ export async function fetchRelatedProducts(
           
           // 对每个搜索变体进行API调用
           for (const searchTerm of uniqueSearchVariants) {
-            try {
-              const categoryResp = await client.get("/products/categories", {
-                params: {
+          try {
+            const categoryResp = await client.get("/products/categories", {
+              params: {
                   search: searchTerm,
                   per_page: 30, // 增加搜索数量以支持模糊匹配
-                  hide_empty: true,
-                },
-              });
-              
-              let categories: Array<{ id: number; name: string; slug: string }> = Array.isArray(categoryResp.data)
-                ? categoryResp.data
-                : [];
-              
+                hide_empty: true,
+              },
+            });
+            
+            let categories: Array<{ id: number; name: string; slug: string }> = Array.isArray(categoryResp.data)
+              ? categoryResp.data
+              : [];
+            
               console.log(`[WordPress]   搜索词 "${searchTerm}" 返回 ${categories.length} 个分类`);
               
-              const targetCategoryNormalized = normalizeCategory(targetCat);
+            const targetCategoryNormalized = normalizeCategory(targetCat);
               const searchTermNormalized = normalizeCategory(searchTerm);
+            
+            // 模糊匹配分类（包含匹配，不区分大小写）
+            categories.forEach((category) => {
+              const categoryName = normalizeCategory(category.name || "");
+              const categorySlug = normalizeCategory(category.slug || "");
               
-              // 模糊匹配分类（包含匹配，不区分大小写）
-              categories.forEach((category) => {
-                const categoryName = normalizeCategory(category.name || "");
-                const categorySlug = normalizeCategory(category.slug || "");
-                
-                // 检查分类名称或slug是否包含目标关键词（模糊匹配）
+              // 检查分类名称或slug是否包含目标关键词（模糊匹配）
                 const nameMatches = categoryName.includes(targetCategoryNormalized) || 
                                    targetCategoryNormalized.includes(categoryName) ||
                                    categoryName.includes(searchTermNormalized) || 
@@ -548,24 +548,24 @@ export async function fetchRelatedProducts(
                                    targetCategoryNormalized.includes(categorySlug) ||
                                    categorySlug.includes(searchTermNormalized) || 
                                    searchTermNormalized.includes(categorySlug);
-                
-                // 也支持精确匹配
+              
+              // 也支持精确匹配
                 const exactMatch = categoryName === targetCategoryNormalized || 
                                   categorySlug === targetCategoryNormalized ||
                                   categoryName === searchTermNormalized || 
                                   categorySlug === searchTermNormalized;
-                
-                if (exactMatch || nameMatches || slugMatches) {
-                  // 使用Map避免重复
-                  if (!matchedCategories.has(category.id)) {
-                    matchedCategories.set(category.id, category);
+              
+              if (exactMatch || nameMatches || slugMatches) {
+                // 使用Map避免重复
+                if (!matchedCategories.has(category.id)) {
+                  matchedCategories.set(category.id, category);
                     console.log(`[WordPress]   ✅ 匹配到分类: "${category.name}" (slug: "${category.slug}") - 原始输入: "${targetCat}", 搜索词: "${searchTerm}"`);
-                  }
                 }
-              });
-            } catch (error: any) {
+              }
+            });
+          } catch (error: any) {
               console.warn(`[WordPress]   ⚠️ 搜索分类 "${searchTerm}" 失败:`, error.response?.status || error.message);
-              continue;
+            continue;
             }
           }
         }

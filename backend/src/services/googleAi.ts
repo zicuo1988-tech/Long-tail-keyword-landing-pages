@@ -175,6 +175,10 @@ async function generateWithKey(
   // 根据关键词匹配相关产品（只提及与关键词相关的产品）
   const relevantProducts = extractRelevantProductsFromKeyword(keyword, knownProducts);
   
+  // 根据产品类型过滤知识库内容，只保留相关的产品信息
+  // 这是关键修复：防止AI混用不同产品的信息（如ring关键词不应该使用Agent Q的规格）
+  const filteredKbContent = filterKnowledgeBaseByProductType(kbContent, keyword, relevantProducts);
+  
   // 检测性别和目标受众
   const combinedText = `${keyword.toLowerCase()} ${pageTitle.toLowerCase()}`;
   const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || 
@@ -321,27 +325,39 @@ async function generateWithKey(
 
   const contentStyleGuide = getContentStyleByType(titleType);
 
-  // 处理用户提示词
+  // 处理用户提示词 - 放在更突出的位置，确保AI优先遵循
   const userPromptSection = userPrompt && userPrompt.trim() 
-    ? `\n\nUSER-SPECIFIED CONTENT DIRECTION (MUST FOLLOW):
-The user has provided specific guidance for content creation. You MUST incorporate these ideas and directions into the article:
+    ? `\n\n═══════════════════════════════════════════════════════════════
+USER-SPECIFIED CONTENT DIRECTION (HIGHEST PRIORITY - MUST FOLLOW):
+═══════════════════════════════════════════════════════════════
+The user has provided CRITICAL guidance for content creation. You MUST incorporate these ideas and directions into the article:
+
 "${userPrompt.trim()}"
 
-IMPORTANT: While following the user's direction, you MUST still:
-- Maintain British English grammar and vocabulary
-- Adhere to the knowledge base (no fabricated information)
-- Follow the content structure requirements (H2 headings, paragraphs, lists)
-- Keep the content concise and SEO-optimised
-- Match the selected title type style`
+CRITICAL REQUIREMENTS:
+- You MUST follow the user's direction above - this takes PRIORITY over other guidelines
+- If the user asks to recommend specific products (e.g., "推荐我们产品AI Diamond Ring, 推荐oura, ringconn产品"), you MUST mention these products prominently
+- If the user asks to focus on specific aspects (e.g., "重点介绍产品的工艺特色"), you MUST emphasize those aspects
+- If the user asks to compare products (e.g., "推荐oura, ringconn产品"), you MUST include comparisons with those products
+- While following the user's direction, you MUST still:
+  * Maintain British English grammar and vocabulary
+  * Adhere to the knowledge base (no fabricated information)
+  * Follow the content structure requirements (H2 headings, paragraphs, lists)
+  * Keep the content concise and SEO-optimised
+  * Match the selected title type style
+═══════════════════════════════════════════════════════════════`
     : "";
 
   const articlePrompt = `You are an expert SEO content strategist specialising in high-value content. ${isLongFormTemplate ? "Write a COMPREHENSIVE, DETAILED article" : "Write a BRIEF, SEO-optimised article"} about "${keyword}" that directly answers the user's search query${isLongFormTemplate ? ", providing richer depth while remaining factual and tightly aligned to the title" : " without unnecessary length"}.
+
+${userPromptSection}
 
 TITLE-INTENT LOCK (CRITICAL):
 - The page title is "${pageTitle}". ALL content must stay tightly aligned to this title and its core intent.
 - Do NOT drift into unrelated themes (e.g., craftsmanship, materials, or other product categories) unless explicitly relevant to the title.
 - If the title is about rankings/features/minimalist smart phones, focus on ranking logic, feature explanations, user benefits, and why each feature matters for minimalist smart phones.
-- If the title/keyword is about wearables, hearables, or watches (e.g., "wearable", "hearable", "earbud", "watch", "timepiece"), DO NOT deep-dive into phone hardware. You may mention Agent Q / Quantum Flip at most once as a control hub/context link, but keep it to one short sentence and return immediately to the wearable/hearable/watch topic.
+- If the title/keyword is about wearables, hearables, or watches (e.g., "wearable", "hearable", "earbud", "watch", "timepiece"), DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.) at all - they are NOT relevant to these product categories
+- DO NOT mention Ruby Key, Ruby Talk, or Concierge Service when writing about rings, watches, or earbuds - these services are exclusive to phones only
 - Brand naming rule: ONLY use "VERTU" in headings/phrasing if the title或keyword明确包含 "VERTU"；否则保持中性表达（写 "wearables" 而不是 "VERTU wearables"），避免强行加品牌前缀。
 - Use knowledge base facts only when they are relevant to the title intent; ignore irrelevant KB parts.
 - It is BETTER to add new, relevant, factual detail that fits the title than to include off-topic KB snippets.
@@ -353,14 +369,17 @@ GENDER AND TARGET AUDIENCE MATCHING (CRITICAL):
 - DO NOT recommend men's products when the title is about gifts for wives/women
 - Product recommendations MUST match the target audience specified in the title
 
-PRODUCT TYPE MATCHING (CRITICAL):
-- If the title/keyword explicitly mentions "phone", "smartphone", "mobile phone" → content MUST focus on PHONE products, NOT watches, rings, or bags
-- If the title/keyword explicitly mentions "watch", "timepiece" → content MUST focus on WATCH products, NOT phones
-- If the title/keyword explicitly mentions "ring", "jewellery" → content MUST focus on RING products, NOT phones or watches
-- If the title/keyword explicitly mentions "earbud", "earphone" → content MUST focus on EARBUD products, NOT phones or watches
-- Product recommendations MUST match the product type specified in the title/keyword
+PRODUCT TYPE MATCHING (CRITICAL - but user prompt takes priority):
+- IMPORTANT: If the user has provided specific product recommendations in the user prompt above, those take HIGHEST PRIORITY
+- If the user prompt mentions specific products (e.g., "推荐AI Diamond Ring, oura, ringconn"), you MUST prioritize those products
+- Only if NO user prompt is provided, then follow these rules:
+  * If the title/keyword explicitly mentions "phone", "smartphone", "mobile phone" → content MUST focus on PHONE products, NOT watches, rings, or bags
+  * If the title/keyword explicitly mentions "watch", "timepiece" → content MUST focus on WATCH products, NOT phones
+  * If the title/keyword explicitly mentions "ring", "jewellery" → content MUST focus on RING products, NOT phones or watches
+  * If the title/keyword explicitly mentions "earbud", "earphone" → content MUST focus on EARBUD products, NOT phones or watches
+- Product recommendations MUST match the product type specified in the title/keyword (unless user prompt specifies otherwise)
 
-${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}${userPromptSection}
+${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}
 
 CRITICAL REQUIREMENTS:
 - You MUST write in British English (UK English) ONLY - this is non-negotiable
@@ -654,40 +673,84 @@ CRITICAL: TITLE-CONTENT MATCHING REQUIREMENTS:
   * This mismatch confuses users - it's like showing "restaurant decoration" under "Menu"
 
 KNOWLEDGE BASE (CRITICAL - use ONLY this data for ALL product information. This is your ONLY source of truth):
-${kbContent}
+${filteredKbContent}
 
-TRUTHFULNESS REQUIREMENTS:
+CRITICAL: KNOWLEDGE BASE FILTERING AND ACCURACY REQUIREMENTS:
+- The knowledge base above has been FILTERED to include ONLY information relevant to "${keyword}"
+- You MUST ONLY use information from the filtered knowledge base above - DO NOT use external knowledge or make assumptions
+- DO NOT use information from products that are NOT listed in the "RELEVANT PRODUCTS" section above
+- If the keyword is about "rings" → ONLY use ring-related information (Meta Ring, AI Diamond Ring, AI Meta Ring)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
+  * DO NOT use phone specifications (Snapdragon, RAM, display sizes, battery capacity, etc.)
+  * DO NOT invent specifications not in the knowledge base (e.g., if knowledge base says "5ATM", DO NOT write "10ATM")
+- If the keyword is about "phones" → ONLY use phone-related information (Agent Q, Quantum Flip, Metavertu, etc.)
+- If the keyword is about "watches" → ONLY use watch-related information (Grand Watch, Metawatch)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
+- If the keyword is about "earbuds" → ONLY use earbud-related information (Phantom Earbuds, OWS Earbuds)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
+- DO NOT mix specifications from different product categories (e.g., DO NOT use phone specs like "Snapdragon 8 Elite Supreme" or "16GB RAM" when writing about rings)
+- DO NOT use product features from unrelated categories (e.g., DO NOT mention "Falcon-Wing SIM chamber" when writing about rings)
+- CRITICAL: Use EXACT specifications from the knowledge base - if knowledge base says "5ATM", write "5ATM", NOT "10ATM" or any other value
+- CRITICAL: If a specification is NOT in the knowledge base, DO NOT mention it - omit it entirely rather than guessing or using external knowledge
+
+TRUTHFULNESS REQUIREMENTS (CRITICAL - STRICTLY ENFORCE):
 - ONLY use facts, specifications, prices, materials, and features explicitly stated in the knowledge base above
 - If information is NOT in the knowledge base, DO NOT mention it - skip it entirely
 - DO NOT make assumptions, inferences, or educated guesses
 - DO NOT use external knowledge or general industry information
+- DO NOT use common industry knowledge (e.g., if knowledge base says "5ATM", DO NOT assume "10ATM" is better and use that instead)
 - If a product detail is missing from the knowledge base, simply omit that detail rather than inventing it
 - All product names, prices, specifications, and features MUST match the knowledge base exactly
+- CRITICAL: If the knowledge base specifies "5ATM" for a ring product, write "5ATM" - DO NOT write "10ATM" or any other value
+- CRITICAL: If the knowledge base does NOT mention waterproof rating, DO NOT mention it at all
+- CRITICAL: If the knowledge base does NOT mention specific materials (e.g., "ceramic and titanium"), DO NOT mention them
+- CRITICAL: Use EXACT wording and numbers from the knowledge base - do not paraphrase specifications
+- CRITICAL: DO NOT use specifications from other products or external knowledge - ONLY use what is explicitly stated in the filtered knowledge base above
 
 RELEVANT PRODUCTS FOR THIS KEYWORD "${keyword}" (you MUST focus ONLY on these products - do NOT mention other unrelated products):
 ${(() => {
   // 构建产品推荐约束
   let productGuidance = "";
   
-  // 性别约束
-  if (isMenTarget && !isWomenTarget) {
-    productGuidance += `- CRITICAL: The title/keyword is about gifts for HUSBANDS/MEN
+  // 优先级检查：如果用户提供了提示词，优先遵循用户提示词中的产品推荐
+  const hasUserProductGuidance = userPrompt && userPrompt.trim() && (
+    userPrompt.toLowerCase().includes("推荐") || 
+    userPrompt.toLowerCase().includes("recommend") ||
+    userPrompt.toLowerCase().includes("product") ||
+    userPrompt.toLowerCase().includes("产品")
+  );
+  
+  if (hasUserProductGuidance) {
+    // 如果用户提示词中包含产品推荐，优先遵循用户提示词
+    productGuidance += `- CRITICAL: The user has specified product recommendations in their prompt above
+- You MUST prioritize the products mentioned in the user prompt
+- The user's product preferences take HIGHEST PRIORITY over keyword-based matching
+- Follow the user's direction for product recommendations\n`;
+  }
+  
+  // 性别约束（如果没有用户提示词覆盖，则应用）
+  if (!hasUserProductGuidance) {
+    if (isMenTarget && !isWomenTarget) {
+      productGuidance += `- CRITICAL: The title/keyword is about gifts for HUSBANDS/MEN
 - You MUST recommend products suitable for MEN/HUSBANDS ONLY
 - DO NOT recommend women's products (e.g., women's bags, ladies' accessories, women's jewellery)
 - Focus on products that men/husbands would appreciate (phones, watches, men's accessories)\n`;
-  } else if (isWomenTarget && !isMenTarget) {
-    productGuidance += `- CRITICAL: The title/keyword is about gifts for WIVES/WOMEN
+    } else if (isWomenTarget && !isMenTarget) {
+      productGuidance += `- CRITICAL: The title/keyword is about gifts for WIVES/WOMEN
 - You MUST recommend products suitable for WOMEN/WIVES ONLY
 - DO NOT recommend men's products
 - Focus on products that women/wives would appreciate\n`;
+    }
   }
   
-  // 产品类型约束
-  if (isPhoneKeyword) {
-    productGuidance += `- CRITICAL: The title/keyword explicitly mentions PHONES/SMARTPHONES
+  // 产品类型约束（如果没有用户提示词覆盖，则应用）
+  if (!hasUserProductGuidance) {
+    if (isPhoneKeyword) {
+      productGuidance += `- CRITICAL: The title/keyword explicitly mentions PHONES/SMARTPHONES
 - You MUST recommend PHONE products ONLY (Agent Q, Quantum Flip, Metavertu, etc.)
 - DO NOT recommend watches, rings, bags, or other non-phone products
 - Focus ONLY on phone-related products from the knowledge base\n`;
+    }
   }
   
   if (relevantProducts.length > 0) {
@@ -697,21 +760,24 @@ ${(() => {
 - If "${keyword}" relates to laptops/notebooks/computers, discuss VERTU's approach to luxury technology, craftsmanship, and premium devices
 - Do NOT mention specific product names unless they are directly related to "${keyword}"
 - Keep content general and relevant to the keyword, focusing on VERTU's brand values and luxury technology positioning`;
-  } else if (keyword.toLowerCase().includes("watch") || keyword.toLowerCase().includes("timepiece") || keyword.toLowerCase().includes("horology") || keyword.toLowerCase().includes("chronograph")) {
+  } else if (!hasUserProductGuidance && (keyword.toLowerCase().includes("watch") || keyword.toLowerCase().includes("timepiece") || keyword.toLowerCase().includes("horology") || keyword.toLowerCase().includes("chronograph"))) {
     return productGuidance + `- CRITICAL: The keyword "${keyword}" is about WATCHES/TIMEPIECES
 - You MUST write about watches (Grand Watch, Metawatch) ONLY
 - DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.) - they are NOT relevant to "${keyword}"
 - DO NOT mention rings, earbuds, or other product categories
+- DO NOT mention Ruby Key, Ruby Talk, or Concierge Service - these are EXCLUSIVE to phones ONLY
 - Focus ONLY on watch-related products and features from the knowledge base`;
-  } else if (keyword.toLowerCase().includes("ring") || keyword.toLowerCase().includes("jewellery") || keyword.toLowerCase().includes("jewelry")) {
+  } else if (!hasUserProductGuidance && (keyword.toLowerCase().includes("ring") || keyword.toLowerCase().includes("jewellery") || keyword.toLowerCase().includes("jewelry"))) {
     return productGuidance + `- CRITICAL: The keyword "${keyword}" is about RINGS/JEWELLERY
 - You MUST write about rings (Meta Ring, AI Diamond Ring, AI Meta Ring) ONLY
-- DO NOT mention phones, watches, earbuds, or other product categories
+- DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.), watches, earbuds, or other product categories
+- DO NOT mention Ruby Key, Ruby Talk, or Concierge Service - these are EXCLUSIVE to phones ONLY
 - Focus ONLY on ring-related products and features from the knowledge base`;
-  } else if (keyword.toLowerCase().includes("earbud") || keyword.toLowerCase().includes("earphone") || keyword.toLowerCase().includes("audio")) {
+  } else if (!hasUserProductGuidance && (keyword.toLowerCase().includes("earbud") || keyword.toLowerCase().includes("earphone") || keyword.toLowerCase().includes("audio"))) {
     return productGuidance + `- CRITICAL: The keyword "${keyword}" is about EARBUDS/AUDIO
 - You MUST write about earbuds (Phantom Earbuds, OWS Earbuds) ONLY
-- DO NOT mention phones, watches, rings, or other product categories
+- DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.), watches, rings, or other product categories
+- DO NOT mention Ruby Key, Ruby Talk, or Concierge Service - these are EXCLUSIVE to phones ONLY
 - Focus ONLY on earbud-related products and features from the knowledge base`;
   } else {
     return productGuidance + `- Focus on VERTU brand and general luxury mobile phone features relevant to "${keyword}"
@@ -734,8 +800,10 @@ ABSOLUTE PROHIBITIONS:
 - If information is missing from the knowledge base, skip it entirely rather than making assumptions
 - CRITICAL: If keyword is about "watches" → DO NOT mention phones, rings, earbuds
 - CRITICAL: If keyword is about "phones" → DO NOT mention watches, rings, earbuds
-- CRITICAL: If keyword is about "rings" → DO NOT mention phones, watches, earbuds
-- CRITICAL: If keyword is about "earbuds" → DO NOT mention phones, watches, rings
+- CRITICAL: If keyword is about "rings" → DO NOT mention phones, watches, earbuds, Agent Q, Ruby Key, Ruby Talk, or Concierge Service
+- CRITICAL: If keyword is about "earbuds" → DO NOT mention phones, watches, rings, Agent Q, Ruby Key, Ruby Talk, or Concierge Service
+- CRITICAL: Ruby Key, Ruby Talk, and Concierge Service are EXCLUSIVE to phones ONLY - NEVER mention them when writing about rings, watches, or earbuds
+- CRITICAL: Agent Q is a phone product - NEVER mention it when writing about rings, watches, or earbuds
 - This is a SEVERE SEO violation if content topic does not match keyword topic
 
 CONTENT ENRICHMENT GUIDELINES:
@@ -796,9 +864,25 @@ ${isLongFormTemplate ? "- No hard word limit: prioritise depth, completeness, an
 - Focus on directly answering the keyword question`;
 
   // 生成FAQ内容的提示词（SEO优化版本）
-  const faqPrompt = `You are an expert SEO strategist and user experience specialist. Generate EXACTLY 6 highly relevant, keyword-focused FAQ items in British English for the search query "${keyword}".
+  const faqUserPromptSection = userPrompt && userPrompt.trim() 
+    ? `\n\n═══════════════════════════════════════════════════════════════
+USER-SPECIFIED FAQ DIRECTION (HIGHEST PRIORITY - MUST FOLLOW):
+═══════════════════════════════════════════════════════════════
+The user has provided CRITICAL guidance for FAQ generation. You MUST incorporate these ideas into the FAQs:
+
+"${userPrompt.trim()}"
 
 CRITICAL REQUIREMENTS:
+- You MUST follow the user's direction above - this takes PRIORITY over other guidelines
+- If the user asks to recommend specific products (e.g., "推荐我们产品AI Diamond Ring, 推荐oura, ringconn产品"), you MUST include FAQs about these products
+- If the user asks to focus on specific aspects, you MUST create FAQs that emphasize those aspects
+- If the user asks to compare products, you MUST include comparison FAQs
+═══════════════════════════════════════════════════════════════\n\n`
+    : "";
+
+  const faqPrompt = `You are an expert SEO strategist and user experience specialist. Generate EXACTLY 6 highly relevant, keyword-focused FAQ items in British English for the search query "${keyword}".
+
+${faqUserPromptSection}CRITICAL REQUIREMENTS:
 - You MUST generate EXACTLY 6 FAQ items (no more, no less)
 - You MUST write in British English (UK English) only
 - You MUST NOT include any Chinese characters, words, or phrases
@@ -904,7 +988,28 @@ FAQ STRUCTURE (MUST FOLLOW THIS EXACT ORDER):
    - Choose diverse categories (e.g., one Shopping, one Payment, one Shipping/Return)
 
 KNOWLEDGE BASE (YOUR ONLY SOURCE OF TRUTH - use ONLY this data):
-${kbContent}
+${filteredKbContent}
+
+CRITICAL: KNOWLEDGE BASE FILTERING FOR FAQ:
+- The knowledge base above has been FILTERED to include ONLY information relevant to "${keyword}"
+- You MUST ONLY use information from the filtered knowledge base above - DO NOT use external knowledge
+- DO NOT use information from products that are NOT listed in the "RELEVANT PRODUCTS" section above
+- If the keyword is about "rings" → ONLY use ring-related information (Meta Ring, AI Diamond Ring, AI Meta Ring)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products in FAQs
+  * DO NOT use phone specifications (Snapdragon, RAM, display sizes, etc.)
+  * Use EXACT specifications from knowledge base (e.g., if knowledge base says "5ATM", write "5ATM", NOT "10ATM")
+  * DO NOT select FAQs about Ruby Key, Ruby Talk, or Concierge Service from the FAQ section
+- If the keyword is about "phones" → ONLY use phone-related information (Agent Q, Quantum Flip, Metavertu, etc.)
+- If the keyword is about "watches" → ONLY use watch-related information (Grand Watch, Metawatch)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products in FAQs
+  * DO NOT select FAQs about Ruby Key, Ruby Talk, or Concierge Service from the FAQ section
+- If the keyword is about "earbuds" → ONLY use earbud-related information (Phantom Earbuds, OWS Earbuds)
+  * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products in FAQs
+  * DO NOT select FAQs about Ruby Key, Ruby Talk, or Concierge Service from the FAQ section
+- DO NOT mix specifications from different product categories
+- CRITICAL: Use EXACT specifications from the knowledge base - if knowledge base says "5ATM", write "5ATM", NOT "10ATM" or any other value
+- CRITICAL: DO NOT use external knowledge or common industry information - ONLY use what is explicitly stated in the filtered knowledge base
+- CRITICAL: When selecting FAQs from "GLOBAL SHOPPING / PAYMENT / SHIPPING / RETURN FAQ", SKIP any FAQs that mention Ruby Key, Ruby Talk, Concierge Service, or phone-specific features if the keyword is about rings, watches, or earbuds
 
 RELEVANT PRODUCTS FOR KEYWORD "${keyword}" (use these in the first 3 FAQs when relevant):
 ${relevantProducts.length > 0 
@@ -1515,7 +1620,7 @@ CONTENT STRUCTURE:
 5. NO word limit - be thorough and detailed
 
 KNOWLEDGE BASE (use ONLY this data):
-${kbContent.substring(0, 3000)}
+${filteredKbContent.substring(0, 3000)}
 
 Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul>, <li>). Do NOT include H1 tags.`;
 
@@ -2120,13 +2225,9 @@ function extractProductNamesFromKnowledgeBase(kbContent: string): string[] {
   // 去重并排序
   const uniqueProducts = Array.from(new Set(products.map(p => p.trim()).filter(p => p.length > 0)));
   
-  // 确保至少包含明确列出的主要产品
-  const mainProducts = ["Agent Q", "Quantum Flip", "Metavertu Max", "iVERTU"];
-  mainProducts.forEach((product) => {
-    if (!uniqueProducts.some(p => p.toLowerCase().includes(product.toLowerCase()) || product.toLowerCase().includes(p.toLowerCase()))) {
-      uniqueProducts.push(product);
-    }
-  });
+  // 移除强制添加手机产品的逻辑 - 这会导致不相关的产品被添加到列表中
+  // 例如："smart ring" 关键词不应该强制添加 "Agent Q"
+  // 产品应该只从知识库中提取，或者通过关键词匹配逻辑确定
   
   return uniqueProducts.sort();
 }
@@ -2193,15 +2294,39 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
     },
   ];
 
-  // 直接匹配产品名称
+  // 直接匹配产品名称（仅在关键词明确包含产品名称时）
+  // 注意：避免部分单词匹配导致误匹配（如 "smart ring" 不应该匹配到 "Agent Q"）
   for (const product of knownProducts) {
     const productLower = product.toLowerCase();
-    // 如果关键词包含产品名称，或者产品名称包含关键词的一部分
-    if (
-      keywordLower.includes(productLower) ||
-      productLower.includes(keywordLower) ||
-      keywordLower.split(/\s+/).some((word) => productLower.includes(word) && word.length >= 3)
-    ) {
+    // 只匹配以下情况：
+    // 1. 关键词完整包含产品名称（如 "agent q" 匹配 "Agent Q"）
+    // 2. 产品名称完整包含关键词（如 "Quantum Flip" 匹配 "quantum"）
+    // 3. 关键词是产品名称的一部分（如 "agent" 匹配 "Agent Q"）
+    // 但不匹配部分单词（避免 "smart" 匹配到不相关的产品）
+    const productWords = productLower.split(/\s+/);
+    const keywordWords = keywordLower.split(/\s+/);
+    
+    // 检查关键词是否包含完整的产品名称
+    const keywordContainsProduct = keywordLower.includes(productLower);
+    // 检查产品名称是否包含完整的关键词
+    const productContainsKeyword = productLower.includes(keywordLower);
+    // 检查关键词中的单词是否完整匹配产品名称中的单词（至少3个字符）
+    const hasFullWordMatch = keywordWords.some((kw) => 
+      kw.length >= 3 && productWords.some((pw) => pw === kw || pw.includes(kw))
+    );
+    
+    if (keywordContainsProduct || productContainsKeyword || hasFullWordMatch) {
+      // 额外检查：如果是特定类别关键词（ring/watch/earbud），只匹配对应类别的产品
+      if (isRingKeyword && !productMatchesCategory(product, "ring")) {
+        continue; // 跳过不匹配的产品
+      }
+      if (isWatchKeyword && !productMatchesCategory(product, "watch")) {
+        continue; // 跳过不匹配的产品
+      }
+      if (isEarbudKeyword && !productMatchesCategory(product, "earbud")) {
+        continue; // 跳过不匹配的产品
+      }
+      
       if (!relevantProducts.includes(product)) {
         relevantProducts.push(product);
       }
@@ -2273,6 +2398,291 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
   }
 
   return relevantProducts;
+}
+
+/**
+ * 根据产品类型过滤知识库内容，只保留相关的产品信息
+ * 这是关键修复：防止AI混用不同产品的信息（如ring关键词不应该使用Agent Q的规格）
+ * 重要：Ruby Talk 只有 Agent Q 才有，其他手机产品（Quantum Flip、Metavertu等）没有
+ */
+function filterKnowledgeBaseByProductType(
+  kbContent: string,
+  keyword: string,
+  relevantProducts: string[]
+): string {
+  if (!kbContent || !keyword) {
+    return kbContent;
+  }
+
+  const keywordLower = keyword.toLowerCase().trim();
+  const isPhoneKeyword = /\b(phone|phones|smartphone|smart phone|cellphone|cell phone|mobile)\b/i.test(keyword);
+  const isWatchKeyword = /(watch|watches|timepiece|horology|chronograph)/i.test(keyword);
+  const isRingKeyword = /\b(ring|jewellery|jewelry|jewel)\b/i.test(keyword);
+  const isEarbudKeyword = /(earbud|earbuds|earphone|earphones|audio|hearable|hearables|headphone)/i.test(keyword);
+  
+  // 检查相关产品中是否包含 Agent Q
+  const hasAgentQ = relevantProducts.some(p => p.toLowerCase().includes("agent q"));
+  
+  // 如果没有明确的产品类型，返回完整知识库
+  if (!isPhoneKeyword && !isWatchKeyword && !isRingKeyword && !isEarbudKeyword) {
+    return kbContent;
+  }
+
+  // 如果有关联产品，只保留这些产品的信息
+  if (relevantProducts.length > 0) {
+    const sections: string[] = [];
+    const lines = kbContent.split('\n');
+    let currentSection: string[] = [];
+    let inRelevantSection = false;
+    let sectionTitle = '';
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // 检测产品分隔符（如 "AGENT Q", "META RING" 等）
+      if (line.match(/^-{3,}/) && i > 0) {
+        // 保存上一个section
+        if (inRelevantSection && currentSection.length > 0) {
+          sections.push(currentSection.join('\n'));
+        }
+        currentSection = [];
+        inRelevantSection = false;
+        sectionTitle = '';
+        
+        // 检查下一个section的标题
+        if (i + 1 < lines.length) {
+          const nextLine = lines[i + 1].trim();
+          const productNameMatch = nextLine.match(/^([A-Z][A-Z\s]+)$/);
+          if (productNameMatch) {
+            sectionTitle = productNameMatch[1];
+            // 检查是否是相关产品
+            const isRelevant = relevantProducts.some(product => {
+              const productLower = product.toLowerCase();
+              const titleLower = sectionTitle.toLowerCase();
+              return titleLower.includes(productLower) || productLower.includes(titleLower);
+            });
+            inRelevantSection = isRelevant;
+          }
+        }
+      } else {
+        // 检查是否是产品标题行
+        if (line.match(/^[A-Z][A-Z\s]+$/) && line.length < 50) {
+          sectionTitle = line.trim();
+          const isRelevant = relevantProducts.some(product => {
+            const productLower = product.toLowerCase();
+            const titleLower = sectionTitle.toLowerCase();
+            return titleLower.includes(productLower) || productLower.includes(titleLower);
+          });
+          inRelevantSection = isRelevant;
+        }
+        
+        if (inRelevantSection || line.trim() === '' || line.match(/^REGARDING|^ALL OUTPUT|^BRITISH ENGLISH/i)) {
+          currentSection.push(line);
+        }
+      }
+    }
+    
+    // 保存最后一个section
+    if (inRelevantSection && currentSection.length > 0) {
+      sections.push(currentSection.join('\n'));
+    }
+    
+    // 添加通用部分（FAQ、Ruby Key、Ruby Talk等，根据产品类型和产品决定）
+    const generalSections: string[] = [];
+    
+    // 检查相关产品是否真的是手机产品（防止误匹配）
+    const isActuallyPhoneProduct = relevantProducts.some(p => {
+      const pLower = p.toLowerCase();
+      return pLower.includes("agent q") || pLower.includes("quantum flip") || 
+             pLower.includes("metavertu") || pLower.includes("ivertu") || 
+             pLower.includes("signature");
+    });
+    
+    // Ruby Key 和 Concierge Service：只有手机产品才有，ring/watch/earbud 不应该包含
+    // 重要：必须确保相关产品真的是手机产品，而不是误匹配
+    if (isPhoneKeyword && isActuallyPhoneProduct) {
+      const rubyKeyPattern = /-{3,}\s*RUBY\s+KEY[\s\S]*?(?=-{3,}|$)/i;
+      const rubyKeyMatch = kbContent.match(rubyKeyPattern);
+      if (rubyKeyMatch) {
+        generalSections.push(rubyKeyMatch[0]);
+        console.log(`[GoogleAI] 知识库过滤: 手机产品，包含 Ruby Key 信息`);
+      }
+    } else if (!isPhoneKeyword) {
+      console.log(`[GoogleAI] 知识库过滤: 非手机关键词（${isRingKeyword ? 'ring' : isWatchKeyword ? 'watch' : isEarbudKeyword ? 'earbud' : 'unknown'}），排除 Ruby Key 和 Concierge Service`);
+    } else if (isPhoneKeyword && !isActuallyPhoneProduct) {
+      console.log(`[GoogleAI] 知识库过滤: 手机关键词但相关产品不是手机（相关产品: ${relevantProducts.join(', ')}），排除 Ruby Key`);
+    }
+    
+    // Ruby Talk：只有 Agent Q 才有，其他手机产品（Quantum Flip、Metavertu等）没有
+    if (isPhoneKeyword && hasAgentQ && isActuallyPhoneProduct) {
+      const rubyTalkPattern = /-{3,}\s*RUBY\s+TALK[\s\S]*?(?=-{3,}|$)/i;
+      const rubyTalkMatch = kbContent.match(rubyTalkPattern);
+      if (rubyTalkMatch) {
+        generalSections.push(rubyTalkMatch[0]);
+        console.log(`[GoogleAI] 知识库过滤: 检测到 Agent Q，包含 Ruby Talk 信息`);
+      }
+    } else if (isPhoneKeyword && !hasAgentQ) {
+      console.log(`[GoogleAI] 知识库过滤: 手机关键词但非 Agent Q（相关产品: ${relevantProducts.join(', ')}），排除 Ruby Talk 信息`);
+    }
+    
+    // FAQ和购物信息：根据产品类型过滤，ring/watch/earbud不应该包含手机相关的FAQ
+    const faqKeywords = ['GLOBAL SHOPPING', 'PAYMENT', 'SHIPPING', 'RETURN'];
+    for (const faqKeyword of faqKeywords) {
+      const faqPattern = new RegExp(`-{3,}\\s*${faqKeyword}[\\s\\S]*?(?=-{3,}|$)`, 'i');
+      const faqMatch = kbContent.match(faqPattern);
+      if (faqMatch) {
+        let faqContent = faqMatch[0];
+        
+        // 如果是ring/watch/earbud，需要过滤掉FAQ中关于Ruby Key、Ruby Talk、Concierge Service的内容
+        if (!isPhoneKeyword) {
+          // 移除FAQ中关于Ruby Key、Ruby Talk、Concierge Service的行
+          const lines = faqContent.split('\n');
+          const filteredLines = lines.filter(line => {
+            const lineLower = line.toLowerCase();
+            // 排除包含Ruby Key、Ruby Talk、Concierge Service的行
+            return !lineLower.includes('ruby key') && 
+                   !lineLower.includes('ruby talk') && 
+                   !lineLower.includes('concierge service') &&
+                   !lineLower.includes('aigs') &&
+                   !lineLower.includes('vps') &&
+                   !lineLower.includes('agent q') &&
+                   !lineLower.includes('tell me about the concierge') &&
+                   !lineLower.includes('what is the ruby key') &&
+                   !lineLower.includes('what is ruby talk') &&
+                   !lineLower.includes('what is aigs') &&
+                   !lineLower.includes('what is vps') &&
+                   !lineLower.includes('how does the concierge service') &&
+                   !lineLower.includes('what are the six privilege pillars') &&
+                   !lineLower.includes('24/7 concierge') &&
+                   !lineLower.includes('concierge handles') &&
+                   !lineLower.includes('concierge can') &&
+                   !lineLower.includes('concierge team') &&
+                   !lineLower.includes('concierge contact');
+          });
+          faqContent = filteredLines.join('\n');
+          console.log(`[GoogleAI] 知识库过滤: ${isRingKeyword ? 'Ring' : isWatchKeyword ? 'Watch' : 'Earbud'}关键词，已过滤FAQ中的Ruby Key/Ruby Talk/Concierge Service相关内容`);
+        }
+        
+        if (faqContent.trim().length > 0) {
+          generalSections.push(faqContent);
+        }
+      }
+    }
+    
+    // 组合过滤后的内容
+    const header = kbContent.split('\n').slice(0, 3).join('\n'); // 保留开头的说明
+    const filtered = [header, ...sections, ...generalSections].join('\n\n');
+    
+    console.log(`[GoogleAI] 知识库过滤: 关键词="${keyword}", 相关产品=${relevantProducts.join(', ')}, 包含Agent Q=${hasAgentQ}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
+    
+    return filtered || kbContent; // 如果过滤后为空，返回原始内容
+  }
+
+  // 如果没有相关产品，根据产品类型过滤
+  let filtered = kbContent;
+  
+  if (isRingKeyword) {
+    // 只保留ring相关的section，明确排除 Ruby Key、Ruby Talk、Concierge Service
+    const ringPattern = /-{3,}\s*(META\s+RING|AI\s+DIAMOND\s+RING|AI\s+META\s+RING)[\s\S]*?(?=-{3,}|$)/gi;
+    const ringMatches = kbContent.match(ringPattern);
+    if (ringMatches) {
+      const header = kbContent.split('\n').slice(0, 3).join('\n');
+      filtered = [header, ...ringMatches].join('\n\n');
+      console.log(`[GoogleAI] 知识库过滤: Ring关键词，排除 Ruby Key、Ruby Talk、Concierge Service`);
+    }
+  } else if (isWatchKeyword) {
+    // 只保留watch相关的section，明确排除 Ruby Key、Ruby Talk、Concierge Service
+    const watchPattern = /-{3,}\s*(GRAND\s+WATCH|METAWATCH)[\s\S]*?(?=-{3,}|$)/gi;
+    const watchMatches = kbContent.match(watchPattern);
+    if (watchMatches) {
+      const header = kbContent.split('\n').slice(0, 3).join('\n');
+      filtered = [header, ...watchMatches].join('\n\n');
+      console.log(`[GoogleAI] 知识库过滤: Watch关键词，排除 Ruby Key、Ruby Talk、Concierge Service`);
+    }
+  } else if (isEarbudKeyword) {
+    // 只保留earbud相关的section，明确排除 Ruby Key、Ruby Talk、Concierge Service
+    const earbudPattern = /-{3,}\s*(PHANTOM\s+EARBUDS|OWS\s+EARBUDS)[\s\S]*?(?=-{3,}|$)/gi;
+    const earbudMatches = kbContent.match(earbudPattern);
+    if (earbudMatches) {
+      const header = kbContent.split('\n').slice(0, 3).join('\n');
+      filtered = [header, ...earbudMatches].join('\n\n');
+      console.log(`[GoogleAI] 知识库过滤: Earbud关键词，排除 Ruby Key、Ruby Talk、Concierge Service`);
+    }
+  } else if (isPhoneKeyword) {
+    // 只保留phone相关的section
+    const phonePattern = /-{3,}\s*(AGENT\s+Q|QUANTUM\s+FLIP|METAVERTU|IVERTU|SIGNATURE)[\s\S]*?(?=-{3,}|$)/gi;
+    const phoneMatches = kbContent.match(phonePattern);
+    if (phoneMatches) {
+      const header = kbContent.split('\n').slice(0, 3).join('\n');
+      // 检查是否包含 Agent Q
+      const hasAgentQInMatches = phoneMatches.some(m => /AGENT\s+Q/i.test(m));
+      
+      // Ruby Key：所有手机都有
+      const rubyKeyPattern = /-{3,}\s*RUBY\s+KEY[\s\S]*?(?=-{3,}|$)/gi;
+      const rubyKeyMatch = kbContent.match(rubyKeyPattern);
+      
+      // Ruby Talk：只有 Agent Q 才有
+      let rubyTalkMatch = null;
+      if (hasAgentQInMatches) {
+        const rubyTalkPattern = /-{3,}\s*RUBY\s+TALK[\s\S]*?(?=-{3,}|$)/gi;
+        rubyTalkMatch = kbContent.match(rubyTalkPattern);
+        console.log(`[GoogleAI] 知识库过滤: 检测到 Agent Q，包含 Ruby Talk 信息`);
+      } else {
+        console.log(`[GoogleAI] 知识库过滤: 手机关键词但非 Agent Q，排除 Ruby Talk 信息`);
+      }
+      
+      filtered = [header, ...phoneMatches, ...(rubyKeyMatch ? rubyKeyMatch : []), ...(rubyTalkMatch ? rubyTalkMatch : [])].join('\n\n');
+    }
+  }
+  
+  // 根据产品类型过滤FAQ和购物信息，ring/watch/earbud不应该包含手机相关的FAQ
+  const faqPattern = /-{3,}\s*(GLOBAL\s+SHOPPING|PAYMENT|SHIPPING|RETURN)[\s\S]*?(?=-{3,}|$)/gi;
+  const faqMatches = kbContent.match(faqPattern);
+  if (faqMatches) {
+    if (!isPhoneKeyword) {
+      // 对于ring/watch/earbud，过滤掉FAQ中关于Ruby Key、Ruby Talk、Concierge Service的内容
+      const filteredFaqs = faqMatches.map(faqContent => {
+        const lines = faqContent.split('\n');
+        const filteredLines = lines.filter(line => {
+          const lineLower = line.toLowerCase();
+          // 排除包含Ruby Key、Ruby Talk、Concierge Service的行
+          return !lineLower.includes('ruby key') && 
+                 !lineLower.includes('ruby talk') && 
+                 !lineLower.includes('concierge service') &&
+                 !lineLower.includes('aigs') &&
+                 !lineLower.includes('vps') &&
+                 !lineLower.includes('agent q') &&
+                 !lineLower.includes('tell me about the concierge') &&
+                 !lineLower.includes('what is the ruby key') &&
+                 !lineLower.includes('what is ruby talk') &&
+                 !lineLower.includes('what is aigs') &&
+                 !lineLower.includes('what is vps') &&
+                 !lineLower.includes('how does the concierge service') &&
+                 !lineLower.includes('what are the six privilege pillars') &&
+                 !lineLower.includes('24/7 concierge') &&
+                 !lineLower.includes('concierge handles') &&
+                 !lineLower.includes('concierge can') &&
+                 !lineLower.includes('concierge team') &&
+                 !lineLower.includes('concierge contact') &&
+                 !lineLower.includes('concierge access') &&
+                 !lineLower.includes('concierge privileges');
+        });
+        return filteredLines.join('\n');
+      }).filter(faq => faq.trim().length > 0);
+      
+      if (filteredFaqs.length > 0) {
+        filtered = filtered + '\n\n' + filteredFaqs.join('\n\n');
+        console.log(`[GoogleAI] 知识库过滤: ${isRingKeyword ? 'Ring' : isWatchKeyword ? 'Watch' : 'Earbud'}关键词，已过滤FAQ中的Ruby Key/Ruby Talk/Concierge Service相关内容`);
+      }
+    } else {
+      // 手机产品包含所有FAQ
+      filtered = filtered + '\n\n' + faqMatches.join('\n\n');
+    }
+  }
+  
+  console.log(`[GoogleAI] 知识库类型过滤: 关键词="${keyword}", 产品类型=${isRingKeyword ? 'ring' : isWatchKeyword ? 'watch' : isEarbudKeyword ? 'earbud' : isPhoneKeyword ? 'phone' : 'unknown'}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
+  
+  return filtered || kbContent; // 如果过滤后为空，返回原始内容
 }
 
 // 从文本中提取FAQ的辅助函数
@@ -2415,7 +2825,7 @@ function formatTitleCase(title: string): string {
       const trailingPunctuationMatch = word.match(/([.,:;!?]+)$/);
       const trailingPunctuation = trailingPunctuationMatch ? trailingPunctuationMatch[0] : "";
       const cleanWord = word.replace(/([.,:;!?]+)$/, ""); // 移除尾部标点
-      
+    
       // 分割连字符词
       const parts = cleanWord.split("-");
       const formattedParts = parts.map((part, partIndex) => {
@@ -2588,7 +2998,7 @@ async function generateTitleWithKey(apiKey: string, keyword: string, titleType?:
              keywordLower.startsWith(prefixLower + "-");
     });
   };
-  
+
   // 根据标题类型生成对应的备用标题
   const getFallbackTitleByType = (keyword: string, type?: string): string => {
     let fallbackTitle: string;
