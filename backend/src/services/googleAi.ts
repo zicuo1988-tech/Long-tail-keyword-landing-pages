@@ -45,6 +45,7 @@ export interface GenerateContentOptions {
   templateType?: string; // 模板类型：template-1, template-2, template-3/4/5（3/4/5长内容模式，无严格字数上限）
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   knowledgeBaseContent?: string;
+  availableProducts?: string[]; // 可选：实际从 WordPress 获取到的产品名称列表，AI 将只使用这些产品生成内容
   onStatusUpdate?: (message: string) => void; // 可选：状态更新回调
   shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
 }
@@ -77,7 +78,8 @@ async function generateWithKey(
   templateType?: string, 
   userPrompt?: string, 
   knowledgeBaseContent?: string,
-  preferredModel?: string // 可选：指定优先使用的模型
+  preferredModel?: string, // 可选：指定优先使用的模型
+  availableProducts?: string[] // 可选：实际从 WordPress 获取到的产品名称列表
 ): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
   // template-3/4/5 为长内容模式，无严格字数上限
@@ -172,8 +174,28 @@ async function generateWithKey(
   // 提取知识库中明确列出的产品名称
   const knownProducts = extractProductNamesFromKnowledgeBase(kbContent);
   
-  // 根据关键词匹配相关产品（只提及与关键词相关的产品）
-  const relevantProducts = extractRelevantProductsFromKeyword(keyword, knownProducts);
+  // 🎯 关键修复：优先使用实际获取到的产品列表，而不是从关键词推测
+  // 如果调用者提供了 availableProducts（实际从 WordPress 获取的产品），使用它们
+  // 否则使用原来的逻辑从关键词推测产品
+  let relevantProducts: string[];
+  if (availableProducts && availableProducts.length > 0) {
+    console.log(`[GoogleAI] 🎯 使用实际获取的 ${availableProducts.length} 个产品:`, availableProducts.join(", "));
+    // 过滤出知识库中存在的产品（确保产品在知识库中有详细信息）
+    relevantProducts = availableProducts.filter(p => 
+      knownProducts.some(kp => kp.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(kp.toLowerCase()))
+    );
+    console.log(`[GoogleAI] 📋 知识库中匹配到 ${relevantProducts.length} 个产品:`, relevantProducts.join(", "));
+    // 如果没有匹配，使用原始列表（可能是新产品）
+    if (relevantProducts.length === 0) {
+      console.log(`[GoogleAI] ⚠️ 警告：提供的产品在知识库中未找到，将使用原始列表`);
+      relevantProducts = availableProducts;
+    }
+  } else {
+    // 如果没有提供 availableProducts，使用原来的逻辑从关键词推测
+    console.log(`[GoogleAI] 📝 未提供产品列表，从关键词 "${keyword}" 推测相关产品...`);
+    relevantProducts = extractRelevantProductsFromKeyword(keyword, knownProducts);
+    console.log(`[GoogleAI] 📋 从关键词推测到 ${relevantProducts.length} 个产品:`, relevantProducts.join(", "));
+  }
   
   // 根据产品类型过滤知识库内容，只保留相关的产品信息
   // 这是关键修复：防止AI混用不同产品的信息（如ring关键词不应该使用Agent Q的规格）
@@ -3454,6 +3476,7 @@ async function generateWithModelRotation(
   userPrompt?: string,
   knowledgeBaseContent?: string,
   onStatusUpdate?: (message: string) => void,
+  availableProducts?: string[], // 实际从 WordPress 获取到的产品名称列表
   attemptedModels: string[] = []
 ): Promise<GeneratedContent> {
   const isTemplate3 = templateType === "template-3";
@@ -3493,7 +3516,7 @@ async function generateWithModelRotation(
   }
   
   try {
-    return await generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, modelName);
+    return await generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, modelName, availableProducts);
   } catch (error: any) {
     const statusCode = error?.statusCode || 0;
     const errorMessage = error?.message || "";
@@ -3524,15 +3547,15 @@ async function generateWithModelRotation(
   }
 }
 
-export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate, shouldAbort }: GenerateContentOptions): Promise<GeneratedContent> {
+export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, availableProducts, onStatusUpdate, shouldAbort }: GenerateContentOptions): Promise<GeneratedContent> {
   // 如果提供了 apiKey，直接使用（向后兼容）+ 模型轮换
   if (apiKey) {
-    return generateWithModelRotation(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate);
+    return generateWithModelRotation(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate, availableProducts);
   }
 
   // 否则使用 API Key 管理器（支持多 Key 轮换和故障转移）+ 模型轮换
   return withApiKey(
-    (key) => generateWithModelRotation(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate),
+    (key) => generateWithModelRotation(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate, availableProducts),
     5, // maxRetries
     onStatusUpdate, // 传递状态更新回调
     shouldAbort // 传递暂停检查回调

@@ -239,7 +239,7 @@ previewModal.innerHTML = `
   <div class="preview-modal-content">
     <button class="preview-modal-close" aria-label="关闭预览">×</button>
     <div class="preview-image-container">
-      <img src="" alt="模板预览" id="preview-image">
+    <img src="" alt="模板预览" id="preview-image">
     </div>
     <div class="preview-controls">
       <button class="preview-zoom-btn" id="zoom-in" aria-label="放大">+</button>

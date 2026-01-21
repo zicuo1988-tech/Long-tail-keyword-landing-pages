@@ -288,11 +288,11 @@ export async function searchProductsByName(
       for (const productName of productNames) {
         try {
           const response = await client.get("/products", {
-              params: {
-                search: productName,
-                per_page: 10,
+            params: {
+              search: productName,
+              per_page: 10,
                 status: "publish", // 只要求已发布
-              },
+            },
           });
 
           if (response.data && Array.isArray(response.data)) {
@@ -1261,8 +1261,8 @@ async function fetchWooCommerceProductsBySearch(
 
   // 只要求产品已发布，不限制库存状态
   const searchParams: any = {
-    search: trimmedTerm,
-    per_page: perPage,
+      search: trimmedTerm,
+      per_page: perPage,
     status: "publish", // 只要求已发布
   };
   
@@ -1288,9 +1288,9 @@ async function fetchWooCommerceProductsBySearch(
             search: productName,
             per_page: 10,
             status: "publish",
-          },
-        });
-        
+    },
+  });
+
         if (coreResponse.data && Array.isArray(coreResponse.data) && coreResponse.data.length > 0) {
           console.log(`[WordPress] ✅ 找到核心产品 "${productName}": ${coreResponse.data.length} 个`);
           // 合并产品，避免重复
@@ -1457,8 +1457,8 @@ async function fetchWooCommerceProductsByCategory(
       try {
         // 只要求产品已发布，不限制库存状态
         const categoryParams: any = {
-          category: category.id,
-          per_page: perPage,
+            category: category.id,
+            per_page: perPage,
           status: "publish", // 只要求已发布
         };
         
@@ -1512,7 +1512,7 @@ async function fetchWooCommerceProductsByCategory(
       
       console.log(`[WordPress] 分类搜索合并核心产品后，总计 ${uniqueProducts.size} 个产品`);
     }
-    
+
     if (!uniqueProducts.size) {
       return null;
     }

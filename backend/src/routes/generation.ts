@@ -264,42 +264,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
-    // 检查是否暂停
-    await waitForTaskResume(taskId);
-    if (isTaskPaused(taskId)) {
-      return; // 任务已暂停，退出
-    }
-    
-    updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
-    
-    // 在生成内容之前再次检查暂停状态
-    if (isTaskPaused(taskId)) {
-      return; // 任务已暂停，退出
-    }
-    
-    const generatedContent = await generateHtmlContent({
-      apiKey, // 如果为 undefined，将使用 API Key 管理器
-      keyword: payload.keyword,
-      pageTitle: finalPageTitle,
-      titleType: payload.titleType, // 传递标题类型，用于调整内容风格和FAQ重点
-      templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
-      userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
-      onStatusUpdate: (message) => {
-        // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
-        if (!isTaskPaused(taskId)) {
-          // 更新任务状态，但不改变状态类型
-          updateTaskStatus(taskId, "generating_content", message);
-        }
-      },
-      shouldAbort: () => isTaskPaused(taskId), // 传递暂停检查回调
-    });
-
-    // 生成内容后立即检查暂停状态
-    if (isTaskPaused(taskId)) {
-      return; // 任务已暂停，丢弃结果并退出
-    }
+    // 【重要调整】先获取产品，再生成内容，确保 AI 只使用实际存在的产品
+    // 这样可以避免内容提到的产品在实际显示中缺失的问题
     
     // 在获取产品之前检查暂停状态
+    await waitForTaskResume(taskId);
     if (isTaskPaused(taskId)) {
       return; // 任务已暂停，退出
     }
@@ -529,11 +498,10 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       const isEarbudKeywordForPhoneCheck = keywordLower.includes("earbud") || keywordLower.includes("earphone") || keywordLower.includes("audio");
       const isSpecificCategoryKeyword = isRingKeywordForPhoneCheck || isWatchKeywordForPhoneCheck || isEarbudKeywordForPhoneCheck;
       
+      // 简化逻辑：只根据关键词判断是否需要补充手机产品（避免过早访问 generatedContent）
       const contentSuggestsPhone =
-        !isSpecificCategoryKeyword && ( // 只有在不是特定类别关键词时才检查
-          /phone|mobile|smartphone|fold|flip|hinge|camera\s+phone|best phone/i.test(payload.keyword) ||
-          generatedContent.articleContent.toLowerCase().includes("phone")
-        );
+        !isSpecificCategoryKeyword && 
+        /phone|mobile|smartphone|fold|flip|hinge|camera\s+phone|best phone/i.test(payload.keyword);
       const hasPhoneProduct = products.some(
         (p) =>
           (p.category?.toLowerCase().includes("phone") || p.name.toLowerCase().includes("phone")) ||
@@ -572,7 +540,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       relatedProducts = [];
     }
 
-    // SEO优化：确保内容中提到的产品也出现在产品列表中，且与关键词相关
+    // 【已移除】此部分逻辑已废弃，因为现在 AI 生成内容时就会传入实际产品列表，
+    // 确保内容只提到实际存在的产品，不需要事后检查和补充
+    // 
+    // SEO优化：（可选）如果需要根据内容提到的产品进行额外验证，可在 AI 内容生成后执行
+    /*
     try {
       // 从生成的内容中提取提到的产品
       const allContent = `${generatedContent.articleContent} ${generatedContent.extendedContent || ""} ${generatedContent.faqItems.map(f => `${f.question} ${f.answer}`).join(" ")}`;
@@ -729,6 +701,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       const errorMsg = error instanceof Error ? error.message : String(error);
       console.warn(`[task ${taskId}] 提取或搜索内容中提到的产品失败，继续执行:`, errorMsg);
     }
+    */
 
     // 随机打乱产品数组，确保每次生成都是随机的
     function shuffleArray<T>(array: T[]): T[] {
@@ -1084,14 +1057,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`  - 包含 relatedProducts 循环: ${payload.templateContent.includes('{{#each relatedProducts}}')}`);
     console.log(`  - 包含 faqItems 循环: ${payload.templateContent.includes('{{#each faqItems}}')}`);
     
-    // 检查数据
+    // 检查产品数据（AI 内容相关的检查将在生成后执行）
     console.log(`[task ${taskId}] 数据检查:`);
     console.log(`  - 页面标题: ${finalPageTitle}`);
-    console.log(`  - AI 内容长度: ${generatedContent.articleContent.length}`);
     console.log(`  - 第一排产品数量: ${productsRow1.length}`);
     console.log(`  - 第二排产品数量: ${productsRow2.length}`);
     console.log(`  - 第三排产品数量: ${productsRow3.length}`);
-    console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
     
     // 构建预期的页面URL（用于SEO meta标签）
     const baseSlug = createSlug(finalPageTitle) || createSlug(payload.keyword) || `page-${Date.now()}`;
@@ -2330,6 +2301,56 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 更新productsRow1为优化后的列表（避免重复）
       productsRow1 = finalProductsRow1;
     }
+
+    // 【关键步骤】在所有产品准备完成后，提取产品名称并生成 AI 内容
+    // 这确保 AI 只使用实际获取到的产品生成内容，避免内容和产品列表不匹配
+    await waitForTaskResume(taskId);
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，退出
+    }
+    
+    // 提取所有将要显示的产品名称
+    const availableProductNames = [
+      ...productsRow1,
+      ...productsRow2,
+      ...productsRow3,
+      ...(topProducts || [])
+    ]
+      .map(p => p.name.replace(/<[^>]*>/g, "").trim()) // 移除 HTML 标签
+      .filter((name, index, self) => self.indexOf(name) === index); // 去重
+    
+    console.log(`[task ${taskId}] 📋 提取到 ${availableProductNames.length} 个可用产品:`, availableProductNames.join(", "));
+    
+    updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
+    
+    const generatedContent = await generateHtmlContent({
+      apiKey, // 如果为 undefined，将使用 API Key 管理器
+      keyword: payload.keyword,
+      pageTitle: finalPageTitle,
+      titleType: payload.titleType, // 传递标题类型，用于调整内容风格和FAQ重点
+      templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
+      userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
+      availableProducts: availableProductNames, // 🎯 关键：传递实际获取到的产品列表
+      onStatusUpdate: (message) => {
+        // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
+        if (!isTaskPaused(taskId)) {
+          // 更新任务状态，但不改变状态类型
+          updateTaskStatus(taskId, "generating_content", message);
+        }
+      },
+      shouldAbort: () => isTaskPaused(taskId), // 传递暂停检查回调
+    });
+
+    // 生成内容后立即检查暂停状态
+    if (isTaskPaused(taskId)) {
+      return; // 任务已暂停，丢弃结果并退出
+    }
+    
+    console.log(`[task ${taskId}] ✅ AI 内容生成完成（基于实际 ${availableProductNames.length} 个产品）`);
+    console.log(`[task ${taskId}] AI 内容检查:`);
+    console.log(`  - AI 内容长度: ${generatedContent.articleContent.length}`);
+    console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
+    console.log(`  - Meta 描述长度: ${generatedContent.metaDescription.length}`);
 
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
