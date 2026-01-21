@@ -383,9 +383,29 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
                    productName.includes("grand") || productName.includes("meta") ||
                    productCategory.includes("watch");
           } else if (isRingKeyword) {
-            return productName.includes("ring") || productName.includes("jewellery") ||
-                   productName.includes("jewelry") || productName.includes("diamond") ||
-                   productName.includes("aura") || productCategory.includes("ring");
+            // 严格过滤：只保留ring相关产品，排除手机产品
+            // 检查产品名称是否包含ring相关关键词
+            const hasRingKeyword = productName.includes("ring") || 
+                                   productName.includes("jewellery") || 
+                                   productName.includes("jewelry") || 
+                                   productName.includes("diamond") ||
+                                   productName.includes("aura");
+            // 检查产品分类是否包含ring
+            const hasRingCategory = productCategory.includes("ring") || 
+                                    productCategory.includes("jewellery") || 
+                                    productCategory.includes("jewelry");
+            // 排除手机产品（即使名称中包含"ring"但实际上是手机）
+            const isPhoneProduct = productName.includes("phone") || 
+                                  productName.includes("smartphone") ||
+                                  productName.includes("mobile") ||
+                                  productName.includes("agent") ||
+                                  productName.includes("quantum") ||
+                                  productName.includes("metavertu") ||
+                                  productName.includes("ivertu") ||
+                                  productName.includes("signature") ||
+                                  productCategory.includes("phone");
+            // 只有包含ring关键词且不是手机产品才保留
+            return (hasRingKeyword || hasRingCategory) && !isPhoneProduct;
           } else if (isEarbudKeyword) {
             return productName.includes("earbud") || productName.includes("earphone") ||
                    productName.includes("audio") || productName.includes("headphone") ||
@@ -598,7 +618,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           } else if (isWatchKeywordForFilter) {
             return nameLower.includes("watch") || nameLower.includes("timepiece") || nameLower.includes("grand");
           } else if (isRingKeywordForFilter) {
-            return nameLower.includes("ring") || nameLower.includes("jewellery") || nameLower.includes("jewelry") || nameLower.includes("diamond");
+            // 严格过滤：只保留ring相关产品，排除手机产品
+            const hasRingKeyword = nameLower.includes("ring") || 
+                                   nameLower.includes("jewellery") || 
+                                   nameLower.includes("jewelry") || 
+                                   nameLower.includes("diamond");
+            const isPhoneProduct = nameLower.includes("phone") || 
+                                  nameLower.includes("smartphone") ||
+                                  nameLower.includes("mobile") ||
+                                  nameLower.includes("agent") ||
+                                  nameLower.includes("quantum") ||
+                                  nameLower.includes("metavertu") ||
+                                  nameLower.includes("ivertu") ||
+                                  nameLower.includes("signature");
+            return hasRingKeyword && !isPhoneProduct;
           } else if (isEarbudKeywordForFilter) {
             return nameLower.includes("earbud") || nameLower.includes("earphone") || nameLower.includes("audio") || nameLower.includes("ows");
           }
@@ -706,6 +739,61 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
       return shuffled;
     }
+    
+    // 产品优先级排序：新品优先显示
+    function prioritizeProducts(products: ProductSummary[], keyword: string = ""): ProductSummary[] {
+      const keywordLower = keyword.toLowerCase();
+      const isPhoneKeyword = /\b(phone|phones|smartphone|smartphones|mobile|cellphone)\b/i.test(keyword);
+      
+      // 如果不是手机关键词，直接返回
+      if (!isPhoneKeyword) {
+        return products;
+      }
+      
+      // 定义新品优先级（数字越大优先级越高）
+      const priorityMap: Record<string, number> = {
+        "agent q": 100,           // 最新旗舰，最高优先级
+        "quantum flip": 95,       // 翻盖新品
+        "metavertu max": 90,      // Web3 旗舰
+        "metavertu 2": 88,
+        "metavertu pro": 86,
+        "metavertu curve": 84,
+        "metavertu 1 curve": 82,
+        "metavertu": 80,
+        "signature cobra": 75,    // Signature 系列
+        "signature v": 73,
+        "signature s+": 71,
+        "signature s": 70,
+        "ivertu": 60,             // 入门系列
+      };
+      
+      // 计算每个产品的优先级分数
+      const productsWithPriority = products.map(product => {
+        const nameLower = product.name.toLowerCase();
+        let priority = 0;
+        
+        // 匹配优先级
+        for (const [key, value] of Object.entries(priorityMap)) {
+          if (nameLower.includes(key)) {
+            priority = value;
+            break;
+          }
+        }
+        
+        // 添加随机因子，避免完全固定顺序（优先级相近的产品会随机排列）
+        const randomFactor = Math.random() * 10;
+        
+        return {
+          product,
+          priority: priority + randomFactor
+        };
+      });
+      
+      // 按优先级排序（优先级高的在前）
+      productsWithPriority.sort((a, b) => b.priority - a.priority);
+      
+      return productsWithPriority.map(item => item.product);
+    }
 
     // 将产品数组分组，每组4个，确保不重复，优先显示与关键词相关的产品
     function getUniqueProductGroups(allProducts: ProductSummary[], numGroups: number, productsPerGroup: number = 4, keyword: string = "", pageTitle: string = ""): ProductSummary[][] {
@@ -732,10 +820,37 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           score += 5;
         }
         
+        // 特殊关键词匹配：flip/fold/folding → 推荐 Quantum Flip
+        if (combinedText.includes("flip") || combinedText.includes("fold") || 
+            combinedText.includes("foldable") || combinedText.includes("folding")) {
+          if (productName.includes("quantum") && productName.includes("flip")) {
+            score += 15; // 最高优先级
+          }
+        }
+        
+        // 特殊关键词匹配：keyboard/keypad → 推荐 Signature 系列
+        if (combinedText.includes("keyboard") || combinedText.includes("keypad") || 
+            combinedText.includes("physical keyboard") || combinedText.includes("qwerty")) {
+          if (productName.includes("signature")) {
+            score += 15; // 最高优先级
+          }
+        }
+        
         // 标题中明确提到的产品类型匹配
-        if (combinedText.includes("phone") || combinedText.includes("smartphone")) {
+        if (combinedText.includes("phone") || combinedText.includes("smartphone") || combinedText.includes("mobile")) {
           if (productName.includes("phone") || productName.includes("agent") || productName.includes("quantum") || productName.includes("metavertu")) {
             score += 8;
+          }
+          
+          // 新品优先加分（泛词搜索时推荐新品）
+          if (productName.includes("agent") && productName.includes("q")) {
+            score += 20; // Agent Q 最新旗舰，最高优先级
+          } else if (productName.includes("quantum") && productName.includes("flip")) {
+            score += 18; // Quantum Flip 新品
+          } else if (productName.includes("metavertu") && (productName.includes("max") || productName.includes("2") || productName.includes("pro"))) {
+            score += 16; // Metavertu 新品系列
+          } else if (productName.includes("signature") && (productName.includes("cobra") || productName.includes("v"))) {
+            score += 14; // Signature 新款
           }
         }
         if (combinedText.includes("watch") || combinedText.includes("timepiece")) {
@@ -744,7 +859,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           }
         }
         if (combinedText.includes("ring")) {
-          if (productName.includes("ring")) {
+          // 严格匹配：只有真正的ring产品才加分，排除手机产品
+          const isRingProduct = productName.includes("ring") && 
+                                !productName.includes("phone") &&
+                                !productName.includes("smartphone") &&
+                                !productName.includes("mobile") &&
+                                !productName.includes("agent") &&
+                                !productName.includes("quantum") &&
+                                !productName.includes("metavertu");
+          if (isRingProduct) {
             score += 8;
           }
         }
@@ -754,14 +877,72 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           }
         }
         
+        // 添加随机因子，确保相同相关性的产品每次顺序不同
+        // 随机因子范围：-0.5 到 +0.5，不会显著影响相关性排序，但会打乱相同分数的产品
+        const randomFactor = (Math.random() - 0.5);
+        score += randomFactor;
+        
         return { product, score };
       });
+      
+      // 判断是否为泛词搜索（如 "phone"、"mobile phone"、"luxury watch"、"smart ring" 等）
+      // 使用完整泛词模式，支持所有常见组合，但排除特定产品型号关键词
+      // 完整的手机泛词模式
+      const phoneKw = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|mobile\s+phone|mobile\s+phones|smart\s+phone|smart\s+phones|luxury\s+phone|luxury\s+mobile|premium\s+phone|premium\s+mobile|high-?end\s+phone|flagship\s+phone|business\s+phone|expensive\s+phone|designer\s+phone|exclusive\s+phone|VERTU\s+phone|VERTU\s+mobile|secure\s+phone|encrypted\s+phone|crypto\s+phone|Web3\s+phone|AI\s+phone|executive\s+phone|VIP\s+phone)\b/i;
+      const watchKw = /\b(watch|watches|timepiece|timepieces|smartwatch|smartwatches|smart\s+watch|smart\s+watches|luxury\s+watch|premium\s+watch)\b/i;
+      const ringKw = /\b(ring|rings|smart\s+ring|smart\s+rings|luxury\s+ring|premium\s+ring|jewellery|jewelry)\b/i;
+      const earbudKw = /\b(earbud|earbuds|earphone|earphones|headphone|headphones)\b/i;
+      const specificModel = /(flip|fold|foldable|folding|keyboard|keypad|signature|agent|quantum|metavertu|grand\s+watch|metawatch|meta\s+ring)/i;
+      
+      const isGenericKeyword = (phoneKw.test(keyword) || watchKw.test(keyword) || ringKw.test(keyword) || earbudKw.test(keyword)) &&
+                               !specificModel.test(keyword);
       
       // 按相关性得分排序（得分高的在前）
       scoredProducts.sort((a, b) => b.score - a.score);
       
       // 提取排序后的产品列表
       const sortedProducts = scoredProducts.map(item => item.product);
+      
+      let randomizedProducts: ProductSummary[] = [];
+      
+      if (isGenericKeyword) {
+        // 对于泛词搜索，强化随机性：所有产品完全随机化
+        // 这确保每次生成都显示不同的产品，避免总是显示相同的产品
+        console.log(`检测到泛词关键词 "${keyword}"，使用完全随机化产品顺序`);
+        randomizedProducts = shuffleArray(sortedProducts);
+      } else {
+        // 对于具体产品或特定关键词，在保持相关性排序的同时，为相同得分的产品添加随机化
+        // 这确保每次生成时产品顺序不完全相同，提高内容多样性
+        let currentScore = -1;
+        let sameScoreGroup: ProductSummary[] = [];
+        
+        for (let i = 0; i < scoredProducts.length; i++) {
+          const roundedScore = Math.round(scoredProducts[i].score * 10) / 10; // 四舍五入到一位小数
+          if (roundedScore !== currentScore) {
+            // 分数变化，打乱并添加之前的同分组
+            if (sameScoreGroup.length > 0) {
+              // Fisher-Yates 洗牌算法
+              for (let j = sameScoreGroup.length - 1; j > 0; j--) {
+                const k = Math.floor(Math.random() * (j + 1));
+                [sameScoreGroup[j], sameScoreGroup[k]] = [sameScoreGroup[k], sameScoreGroup[j]];
+              }
+              randomizedProducts.push(...sameScoreGroup);
+            }
+            sameScoreGroup = [scoredProducts[i].product];
+            currentScore = roundedScore;
+          } else {
+            sameScoreGroup.push(scoredProducts[i].product);
+          }
+        }
+        // 处理最后一组
+        if (sameScoreGroup.length > 0) {
+          for (let j = sameScoreGroup.length - 1; j > 0; j--) {
+            const k = Math.floor(Math.random() * (j + 1));
+            [sameScoreGroup[j], sameScoreGroup[k]] = [sameScoreGroup[k], sameScoreGroup[j]];
+          }
+          randomizedProducts.push(...sameScoreGroup);
+        }
+      }
       
       const groups: ProductSummary[][] = [];
       const usedProductIds = new Set<number>();
@@ -772,7 +953,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         const maxAttempts = sortedProducts.length * 2; // 防止无限循环
         
         while (group.length < productsPerGroup && attempts < maxAttempts) {
-          for (const product of sortedProducts) {
+          for (const product of randomizedProducts) {
             if (group.length >= productsPerGroup) break;
             
             // 如果产品未被使用，添加到当前组
@@ -784,7 +965,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           
           // 如果当前组还没满，但所有产品都已使用，则允许重复使用（但优先使用未使用的）
           if (group.length < productsPerGroup) {
-            for (const product of sortedProducts) {
+            for (const product of randomizedProducts) {
               if (group.length >= productsPerGroup) break;
               if (!group.some(p => p.id === product.id)) {
                 group.push(product);
@@ -801,9 +982,76 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return groups;
     }
 
-    // 为三个产品区域准备不同的产品列表（每排4个，不重复，优先显示与关键词相关的产品）
-    const allProducts = [...products, ...relatedProducts];
-    const productGroups = getUniqueProductGroups(allProducts, 3, 4, payload.keyword, payload.pageTitle || "");
+    // 为三个产品区域准备不同的产品列表
+    // 对于泛词搜索（如 "phones"、"mobile phones"、"luxury watches"、"smart rings" 等）
+    const keywordLower = payload.keyword.toLowerCase();
+    
+    // 完整泛词识别：支持所有常见的手机、手表、戒指、耳机泛词和组合
+    // 完整的手机泛词模式 - 包含所有可能的长尾词组合
+    const phonePattern = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|handset|handsets|mobile\s+phone|mobile\s+phones|smart\s+phone|smart\s+phones|cell\s+phone|cell\s+phones|luxury\s+phone|luxury\s+phones|luxury\s+mobile|luxury\s+smartphone|premium\s+phone|premium\s+phones|premium\s+mobile|premium\s+smartphone|high-?end\s+phone|high-?end\s+phones|high-?end\s+mobile|flagship\s+phone|flagship\s+phones|business\s+phone|business\s+phones|feature\s+phone|android\s+phone|5G\s+phone|5G\s+phones|expensive\s+phone|expensive\s+phones|designer\s+phone|designer\s+phones|exclusive\s+phone|exclusive\s+phones|boutique\s+phone|VERTU\s+phone|VERTU\s+mobile|VERTU\s+smartphone|secure\s+phone|privacy\s+phone|encrypted\s+phone|crypto\s+phone|Web3\s+phone|AI\s+phone|concierge\s+phone|titanium\s+phone|ceramic\s+phone|leather\s+phone|gold\s+phone|diamond\s+phone|executive\s+phone|VIP\s+phone)\b/i;
+    const watchPattern = /\b(watch|watches|timepiece|timepieces|wristwatch|wristwatches|smartwatch|smartwatches|smart\s+watch|smart\s+watches|luxury\s+watch|luxury\s+watches|premium\s+watch|premium\s+watches|high-?end\s+watch|high-?end\s+watches|designer\s+watch|designer\s+watches)\b/i;
+    const ringPattern = /\b(ring|rings|smart\s+ring|smart\s+rings|wearable\s+ring|wearable\s+rings|luxury\s+ring|luxury\s+rings|premium\s+ring|premium\s+rings|diamond\s+ring|diamond\s+rings|gold\s+ring|gold\s+rings|jewellery|jewelry)\b/i;
+    const earbudPattern = /\b(earbud|earbuds|earphone|earphones|headphone|headphones|wireless\s+earbud|wireless\s+earbuds|bluetooth\s+earbud|bluetooth\s+earbuds|luxury\s+earbud|luxury\s+earbuds|premium\s+earbud|premium\s+earbuds)\b/i;
+    
+    // 排除特定产品型号（非泛词）
+    const specificModelPattern = /(flip|fold|foldable|folding|keyboard|keypad|signature|agent|quantum|metavertu|grand\s+watch|metawatch|meta\s+ring)/i;
+    
+    const isGenericCategoryKeyword = (phonePattern.test(payload.keyword) || watchPattern.test(payload.keyword) || ringPattern.test(payload.keyword) || earbudPattern.test(payload.keyword)) &&
+                                     !specificModelPattern.test(payload.keyword);
+    
+    // 重要：保持每排4个产品，确保前端布局正常显示
+    // 所有关键词统一使用：每排4个产品，共3排12个
+    const productsPerRow = 4;
+    const numRows = 3;
+    
+    console.log(`[task ${taskId}] 产品分组策略: ${isGenericCategoryKeyword ? '泛词搜索（新品优先）' : '普通搜索'}，每排 ${productsPerRow} 个产品，共 ${numRows} 排（总计 ${productsPerRow * numRows} 个）`);
+    console.log(`[task ${taskId}] 获取到的产品: 主产品 ${products.length} 个 [${products.map(p => p.name).join(", ")}]`);
+    console.log(`[task ${taskId}] 获取到的相关产品: ${relatedProducts.length} 个 [${relatedProducts.map(p => p.name).join(", ")}]`);
+    
+    // 重要：在合并产品前，先对产品进行优先级排序（新品优先）和随机化
+    // 对于泛词搜索（如 "phone"、"mobile phone"），优先显示新品（Agent Q、Quantum Flip、Metavertu 等）
+    // 然后在相似优先级的产品中随机化，确保每次生成都有不同的产品组合
+    const prioritizedProducts = prioritizeProducts(products, payload.keyword);
+    const prioritizedRelatedProducts = prioritizeProducts(relatedProducts, payload.keyword);
+    
+    // 对优先级产品进行轻度随机化（保持新品靠前，但不完全固定）
+    const shuffledProducts = isGenericCategoryKeyword ? prioritizedProducts : shuffleArray(products);
+    const shuffledRelatedProducts = isGenericCategoryKeyword ? prioritizedRelatedProducts : shuffleArray(relatedProducts);
+    
+    console.log(`[task ${taskId}] ========== 产品处理详情 ==========`);
+    console.log(`[task ${taskId}] 关键词: "${payload.keyword}"`);
+    console.log(`[task ${taskId}] 是否为泛词: ${isGenericCategoryKeyword ? '是（新品优先）' : '否（随机化）'}`);
+    console.log(`[task ${taskId}] 原始产品数量: 主产品 ${products.length} 个, 相关产品 ${relatedProducts.length} 个`);
+    console.log(`[task ${taskId}] 处理后产品数量: 主产品 ${shuffledProducts.length} 个, 相关产品 ${shuffledRelatedProducts.length} 个`);
+    
+    // 详细列出所有产品名称
+    if (shuffledProducts.length > 0) {
+      console.log(`[task ${taskId}] 主产品列表:`);
+      shuffledProducts.forEach((p, idx) => {
+        console.log(`[task ${taskId}]   ${idx + 1}. ${p.name} (${p.category || '无分类'})`);
+      });
+    }
+    
+    if (shuffledRelatedProducts.length > 0 && shuffledRelatedProducts.length <= 10) {
+      console.log(`[task ${taskId}] 相关产品列表:`);
+      shuffledRelatedProducts.forEach((p, idx) => {
+        console.log(`[task ${taskId}]   ${idx + 1}. ${p.name} (${p.category || '无分类'})`);
+      });
+    } else if (shuffledRelatedProducts.length > 10) {
+      console.log(`[task ${taskId}] 相关产品列表 (前10个):`);
+      shuffledRelatedProducts.slice(0, 10).forEach((p, idx) => {
+        console.log(`[task ${taskId}]   ${idx + 1}. ${p.name} (${p.category || '无分类'})`);
+      });
+      console.log(`[task ${taskId}]   ... 还有 ${shuffledRelatedProducts.length - 10} 个产品`);
+    }
+    
+    if (isGenericCategoryKeyword && shuffledProducts.length > 0) {
+      console.log(`[task ${taskId}] 新品推荐优先级: ${shuffledProducts.slice(0, 5).map(p => p.name).join(", ")}${shuffledProducts.length > 5 ? '...' : ''}`);
+    }
+    console.log(`[task ${taskId}] ====================================`);
+    
+    const allProducts = [...shuffledProducts, ...shuffledRelatedProducts];
+    const productGroups = getUniqueProductGroups(allProducts, numRows, productsPerRow, payload.keyword, payload.pageTitle || "");
     
     // 第一排产品（product-section）
     let productsRow1 = productGroups[0] || [];

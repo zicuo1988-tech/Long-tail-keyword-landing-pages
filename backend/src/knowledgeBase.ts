@@ -36,8 +36,13 @@ AGENT Q
 - Battery delivers 65W rapid charging for global travellers.
 
 ----------------------------------------------------------------------
-RUBY KEY
+RUBY KEY (CONCIERGE SERVICE - NOT A PRODUCT)
 ----------------------------------------------------------------------
+### IMPORTANT: This is a SERVICE/PRIVILEGE, NOT a phone product
+- **Service Type:** Ruby Key is an exclusive concierge service and privilege that comes with VERTU phone purchases. It is NOT a standalone phone product.
+- **Availability:** Ruby Key service is included with all VERTU phone purchases (Agent Q, Quantum Flip, Metavertu, iVERTU, Signature series, etc.).
+- **Service Activation:** The Ruby Key is a physical button on VERTU phones that activates the 24/7 Concierge Service.
+
 ### Basic info
 - **Inspiration:** Inspired by the Black Prince Ruby, the centre stone of the British Empire's crown.
 - **Engineering First:** VERTU was the first to use ruby for physical buttons, necessitating the development of a custom machine specifically to cut ruby.
@@ -86,8 +91,13 @@ RUBY KEY
 - **Sourcing & Purchasing:** Global gateway for sourcing and purchasing high-end designer handbags, luxury watches, and limited-edition luxury items.
 
 ----------------------------------------------------------------------
-RUBY TALK
+RUBY TALK (CONCIERGE SERVICE - NOT A PRODUCT)
 ----------------------------------------------------------------------
+### IMPORTANT: This is a SERVICE/PRIVILEGE, NOT a phone product
+- **Service Type:** Ruby Talk is an exclusive AI-powered concierge service and privilege that comes with VERTU Agent Q phone purchases. It is NOT a standalone phone product.
+- **Availability:** Ruby Talk service is exclusively available with VERTU Agent Q model purchases. Other VERTU phone models (Quantum Flip, Metavertu, iVERTU, Signature series, etc.) include the traditional Ruby Key service instead.
+- **Service Activation:** Ruby Talk is a physical button on the Agent Q phone that activates the AI-powered concierge service.
+
 ### Basic info
 - **Exclusivity:** Ruby Talk is currently exclusive to the VERTU Agent Q model. (Other VERTU models retain the traditional Ruby Key).
 - **Definition:** A one-touch physical portal designed to "Awaken Intelligence."

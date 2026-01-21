@@ -24,8 +24,12 @@ const STOP_WORDS = new Set([
 
 const PRODUCT_KEYWORD_HINTS = [
   {
-    keywords: ["flip", "fold", "foldable", "hinge", "clamshell", "dual screen"],
-    productNames: ["Quantum Flip", "Metavertu 1 Curve", "Metavertu Curve"],
+    keywords: ["flip", "fold", "foldable", "folding", "hinge", "clamshell", "dual screen"],
+    productNames: ["Quantum Flip"], // 优先推荐 Quantum Flip（翻盖手机）
+  },
+  {
+    keywords: ["keyboard", "keypad", "physical keyboard", "qwerty"],
+    productNames: ["Signature S", "Signature S+", "Signature V", "Signature Cobra"], // 实体键盘手机
   },
   {
     keywords: ["web3", "crypto", "blockchain", "metaverse", "wallet", "defi"],
@@ -33,7 +37,7 @@ const PRODUCT_KEYWORD_HINTS = [
   },
   {
     keywords: ["signature", "bar phone", "classic", "artisan", "bespoke"],
-    productNames: ["Signature S", "Signature V", "Signature Cobra"],
+    productNames: ["Signature S", "Signature S+", "Signature V", "Signature Cobra"],
   },
   {
     keywords: ["ring", "jewellery", "jewelry", "wearable", "diamond"],
@@ -284,11 +288,11 @@ export async function searchProductsByName(
       for (const productName of productNames) {
         try {
           const response = await client.get("/products", {
-            params: {
-              search: productName,
-              per_page: 10,
-              stock_status: "instock",
-            },
+              params: {
+                search: productName,
+                per_page: 10,
+                status: "publish", // 只要求已发布
+              },
           });
 
           if (response.data && Array.isArray(response.data)) {
@@ -329,7 +333,7 @@ export async function searchProductsByName(
               search: productName,
               per_page: 10,
               _embed: true,
-              stock_status: "instock",
+              status: "publish", // 只要求已发布
             },
           });
 
@@ -584,9 +588,8 @@ export async function fetchRelatedProducts(
               const productsResp = await client.get("/products", {
                 params: {
                   category: category.id,
-                  per_page: 50, // 获取更多产品以确保有足够的选择
-                  status: "publish",
-                  stock_status: "instock", // 只获取有库存的产品
+                  per_page: 50,
+                  status: "publish", // 只要求已发布
                 },
               });
               
@@ -787,13 +790,26 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
   ];
   
   // Phones 分类下允许的子分类（白名单）
+  // 注意：对于泛词搜索（如"phones"），应该显示所有手机产品，所以白名单应该包含所有 VERTU 手机系列
   const allowedPhonesSubcategories = [
     "agent q",
     "agent-q",
     "quantum flip",
     "quantum-flip",
+    "metavertu",
+    "meta-vertu",
+    "metavertu max",
+    "metavertu-max",
+    "metavertu 2",
+    "metavertu-2",
+    "metavertu pro",
+    "metavertu-pro",
     "meta max",
     "meta-max",
+    "metavertu curve",
+    "metavertu-curve",
+    "metavertu 1 curve",
+    "metavertu-1-curve",
     "meta curve",
     "meta-curve",
     "ivertu",
@@ -802,6 +818,10 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
     "signature-s+",
     "signature s",
     "signature-s",
+    "signature v",
+    "signature-v",
+    "signature cobra",
+    "signature-cobra",
     "signature",
   ];
   
@@ -943,12 +963,13 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
   return productsData
     .filter((product) => {
       // 先过滤掉缺货的产品
-      if (isProductOutOfStock(product)) {
-        const productName = product.name || product.title?.rendered || product.slug || "Unknown";
-        console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName} (stock_status: ${product.stock_status || "N/A"}, in_stock: ${product.in_stock ?? "N/A"}, stock_quantity: ${product.stock_quantity ?? "N/A"})`);
-        return false;
-      }
-      // 再过滤掉属于排除分类的产品
+      // 不过滤缺货产品 - 只要已发布就显示
+      // if (isProductOutOfStock(product)) {
+      //   const productName = product.name || product.title?.rendered || product.slug || "Unknown";
+      //   console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName}`);
+      //   return false;
+      // }
+      // 只过滤掉属于排除分类的产品
       return !isProductExcluded(product);
     })
     .map((product) => {
@@ -1221,30 +1242,119 @@ async function fetchWooCommerceProductsBySearch(
     return null;
   }
 
-  // 如果有多个目标产品名称，增加搜索数量以确保能获取到所有相关产品
-  const perPage = targetProductNames.length > 1 ? 20 : 10;
+  // 优化：对于通用类别关键词（如"phone"、"mobile phone"、"luxury watch"、"smart ring"），大幅增加搜索数量以获取所有相关产品
+  // 完整泛词识别：支持所有常见的手机、手表、戒指、耳机泛词和组合
+  // 完整的手机泛词模式 - 包含所有可能的长尾词组合
+  // 基础词 + 所有形容词组合（luxury, premium, flagship, business, designer, expensive 等）
+  const phonePattern = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|handset|handsets|mobile\s+phone|mobile\s+phones|smart\s+phone|smart\s+phones|cell\s+phone|cell\s+phones|luxury\s+phone|luxury\s+phones|luxury\s+mobile|luxury\s+smartphone|premium\s+phone|premium\s+phones|premium\s+mobile|premium\s+smartphone|high-?end\s+phone|high-?end\s+phones|high-?end\s+mobile|flagship\s+phone|flagship\s+phones|business\s+phone|business\s+phones|feature\s+phone|feature\s+phones|android\s+phone|android\s+phones|5G\s+phone|5G\s+phones|expensive\s+phone|expensive\s+phones|designer\s+phone|designer\s+phones|exclusive\s+phone|exclusive\s+phones|boutique\s+phone|boutique\s+phones|VERTU\s+phone|VERTU\s+phones|VERTU\s+mobile|VERTU\s+smartphone|secure\s+phone|secure\s+phones|privacy\s+phone|privacy\s+phones|encrypted\s+phone|encrypted\s+phones|crypto\s+phone|crypto\s+phones|Web3\s+phone|Web3\s+phones|AI\s+phone|AI\s+phones|concierge\s+phone|titanium\s+phone|ceramic\s+phone|leather\s+phone|gold\s+phone|diamond\s+phone|sapphire\s+phone|executive\s+phone|executive\s+phones|VIP\s+phone|VIP\s+phones|collector\s+phone)\b/i;
+  const watchPattern = /\b(watch|watches|timepiece|timepieces|wristwatch|wristwatches|smartwatch|smartwatches|smart\s+watch|smart\s+watches|luxury\s+watch|premium\s+watch)\b/i;
+  const ringPattern = /\b(ring|rings|smart\s+ring|smart\s+rings|wearable\s+ring|luxury\s+ring|premium\s+ring|diamond\s+ring|gold\s+ring|jewellery|jewelry)\b/i;
+  const earbudPattern = /\b(earbud|earbuds|earphone|earphones|headphone|headphones|wireless\s+earbud|bluetooth\s+earbud)\b/i;
+  const specificModelPattern = /(flip|fold|foldable|folding|keyboard|keypad|signature|agent|quantum|metavertu|grand\s+watch|metawatch|meta\s+ring)/i;
+  
+  const isGenericCategoryKeyword = (phonePattern.test(trimmedTerm) || watchPattern.test(trimmedTerm) || ringPattern.test(trimmedTerm) || earbudPattern.test(trimmedTerm)) &&
+                                   !specificModelPattern.test(trimmedTerm);
+  // 泛词使用 100 个产品搜索，确保获取所有相关产品
+  const perPage = isGenericCategoryKeyword ? 100 : (targetProductNames.length > 1 ? 20 : 10);
 
+  console.log(`[WordPress] 搜索关键词"${trimmedTerm}"${isGenericCategoryKeyword ? '（泛词）' : ''}，per_page=${perPage}`);
+
+  // 只要求产品已发布，不限制库存状态
+  const searchParams: any = {
+    search: trimmedTerm,
+    per_page: perPage,
+    status: "publish", // 只要求已发布
+  };
+  
+  console.log(`[WordPress] 搜索关键词"${trimmedTerm}"（${isGenericCategoryKeyword ? '泛词' : '普通'}），per_page=${perPage}，仅已发布产品`);
+  
   const response = await client.get("/products", {
-    params: {
-      search: trimmedTerm,
-      per_page: perPage,
-      stock_status: "instock", // 只获取有库存的产品
-    },
+    params: searchParams,
   });
 
-  if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-    console.log(`[WordPress] ✅ 成功使用 ${apiName} （search=${trimmedTerm}）获取 ${response.data.length} 个产品`);
-    const filteredRaw = filterRawProductsByTargetNames(response.data, targetProductNames);
+  // 对于手机泛词，额外搜索核心产品名称以确保这些产品一定被获取
+  let allProducts = response.data && Array.isArray(response.data) ? [...response.data] : [];
+  
+  if (isGenericCategoryKeyword && phonePattern.test(trimmedTerm)) {
+    console.log(`[WordPress] 🔍 检测到手机泛词，额外搜索核心产品以确保覆盖...`);
+    
+    // 核心手机产品列表
+    const corePhoneProducts = ['Agent Q', 'Quantum Flip', 'Signature', 'Metavertu Max', 'Metavertu'];
+    
+    for (const productName of corePhoneProducts) {
+      try {
+        const coreResponse = await client.get("/products", {
+          params: {
+            search: productName,
+            per_page: 10,
+            status: "publish",
+          },
+        });
+        
+        if (coreResponse.data && Array.isArray(coreResponse.data) && coreResponse.data.length > 0) {
+          console.log(`[WordPress] ✅ 找到核心产品 "${productName}": ${coreResponse.data.length} 个`);
+          // 合并产品，避免重复
+          const existingIds = new Set(allProducts.map((p: any) => p.id));
+          coreResponse.data.forEach((p: any) => {
+            if (!existingIds.has(p.id)) {
+              allProducts.push(p);
+              existingIds.add(p.id);
+            }
+          });
+        }
+      } catch (error) {
+        console.log(`[WordPress] ⚠️ 搜索核心产品 "${productName}" 失败，继续...`);
+      }
+    }
+    
+    console.log(`[WordPress] 合并核心产品后，总计 ${allProducts.length} 个产品`);
+  }
+  
+  if (allProducts.length > 0) {
+    console.log(`[WordPress] ✅ 成功使用 ${apiName} （search=${trimmedTerm}）获取 ${allProducts.length} 个原始产品`);
+    
+    // 详细列出所有获取到的产品名称和状态
+    console.log(`[WordPress] ========== 原始产品列表 ==========`);
+    allProducts.slice(0, 30).forEach((p: any, idx: number) => {
+      const name = p.name || p.title?.rendered || 'Unknown';
+      const status = p.status || 'N/A';
+      const stockStatus = p.stock_status || 'N/A';
+      const categories = p.categories?.map((c: any) => c.name).join(', ') || 'No category';
+      console.log(`[WordPress]   ${idx + 1}. ${name}`);
+      console.log(`[WordPress]      状态: ${status}, 库存: ${stockStatus}`);
+      console.log(`[WordPress]      分类: ${categories}`);
+    });
+    if (allProducts.length > 30) {
+      console.log(`[WordPress]   ... 还有 ${allProducts.length - 30} 个产品`);
+    }
+    console.log(`[WordPress] ========================================`);
+    
+    // 更新 response.data 为合并后的产品列表
+    response.data = allProducts;
+    
+    // 重要：如果是通用类别关键词，应该返回所有相关类别的产品，不做严格过滤
+    // 这样可以确保 phone 关键词能返回所有手机产品，而不仅仅是知识库中定义的几个
+    console.log(`[WordPress] 准备过滤产品，是否泛词: ${isGenericCategoryKeyword}, 目标产品: ${targetProductNames.join(", ")}`);
+    
+    let filteredRaw: any[];
+    if (isGenericCategoryKeyword) {
+      // 对于通用类别关键词，使用宽松过滤：过滤掉明显不相关的产品
+      filteredRaw = filterRawProductsByTargetNames(response.data, targetProductNames, trimmedTerm);
+      console.log(`[WordPress] 通用类别关键词"${trimmedTerm}"，过滤后 ${filteredRaw.length} 个产品（宽松过滤）`);
+    } else {
+      filteredRaw = filterRawProductsByTargetNames(response.data, targetProductNames, trimmedTerm);
+      console.log(`[WordPress] 普通关键词"${trimmedTerm}"，过滤后 ${filteredRaw.length} 个产品`);
+    }
     
     // 如果有目标产品名称但未找到匹配的产品，记录警告但不立即返回 null
     // 因为可能通过其他搜索方式找到产品
-    if (targetProductNames.length && filteredRaw.length === 0) {
+    if (targetProductNames.length && filteredRaw.length === 0 && !isGenericCategoryKeyword) {
       console.warn(`[WordPress] ${apiName} （search=${trimmedTerm}）未找到指定产品: ${targetProductNames.join(", ")}`);
       // 不返回 null，继续尝试其他搜索方式
       return null;
     }
     
-    if (targetProductNames.length > 1) {
+    if (targetProductNames.length > 1 && !isGenericCategoryKeyword) {
       console.log(`[WordPress] 多产品关键词匹配: 找到 ${filteredRaw.length} 个产品（目标产品: ${targetProductNames.join(", ")})`);
     }
     
@@ -1328,18 +1438,32 @@ async function fetchWooCommerceProductsByCategory(
 
     const uniqueProducts = new Map<number, any>();
 
-    // 如果有多个目标产品名称，增加搜索数量以确保能获取到所有相关产品
-    const perPage = targetProductNames.length > 1 ? 20 : 10;
+    // 如果有多个目标产品名称，或者是泛词搜索，增加搜索数量以确保能获取到所有相关产品
+    // 完整泛词识别：支持所有常见的手机、手表、戒指、耳机泛词和组合
+    // 完整的手机泛词模式
+    const phoneP = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|mobile\s+phone|mobile\s+phones|smart\s+phone|luxury\s+phone|luxury\s+mobile|premium\s+phone|premium\s+mobile|high-?end\s+phone|flagship\s+phone|business\s+phone|expensive\s+phone|designer\s+phone|exclusive\s+phone|VERTU\s+phone|VERTU\s+mobile|secure\s+phone|encrypted\s+phone|Web3\s+phone|AI\s+phone|executive\s+phone|VIP\s+phone)\b/i;
+    const watchP = /\b(watch|watches|timepiece|timepieces|smartwatch|smartwatches|smart\s+watch|luxury\s+watch|premium\s+watch)\b/i;
+    const ringP = /\b(ring|rings|smart\s+ring|luxury\s+ring|premium\s+ring|diamond\s+ring|jewellery|jewelry)\b/i;
+    const earbudP = /\b(earbud|earbuds|earphone|earphones|headphone|headphones)\b/i;
+    const specificP = /(flip|fold|foldable|folding|keyboard|keypad|signature|agent|quantum|metavertu|grand\s+watch|metawatch|meta\s+ring)/i;
+    
+    const isGenericCategorySearch = (phoneP.test(trimmedKeyword) || watchP.test(trimmedKeyword) || ringP.test(trimmedKeyword) || earbudP.test(trimmedKeyword)) &&
+                                    !specificP.test(trimmedKeyword);
+    const perPage = isGenericCategorySearch ? 100 : (targetProductNames.length > 1 ? 20 : 10);
+
+    console.log(`[WordPress] 分类搜索关键词"${trimmedKeyword}"${isGenericCategorySearch ? '（泛词）' : ''}，per_page=${perPage}`);
 
     for (const category of categories) {
       try {
+        // 只要求产品已发布，不限制库存状态
+        const categoryParams: any = {
+          category: category.id,
+          per_page: perPage,
+          status: "publish", // 只要求已发布
+        };
+        
         const productsResp = await client.get("/products", {
-          params: {
-            category: category.id,
-            per_page: perPage,
-            status: "publish",
-            stock_status: "instock", // 只获取有库存的产品
-          },
+          params: categoryParams,
         });
 
         const list: any[] = Array.isArray(productsResp.data) ? productsResp.data : [];
@@ -1357,12 +1481,44 @@ async function fetchWooCommerceProductsByCategory(
       }
     }
 
+    // 对于手机泛词分类搜索，额外搜索核心产品以确保覆盖
+    if (isGenericCategorySearch && phoneP.test(trimmedKeyword)) {
+      console.log(`[WordPress] 🔍 分类搜索：检测到手机泛词，额外搜索核心产品...`);
+      
+      const corePhoneProducts = ['Agent Q', 'Quantum Flip', 'Signature'];
+      
+      for (const productName of corePhoneProducts) {
+        try {
+          const coreResponse = await client.get("/products", {
+            params: {
+              search: productName,
+              per_page: 10,
+              status: "publish",
+            },
+          });
+          
+          if (coreResponse.data && Array.isArray(coreResponse.data) && coreResponse.data.length > 0) {
+            console.log(`[WordPress] ✅ 分类搜索找到核心产品 "${productName}": ${coreResponse.data.length} 个`);
+            coreResponse.data.forEach((product: any) => {
+              if (!uniqueProducts.has(product.id)) {
+                uniqueProducts.set(product.id, product);
+              }
+            });
+          }
+        } catch (error) {
+          console.log(`[WordPress] ⚠️ 分类搜索核心产品 "${productName}" 失败，继续...`);
+        }
+      }
+      
+      console.log(`[WordPress] 分类搜索合并核心产品后，总计 ${uniqueProducts.size} 个产品`);
+    }
+    
     if (!uniqueProducts.size) {
       return null;
     }
 
     const collectedProducts = Array.from(uniqueProducts.values());
-    const filteredRaw = filterRawProductsByTargetNames(collectedProducts, targetProductNames);
+    const filteredRaw = filterRawProductsByTargetNames(collectedProducts, targetProductNames, trimmedKeyword);
     
     // 如果有目标产品名称但未找到匹配的产品，记录警告但不立即返回 null
     if (targetProductNames.length && filteredRaw.length === 0) {
@@ -1403,13 +1559,13 @@ async function fetchWooCommerceFallbackProducts(
   targetProductNames: string[] = []
 ): Promise<ProductFetchResult | null> {
   try {
+    // Fallback：只要求已发布
     const response = await client.get("/products", {
       params: {
-        per_page: 12,
-        status: "publish",
+        per_page: 20,
+        status: "publish", // 只要求已发布
         orderby: "date",
         order: "desc",
-        stock_status: "instock", // 只获取有库存的产品
       },
     });
 
@@ -1483,7 +1639,7 @@ async function fetchWooCommerceUpsells(
       params: { 
         include: upsellIds.join(","), 
         per_page: upsellIds.length,
-        stock_status: "instock", // 只获取有库存的产品
+        status: "publish", // 只要求已发布
       },
     });
 
@@ -1524,7 +1680,7 @@ async function fetchWordpressStandardProducts(
           search: trimmed,
           per_page: 10,
           _embed: true,
-          stock_status: "instock", // 只获取有库存的产品（如果API支持）
+          status: "publish", // 只要求已发布
         },
       });
 
@@ -1550,9 +1706,8 @@ async function fetchWordpressStandardProducts(
     const fallbackResp = await client.get("/products", {
       params: {
         per_page: 10,
-        status: "publish",
+        status: "publish", // 只要求已发布
         _embed: true,
-        stock_status: "instock", // 只获取有库存的产品（如果API支持）
       },
     });
 
@@ -1665,7 +1820,7 @@ function extractTargetProductNames(keyword: string): string[] {
   return Array.from(matches);
 }
 
-function filterRawProductsByTargetNames(productsData: any[], targetNames: string[]): any[] {
+function filterRawProductsByTargetNames(productsData: any[], targetNames: string[], originalSearchTerm?: string): any[] {
   if (!targetNames.length) {
     return productsData;
   }
@@ -1675,7 +1830,134 @@ function filterRawProductsByTargetNames(productsData: any[], targetNames: string
     return productsData;
   }
 
-  // 过滤产品：只要产品名称包含任何一个目标关键词就匹配
+  // 重要优化：如果原始搜索词是通用类别关键词（如"phone"、"ring"），
+  // 应该返回所有相关类别的产品，而不仅仅是知识库中定义的特定产品
+  // 例如：关键词"phone"应该返回所有手机产品，而不仅仅是"Agent Q"、"Quantum Flip"、"Metavertu Max"
+  
+  // 检查是否是通用类别关键词（优先检查原始搜索词）
+  let categoryKeyword: string | undefined;
+  let isGenericCategoryKeyword = false;
+  
+  if (originalSearchTerm) {
+    const normalizedSearchTerm = normalizePhrase(originalSearchTerm);
+    const searchTermLower = normalizedSearchTerm.toLowerCase();
+    
+    // 检查是否是类别关键词（支持所有常见组合词）
+    // 完整泛词模式：包含所有手机、手表、戒指、耳机的常见表达
+    // 完整的手机泛词模式 - 包含所有长尾词
+    const phoneGen = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|handset|handsets|mobile\s+phone|mobile\s+phones|smart\s+phone|smart\s+phones|cell\s+phone|cell\s+phones|luxury\s+phone|luxury\s+phones|luxury\s+mobile|luxury\s+smartphone|premium\s+phone|premium\s+phones|premium\s+mobile|premium\s+smartphone|high-?end\s+phone|high-?end\s+phones|flagship\s+phone|flagship\s+phones|business\s+phone|business\s+phones|5G\s+phone|5G\s+phones|expensive\s+phone|expensive\s+phones|designer\s+phone|designer\s+phones|exclusive\s+phone|exclusive\s+phones|boutique\s+phone|boutique\s+phones|VERTU\s+phone|VERTU\s+phones|VERTU\s+mobile|VERTU\s+smartphone|secure\s+phone|secure\s+phones|privacy\s+phone|encrypted\s+phone|encrypted\s+phones|crypto\s+phone|Web3\s+phone|AI\s+phone|AI\s+phones|concierge\s+phone|titanium\s+phone|ceramic\s+phone|leather\s+phone|gold\s+phone|diamond\s+phone|executive\s+phone|executive\s+phones|VIP\s+phone|VIP\s+phones)\b/i;
+    const watchGen = /\b(watch|watches|timepiece|timepieces|wristwatch|wristwatches|smartwatch|smartwatches|smart\s+watch|smart\s+watches|luxury\s+watch|premium\s+watch|high-?end\s+watch|designer\s+watch)\b/i;
+    const ringGen = /\b(ring|rings|smart\s+ring|smart\s+rings|wearable\s+ring|luxury\s+ring|premium\s+ring|diamond\s+ring|gold\s+ring|jewellery|jewelry)\b/i;
+    const earbudGen = /\b(earbud|earbuds|earphone|earphones|headphone|headphones|wireless\s+earbud|bluetooth\s+earbud|luxury\s+earbud|premium\s+earbud)\b/i;
+    
+    const isGenericPattern = phoneGen.test(originalSearchTerm) || watchGen.test(originalSearchTerm) || ringGen.test(originalSearchTerm) || earbudGen.test(originalSearchTerm);
+    const isSpecificModel = /(flip|fold|foldable|folding|keyboard|keypad|signature|agent|quantum|metavertu|grand\s+watch|metawatch|meta\s+ring)/i.test(originalSearchTerm);
+    
+    if (isGenericPattern && !isSpecificModel) {
+      isGenericCategoryKeyword = true;
+      // 提取类别关键词的基础形式
+      if (searchTermLower.includes("phone") || searchTermLower.includes("mobile")) {
+        categoryKeyword = "phone";
+      } else if (searchTermLower.includes("ring")) {
+        categoryKeyword = "ring";
+      } else if (searchTermLower.includes("watch")) {
+        categoryKeyword = "watch";
+      } else if (searchTermLower.includes("earbud")) {
+        categoryKeyword = "earbud";
+      }
+      console.log(`[WordPress] ✓ 识别为泛词关键词: "${originalSearchTerm}" → 类别: "${categoryKeyword}"`);
+    }
+  }
+  
+  // 如果没有从原始搜索词检测到，尝试从目标产品名称检测
+  if (!isGenericCategoryKeyword) {
+    isGenericCategoryKeyword = normalizedTargets.some(target => {
+      const targetLower = target.toLowerCase();
+      return targetLower.includes("ring") || targetLower.includes("watch") || 
+             targetLower.includes("earbud") || targetLower.includes("phone");
+    });
+    
+    if (isGenericCategoryKeyword && !categoryKeyword) {
+      categoryKeyword = normalizedTargets.find(target => {
+        const targetLower = target.toLowerCase();
+        return targetLower.includes("ring") || targetLower.includes("watch") || 
+               targetLower.includes("earbud") || targetLower.includes("phone");
+      });
+    }
+  }
+  
+  // 如果是通用类别关键词，返回所有相关类别的产品
+  if (isGenericCategoryKeyword && categoryKeyword) {
+    console.log(`[WordPress] ========== 泛词过滤 ==========`);
+    console.log(`[WordPress] 检测到通用类别关键词"${categoryKeyword}"（原始: "${originalSearchTerm}"）`);
+    console.log(`[WordPress] 准备过滤 ${productsData.length} 个产品...`);
+    
+    // 对于 phone 类别，需要特殊处理：匹配所有包含 "vertu"、"phone"、"smartphone" 等关键词的产品
+    // 以及特定产品名称（Agent Q、Quantum Flip、Metavertu 等）
+    const filtered = productsData.filter((product) => {
+      const rawName = product?.name || product?.title?.rendered || product?.slug || "";
+      const normalizedProductName = normalizePhrase(rawName).toLowerCase();
+      
+      // 检查产品分类
+      const categories = product?.categories || [];
+      const categoryNames = categories.map((cat: any) => normalizePhrase(cat?.name || "").toLowerCase()).join(" ");
+      
+      if (categoryKeyword === "phone") {
+        // 手机产品：匹配 "vertu"、"phone"、"smartphone"、特定型号名称
+        return normalizedProductName.includes("vertu") ||
+               normalizedProductName.includes("phone") ||
+               normalizedProductName.includes("smartphone") ||
+               normalizedProductName.includes("agent") ||
+               normalizedProductName.includes("quantum") ||
+               normalizedProductName.includes("metavertu") ||
+               normalizedProductName.includes("ivertu") ||
+               normalizedProductName.includes("signature") ||
+               categoryNames.includes("phone") ||
+               categoryNames.includes("smartphone");
+      } else if (categoryKeyword === "ring") {
+        // 戒指产品
+        return normalizedProductName.includes("ring") ||
+               categoryNames.includes("ring") ||
+               categoryNames.includes("jewellery") ||
+               categoryNames.includes("jewelry");
+      } else if (categoryKeyword === "watch") {
+        // 手表产品
+        return normalizedProductName.includes("watch") ||
+               categoryNames.includes("watch") ||
+               categoryNames.includes("timepiece");
+      } else if (categoryKeyword === "earbud") {
+        // 耳机产品
+        return normalizedProductName.includes("earbud") ||
+               normalizedProductName.includes("earphone") ||
+               categoryNames.includes("earbud") ||
+               categoryNames.includes("earphone") ||
+               categoryNames.includes("audio");
+      }
+      
+      return false;
+    });
+    
+    if (filtered.length > 0) {
+      console.log(`[WordPress] 通用类别"${categoryKeyword}"过滤后找到 ${filtered.length} 个产品:`);
+      filtered.slice(0, 10).forEach((p: any, idx: number) => {
+        console.log(`[WordPress]   ${idx + 1}. ${p.name || p.title?.rendered}`);
+      });
+      if (filtered.length > 10) {
+        console.log(`[WordPress]   ... 还有 ${filtered.length - 10} 个产品`);
+      }
+      console.log(`[WordPress] ====================================`);
+      
+      // 泛词返回所有匹配的产品
+      const maxProducts = Math.min(100, filtered.length);
+      return filtered.slice(0, maxProducts);
+    } else {
+      console.log(`[WordPress] ⚠️ 泛词过滤后没有找到任何产品！`);
+      console.log(`[WordPress] 原始产品数量: ${productsData.length}`);
+      console.log(`[WordPress] 过滤条件: categoryKeyword="${categoryKeyword}"`);
+    }
+  }
+
+  // 否则，使用原来的逻辑：过滤产品，只要产品名称包含任何一个目标关键词就匹配
   const filtered = productsData.filter((product) => {
     const rawName = product?.name || product?.title?.rendered || product?.slug || "";
     const normalizedProductName = normalizePhrase(rawName);

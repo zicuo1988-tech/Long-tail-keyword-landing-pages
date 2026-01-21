@@ -679,11 +679,16 @@ CRITICAL: KNOWLEDGE BASE FILTERING AND ACCURACY REQUIREMENTS:
 - The knowledge base above has been FILTERED to include ONLY information relevant to "${keyword}"
 - You MUST ONLY use information from the filtered knowledge base above - DO NOT use external knowledge or make assumptions
 - DO NOT use information from products that are NOT listed in the "RELEVANT PRODUCTS" section above
+- IMPORTANT: Ruby Key and Ruby Talk are SERVICES/PRIVILEGES that come with phone purchases, NOT standalone phone products
+  * Ruby Key is a concierge service included with all VERTU phone purchases
+  * Ruby Talk is an AI-powered concierge service exclusively included with Agent Q phone purchases
+  * DO NOT recommend Ruby Key or Ruby Talk as products - they are services that come with phones
 - If the keyword is about "rings" → ONLY use ring-related information (Meta Ring, AI Diamond Ring, AI Meta Ring)
   * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
   * DO NOT use phone specifications (Snapdragon, RAM, display sizes, battery capacity, etc.)
   * DO NOT invent specifications not in the knowledge base (e.g., if knowledge base says "5ATM", DO NOT write "10ATM")
 - If the keyword is about "phones" → ONLY use phone-related information (Agent Q, Quantum Flip, Metavertu, etc.)
+  * You MAY mention Ruby Key and Ruby Talk as services/privileges that come with phone purchases, but DO NOT recommend them as standalone products
 - If the keyword is about "watches" → ONLY use watch-related information (Grand Watch, Metawatch)
   * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
 - If the keyword is about "earbuds" → ONLY use earbud-related information (Phantom Earbuds, OWS Earbuds)
@@ -708,6 +713,8 @@ TRUTHFULNESS REQUIREMENTS (CRITICAL - STRICTLY ENFORCE):
 - CRITICAL: DO NOT use specifications from other products or external knowledge - ONLY use what is explicitly stated in the filtered knowledge base above
 
 RELEVANT PRODUCTS FOR THIS KEYWORD "${keyword}" (you MUST focus ONLY on these products - do NOT mention other unrelated products):
+IMPORTANT: Ruby Key and Ruby Talk are SERVICES/PRIVILEGES that come with phone purchases, NOT standalone products. They should NOT be recommended as products.
+
 ${(() => {
   // 构建产品推荐约束
   let productGuidance = "";
@@ -745,7 +752,24 @@ ${(() => {
   
   // 产品类型约束（如果没有用户提示词覆盖，则应用）
   if (!hasUserProductGuidance) {
-    if (isPhoneKeyword) {
+    // 特殊关键词检测：翻盖手机
+    const isFoldableKeyword = /(flip|fold|foldable|folding|clamshell)/i.test(keyword) || 
+                              /(flip|fold|foldable|folding|clamshell)/i.test(pageTitle);
+    // 特殊关键词检测：实体键盘手机
+    const isKeyboardKeyword = /(keyboard|keypad|physical keyboard|qwerty)/i.test(keyword) || 
+                              /(keyboard|keypad|physical keyboard|qwerty)/i.test(pageTitle);
+    
+    if (isFoldableKeyword) {
+      productGuidance += `- CRITICAL: The title/keyword explicitly mentions FOLDABLE/FLIP phones
+- You MUST recommend QUANTUM FLIP ONLY (the foldable phone)
+- DO NOT recommend Agent Q, Metavertu, or other non-foldable phones
+- Focus ONLY on Quantum Flip's folding features, hinge, durability, and foldable design\n`;
+    } else if (isKeyboardKeyword) {
+      productGuidance += `- CRITICAL: The title/keyword explicitly mentions KEYBOARD/KEYPAD phones
+- You MUST recommend SIGNATURE series ONLY (Signature S, S+, V, Cobra - phones with physical keyboards)
+- DO NOT recommend Agent Q, Quantum Flip, Metavertu, or other touchscreen-only phones
+- Focus ONLY on Signature series' physical keyboard, classic design, and tactile typing experience\n`;
+    } else if (isPhoneKeyword) {
       productGuidance += `- CRITICAL: The title/keyword explicitly mentions PHONES/SMARTPHONES
 - You MUST recommend PHONE products ONLY (Agent Q, Quantum Flip, Metavertu, etc.)
 - DO NOT recommend watches, rings, bags, or other non-phone products
@@ -2192,11 +2216,18 @@ function extractProductNamesFromKnowledgeBase(kbContent: string): string[] {
     const line = lines[i].trim();
     
     // 检测产品分隔符（如 "AGENT Q", "QUANTUM FLIP" 等）
+    // 排除服务/权益（Ruby Key, Ruby Talk, Concierge Service 等）
     if (line.match(/^-{3,}/) && i > 0) {
       const prevLine = lines[i - 1]?.trim();
       if (prevLine && prevLine.length > 0 && !prevLine.startsWith("-") && !prevLine.startsWith("#")) {
         const productName = prevLine.replace(/^#+\s*/, "").trim();
-        if (productName && productName.length > 0 && productName.length < 100) {
+        // 排除服务/权益标识
+        const isServiceSection = prevLine.toUpperCase().includes("SERVICE") || 
+                                 prevLine.toUpperCase().includes("CONCIERGE") ||
+                                 (prevLine.toUpperCase().includes("RUBY") && 
+                                  (prevLine.toUpperCase().includes("KEY") || prevLine.toUpperCase().includes("TALK"))) ||
+                                 prevLine.toUpperCase().includes("NOT A PRODUCT");
+        if (productName && productName.length > 0 && productName.length < 100 && !isServiceSection) {
           products.push(productName);
         }
       }
@@ -2205,7 +2236,11 @@ function extractProductNamesFromKnowledgeBase(kbContent: string): string[] {
     // 检测 "- Product name:" 模式
     if (line.match(/^-\s*Product\s+name:\s*/i)) {
       const productName = line.replace(/^-\s*Product\s+name:\s*/i, "").trim();
-      if (productName && productName.length > 0) {
+      // 排除服务/权益
+      const isService = productName.toUpperCase().includes("RUBY KEY") || 
+                        productName.toUpperCase().includes("RUBY TALK") ||
+                        productName.toUpperCase().includes("CONCIERGE SERVICE");
+      if (productName && productName.length > 0 && !isService) {
         products.push(productName);
       }
     }
@@ -2225,11 +2260,32 @@ function extractProductNamesFromKnowledgeBase(kbContent: string): string[] {
   // 去重并排序
   const uniqueProducts = Array.from(new Set(products.map(p => p.trim()).filter(p => p.length > 0)));
   
+  // 排除服务/权益（不是产品）
+  const excludedServices = [
+    "RUBY KEY",
+    "RUBY TALK",
+    "Ruby Key",
+    "Ruby Talk",
+    "CONCIERGE SERVICE",
+    "Concierge Service",
+    "CONCIERGE SERVICE CASE STUDIES",
+    "Concierge Service Case Studies"
+  ];
+  
+  // 检查是否是服务/权益（不是产品）
+  const isService = (name: string): boolean => {
+    const nameUpper = name.toUpperCase();
+    return excludedServices.some(service => nameUpper === service.toUpperCase()) ||
+           nameUpper.includes("SERVICE") ||
+           nameUpper.includes("CONCIERGE") ||
+           (nameUpper.includes("RUBY") && (nameUpper.includes("KEY") || nameUpper.includes("TALK")));
+  };
+  
   // 移除强制添加手机产品的逻辑 - 这会导致不相关的产品被添加到列表中
   // 例如："smart ring" 关键词不应该强制添加 "Agent Q"
   // 产品应该只从知识库中提取，或者通过关键词匹配逻辑确定
-  
-  return uniqueProducts.sort();
+  // 确保 Ruby Key 和 Ruby Talk 不会被识别为产品（它们是服务/权益）
+  return uniqueProducts.filter(p => !isService(p)).sort();
 }
 
 // 根据关键词提取相关产品的辅助函数
@@ -2240,11 +2296,22 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
 
   const keywordLower = keyword.toLowerCase().trim();
   const relevantProducts: string[] = [];
-  const isPhoneKeyword = /\b(phone|phones|smartphone|smart phone|cellphone|cell phone|mobile)\b/i.test(keyword);
-  const isWatchKeyword = /(watch|watches|timepiece|horology|chronograph)/i.test(keyword);
-  const isRingKeyword = /\b(ring|jewellery|jewelry|jewel)\b/i.test(keyword);
-  const isEarbudKeyword = /(earbud|earbuds|earphone|earphones|audio|hearable|hearables|headphone)/i.test(keyword);
-  const isWearableBroadKeyword = /(wearable|wearables|wearable device|smart wearable)/i.test(keyword);
+  
+  // 完整泛词识别：支持所有常见的手机、手表、戒指、耳机泛词和组合
+  // 完整的手机关键词：包含所有常见表达和长尾词
+  const isPhoneKeyword = /\b(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones|handset|handsets|mobile\s+phone|mobile\s+phones|smart\s+phone|smart\s+phones|cell\s+phone|cell\s+phones|luxury\s+phone|luxury\s+phones|luxury\s+mobile|luxury\s+smartphone|premium\s+phone|premium\s+phones|premium\s+mobile|premium\s+smartphone|high-?end\s+phone|high-?end\s+phones|high-?end\s+mobile|flagship\s+phone|flagship\s+phones|business\s+phone|business\s+phones|5G\s+phone|5G\s+phones|expensive\s+phone|expensive\s+phones|designer\s+phone|designer\s+phones|exclusive\s+phone|exclusive\s+phones|boutique\s+phone|boutique\s+phones|VERTU\s+phone|VERTU\s+phones|VERTU\s+mobile|VERTU\s+smartphone|secure\s+phone|secure\s+phones|privacy\s+phone|encrypted\s+phone|encrypted\s+phones|crypto\s+phone|Web3\s+phone|AI\s+phone|AI\s+phones|concierge\s+phone|titanium\s+phone|ceramic\s+phone|leather\s+phone|gold\s+phone|diamond\s+phone|executive\s+phone|executive\s+phones|VIP\s+phone|VIP\s+phones)\b/i.test(keyword);
+  
+  // 手表关键词：包含所有常见表达（watch, timepiece, smartwatch, luxury watch 等）
+  const isWatchKeyword = /\b(watch|watches|timepiece|timepieces|wristwatch|wristwatches|smartwatch|smartwatches|smart\s+watch|smart\s+watches|luxury\s+watch|luxury\s+watches|premium\s+watch|high-?end\s+watch|designer\s+watch|horology|chronograph)\b/i.test(keyword);
+  
+  // 戒指关键词：包含所有常见表达（ring, smart ring, luxury ring, jewellery 等）
+  const isRingKeyword = /\b(ring|rings|smart\s+ring|smart\s+rings|wearable\s+ring|luxury\s+ring|luxury\s+rings|premium\s+ring|diamond\s+ring|diamond\s+rings|gold\s+ring|jewellery|jewelry|jewel)\b/i.test(keyword);
+  
+  // 耳机关键词：包含所有常见表达（earbud, earphone, wireless earbud 等）
+  const isEarbudKeyword = /\b(earbud|earbuds|earphone|earphones|headphone|headphones|wireless\s+earbud|wireless\s+earbuds|bluetooth\s+earbud|luxury\s+earbud|premium\s+earbud|audio|hearable|hearables)\b/i.test(keyword);
+  
+  // 广义可穿戴设备关键词
+  const isWearableBroadKeyword = /(wearable|wearables|wearable\s+device|smart\s+wearable)/i.test(keyword);
 
   const productMatchesCategory = (product: string, category: "watch" | "ring" | "earbud"): boolean => {
     const nameLower = product.toLowerCase();
@@ -2256,9 +2323,14 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
 
   // 产品关键词匹配规则
   const productKeywordHints: Array<{ keywords: string[]; productNames: string[] }> = [
+    // 特定类别优先（flip, keyboard 等特定手机类型）
     {
-      keywords: ["flip", "fold", "foldable", "hinge", "clamshell", "dual screen", "quantum"],
-      productNames: ["Quantum Flip"],
+      keywords: ["flip", "fold", "foldable", "folding", "hinge", "clamshell", "dual screen", "quantum"],
+      productNames: ["Quantum Flip"], // 翻盖手机
+    },
+    {
+      keywords: ["keyboard", "keypad", "physical keyboard", "qwerty", "physical key"],
+      productNames: ["Signature S", "Signature S+", "Signature V", "Signature Cobra"], // 实体键盘手机
     },
     {
       keywords: ["web3", "crypto", "blockchain", "metaverse", "wallet", "defi", "metavertu", "meta vertu"],
@@ -2271,6 +2343,11 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
     {
       keywords: ["signature", "bar phone", "classic", "artisan", "bespoke"],
       productNames: ["Signature S", "Signature S+", "Signature V", "Signature Cobra"],
+    },
+    // 泛词类别（phone, ring, watch, earbud）
+    {
+      keywords: ["phone", "phones", "smartphone", "smartphones", "mobile", "cellphone", "cell phone"],
+      productNames: ["Agent Q", "Quantum Flip", "Metavertu Max", "Metavertu", "Signature S", "Signature S+", "Signature V", "Signature Cobra", "iVERTU"], // 所有手机产品
     },
     {
       keywords: ["ring", "jewellery", "jewelry", "wearable", "diamond", "meta ring"],
@@ -2367,16 +2444,34 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
       console.log(`[GoogleAI] Keyword "${keyword}" matches category: ${hint.keywords.join(", ")} → Products: ${hint.productNames.join(", ")}`);
       
       for (const productName of hint.productNames) {
-        if (knownProducts.includes(productName) && !relevantProducts.includes(productName)) {
-          relevantProducts.push(productName);
+        if (knownProducts.includes(productName)) {
+          if (!relevantProducts.includes(productName)) {
+            relevantProducts.push(productName);
+            console.log(`[GoogleAI] ✓ 添加产品: ${productName}`);
+          }
+        } else {
+          console.log(`[GoogleAI] ✗ 跳过产品 ${productName}（不在知识库中）`);
         }
       }
       
-      // 如果匹配到特定类别（手表、戒指、耳机），立即返回，避免继续匹配其他类别
-      const isSpecificCategory = hint.keywords.some(kw => ["watch", "watches", "ring", "earbud", "earbuds"].includes(kw.toLowerCase()));
+      // 如果匹配到特定类别（手表、戒指、耳机、翻盖手机、实体键盘手机），立即返回，避免继续匹配其他类别
+      // 注意：泛词（phone, phones, smartphone）不应该被视为"特定类别"，因为我们希望显示所有手机产品
+      const isSpecificCategory = hint.keywords.some(kw => 
+        ["watch", "watches", "ring", "earbud", "earbuds", "flip", "fold", "foldable", "folding", "keyboard", "keypad"].includes(kw.toLowerCase())
+      );
       if (isSpecificCategory && relevantProducts.length > 0) {
-        console.log(`[GoogleAI] Keyword "${keyword}" matched specific category, returning relevant products: ${relevantProducts.join(", ")}`);
+        console.log(`[GoogleAI] Keyword "${keyword}" matched specific category, returning ONLY relevant products: ${relevantProducts.join(", ")}`);
         return relevantProducts;
+      }
+      
+      // 如果匹配到泛词手机类别（phone, phones, smartphone），继续匹配以收集所有手机产品，不立即返回
+      const isGenericPhoneKeyword = hint.keywords.some(kw => 
+        ["phone", "phones", "smartphone", "smartphones", "mobile"].includes(kw.toLowerCase())
+      );
+      if (isGenericPhoneKeyword && relevantProducts.length > 0) {
+        console.log(`[GoogleAI] Keyword "${keyword}" matched generic phone category, collected ${relevantProducts.length} phone products: ${relevantProducts.join(", ")}`);
+        // 继续收集，但标记已找到泛词手机类别
+        // 不立即返回，允许收集所有手机产品
       }
     }
   }
@@ -2420,8 +2515,14 @@ function filterKnowledgeBaseByProductType(
   const isRingKeyword = /\b(ring|jewellery|jewelry|jewel)\b/i.test(keyword);
   const isEarbudKeyword = /(earbud|earbuds|earphone|earphones|audio|hearable|hearables|headphone)/i.test(keyword);
   
+  // 检测特定产品类型关键词
+  const isFoldableKeyword = /(flip|fold|foldable|folding|clamshell)/i.test(keyword);
+  const isKeyboardKeyword = /(keyboard|keypad|physical keyboard|qwerty)/i.test(keyword);
+  
   // 检查相关产品中是否包含 Agent Q
   const hasAgentQ = relevantProducts.some(p => p.toLowerCase().includes("agent q"));
+  // 检查相关产品中是否包含 Quantum Flip
+  const hasQuantumFlip = relevantProducts.some(p => p.toLowerCase().includes("quantum flip"));
   
   // 如果没有明确的产品类型，返回完整知识库
   if (!isPhoneKeyword && !isWatchKeyword && !isRingKeyword && !isEarbudKeyword) {
@@ -2430,6 +2531,24 @@ function filterKnowledgeBaseByProductType(
 
   // 如果有关联产品，只保留这些产品的信息
   if (relevantProducts.length > 0) {
+    console.log(`[GoogleAI] 知识库过滤: 关键词"${keyword}"匹配到 ${relevantProducts.length} 个产品: ${relevantProducts.join(', ')}`);
+    
+    // 特殊处理：如果是翻盖手机关键词，只保留 Quantum Flip，排除其他手机产品（如 Agent Q）
+    if (isFoldableKeyword && hasQuantumFlip) {
+      console.log(`[GoogleAI] 知识库过滤: 检测到翻盖关键词，只保留 Quantum Flip 信息，排除其他手机产品`);
+    }
+    
+    // 特殊处理：如果是实体键盘关键词，只保留 Signature 系列，排除其他手机产品
+    if (isKeyboardKeyword) {
+      console.log(`[GoogleAI] 知识库过滤: 检测到键盘关键词，只保留 Signature 系列信息，排除其他手机产品`);
+    }
+    
+    // 泛词处理：如果是纯类别关键词（如"phone"、"phones"、"smartphone"），允许显示所有该类别产品
+    const isGenericCategoryKeyword = /^(phone|phones|smartphone|smartphones|mobile|mobiles|cellphone|cellphones)$/i.test(keyword);
+    if (isGenericCategoryKeyword && isPhoneKeyword) {
+      console.log(`[GoogleAI] 知识库过滤: 检测到泛词"${keyword}"，将包含所有 ${relevantProducts.length} 个手机产品的信息`);
+    }
+    
     const sections: string[] = [];
     const lines = kbContent.split('\n');
     let currentSection: string[] = [];
@@ -2461,7 +2580,16 @@ function filterKnowledgeBaseByProductType(
               const titleLower = sectionTitle.toLowerCase();
               return titleLower.includes(productLower) || productLower.includes(titleLower);
             });
-            inRelevantSection = isRelevant;
+            
+            // 特殊过滤：如果是翻盖关键词，只保留 Quantum Flip，排除 Agent Q
+            if (isFoldableKeyword && sectionTitle.toLowerCase().includes('agent q')) {
+              inRelevantSection = false;
+            } else if (isKeyboardKeyword && !sectionTitle.toLowerCase().includes('signature')) {
+              // 实体键盘关键词，只保留 Signature 系列
+              inRelevantSection = false;
+            } else {
+              inRelevantSection = isRelevant;
+            }
           }
         }
       } else {
@@ -2473,7 +2601,16 @@ function filterKnowledgeBaseByProductType(
             const titleLower = sectionTitle.toLowerCase();
             return titleLower.includes(productLower) || productLower.includes(titleLower);
           });
-          inRelevantSection = isRelevant;
+          
+          // 特殊过滤：如果是翻盖关键词，只保留 Quantum Flip，排除 Agent Q
+          if (isFoldableKeyword && sectionTitle.toLowerCase().includes('agent q')) {
+            inRelevantSection = false;
+          } else if (isKeyboardKeyword && !sectionTitle.toLowerCase().includes('signature')) {
+            // 实体键盘关键词，只保留 Signature 系列
+            inRelevantSection = false;
+          } else {
+            inRelevantSection = isRelevant;
+          }
         }
         
         if (inRelevantSection || line.trim() === '' || line.match(/^REGARDING|^ALL OUTPUT|^BRITISH ENGLISH/i)) {

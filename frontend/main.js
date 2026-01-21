@@ -238,13 +238,66 @@ previewModal.className = "preview-modal";
 previewModal.innerHTML = `
   <div class="preview-modal-content">
     <button class="preview-modal-close" aria-label="关闭预览">×</button>
-    <img src="" alt="模板预览" id="preview-image">
+    <div class="preview-image-container">
+      <img src="" alt="模板预览" id="preview-image">
+    </div>
+    <div class="preview-controls">
+      <button class="preview-zoom-btn" id="zoom-in" aria-label="放大">+</button>
+      <button class="preview-zoom-btn" id="zoom-out" aria-label="缩小">−</button>
+      <button class="preview-zoom-btn" id="zoom-reset" aria-label="重置">↻</button>
+    </div>
   </div>
 `;
 document.body.appendChild(previewModal);
 
 const previewImage = document.getElementById("preview-image");
+const previewImageContainer = previewModal.querySelector(".preview-image-container");
 const previewCloseBtn = previewModal.querySelector(".preview-modal-close");
+const zoomInBtn = document.getElementById("zoom-in");
+const zoomOutBtn = document.getElementById("zoom-out");
+const zoomResetBtn = document.getElementById("zoom-reset");
+
+// 图片缩放和拖拽状态
+let currentScale = 1;
+let currentTranslateX = 0;
+let currentTranslateY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragStartTranslateX = 0;
+let dragStartTranslateY = 0;
+
+// 更新图片变换
+function updateImageTransform() {
+  if (previewImage) {
+    previewImage.style.transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
+  }
+}
+
+// 重置图片状态
+function resetImageTransform() {
+  currentScale = 1;
+  currentTranslateX = 0;
+  currentTranslateY = 0;
+  updateImageTransform();
+}
+
+// 缩放图片
+function zoomImage(delta) {
+  const minScale = 0.5;
+  const maxScale = 10; // 增加最大缩放比例到10倍
+  const newScale = Math.max(minScale, Math.min(maxScale, currentScale + delta));
+  
+  if (newScale !== currentScale) {
+    currentScale = newScale;
+    // 如果缩放后图片变小，重置位置
+    if (currentScale <= 1) {
+      currentTranslateX = 0;
+      currentTranslateY = 0;
+    }
+    updateImageTransform();
+  }
+}
 
 // 预览按钮点击事件
 function initPreviewButtons() {
@@ -254,6 +307,9 @@ function initPreviewButtons() {
       
       const previewUrl = btn.getAttribute("data-preview");
       if (previewUrl && previewImage) {
+        // 重置缩放和位置
+        resetImageTransform();
+        
         // 添加加载状态
         previewImage.style.opacity = "0";
         previewImage.style.transition = "opacity 0.3s ease";
@@ -269,6 +325,82 @@ function initPreviewButtons() {
         document.body.style.overflow = "hidden"; // 防止背景滚动
       }
     });
+  });
+}
+
+// 鼠标滚轮缩放
+if (previewImageContainer) {
+  previewImageContainer.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    zoomImage(delta);
+  });
+}
+
+// 双击放大/缩小
+if (previewImage) {
+  previewImage.addEventListener("dblclick", () => {
+    if (currentScale > 1) {
+      resetImageTransform();
+    } else {
+      currentScale = 2;
+      updateImageTransform();
+    }
+  });
+}
+
+// 拖拽功能
+if (previewImage) {
+  previewImage.style.cursor = "grab";
+  
+  previewImage.addEventListener("mousedown", (e) => {
+    if (currentScale > 1) {
+      isDragging = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      dragStartTranslateX = currentTranslateX;
+      dragStartTranslateY = currentTranslateY;
+      previewImage.style.cursor = "grabbing";
+    }
+  });
+  
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging && currentScale > 1) {
+      currentTranslateX = dragStartTranslateX + (e.clientX - dragStartX);
+      currentTranslateY = dragStartTranslateY + (e.clientY - dragStartY);
+      updateImageTransform();
+    }
+  });
+  
+  document.addEventListener("mouseup", () => {
+    if (isDragging) {
+      isDragging = false;
+      if (previewImage) {
+        previewImage.style.cursor = currentScale > 1 ? "grab" : "default";
+      }
+    }
+  });
+}
+
+// 缩放按钮事件
+if (zoomInBtn) {
+  zoomInBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    zoomImage(0.2);
+  });
+}
+
+if (zoomOutBtn) {
+  zoomOutBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    zoomImage(-0.2);
+  });
+}
+
+if (zoomResetBtn) {
+  zoomResetBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    resetImageTransform();
   });
 }
 
@@ -292,6 +424,9 @@ function closePreviewModal() {
   if (previewImage) {
     previewImage.src = "";
   }
+  // 重置缩放和位置
+  resetImageTransform();
+  isDragging = false;
 }
 
 // 点击关闭按钮
@@ -304,10 +439,28 @@ if (previewCloseBtn) {
 
 // 点击背景关闭弹窗
 previewModal.addEventListener("click", (e) => {
-  if (e.target === previewModal) {
+  // 如果点击的是弹窗背景（不是内容区域），则关闭
+  if (e.target === previewModal || e.target.classList.contains("preview-modal")) {
     closePreviewModal();
   }
 });
+
+// 防止图片容器和内容区域点击关闭
+if (previewImageContainer) {
+  previewImageContainer.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+}
+
+const previewModalContent = previewModal.querySelector(".preview-modal-content");
+if (previewModalContent) {
+  previewModalContent.addEventListener("click", (e) => {
+    // 如果点击的是控制按钮，不阻止冒泡（让按钮正常工作）
+    if (!e.target.closest(".preview-controls") && !e.target.closest(".preview-zoom-btn")) {
+      e.stopPropagation();
+    }
+  });
+}
 
 // ESC键关闭弹窗
 document.addEventListener("keydown", (e) => {
