@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{PAGE_TITLE}}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{META_DESCRIPTION}}" />
+    <meta name="keywords" content="{{META_KEYWORDS}}" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="VERTU" />
+    <link rel="canonical" href="{{PAGE_URL}}" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="{{PAGE_URL}}" />
+    <meta property="og:title" content="{{PAGE_TITLE}}" />
+    <meta property="og:description" content="{{META_DESCRIPTION}}" />
+    <meta property="og:site_name" content="VERTU" />
+    <meta property="og:locale" content="en_GB" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="{{PAGE_TITLE}}" />
+    <meta name="twitter:description" content="{{META_DESCRIPTION}}" />
+    
+    <!-- Structured Data -->
+    {{#if ARTICLE_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{ARTICLE_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    {{#if FAQ_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{FAQ_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    {{#if CITATIONS_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{CITATIONS_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: Georgia, "Times New Roman", serif;
+            background: #fafafa;
+            color: #1a1a1a;
+            line-height: 1.75;
+            font-size: 18px;
+        }
+
+        .blog-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 80px 80px;
+        }
+
+        /* Hero - editorial style */
+        .blog-hero {
+            padding: 64px 0 48px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .blog-hero-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-hero h1 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            color: #000;
+            margin-bottom: 16px;
+        }
+        {{#if (isNotEmpty PAGE_DESCRIPTION)}}
+        .blog-lead {
+            font-size: 1.25rem;
+            color: #444;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+        {{/if}}
+
+        .blog-byline {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+            color: #666;
+        }
+        .blog-byline .author { font-weight: 600; color: #333; }
+        .blog-byline .sep { opacity: 0.5; }
+        .blog-byline time { font-style: normal; }
+
+        /* Article body - readability (constrained width for long-form reading) */
+        .blog-article {
+            padding: 48px 0 40px;
+        }
+        .blog-article-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-article .content {
+            font-size: 1.125rem;
+            line-height: 1.9;
+            letter-spacing: 0.01em;
+        }
+        .blog-article .content :first-child { margin-top: 0; }
+        /* 段落：增加段间距，减轻文字密度 */
+        .blog-article .content p {
+            margin: 1.5em 0;
+            max-width: 70ch;
+        }
+        .blog-article .content p:first-of-type {
+            font-size: 1.05em;
+            color: #333;
+            line-height: 1.75;
+        }
+        /* H2：章节主标题，上下留白更明显 */
+        .blog-article .content h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.55rem;
+            font-weight: 700;
+            margin: 2.25em 0 0.6em;
+            color: #000;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+        .blog-article .content h2:first-child { margin-top: 0; }
+        /* H3：小节标题 */
+        .blog-article .content h3 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.28rem;
+            font-weight: 600;
+            margin: 1.75em 0 0.5em;
+            color: #1a1a1a;
+            line-height: 1.35;
+        }
+        /* H4：排名/列表项标题，每项成块、易扫读 */
+        .blog-article .content h4 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 1.6em 0 0.4em;
+            padding: 0.6em 0 0.35em;
+            border-top: 1px solid #e8e8e8;
+            color: #222;
+            line-height: 1.4;
+        }
+        .blog-article .content h4:first-of-type,
+        .blog-article .content h3 + h4 { margin-top: 1em; padding-top: 0; border-top: none; }
+        /* 列表：加大项间距，便于扫读 */
+        .blog-article .content ul, .blog-article .content ol {
+            margin: 1.25em 0 1.5em 1.5em;
+            padding-left: 1.5em;
+        }
+        .blog-article .content li { margin: 0.6em 0; line-height: 1.85; }
+        .blog-article .content ol li { padding-left: 0.25em; }
+        .blog-article .content a {
+            color: #1a5fb4;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+        .blog-article .content a:hover { color: #000; }
+        .blog-article .content strong { font-weight: 700; color: #1a1a1a; }
+        /* 段落内加粗小标题式短语（如 "Unyielding Security:"）略增间距 */
+        .blog-article .content p strong { display: inline; }
+        .blog-article .content blockquote {
+            margin: 1.75em 0;
+            padding: 1em 1.25em 1em 1.5em;
+            border-left: 4px solid #ccc;
+            background: #f9f9f9;
+            color: #444;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+        }
+        /* In-article images (figure) - 与章节留白一致 */
+        .blog-article .content figure {
+            margin: 2.25em 0;
+            max-width: 100%;
+        }
+        .blog-article .content figure img {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .blog-article .content figcaption {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #555;
+            line-height: 1.5;
+        }
+        /* In-article tables - 与正文块留白一致 */
+        .blog-article .content table {
+            width: 100%;
+            max-width: 100%;
+            margin: 2em 0;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .blog-article .content thead {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .blog-article .content th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .blog-article .content td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .blog-article .content tbody tr:last-child td { border-bottom: none; }
+        .blog-article .content tbody tr:nth-child(even) { background: #fafafa; }
+        .blog-article .content tbody tr:hover { background: #f5f5f5; }
+        .blog-article .content .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5em 0;
+            -webkit-overflow-scrolling: touch;
+        }
+        .blog-article .content .table-wrapper table { margin: 0; }
+
+        .blog-article .content-extended {
+            margin-top: 3rem;
+            padding-top: 2.25rem;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        /* References */
+        .blog-references {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 1px solid #e8e8e8;
+        }
+        .blog-references-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-references h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .blog-references ol {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .blog-references li {
+            margin-bottom: 12px;
+            padding-left: 0;
+            font-size: 0.95rem;
+            color: #444;
+        }
+        .blog-references .ref-num { font-weight: 600; color: #000; margin-right: 8px; }
+        .blog-references a { color: #1a5fb4; text-decoration: underline; }
+
+        /* External resources */
+        .blog-resources {
+            margin-top: 40px;
+        }
+        .blog-resources-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-resources h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+        .blog-resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .blog-resource-card {
+            padding: 16px 20px;
+            background: #fff;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .blog-resource-card:hover {
+            border-color: #ccc;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .blog-resource-card a {
+            font-weight: 600;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .blog-resource-card a:hover { color: #1a5fb4; text-decoration: underline; }
+        .blog-resource-card .resource-desc { font-size: 0.9rem; color: #666; margin-top: 6px; }
+        .blog-resource-card .resource-source { font-size: 0.8rem; color: #999; margin-top: 4px; }
+
+        /* Products - 左右铺满屏：突破容器限制，背景与内容横跨整屏 */
+        .blog-products {
+            margin-top: 56px;
+            padding: 48px 80px 56px;
+            background: #f2f2f2;
+            width: 100vw;
+            max-width: 100vw;
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        .blog-products h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 32px;
+            color: #000;
+        }
+        /* 电脑端一排固定 4 个；平板/手机再收拢 */
+        .blog-products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-flow: row;
+            gap: 28px;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0;
+        }
+        .blog-product-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        }
+        .blog-product-card a { text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%; }
+        .blog-product-labels {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 2;
+        }
+        .blog-product-tag {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.95);
+            color: #333;
+        }
+        .blog-product-tag.sale {
+            background: #c0392b;
+            color: #fff;
+        }
+        .blog-product-img {
+            aspect-ratio: 1;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+        .blog-product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .blog-product-card:hover .blog-product-img img {
+            transform: scale(1.03);
+        }
+        .blog-product-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .blog-product-name {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8em;
+        }
+        .blog-product-price {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 14px;
+        }
+        .blog-product-price .original { font-size: 0.9rem; color: #999; text-decoration: line-through; margin-left: 6px; font-weight: 400; }
+        .blog-product-cta {
+            display: inline-block;
+            margin-top: auto;
+            padding: 10px 20px;
+            background: #000;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-align: center;
+            transition: background 0.2s, color 0.2s;
+        }
+        .blog-product-cta:hover { background: #333; color: #fff; }
+
+        /* FAQ */
+        .blog-faq {
+            margin-top: 56px;
+            padding-top: 40px;
+            border-top: 1px solid #e8e8e8;
+        }
+        .blog-faq-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-faq h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #000;
+        }
+        .blog-faq-item {
+            border-bottom: 1px solid #e8e8e8;
+            padding: 20px 0;
+        }
+        .blog-faq-item:first-child { padding-top: 0; }
+        .blog-faq-q {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+        .blog-faq-a {
+            font-size: 0.95rem;
+            color: #444;
+            line-height: 1.65;
+        }
+
+        /* Footer */
+        .blog-footer {
+            margin-top: 48px;
+            padding: 24px 0;
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid #e8e8e8;
+        }
+        .blog-footer-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .blog-footer p { margin: 0.5em 0; }
+        .blog-footer time { font-weight: 500; color: #333; }
+
+        /* 桌面端（≥901px）：一排固定 4 个 */
+        @media (min-width: 901px) {
+            .blog-products-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 28px;
+            }
+        }
+        /* 平板竖屏及以下：一排 2 个 */
+        @media (max-width: 900px) {
+            .blog-container { padding: 0 32px 60px; }
+            .blog-products { padding-left: 32px; padding-right: 32px; }
+            .blog-products-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        }
+        @media (max-width: 768px) {
+            .blog-container { padding: 0 20px 48px; }
+            .blog-products { padding-left: 20px; padding-right: 20px; }
+            .blog-hero h1 { font-size: 1.85rem; }
+            .blog-byline { flex-wrap: wrap; }
+            .blog-products-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+            .blog-product-info { padding: 14px; }
+            .blog-product-name { font-size: 0.9rem; min-height: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="blog-container">
+        <header class="blog-hero">
+            <div class="blog-hero-inner">
+                <h1>{{PAGE_TITLE}}</h1>
+                {{#if (isNotEmpty PAGE_DESCRIPTION)}}
+                <p class="blog-lead">{{PAGE_DESCRIPTION}}</p>
+                {{/if}}
+                <div class="blog-byline">
+                    <span class="author">VERTU Editorial</span>
+                    <span class="sep">·</span>
+                    <time datetime="{{DATE_PUBLISHED}}">{{CURRENT_DATE}}</time>
+                </div>
+            </div>
+        </header>
+
+        <article class="blog-article">
+            <div class="blog-article-inner">
+                <div class="content">
+                    {{{AI_GENERATED_CONTENT}}}
+                </div>
+                {{#if (isNotEmpty AI_EXTENDED_CONTENT)}}
+                <div class="content content-extended">
+                    {{{AI_EXTENDED_CONTENT}}}
+                </div>
+                {{/if}}
+            </div>
+        </article>
+
+        {{#if references}}
+        <section class="blog-references" aria-labelledby="ref-heading">
+            <div class="blog-references-inner">
+                <h2 id="ref-heading">References</h2>
+                <ol>
+                {{#each references}}
+                <li>
+                    <span class="ref-num">{{add @index 1}}.</span>
+                    {{#if this.author}}<span class="reference-author">{{this.author}}</span>{{#if this.year}} ({{this.year}}){{/if}}. {{/if}}
+                    {{#if this.title}}<em>{{this.title}}</em>. {{/if}}
+                    {{#if this.publication}}{{this.publication}}. {{/if}}
+                    {{#if this.url}}<a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">Source</a>{{/if}}
+                    {{#if this.doi}} DOI: <a href="https://doi.org/{{this.doi}}" target="_blank" rel="{{getRelAttribute 'authoritative'}}">{{this.doi}}</a>{{/if}}
+                </li>
+                {{/each}}
+                </ol>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if externalResources}}
+        <section class="blog-resources" aria-labelledby="resources-heading">
+            <div class="blog-resources-inner">
+                <h2 id="resources-heading">Further Reading</h2>
+                <div class="blog-resources-list">
+                {{#each externalResources}}
+                <div class="blog-resource-card">
+                    <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                    {{#if this.description}}<p class="resource-desc">{{this.description}}</p>{{/if}}
+                    {{#if this.source}}<p class="resource-source">Source: {{this.source}}</p>{{/if}}
+                </div>
+                {{/each}}
+                </div>
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if products}}
+        <section class="blog-products" aria-labelledby="products-heading">
+            <h2 id="products-heading">Explore Our Collection</h2>
+            <div class="blog-products-grid">
+                {{#each (limit products 10)}}
+                <div class="blog-product-card">
+                    {{#if this.onSale}}
+                    <div class="blog-product-labels">
+                        <span class="blog-product-tag sale">On Sale</span>
+                        {{#if this.tag}}<span class="blog-product-tag">{{this.tag}}</span>{{/if}}
+                    </div>
+                    {{else}}
+                    {{#if this.tag}}
+                    <div class="blog-product-labels">
+                        <span class="blog-product-tag">{{this.tag}}</span>
+                    </div>
+                    {{/if}}
+                    {{/if}}
+                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer">
+                        <div class="blog-product-img">
+                            {{#if this.imageUrl}}
+                            <img src="{{this.imageUrl}}" alt="{{this.name}}" loading="lazy" decoding="async">
+                            {{else}}
+                            <img src="https://via.placeholder.com/400x400?text=No+Image" alt="{{this.name}}" loading="lazy">
+                            {{/if}}
+                        </div>
+                        <div class="blog-product-info">
+                            <div class="blog-product-name">{{this.name}}</div>
+                            {{#if this.price}}
+                            <div class="blog-product-price">
+                                {{#if this.isPriceRange}}From {{/if}}{{this.price}}
+                                {{#if this.onSale}}{{#if this.originalPrice}}<span class="original">{{this.originalPrice}}</span>{{/if}}{{/if}}
+                            </div>
+                            {{/if}}
+                            <span class="blog-product-cta">View</span>
+                        </div>
+                    </a>
+                </div>
+                {{/each}}
+            </div>
+        </section>
+        {{/if}}
+
+        {{#if faqItems}}
+        <section class="blog-faq" aria-labelledby="faq-heading">
+            <div class="blog-faq-inner">
+                <h2 id="faq-heading">Frequently Asked Questions</h2>
+                {{#each faqItems}}
+                <div class="blog-faq-item">
+                    <div class="blog-faq-q">{{this.question}}</div>
+                    <div class="blog-faq-a">{{this.answer}}</div>
+                </div>
+                {{/each}}
+            </div>
+        </section>
+        {{/if}}
+
+        <footer class="blog-footer">
+            <div class="blog-footer-inner">
+                <p>This article was prepared by VERTU's editorial team using our knowledge base and trusted sources. We aim to provide accurate, engaging content that helps you make informed decisions.</p>
+                <p><strong>Last updated:</strong> <time datetime="{{DATE_MODIFIED}}">{{CURRENT_DATE}}</time></p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

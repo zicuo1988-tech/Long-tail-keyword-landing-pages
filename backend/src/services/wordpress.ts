@@ -962,14 +962,13 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
   
   return productsData
     .filter((product) => {
-      // 先过滤掉缺货的产品
-      // 不过滤缺货产品 - 只要已发布就显示
-      // if (isProductOutOfStock(product)) {
-      //   const productName = product.name || product.title?.rendered || product.slug || "Unknown";
-      //   console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName}`);
-      //   return false;
-      // }
-      // 只过滤掉属于排除分类的产品
+      // 过滤掉缺货的产品，模板中不展示缺货商品
+      if (isProductOutOfStock(product)) {
+        const productName = product.name || product.title?.rendered || product.slug || "Unknown";
+        console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName}`);
+        return false;
+      }
+      // 过滤掉属于排除分类的产品
       return !isProductExcluded(product);
     })
     .map((product) => {

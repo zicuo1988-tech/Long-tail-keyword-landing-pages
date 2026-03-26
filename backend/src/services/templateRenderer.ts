@@ -57,6 +57,8 @@ Handlebars.registerHelper("limit", (array: any[] | undefined, limit: number) => 
   if (!array || !Array.isArray(array)) return [];
   return array.slice(0, limit);
 });
+// Helper for template-7: add two numbers (e.g. {{add @index 1}} for 1-based index)
+Handlebars.registerHelper("add", (a: number, b: number) => (Number(a) || 0) + (Number(b) || 0));
 
 /**
  * 智能判断链接的 rel 属性

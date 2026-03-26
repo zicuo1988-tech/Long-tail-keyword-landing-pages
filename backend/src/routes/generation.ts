@@ -92,7 +92,7 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
 }
 import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
 import { fetchRelatedProducts, publishPage, searchProductsByName } from "../services/wordpress.js";
-import { renderTemplate } from "../services/templateRenderer.js";
+import { renderTemplate, type Reference } from "../services/templateRenderer.js";
 import { createSlug } from "../utils/slug.js";
 
 /**
@@ -1081,10 +1081,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       console.log(`[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL已生成: ${pageImageUrl}`);
     }
 
-    // 为模板4、5和6准备特殊数据
+    // 为模板4、5、6和7准备特殊数据
     const isTemplate4 = payload.templateType === "template-4";
     const isTemplate5 = payload.templateType === "template-5";
     const isTemplate6 = payload.templateType === "template-6";
+    const isTemplate7 = payload.templateType === "template-7";
     let topProducts: ProductSummary[] = [];
     let comparisonItems: Array<{ 
       name: string; 
@@ -1103,11 +1104,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     let internalLinks: Array<{ title: string; url: string }> = [];
     let externalLinks: Array<{ title: string; url: string; description?: string }> = [];
 
-    // 模板6：提前声明参考文献和外部权威资源（确保作用域正确）
-    let references: Array<{ author?: string; year?: string; title?: string; publication?: string; url?: string; doi?: string }> = [];
+    // 模板6/7：提前声明参考文献和外部权威资源（确保作用域正确）
+    let references: Reference[] = [];
     let externalResources: Array<{ title: string; url: string; description?: string; type?: string; source?: string; linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' }> = [];
 
-    if (isTemplate4 || isTemplate5 || isTemplate6) {
+    if (isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7) {
       // 提前声明 keywordLower，避免在后续代码中使用时出现初始化错误
       const keywordLower = payload.keyword.toLowerCase();
       const pageTitleLower = (payload.pageTitle || "").toLowerCase();
@@ -2058,8 +2059,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 限制外链数量（最多4个），确保质量
       externalLinks = externalLinksList.slice(0, 4);
       
-      // 模板6：生成参考文献和外部权威资源
-      if (isTemplate6) {
+      // 模板6/7：生成参考文献和外部权威资源（博客式模板7同样需要参考文献与外部资源以增强真实性与可信度）
+      if (isTemplate6 || isTemplate7) {
         // 根据关键词类型生成相关的参考文献和外部资源
         const currentYear = new Date().getFullYear();
         
@@ -2255,12 +2256,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           ];
         }
         
-        console.log(`[task ${taskId}] 模板6数据准备完成:`);
+        console.log(`[task ${taskId}] 模板${isTemplate6 ? '6' : '7'}数据准备完成:`);
         console.log(`  - 参考文献数量: ${references.length}`);
         console.log(`  - 外部资源数量: ${externalResources.length}`);
       }
       
-      console.log(`[task ${taskId}] 模板${isTemplate4 ? '4' : isTemplate5 ? '5' : isTemplate6 ? '6' : '4/5'}数据准备完成:`);
+      console.log(`[task ${taskId}] 模板${isTemplate4 ? '4' : isTemplate5 ? '5' : isTemplate6 ? '6' : isTemplate7 ? '7' : '4/5'}数据准备完成:`);
       console.log(`  - Top Picks数量: ${topProducts.length}`);
       console.log(`  - 对比表项目数: ${comparisonItems.length}`);
       console.log(`  - 内链数量: ${internalLinks.length}`);
@@ -2352,6 +2353,17 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
     console.log(`  - Meta 描述长度: ${generatedContent.metaDescription.length}`);
 
+    // 模板7：产品区展示前10个，且优先展示知识库/排名对应产品（Top Picks 优先，再补足其他相关产品）
+    const productsForRender = isTemplate7
+      ? (() => {
+          const combined = [...(topProducts || []), ...productsRow1, ...(productsRow2 || []), ...(productsRow3 || [])];
+          const byId = new Map(combined.map((p: ProductSummary) => [p.id, p]));
+          const list = Array.from(byId.values()).slice(0, 10);
+          console.log(`[task ${taskId}] 模板7 产品列表（前10，知识库产品优先）: ${list.map((p: ProductSummary) => p.name).join(", ")}`);
+          return list;
+        })()
+      : productsRow1;
+
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
       pageTitle: finalPageTitle,
@@ -2362,7 +2374,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageImage: pageImageUrl, // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
       aiContent: generatedContent.articleContent,
       extendedContent: generatedContent.extendedContent, // 扩展内容（用于模板3/4/5的第二部分）
-      products: productsRow1, // 第一排产品（已优化，排除Top Picks中的产品，避免重复）
+      products: productsForRender, // 模板7 为前10且知识库优先；其他模板为第一排产品
       productsRow2: productsRow2, // 第二排产品（最多4个）
       relatedProducts: productsRow3, // 第三排产品（最多4个）
       faqItems: generatedContent.faqItems,
@@ -2372,17 +2384,17 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       comparisonItems,
       internalLinks,
       externalLinks,
-      // 模板6新增字段
-      references: isTemplate6 ? references : [],
-      externalResources: isTemplate6 ? externalResources : [],
+      // 模板6/7新增字段
+      references: (isTemplate6 || isTemplate7) ? references : [],
+      externalResources: (isTemplate6 || isTemplate7) ? externalResources : [],
     });
 
     // 调试：检查渲染后的 HTML 内容
     console.log(`[task ${taskId}] 渲染后的 HTML 预览（前 500 字符）:`);
     console.log(finalHtml.substring(0, 500));
     console.log(`[task ${taskId}] 渲染后的 HTML 是否包含产品数据:`);
-    if (products.length > 0) {
-      const firstProductName = products[0].name || '';
+    if (productsForRender.length > 0) {
+      const firstProductName = productsForRender[0].name || '';
       console.log(`  - 产品名称 "${firstProductName}" 在 HTML 中: ${finalHtml.includes(firstProductName)}`);
     }
     console.log(`  - 是否包含 "{{" 占位符: ${finalHtml.includes('{{')}`);

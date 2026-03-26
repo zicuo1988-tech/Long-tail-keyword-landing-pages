@@ -1014,6 +1014,11 @@
             <div class="content">
                 {{{AI_GENERATED_CONTENT}}}
             </div>
+            {{#if (isNotEmpty AI_EXTENDED_CONTENT)}}
+            <div class="content" style="margin-top: 2rem;">
+                {{{AI_EXTENDED_CONTENT}}}
+            </div>
+            {{/if}}
         </div>
 
         {{#if products.length}}
