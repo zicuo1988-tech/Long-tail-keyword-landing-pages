@@ -1,5 +1,61 @@
 [
   {
+    "id": "4676d666-5061-45c5-86e0-f58759d97cdf",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-folding-phone-price-quality-guide",
+    "createdAt": 1774864426997,
+    "updatedAt": 1774864528052,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "folding phone price",
+    "titleType": "best",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-folding-phone-price-quality-guide/"
+  },
+  {
+    "id": "a8fccf34-c1b3-486e-8d82-126fc7f35b42",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-android-smartphone-apps-options-top-choices",
+    "createdAt": 1774859151685,
+    "updatedAt": 1774859287510,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best android smartphone apps",
+    "titleType": "best",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-android-smartphone-apps-options-top-choices/"
+  },
+  {
+    "id": "faa17fd6-6278-4a9e-b13a-8f7979e91d27",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mobile-phone-reviews-quality-guide",
+    "createdAt": 1774858915781,
+    "updatedAt": 1774859028887,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mobile phone reviews",
+    "titleType": "best",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-mobile-phone-reviews-quality-guide/"
+  },
+  {
+    "id": "4037bb6c-58f2-4cb0-8066-6724bb14bed6",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-watches-options-top-choices",
+    "createdAt": 1774852438808,
+    "updatedAt": 1774852640978,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watches",
+    "titleType": "best",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-watches-options-top-choices/"
+  },
+  {
     "id": "a0f614b5-a14f-4559-bd81-b71d7f218fb3",
     "status": "completed",
     "message": "发布成功！页面 ID: 141991",
@@ -82,20 +138,6 @@
     "titleType": "how-to",
     "templateType": "template-5",
     "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-luxury-womens-belts/"
-  },
-  {
-    "id": "2c506c70-67a2-4ddf-9178-44cf5c563ae4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142057",
-    "createdAt": 1774251598420,
-    "updatedAt": 1774251753242,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury crystal glassware",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-luxury-crystal-glassware-selection/"
   },
   {
     "id": "fc54ebae-8aa3-4ec3-9541-fef2d4bd018f",
@@ -13956,47 +13998,5 @@
     "titleType": "commercial",
     "templateType": "template-4",
     "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-diver-watch-store/"
-  },
-  {
-    "id": "a36f4156-acc3-4249-beee-6a19e97c3ba1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138038",
-    "createdAt": 1770959629230,
-    "updatedAt": 1770959828284,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury clock wall",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-clock-wall-review-top-rated-models/"
-  },
-  {
-    "id": "ebf2a2e9-7a27-47f5-93e3-e2a156521cb3",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138036",
-    "createdAt": 1770959555368,
-    "updatedAt": 1770959626519,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold watch women",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-gold-watch-women/"
-  },
-  {
-    "id": "e832b19c-6c11-4ddb-a5e0-0750059e4918",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138034",
-    "createdAt": 1770959485776,
-    "updatedAt": 1770959554089,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "miami luxury watches",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-miami-luxury-watches-premium-selection/"
   }
 ]

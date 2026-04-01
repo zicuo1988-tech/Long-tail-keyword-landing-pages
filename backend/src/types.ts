@@ -11,6 +11,8 @@ export type TaskStatus =
 
 export interface GenerationRequestPayload {
   keyword: string;
+  productSource?: "wordpress" | "shopify"; // 产品数据源，默认 wordpress
+  publishTarget?: "wordpress" | "static" | "sanity"; // 发布目标
   titleType?: string; // 标题类型：purchase, informational, review, commercial, how-to, recommendations, services-guides, tech-insights, comparison, expert, best, top, most
   pageTitle?: string; // 可选：如果为空，将根据长尾词和选择的标题类型自动生成标题
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
@@ -19,13 +21,29 @@ export interface GenerationRequestPayload {
   templateContent: string;
   googleApiKey?: string;
   useElementor?: boolean; // 是否使用 Elementor 保存页面
-  wordpress: {
+  wordpress?: {
     url: string;
     username: string;
     appPassword: string;
     // WooCommerce 认证（可选）
     consumerKey?: string;
     consumerSecret?: string;
+  };
+  shopify?: {
+    storeUrl: string; // 例如 https://your-store.myshopify.com
+    accessToken: string; // Admin API Access Token
+  };
+  staticPublish?: {
+    outputDir?: string; // 静态文件落盘目录
+    baseUrl?: string; // 对外访问基地址，例如 https://vertu.com/luxury-life-guides
+  };
+  sanity?: {
+    projectId?: string;
+    dataset?: string;
+    apiVersion?: string; // 默认 2024-01-01
+    token?: string;
+    docType?: string; // 默认 luxuryLifeGuide
+    baseUrl?: string; // 前台页面基地址，例如 https://vertu.com/luxury-life-guides
   };
 }
 

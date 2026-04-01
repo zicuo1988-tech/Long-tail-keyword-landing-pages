@@ -13,6 +13,7 @@ const SENSITIVE_FIELDS = new Set([
   "consumerSecret",
   "accessToken",
   "refreshToken",
+  "token",
 ]);
 
 /**

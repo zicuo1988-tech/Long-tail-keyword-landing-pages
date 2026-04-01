@@ -2,7 +2,9 @@ import express from "express";
 import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 import { extractMentionedProductsFromContent } from "../services/googleAi.js";
-import { searchProductsByName } from "../services/wordpress.js";
+import { fetchProductsBySource, resolveProductSource } from "../services/productProvider.js";
+import { publishStaticPage } from "../services/staticPublisher.js";
+import { publishToSanity } from "../services/sanityPublisher.js";
 /**
  * 智能判断链接是否需要加 nofollow
  * 根据链接类型和性质决定 rel 属性
@@ -91,9 +93,10 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
   });
 }
 import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
-import { fetchRelatedProducts, publishPage, searchProductsByName } from "../services/wordpress.js";
+import { publishPage } from "../services/wordpress.js";
 import { renderTemplate, type Reference } from "../services/templateRenderer.js";
 import { createSlug } from "../utils/slug.js";
+import { normalizePublicSiteRoot } from "../utils/publicSiteUrl.js";
 
 /**
  * 优先推荐最新款产品（Agent Q, Quantum Flip, Metavertu Max等）
@@ -172,8 +175,29 @@ generationRouter.post("/generate-page", (req, res) => {
   if (!payload?.templateContent?.trim()) {
     return res.status(400).json({ error: "Template content is required" });
   }
-  if (!payload?.wordpress) {
-    return res.status(400).json({ error: "WordPress credentials are required" });
+  const publishTarget = payload?.publishTarget ?? "wordpress";
+  if (publishTarget === "wordpress") {
+    if (!payload?.wordpress?.url || !payload?.wordpress?.username || !payload?.wordpress?.appPassword) {
+      return res.status(400).json({ error: "WordPress credentials are required when publishTarget=wordpress" });
+    }
+  } else if (publishTarget === "static") {
+    const outputDir = payload?.staticPublish?.outputDir || process.env.STATIC_PUBLISH_DIR;
+    const baseUrl = payload?.staticPublish?.baseUrl || process.env.STATIC_BASE_URL;
+    if (!outputDir || !baseUrl) {
+      return res.status(400).json({
+        error: "staticPublish.outputDir and staticPublish.baseUrl (or STATIC_PUBLISH_DIR/STATIC_BASE_URL env) are required when publishTarget=static",
+      });
+    }
+  } else if (publishTarget === "sanity") {
+    const projectId = payload?.sanity?.projectId || process.env.SANITY_PROJECT_ID;
+    const dataset = payload?.sanity?.dataset || process.env.SANITY_DATASET;
+    const token = payload?.sanity?.token || process.env.SANITY_API_TOKEN;
+    const baseUrl = payload?.sanity?.baseUrl || process.env.SANITY_BASE_URL;
+    if (!projectId || !dataset || !token || !baseUrl) {
+      return res.status(400).json({
+        error: "sanity.projectId/dataset/token/baseUrl (or SANITY_PROJECT_ID/SANITY_DATASET/SANITY_API_TOKEN/SANITY_BASE_URL env) are required when publishTarget=sanity",
+      });
+    }
   }
 
   const task = createTask("Task queued");
@@ -200,7 +224,16 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
     // 如果请求中提供了 API Key，优先使用；否则使用环境变量中的 Key 池
     const apiKey = payload.googleApiKey || undefined;
-    const siteBaseUrl = normalizeSiteUrl(payload.wordpress.url);
+    const publishTarget = payload.publishTarget ?? "wordpress";
+    const staticBaseUrl = payload.staticPublish?.baseUrl || process.env.STATIC_BASE_URL || "";
+    const sanityBaseUrl = payload.sanity?.baseUrl || process.env.SANITY_BASE_URL || "";
+    const siteBaseUrl =
+      publishTarget === "static"
+        ? normalizeSiteUrl(staticBaseUrl)
+        : publishTarget === "sanity"
+          ? normalizeSiteUrl(sanityBaseUrl)
+        : normalizeSiteUrl(payload.wordpress?.url);
+    const productSource = resolveProductSource(payload);
 
     // 如果页面标题为空，根据长尾词和选择的标题类型自动生成标题
     let finalPageTitle = payload.pageTitle?.trim() || "";
@@ -273,18 +306,28 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return; // 任务已暂停，退出
     }
     
-    updateTaskStatus(taskId, "fetching_products", payload.targetCategory ? `正在搜索分类 "${payload.targetCategory}" 下的产品...` : "正在搜索相关产品...");
+    updateTaskStatus(
+      taskId,
+      "fetching_products",
+      payload.targetCategory
+        ? `正在从 ${productSource} 搜索分类 "${payload.targetCategory}" 下的产品...`
+        : `正在从 ${productSource} 搜索相关产品...`
+    );
     let products: ProductSummary[] = [];
     let relatedProducts: ProductSummary[] = [];
     try {
-      const productResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, payload.targetCategory);
+      const productResult = await fetchProductsBySource(payload, payload.keyword, payload.targetCategory);
       
       // 获取产品后立即检查暂停状态
       if (isTaskPaused(taskId)) {
         return; // 任务已暂停，退出
       }
-      products = attachCategoryLinks(attachLearnMoreLinks(productResult.products), siteBaseUrl);
-      relatedProducts = attachCategoryLinks(attachLearnMoreLinks(productResult.relatedProducts), siteBaseUrl);
+      const withLinks = (items: ProductSummary[]) =>
+        productSource === "shopify"
+          ? attachLearnMoreLinks(items)
+          : attachCategoryLinks(attachLearnMoreLinks(items), siteBaseUrl);
+      products = withLinks(productResult.products);
+      relatedProducts = withLinks(productResult.relatedProducts);
       
       // SEO优化：根据关键词和标题过滤相关产品
       const keywordLower = payload.keyword.toLowerCase();
@@ -459,14 +502,17 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         
         try {
           updateTaskStatus(taskId, "fetching_products", "检测到奢华关键词，补充 bespoke 分类产品...");
-          const bespokeResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, "bespoke");
+          const bespokeResult = await fetchProductsBySource(payload, payload.keyword, "bespoke");
           
           // 补充产品后立即检查暂停状态
           if (isTaskPaused(taskId)) {
             return; // 任务已暂停，退出
           }
           
-          const bespokeProducts = attachCategoryLinks(attachLearnMoreLinks(bespokeResult.products), siteBaseUrl);
+          const bespokeProducts =
+            productSource === "shopify"
+              ? attachLearnMoreLinks(bespokeResult.products)
+              : attachCategoryLinks(attachLearnMoreLinks(bespokeResult.products), siteBaseUrl);
           const prioritizedBespoke = prioritizeLatestProducts(bespokeProducts);
           
           // 合并 bespoke 产品，避免重复，优先显示最新款
@@ -515,14 +561,17 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         
         try {
           updateTaskStatus(taskId, "fetching_products", "未找到手机产品，尝试补充手机类目...");
-          const phoneResult = await fetchRelatedProducts(payload.wordpress, payload.keyword, "phones");
+          const phoneResult = await fetchProductsBySource(payload, payload.keyword, "phones");
           
           // 补充手机产品后立即检查暂停状态
           if (isTaskPaused(taskId)) {
             return; // 任务已暂停，退出
           }
           
-          const phoneProducts = attachCategoryLinks(attachLearnMoreLinks(phoneResult.products), siteBaseUrl);
+          const phoneProducts =
+            productSource === "shopify"
+              ? attachLearnMoreLinks(phoneResult.products)
+              : attachCategoryLinks(attachLearnMoreLinks(phoneResult.products), siteBaseUrl);
           // 只取前4个作为补充，避免过多，并应用优先级排序
           const prioritizedPhoneProducts = prioritizeLatestProducts(phoneProducts);
           products = [...prioritizedPhoneProducts.slice(0, 4), ...products];
@@ -1066,7 +1115,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     
     // 构建预期的页面URL（用于SEO meta标签）
     const baseSlug = createSlug(finalPageTitle) || createSlug(payload.keyword) || `page-${Date.now()}`;
-    const expectedPageUrl = `${siteBaseUrl}/luxury-life-guides/${baseSlug}/`;
+    const publicRootForMeta =
+      publishTarget === "static" || publishTarget === "sanity"
+        ? normalizePublicSiteRoot(siteBaseUrl)
+        : siteBaseUrl;
+    const expectedPageUrl = `${publicRootForMeta}/luxury-life-guides/${baseSlug}/`;
 
     // 为模板4和模板5生成封面图URL（基于页面标题生成）
     let pageImageUrl = "";
@@ -2351,7 +2404,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`[task ${taskId}] AI 内容检查:`);
     console.log(`  - AI 内容长度: ${generatedContent.articleContent.length}`);
     console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
-    console.log(`  - Meta 描述长度: ${generatedContent.metaDescription.length}`);
+    console.log(`  - Meta 描述长度: ${(generatedContent.metaDescription || "").length}`);
 
     // 模板7：产品区展示前10个，且优先展示知识库/排名对应产品（Top Picks 优先，再补足其他相关产品）
     const productsForRender = isTemplate7
@@ -2411,11 +2464,53 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return; // 任务已暂停，退出
     }
     
-    updateTaskStatus(taskId, "publishing", "正在发布 WordPress 页面...");
-    // 在slug前面添加 /luxury-life-guides/ 目录前缀
     const slug = `luxury-life-guides/${baseSlug}`;
+    if ((payload.publishTarget ?? "wordpress") === "static") {
+      updateTaskStatus(taskId, "publishing", "正在发布静态页面...");
+      const outputDir = payload.staticPublish?.outputDir || process.env.STATIC_PUBLISH_DIR || "";
+      const baseUrl = payload.staticPublish?.baseUrl || process.env.STATIC_BASE_URL || "";
+      const published = await publishStaticPage({
+        slug,
+        htmlContent: finalHtml,
+        outputDir,
+        baseUrl,
+      });
+
+      if (isTaskPaused(taskId)) {
+        return;
+      }
+
+      console.log(`[task ${taskId}] 静态页面发布成功: ${published.pageUrl}`);
+      console.log(`[task ${taskId}] 文件写入位置: ${published.filePath}`);
+      setTaskCompleted(taskId, "静态页面发布成功！", published.pageUrl);
+      return;
+    }
+
+    if ((payload.publishTarget ?? "wordpress") === "sanity") {
+      updateTaskStatus(taskId, "publishing", "正在发布到 Sanity...");
+      const published = await publishToSanity({
+        title: finalPageTitle,
+        slug,
+        htmlContent: finalHtml,
+        excerpt: generatedContent.metaDescription || "",
+        projectId: payload.sanity?.projectId || process.env.SANITY_PROJECT_ID || "",
+        dataset: payload.sanity?.dataset || process.env.SANITY_DATASET || "",
+        token: payload.sanity?.token || process.env.SANITY_API_TOKEN || "",
+        apiVersion: payload.sanity?.apiVersion || process.env.SANITY_API_VERSION || "2024-01-01",
+        docType: payload.sanity?.docType || process.env.SANITY_DOC_TYPE || "luxuryLifeGuide",
+        baseUrl: payload.sanity?.baseUrl || process.env.SANITY_BASE_URL || "",
+      });
+      if (isTaskPaused(taskId)) {
+        return;
+      }
+      console.log(`[task ${taskId}] Sanity 文档发布成功: ${published.documentId}`);
+      setTaskCompleted(taskId, `Sanity 发布成功！文档ID: ${published.documentId}`, published.pageUrl);
+      return;
+    }
+
+    updateTaskStatus(taskId, "publishing", "正在发布 WordPress 页面...");
     const page = await publishPage({
-      credentials: payload.wordpress,
+      credentials: payload.wordpress!,
       title: finalPageTitle,
       slug,
       htmlContent: finalHtml,
@@ -2429,9 +2524,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
     // 获取页面 URL
     const pageUrl = page?.link ?? page?.guid?.rendered ?? page?.guid?.raw;
-    const baseUrl = payload.wordpress.url.endsWith("/") 
-      ? payload.wordpress.url.slice(0, -1) 
-      : payload.wordpress.url;
+    const baseUrl = payload.wordpress!.url.endsWith("/") 
+      ? payload.wordpress!.url.slice(0, -1) 
+      : payload.wordpress!.url;
     
     // 获取页面的实际slug（WordPress返回的slug不包含前缀）
     const pageSlug = page?.slug || baseSlug;

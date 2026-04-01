@@ -1,0 +1,11 @@
+{
+  "name": "sanity-luxury-life-guides-example",
+  "private": true,
+  "description": "复制到现有 Next.js App Router 项目：安装 next-sanity 后合并 app/ 与 lib/ 即可",
+  "dependencies": {
+    "next": "^14.2.0",
+    "next-sanity": "^9.4.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}

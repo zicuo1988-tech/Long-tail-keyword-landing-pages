@@ -484,7 +484,7 @@ const TASK_STAGES = {
   "generating_content": { percent: 40, status: "正在生成内容..." },
   "fetching_products": { percent: 60, status: "正在获取产品..." },
   "generating_html": { percent: 80, status: "正在生成HTML..." },
-  "publishing": { percent: 90, status: "正在发布到WordPress..." },
+  "publishing": { percent: 90, status: "正在发布..." },
   "paused": { percent: 0, status: "任务已暂停" },
   "completed": { percent: 100, status: "任务完成！" },
   "failed": { percent: 0, status: "任务失败" }
@@ -675,6 +675,8 @@ form.addEventListener("submit", async (event) => {
       const payload = {
         keyword: keyword,
         titleType: currentTitleType,
+        productSource: String(formData.get("productSource") ?? "wordpress").trim() || "wordpress",
+        publishTarget: String(formData.get("publishTarget") ?? "sanity").trim() || "sanity",
         pageTitle: String(formData.get("pageTitle") ?? "").trim() || undefined,
         userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
         targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
@@ -685,6 +687,21 @@ form.addEventListener("submit", async (event) => {
           url: String(formData.get("wpUrl") ?? "").trim(),
           username: String(formData.get("wpUsername") ?? "").trim(),
           appPassword: String(formData.get("wpAppPassword") ?? "").trim(),
+        },
+        shopify: {
+          storeUrl: String(formData.get("shopifyStoreUrl") ?? "").trim(),
+          accessToken: String(formData.get("shopifyAccessToken") ?? "").trim(),
+        },
+        staticPublish: {
+          baseUrl: String(formData.get("staticBaseUrl") ?? "").trim(),
+          outputDir: String(formData.get("staticOutputDir") ?? "").trim(),
+        },
+        sanity: {
+          projectId: String(formData.get("sanityProjectId") ?? "").trim(),
+          dataset: String(formData.get("sanityDataset") ?? "").trim(),
+          token: String(formData.get("sanityToken") ?? "").trim(),
+          docType: String(formData.get("sanityDocType") ?? "").trim(),
+          baseUrl: String(formData.get("sanityBaseUrl") ?? "").trim(),
         },
       };
 
@@ -816,6 +833,8 @@ form.addEventListener("submit", async (event) => {
   const payload = {
     keyword,
     titleType,
+    productSource: String(formData.get("productSource") ?? "wordpress").trim() || "wordpress",
+    publishTarget: String(formData.get("publishTarget") ?? "sanity").trim() || "sanity",
     pageTitle: pageTitle || undefined,
     userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
     targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
@@ -826,6 +845,21 @@ form.addEventListener("submit", async (event) => {
       url: String(formData.get("wpUrl") ?? "").trim(),
       username: String(formData.get("wpUsername") ?? "").trim(),
       appPassword: String(formData.get("wpAppPassword") ?? "").trim(),
+    },
+    shopify: {
+      storeUrl: String(formData.get("shopifyStoreUrl") ?? "").trim(),
+      accessToken: String(formData.get("shopifyAccessToken") ?? "").trim(),
+    },
+    staticPublish: {
+      baseUrl: String(formData.get("staticBaseUrl") ?? "").trim(),
+      outputDir: String(formData.get("staticOutputDir") ?? "").trim(),
+    },
+    sanity: {
+      projectId: String(formData.get("sanityProjectId") ?? "").trim(),
+      dataset: String(formData.get("sanityDataset") ?? "").trim(),
+      token: String(formData.get("sanityToken") ?? "").trim(),
+      docType: String(formData.get("sanityDocType") ?? "").trim(),
+      baseUrl: String(formData.get("sanityBaseUrl") ?? "").trim(),
     },
   };
 
@@ -913,7 +947,7 @@ async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalK
           progressStage = "fetching_products";
         } else if (message.includes("HTML") || message.includes("模板")) {
           progressStage = "generating_html";
-        } else if (message.includes("发布") || message.includes("publish") || message.includes("WordPress")) {
+        } else if (message.includes("发布") || message.includes("publish") || message.includes("WordPress") || message.includes("Sanity") || message.includes("静态")) {
           progressStage = "publishing";
         }
       }
@@ -952,7 +986,7 @@ async function pollTaskStatus({ backendUrl, taskId, signal, keywordIndex, totalK
           appendLog("💡 提示：点击上方链接验证页面是否已成功发布", "info");
         } else {
           appendLog("✅ 页面已发布成功!", "success");
-          appendLog("⚠️ 注意：未获取到页面 URL，请在 WordPress 后台查看", "info");
+          appendLog("⚠️ 注意：未获取到页面 URL，请在对应发布后台（Sanity Studio / 静态目录 / WordPress）查看", "info");
         }
         // 任务完成后刷新历史记录
         setTimeout(() => {
