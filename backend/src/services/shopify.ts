@@ -38,6 +38,8 @@ function createShopifyClient(credentials: ShopifyCredentials) {
     headers: {
       "X-Shopify-Access-Token": credentials.accessToken.trim(),
     },
+    // Shopify 请求直连，避免被系统 HTTP(S)_PROXY 转发后触发协议端口错误
+    proxy: false,
     timeout: 30000,
   });
 }

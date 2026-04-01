@@ -1,5 +1,75 @@
 [
   {
+    "id": "524bdb3a-3b5f-4321-86ba-fe40de5342be",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-5-luxury-gifts-for-him-best-rankings",
+    "createdAt": 1775032360914,
+    "updatedAt": 1775032401644,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gifts for him",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-luxury-gifts-for-him-best-rankings/"
+  },
+  {
+    "id": "44578df0-da61-44b8-a7f8-9bcbb6b53cb7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-5-luxury-mobile-phones-best-rankings",
+    "createdAt": 1775031796825,
+    "updatedAt": 1775031880448,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury mobile phones",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-luxury-mobile-phones-best-rankings/"
+  },
+  {
+    "id": "7df13db6-610b-41ee-85bc-fa5d994ca5b0",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-mobile-cell-phone-booster-reviews-rankings-comprehensive-list",
+    "createdAt": 1775027044601,
+    "updatedAt": 1775027138075,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mobile cell phone booster reviews",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/mobile-cell-phone-booster-reviews-rankings-comprehensive-list/"
+  },
+  {
+    "id": "66e74199-e95e-4876-8bcb-6229e39686d4",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-smart-folder-phone-rankings-comprehensive-list",
+    "createdAt": 1775026690086,
+    "updatedAt": 1775026768159,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "smart folder phone",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/smart-folder-phone-rankings-comprehensive-list/"
+  },
+  {
+    "id": "249add69-b796-4baf-a492-a9b81ef02a2f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-cell-phone-for-pictures-rankings-comprehensive-list",
+    "createdAt": 1775025865596,
+    "updatedAt": 1775025949242,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best cell phone for pictures",
+    "titleType": "top-ranking",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-cell-phone-for-pictures-rankings-comprehensive-list/"
+  },
+  {
     "id": "4676d666-5061-45c5-86e0-f58759d97cdf",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-folding-phone-price-quality-guide",
@@ -13928,75 +13998,5 @@
     "titleType": "review",
     "templateType": "template-3",
     "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-watches-box-best-rated/"
-  },
-  {
-    "id": "962f293c-375d-454b-b7d7-d3da424439fe",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138066",
-    "createdAt": 1770962219299,
-    "updatedAt": 1770962293768,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches los angeles",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-watches-los-angeles/"
-  },
-  {
-    "id": "60eb6a18-ecde-4244-a519-ba546eb65fe8",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138064",
-    "createdAt": 1770962142634,
-    "updatedAt": 1770962218146,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches from china",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-watches-from-china-premium-selection/"
-  },
-  {
-    "id": "cb4ce7f2-c7c8-49a8-b8a9-4babe225f5c2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138059",
-    "createdAt": 1770961872882,
-    "updatedAt": 1770962087749,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury yacht model",
-    "titleType": "review",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-yacht-model-top-rated-and-reviews/"
-  },
-  {
-    "id": "a57a3a4d-ae39-45fc-bd38-28d718beeca4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138043",
-    "createdAt": 1770960003238,
-    "updatedAt": 1770960170092,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury yacht model",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-luxury-yacht-model/"
-  },
-  {
-    "id": "b0f29b9b-ecef-49ce-974e-91413f774e08",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138041",
-    "createdAt": 1770959830236,
-    "updatedAt": 1770960001148,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diver watch",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-diver-watch-store/"
   }
 ]

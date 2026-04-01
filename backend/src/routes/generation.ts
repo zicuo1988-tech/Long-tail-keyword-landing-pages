@@ -1,4 +1,5 @@
 import express from "express";
+import { isAxiosError } from "axios";
 import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 import { extractMentionedProductsFromContent } from "../services/googleAi.js";
@@ -589,7 +590,22 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     } catch (error) {
       // 如果获取产品失败（如 WooCommerce 未安装），记录警告但继续执行
       const errorMsg = error instanceof Error ? error.message : String(error);
-      console.warn(`[task ${taskId}] 获取产品失败，继续执行:`, errorMsg);
+      if (isAxiosError(error)) {
+        const status = error.response?.status;
+        const requestUrl =
+          `${error.config?.baseURL ?? ""}${error.config?.url ?? ""}` ||
+          error.config?.url ||
+          "unknown";
+        const responseData =
+          typeof error.response?.data === "string"
+            ? error.response.data
+            : JSON.stringify(error.response?.data ?? {});
+        console.warn(
+          `[task ${taskId}] 获取产品失败（source=${productSource}），HTTP ${status ?? "unknown"}，url=${requestUrl}，response=${responseData}`
+        );
+      } else {
+        console.warn(`[task ${taskId}] 获取产品失败（source=${productSource}），继续执行:`, errorMsg);
+      }
       updateTaskStatus(taskId, "fetching_products", "获取产品失败，继续发布页面（不包含产品列表）...");
       products = [];
       relatedProducts = [];

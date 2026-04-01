@@ -1,10 +1,17 @@
 import dotenv from "dotenv";
 import os from "os";
+import path from "path";
+import { fileURLToPath } from "url";
 import { createApp } from "./app.js";
 import { initializeApiKeyManager } from "./services/apiKeyManager.js";
 import { initializeHistoryStore } from "./state/historyStore.js";
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const envPath = path.resolve(__dirname, "../.env");
+
+// 固定从 backend/.env 加载，避免因启动目录不同导致读取失败
+dotenv.config({ path: envPath });
 
 // 初始化 API Key 管理器
 // 支持多种格式：
