@@ -675,7 +675,7 @@ form.addEventListener("submit", async (event) => {
       const payload = {
         keyword: keyword,
         titleType: currentTitleType,
-        productSource: String(formData.get("productSource") ?? "wordpress").trim() || "wordpress",
+        productSource: String(formData.get("productSource") ?? "shopify").trim() || "shopify",
         publishTarget: String(formData.get("publishTarget") ?? "sanity").trim() || "sanity",
         pageTitle: String(formData.get("pageTitle") ?? "").trim() || undefined,
         userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,
@@ -833,7 +833,7 @@ form.addEventListener("submit", async (event) => {
   const payload = {
     keyword,
     titleType,
-    productSource: String(formData.get("productSource") ?? "wordpress").trim() || "wordpress",
+    productSource: String(formData.get("productSource") ?? "shopify").trim() || "shopify",
     publishTarget: String(formData.get("publishTarget") ?? "sanity").trim() || "sanity",
     pageTitle: pageTitle || undefined,
     userPrompt: String(formData.get("userPrompt") ?? "").trim() || undefined,

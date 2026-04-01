@@ -2,7 +2,11 @@ import express from "express";
 import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 import { extractMentionedProductsFromContent } from "../services/googleAi.js";
-import { fetchProductsBySource, resolveProductSource } from "../services/productProvider.js";
+import {
+  fetchProductsBySource,
+  mergeShopifyCredentialsFromEnv,
+  resolveProductSource,
+} from "../services/productProvider.js";
 import { publishStaticPage } from "../services/staticPublisher.js";
 import { publishToSanity } from "../services/sanityPublisher.js";
 /**
@@ -214,6 +218,8 @@ generationRouter.post("/generate-page", (req, res) => {
 
 async function processTask(taskId: string, payload: GenerationRequestPayload) {
   try {
+    mergeShopifyCredentialsFromEnv(payload);
+
     // 保存任务的关键信息到任务对象中（用于历史记录）
     updateTaskStatus(taskId, "queued", "任务已创建", {
       keyword: payload.keyword,

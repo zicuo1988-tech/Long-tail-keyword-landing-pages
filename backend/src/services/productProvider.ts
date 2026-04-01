@@ -10,14 +10,35 @@ import {
 
 export type ProductSource = "wordpress" | "shopify";
 
+/** 用环境变量补全未填的 Shopify 店铺 URL / Token（便于只在服务端 .env 配置） */
+export function mergeShopifyCredentialsFromEnv(payload: GenerationRequestPayload): void {
+  const url = process.env.SHOPIFY_STORE_URL?.trim();
+  const token = process.env.SHOPIFY_ACCESS_TOKEN?.trim();
+  if (!payload.shopify) {
+    payload.shopify = { storeUrl: "", accessToken: "" };
+  }
+  if (!payload.shopify.storeUrl?.trim() && url) {
+    payload.shopify.storeUrl = url;
+  }
+  if (!payload.shopify.accessToken?.trim() && token) {
+    payload.shopify.accessToken = token;
+  }
+}
+
+/**
+ * 仅在明确选择 wordpress / shopify 时采用对应源；未指定时若已有完整 Shopify 凭据则走 Shopify。
+ */
 export function resolveProductSource(payload: GenerationRequestPayload): ProductSource {
-  if (payload.productSource === "shopify") {
+  const explicit = payload.productSource?.trim();
+  const hasShopify =
+    Boolean(payload.shopify?.storeUrl?.trim()) && Boolean(payload.shopify?.accessToken?.trim());
+  if (explicit === "shopify") {
     return "shopify";
   }
-  if (payload.productSource === "wordpress") {
+  if (explicit === "wordpress") {
     return "wordpress";
   }
-  if (payload.shopify?.storeUrl && payload.shopify?.accessToken) {
+  if (hasShopify) {
     return "shopify";
   }
   return "wordpress";

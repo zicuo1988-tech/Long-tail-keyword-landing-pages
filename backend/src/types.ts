@@ -11,7 +11,7 @@ export type TaskStatus =
 
 export interface GenerationRequestPayload {
   keyword: string;
-  productSource?: "wordpress" | "shopify"; // 产品数据源，默认 wordpress
+  productSource?: "wordpress" | "shopify"; // 产品数据源；未指定时若具备完整 Shopify 凭据则走 Shopify，否则 WooCommerce
   publishTarget?: "wordpress" | "static" | "sanity"; // 发布目标
   titleType?: string; // 标题类型：purchase, informational, review, commercial, how-to, recommendations, services-guides, tech-insights, comparison, expert, best, top, most
   pageTitle?: string; // 可选：如果为空，将根据长尾词和选择的标题类型自动生成标题

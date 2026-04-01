@@ -19,12 +19,40 @@
     <main>
       <section class="card">
         <form id="generator-form">
-          <fieldset>
-            <legend>⚙️ 后端配置</legend>
+          <!-- 后端地址、静态发布、Sanity、Shopify 凭据由 backend/.env 与下方隐藏域默认补全，不在界面展示 -->
+          <fieldset style="display: none;">
+            <legend>⚙️ 后端与发布（隐藏）</legend>
             <div class="form-row">
               <label for="backendUrl">后端 API 地址</label>
-              <input type="url" id="backendUrl" name="backendUrl" value="" required />
-              <small>系统会自动检测并填充后端地址。如果无法自动检测，请手动输入（例如：http://192.168.110.32:4000）</small>
+              <input type="url" id="backendUrl" name="backendUrl" value="" />
+            </div>
+            <div class="form-row">
+              <label for="staticBaseUrl">静态页面访问前缀</label>
+              <input type="url" id="staticBaseUrl" name="staticBaseUrl" value="" placeholder="https://vertu.com" />
+            </div>
+            <div class="form-row">
+              <label for="staticOutputDir">静态页面输出目录</label>
+              <input type="text" id="staticOutputDir" name="staticOutputDir" value="" />
+            </div>
+            <div class="form-row">
+              <label for="sanityProjectId">Sanity Project ID</label>
+              <input type="text" id="sanityProjectId" name="sanityProjectId" value="" placeholder="your-project-id" />
+            </div>
+            <div class="form-row">
+              <label for="sanityDataset">Sanity Dataset</label>
+              <input type="text" id="sanityDataset" name="sanityDataset" value="" placeholder="production" />
+            </div>
+            <div class="form-row">
+              <label for="sanityToken">Sanity API Token</label>
+              <input type="password" id="sanityToken" name="sanityToken" value="" />
+            </div>
+            <div class="form-row">
+              <label for="sanityDocType">Sanity 文档类型</label>
+              <input type="text" id="sanityDocType" name="sanityDocType" value="" placeholder="luxuryLifeGuide" />
+            </div>
+            <div class="form-row">
+              <label for="sanityBaseUrl">站点根 URL</label>
+              <input type="url" id="sanityBaseUrl" name="sanityBaseUrl" value="" placeholder="https://vertu.com" />
             </div>
           </fieldset>
 
@@ -34,7 +62,7 @@
               <label for="productSource">产品数据源</label>
               <select id="productSource" name="productSource">
                 <option value="wordpress">WordPress / WooCommerce</option>
-                <option value="shopify">Shopify</option>
+                <option value="shopify" selected>Shopify</option>
               </select>
             </div>
             <div class="form-row">
@@ -44,44 +72,6 @@
                 <option value="static">Static（写本地目录）</option>
                 <option value="wordpress">WordPress</option>
               </select>
-              <small>选 Static 时必须填写「静态输出目录」和「静态访问前缀」，或在后端 .env 配置 STATIC_PUBLISH_DIR / STATIC_BASE_URL。</small>
-            </div>
-            <div class="form-row">
-              <label for="shopifyStoreUrl">Shopify 店铺 URL</label>
-              <input type="url" id="shopifyStoreUrl" name="shopifyStoreUrl" value="" placeholder="https://your-store.myshopify.com" />
-            </div>
-            <div class="form-row">
-              <label for="shopifyAccessToken">Shopify Admin Access Token</label>
-              <input type="password" id="shopifyAccessToken" name="shopifyAccessToken" value="" placeholder="shpat_xxx" />
-            </div>
-            <div class="form-row">
-              <label for="staticBaseUrl">静态页面访问前缀（站点根，如 https://vertu.com）</label>
-              <input type="url" id="staticBaseUrl" name="staticBaseUrl" value="https://vertu.com" placeholder="https://vertu.com" />
-            </div>
-            <div class="form-row">
-              <label for="staticOutputDir">静态页面输出目录（本机绝对路径）</label>
-              <input type="text" id="staticOutputDir" name="staticOutputDir" value="" placeholder="Windows 例：C:\www\vertu-static；Linux 例：/var/www/vertu-static" />
-            </div>
-            <div class="form-row">
-              <label for="sanityProjectId">Sanity Project ID</label>
-              <input type="text" id="sanityProjectId" name="sanityProjectId" value="" placeholder="your-project-id" />
-            </div>
-            <div class="form-row">
-              <label for="sanityDataset">Sanity Dataset</label>
-              <input type="text" id="sanityDataset" name="sanityDataset" value="production" placeholder="production" />
-            </div>
-            <div class="form-row">
-              <label for="sanityToken">Sanity API Token（写权限）</label>
-              <input type="password" id="sanityToken" name="sanityToken" value="" placeholder="Sanity write token" />
-            </div>
-            <div class="form-row">
-              <label for="sanityDocType">Sanity 文档类型</label>
-              <input type="text" id="sanityDocType" name="sanityDocType" value="luxuryLifeGuide" placeholder="luxuryLifeGuide" />
-            </div>
-            <div class="form-row">
-              <label for="sanityBaseUrl">站点根 URL（用于拼最终页面链接）</label>
-              <input type="url" id="sanityBaseUrl" name="sanityBaseUrl" value="https://vertu.com" placeholder="https://vertu.com" />
-              <small>填站点根域名即可；不要填 …/luxury-life-guides。</small>
             </div>
           </fieldset>
 
