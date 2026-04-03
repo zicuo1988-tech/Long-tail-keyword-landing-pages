@@ -352,6 +352,7 @@
             color: #111;
         }
 
+        /* FAQ：全部静态展开，无手风琴交互 */
         .accordion {
             border-top: 1px solid #e6e6e6;
         }
@@ -362,46 +363,20 @@
         }
 
         .accordion-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            cursor: pointer;
+            display: block;
+            margin-bottom: 12px;
         }
 
         .accordion-question {
             font-size: 18px;
             color: #111;
-        }
-
-        .accordion-icon {
-            font-size: 20px;
-            color: #111;
-            line-height: 1;
+            font-weight: 600;
         }
 
         .accordion-content {
             font-size: 14px;
             color: #666;
             line-height: 1.7;
-            margin-top: 0;
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: max-height 0.35s ease, opacity 0.35s ease, margin-top 0.35s ease;
-        }
-
-        .accordion-item.open .accordion-content {
-            opacity: 1;
-            margin-top: 12px;
-        }
-
-        .accordion-item .accordion-icon {
-            transition: transform 0.3s ease;
-        }
-
-        .accordion-item.open .accordion-icon {
-            transform: rotate(45deg);
         }
 
         /* 分类网格 + 福利条 */
@@ -953,7 +928,12 @@
                 position: static;
                 text-indent: 0;
             }
-
+            .price {
+            font-size: 12px;
+        }
+        .btn-group .button, .btn-group .learn-more{
+            padding: 8px 20px !important;
+        }
             .features-list li::before {
                 content: none;
             }
@@ -1048,7 +1028,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div >
         <div class="content-container">
             <h1 class="title">{{PAGE_TITLE}}</h1>
             {{#if (isNotEmpty PAGE_DESCRIPTION)}}
@@ -1377,10 +1357,9 @@
 
                 <div class="accordion">
                     {{#each faqItems}}
-                    <div class="accordion-item{{#if @first}} open{{/if}}">
+                    <div class="accordion-item">
                         <div class="accordion-header">
                             <div class="accordion-question">{{this.question}}</div>
-                            <div class="accordion-icon">+</div>
                         </div>
                         <div class="accordion-content">
                             {{this.answer}}
@@ -1654,90 +1633,6 @@
         </div>
         {{/if}}
     </div>
-    <script>
-        // 使用多种方式确保在 WordPress 中也能正常工作
-        (function() {
-            'use strict';
-            
-            function initAccordion() {
-                var items = document.querySelectorAll('.accordion .accordion-item');
-                if (!items.length) {
-                    // 如果立即执行时找不到元素，延迟重试
-                    setTimeout(initAccordion, 100);
-                    return;
-                }
-
-                var setContentState = function (content, isOpen) {
-                    if (!content) return;
-                    if (isOpen) {
-                        content.style.maxHeight = content.scrollHeight + 'px';
-                        content.style.opacity = '1';
-                        content.style.marginTop = '12px';
-                    } else {
-                        content.style.maxHeight = '0px';
-                        content.style.opacity = '0';
-                        content.style.marginTop = '0px';
-                    }
-                };
-
-                items.forEach(function (item) {
-                    var header = item.querySelector('.accordion-header');
-                    var content = item.querySelector('.accordion-content');
-                    if (!header || !content) return;
-
-                    // 初始化状态
-                    setContentState(content, item.classList.contains('open'));
-
-                    // 移除可能存在的旧事件监听器（通过克隆节点）
-                    var newHeader = header.cloneNode(true);
-                    header.parentNode.replaceChild(newHeader, header);
-                    header = newHeader;
-
-                    // 添加点击事件
-                    header.addEventListener('click', function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        
-                        var isOpen = item.classList.contains('open');
-                        item.classList.toggle('open');
-                        setContentState(content, !isOpen);
-
-                        // 关闭其他项目
-                        items.forEach(function (other) {
-                            if (other === item) return;
-                            other.classList.remove('open');
-                            var otherContent = other.querySelector('.accordion-content');
-                            if (otherContent) {
-                                setContentState(otherContent, false);
-                            }
-                        });
-                    });
-                });
-
-                // 窗口大小改变时重新计算高度
-                window.addEventListener('resize', function () {
-                    items.forEach(function (item) {
-                        if (!item.classList.contains('open')) return;
-                        var content = item.querySelector('.accordion-content');
-                        if (content) {
-                            content.style.maxHeight = content.scrollHeight + 'px';
-                        }
-                    });
-                });
-            }
-
-            // 多种初始化方式，确保在 WordPress 中也能工作
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initAccordion);
-            } else {
-                // DOM 已经加载完成
-                initAccordion();
-            }
-            
-            // 备用方案：延迟执行
-            setTimeout(initAccordion, 50);
-        })();
-    </script>
 
 </body>
 
