@@ -1,5 +1,33 @@
 [
   {
+    "id": "106e0294-9154-48c5-911c-857600c8d8e5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-dual-sim-android-mobile-phones",
+    "createdAt": 1775528322519,
+    "updatedAt": 1775528476371,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "dual sim android mobile phones",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-dual-sim-android-mobile-phones/"
+  },
+  {
+    "id": "3f2a3e2c-efcf-4121-8a1f-80781cc9945d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-authorised-compare-iphone-and-android-phone-retailer",
+    "createdAt": 1775528212518,
+    "updatedAt": 1775528322095,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "compare iphone and android phone",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/authorised-compare-iphone-and-android-phone-retailer/"
+  },
+  {
     "id": "f05e07f3-9092-4ef2-9812-e34d6e7effe4",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-charging-pad-for-android-phones-best-rated",
@@ -13970,33 +13998,5 @@
     "titleType": "recommendations",
     "templateType": "template-6",
     "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-simple-luxury-necklace-expert-recommendations/"
-  },
-  {
-    "id": "7cb44599-2e83-4348-a947-6e8da79d6c91",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138328",
-    "createdAt": 1771037041466,
-    "updatedAt": 1771037252095,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelery brands",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-luxury-jewelery-brands/"
-  },
-  {
-    "id": "292038a8-50ec-412b-b5cb-6c00c36cee9d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138326",
-    "createdAt": 1771036873463,
-    "updatedAt": 1771037040590,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry miami",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-jewelry-miami-collection/"
   }
 ]

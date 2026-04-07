@@ -1144,7 +1144,7 @@ async function loadHistory() {
           </div>
           ${record.pageUrl ? `
             <div style="margin-top: 0.5rem;">
-              <a href="${record.pageUrl}" target="_blank" rel="noopener noreferrer" 
+              <a href="${record.pageUrl}" rel="noopener noreferrer" 
                  style="color: var(--primary-color); text-decoration: none; word-break: break-all;">
                 🔗 ${record.pageUrl}
               </a>
@@ -1157,7 +1157,7 @@ async function loadHistory() {
           ` : ""}
           <div class="history-item-actions">
             ${record.pageUrl ? `
-              <a href="${record.pageUrl}" target="_blank" rel="noopener noreferrer" class="secondary-btn">
+              <a href="${record.pageUrl}" rel="noopener noreferrer" class="secondary-btn">
                 🔗 查看页面
               </a>
             ` : ""}

@@ -532,8 +532,8 @@
                     {{#if this.author}}<span class="reference-author">{{this.author}}</span>{{#if this.year}} ({{this.year}}){{/if}}. {{/if}}
                     {{#if this.title}}<em>{{this.title}}</em>. {{/if}}
                     {{#if this.publication}}{{this.publication}}. {{/if}}
-                    {{#if this.url}}<a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">Source</a>{{/if}}
-                    {{#if this.doi}} DOI: <a href="https://doi.org/{{this.doi}}" target="_blank" rel="{{getRelAttribute 'authoritative'}}">{{this.doi}}</a>{{/if}}
+                    {{#if this.url}}<a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">Source</a>{{/if}}
+                    {{#if this.doi}} DOI: <a href="https://doi.org/{{this.doi}}" rel="{{getRelAttribute 'authoritative'}}">{{this.doi}}</a>{{/if}}
                 </li>
                 {{/each}}
                 </ol>
@@ -548,7 +548,7 @@
                 <div class="blog-resources-list">
                 {{#each externalResources}}
                 <div class="blog-resource-card">
-                    <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                     {{#if this.description}}<p class="resource-desc">{{this.description}}</p>{{/if}}
                     {{#if this.source}}<p class="resource-source">Source: {{this.source}}</p>{{/if}}
                 </div>
@@ -576,7 +576,7 @@
                     </div>
                     {{/if}}
                     {{/if}}
-                    <a href="{{this.link}}" target="_blank" rel="noopener noreferrer">
+                    <a href="{{this.link}}">
                         <div class="blog-product-img">
                             {{#if this.imageUrl}}
                             <img src="{{this.imageUrl}}" alt="{{this.name}}" loading="lazy" decoding="async">

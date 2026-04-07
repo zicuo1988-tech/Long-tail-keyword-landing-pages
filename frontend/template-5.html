@@ -1529,7 +1529,7 @@
                     <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
                         <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
                             {{#if this.externalUrl}}
-                                <a href="{{this.externalUrl}}" target="_blank" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                                <a href="{{this.externalUrl}}" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
                                 <span style="color: #999; font-size: 12px; margin-left: 4px;">(External)</span>
                             {{else if this.productLink}}
                                 <a href="{{this.productLink}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
@@ -1653,7 +1653,7 @@
         <ul class="links-list">
             {{#each externalLinks}}
             <li>
-                <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                 {{#if this.description}}
                 <span style="display: block; color: #666; font-size: 14px; margin-top: 4px; padding-left: 0;">{{this.description}}</span>
                 {{/if}}
@@ -1864,7 +1864,7 @@
                     return;
                 }
                 
-                // 跳过外部链接（target="_blank"）
+                // 跳过新标签打开的链接（如社交分享仍使用 target="_blank"）
                 if (this.getAttribute('target') === '_blank') {
                     return;
                 }

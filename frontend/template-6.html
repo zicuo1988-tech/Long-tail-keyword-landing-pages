@@ -1430,7 +1430,7 @@
                     <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
                         <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
                             {{#if this.externalUrl}}
-                                <a href="{{this.externalUrl}}" target="_blank" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                                <a href="{{this.externalUrl}}" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
                                 <span style="color: #999; font-size: 12px; margin-left: 4px;">(External)</span>
                             {{else if this.productLink}}
                                 <a href="{{this.productLink}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
@@ -1484,10 +1484,10 @@
                     {{this.publication}}.
                     {{/if}}
                     {{#if this.url}}
-                    <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}" class="reference-link">{{#if this.title}}{{this.title}}{{else}}{{this.url}}{{/if}}</a>
+                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}" class="reference-link">{{#if this.title}}{{this.title}}{{else}}{{this.url}}{{/if}}</a>
                     {{/if}}
                     {{#if this.doi}}
-                    DOI: <a href="https://doi.org/{{this.doi}}" target="_blank" rel="{{getRelAttribute 'authoritative'}}" class="reference-link">{{this.doi}}</a>
+                    DOI: <a href="https://doi.org/{{this.doi}}" rel="{{getRelAttribute 'authoritative'}}" class="reference-link">{{this.doi}}</a>
                     {{/if}}
                 </div>
             </li>
@@ -1507,7 +1507,7 @@
                 <div class="resource-type">{{this.type}}</div>
                 {{/if}}
                 <h3 class="resource-title">
-                    <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                 </h3>
                 {{#if this.description}}
                 <p class="resource-description">{{this.description}}</p>
@@ -1604,7 +1604,7 @@
         <ul class="links-list">
             {{#each externalLinks}}
             <li>
-                <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                 {{#if this.description}}
                 <span style="display: block; color: #666; font-size: 14px; margin-top: 4px; padding-left: 0;">{{this.description}}</span>
                 {{/if}}
@@ -1721,7 +1721,7 @@
                 <ul class="seo-bottom-resources">
                     {{#each externalResources}}
                     <li>
-                        <a href="{{this.url}}" target="_blank" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                        <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
                         {{#if this.source}}
                         <span class="resource-source-badge">({{this.source}})</span>
                         {{/if}}
