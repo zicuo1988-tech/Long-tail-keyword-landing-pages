@@ -1,4 +1,19 @@
 import type { GenerationRequestPayload, ProductFetchResult, ProductSummary } from "../types.js";
+
+/** 从已获取的产品中收集去重主图 URL（Shopify/Woo 接口返回的地址，避免臆测 /files/ 路径 404） */
+export function collectDistinctProductImageUrls(products: ProductSummary[], max = 12): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const p of products) {
+    const u = p.imageUrl?.trim();
+    if (!u || !/^https?:\/\//i.test(u)) continue;
+    if (seen.has(u)) continue;
+    seen.add(u);
+    out.push(u);
+    if (out.length >= max) break;
+  }
+  return out;
+}
 import {
   fetchRelatedProducts as fetchWordpressProducts,
   searchProductsByName as searchWordpressProductsByName,

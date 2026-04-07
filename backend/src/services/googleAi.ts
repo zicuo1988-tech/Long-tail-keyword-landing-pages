@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
-import { shopifyCdnFileUrl } from "../config/shopifyCdn.js";
+import { getArticleImageUrlsFromEnv } from "../config/shopifyCdn.js";
 
 // 多模型配置：支持多个模型轮换，降低限流风险
 // 注意：只包含当前API版本确实可用的模型
@@ -47,6 +47,8 @@ export interface GenerateContentOptions {
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   knowledgeBaseContent?: string;
   availableProducts?: string[]; // 可选：实际从 WordPress 获取到的产品名称列表，AI 将只使用这些产品生成内容
+  /** 长文配图：须为接口返回的真实商品主图 URL（勿用手工臆测的 Shopify /files/ 路径） */
+  articleImageUrls?: string[];
   onStatusUpdate?: (message: string) => void; // 可选：状态更新回调
   shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
 }
@@ -80,7 +82,8 @@ async function generateWithKey(
   userPrompt?: string, 
   knowledgeBaseContent?: string,
   preferredModel?: string, // 可选：指定优先使用的模型
-  availableProducts?: string[] // 可选：实际从 WordPress 获取到的产品名称列表
+  availableProducts?: string[], // 可选：实际从 WordPress 获取到的产品名称列表
+  articleImageUrls?: string[] // 可选：正文配图白名单（Shopify/Woo 商品主图）
 ): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
   // template-3/4/5 为长内容模式，无严格字数上限
@@ -420,41 +423,24 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 \n\n` : ""}
 ${((): string => {
   if (!isLongFormTemplate) return "";
-  const q = "width=800&height=450&crop=center";
-  const phoneImgs = [
-    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
-    shopifyCdnFileUrl("Ruby-Talk-Powered-by-AIGS.webp", q),
-    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
-    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
-    shopifyCdnFileUrl("Redefine-Luxury-as-Data-Sovereignty.webp", q),
-  ].join(", ");
-  const watchImgs = [
-    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
-    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
-    shopifyCdnFileUrl("WALNUT-11.webp", q),
-  ].join(", ");
-  const ringImgs = [
-    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
-    shopifyCdnFileUrl("WALNUT-11.webp", q),
-    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
-  ].join(", ");
-  const earbudImgs = [
-    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
-    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
-    shopifyCdnFileUrl("WALNUT-11.webp", q),
-  ].join(", ");
-  const generalImgs = [
-    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
-    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
-    shopifyCdnFileUrl("WALNUT-11.webp", q),
-    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
-  ].join(", ");
-  const urls = isWatchKeywordCombined ? watchImgs : isRingKeywordCombined ? ringImgs : isEarbudKeywordCombined ? earbudImgs : isPhoneKeyword ? phoneImgs : generalImgs;
+  const merged = [
+    ...new Set([...(articleImageUrls || []).filter(Boolean), ...getArticleImageUrlsFromEnv()]),
+  ].slice(0, 12);
+  if (merged.length === 0) {
+    return `
+RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
+- Do NOT include <figure>, <img>, or any embedded images (no verified product image URLs were available for this page).
+- Include at least ONE HTML table in the article (e.g. key features comparison, specifications at a glance, or "What to look for" summary). Use semantic markup:
+  <table><thead><tr><th>Feature</th><th>Details</th></tr></thead><tbody><tr><td>...</td><td>...</td></tr></tbody></table>
+- Make the article rich and substantial: use multiple H2 sections, several paragraphs, and at least one table.
+\n`;
+  }
+  const urls = merged.join(", ");
   return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 - Include 1–2 relevant images in the article. Use this exact HTML structure for each image:
   <figure><img src="[URL below]" alt="[short descriptive alt text]" loading="lazy" width="800" height="450"><figcaption>[Brief caption, e.g. key feature or product name]</figcaption></figure>
-- You MUST use ONLY the following image URLs (choose 1–2 that match the topic). Do not use any other URLs:
+- You MUST use ONLY the following image URLs (real product imagery from our store feed; copy each URL exactly as shown, character-for-character, including ? and &). Do not invent, guess, or substitute other URLs:
   ${urls}
 - Include at least ONE HTML table in the article (e.g. key features comparison, specifications at a glance, or "What to look for" summary). Use semantic markup:
   <table><thead><tr><th>Feature</th><th>Details</th></tr></thead><tbody><tr><td>...</td><td>...</td></tr></tbody></table>
@@ -3536,7 +3522,8 @@ async function generateWithModelRotation(
   userPrompt?: string,
   knowledgeBaseContent?: string,
   onStatusUpdate?: (message: string) => void,
-  availableProducts?: string[], // 实际从 WordPress 获取到的产品名称列表
+  availableProducts?: string[],
+  articleImageUrls?: string[],
   attemptedModels: string[] = []
 ): Promise<GeneratedContent> {
   const isTemplate3 = templateType === "template-3";
@@ -3577,7 +3564,18 @@ async function generateWithModelRotation(
   }
   
   try {
-    return await generateWithKey(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, modelName, availableProducts);
+    return await generateWithKey(
+      apiKey,
+      keyword,
+      pageTitle,
+      titleType,
+      templateType,
+      userPrompt,
+      knowledgeBaseContent,
+      modelName,
+      availableProducts,
+      articleImageUrls
+    );
   } catch (error: any) {
     const statusCode = error?.statusCode || 0;
     const errorMessage = error?.message || "";
@@ -3599,7 +3597,17 @@ async function generateWithModelRotation(
       await new Promise(resolve => setTimeout(resolve, is404 ? 1000 : 2000));
       
       return generateWithModelRotation(
-        apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, onStatusUpdate, newAttemptedModels
+        apiKey,
+        keyword,
+        pageTitle,
+        titleType,
+        templateType,
+        userPrompt,
+        knowledgeBaseContent,
+        onStatusUpdate,
+        availableProducts,
+        articleImageUrls,
+        newAttemptedModels
       );
     }
     
@@ -3608,15 +3616,50 @@ async function generateWithModelRotation(
   }
 }
 
-export async function generateHtmlContent({ apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent, availableProducts, onStatusUpdate, shouldAbort }: GenerateContentOptions): Promise<GeneratedContent> {
+export async function generateHtmlContent({
+  apiKey,
+  keyword,
+  pageTitle,
+  titleType,
+  templateType,
+  userPrompt,
+  knowledgeBaseContent,
+  availableProducts,
+  articleImageUrls,
+  onStatusUpdate,
+  shouldAbort,
+}: GenerateContentOptions): Promise<GeneratedContent> {
   // 如果提供了 apiKey，直接使用（向后兼容）+ 模型轮换
   if (apiKey) {
-    return generateWithModelRotation(apiKey, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate, availableProducts);
+    return generateWithModelRotation(
+      apiKey,
+      keyword,
+      pageTitle,
+      titleType,
+      templateType,
+      userPrompt,
+      knowledgeBaseContent || KNOWLEDGE_BASE,
+      onStatusUpdate,
+      availableProducts,
+      articleImageUrls
+    );
   }
 
   // 否则使用 API Key 管理器（支持多 Key 轮换和故障转移）+ 模型轮换
   return withApiKey(
-    (key) => generateWithModelRotation(key, keyword, pageTitle, titleType, templateType, userPrompt, knowledgeBaseContent || KNOWLEDGE_BASE, onStatusUpdate, availableProducts),
+    (key) =>
+      generateWithModelRotation(
+        key,
+        keyword,
+        pageTitle,
+        titleType,
+        templateType,
+        userPrompt,
+        knowledgeBaseContent || KNOWLEDGE_BASE,
+        onStatusUpdate,
+        availableProducts,
+        articleImageUrls
+      ),
     5, // maxRetries
     onStatusUpdate, // 传递状态更新回调
     shouldAbort // 传递暂停检查回调

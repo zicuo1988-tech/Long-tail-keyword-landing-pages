@@ -7,6 +7,7 @@ import {
   fetchProductsBySource,
   mergeShopifyCredentialsFromEnv,
   resolveProductSource,
+  collectDistinctProductImageUrls,
 } from "../services/productProvider.js";
 import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { publishStaticPage } from "../services/staticPublisher.js";
@@ -2392,6 +2393,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       .filter((name, index, self) => self.indexOf(name) === index); // 去重
     
     console.log(`[task ${taskId}] 📋 提取到 ${availableProductNames.length} 个可用产品:`, availableProductNames.join(", "));
+
+    const articleImageUrls = collectDistinctProductImageUrls([
+      ...productsRow1,
+      ...productsRow2,
+      ...productsRow3,
+      ...(topProducts || []),
+    ]);
+    console.log(
+      `[task ${taskId}] 📷 正文配图白名单: ${articleImageUrls.length} 张（商品主图优先；无则合并 ARTICLE_IMAGE_URLS / SANITY_ARTICLE_IMAGE_URLS / SHOPIFY_ARTICLE_IMAGE_URLS 或不出图）`
+    );
+    if (
+      (payload.templateType === "template-4" || payload.templateType === "template-5") &&
+      !pageImageUrl?.trim() &&
+      articleImageUrls[0]
+    ) {
+      pageImageUrl = articleImageUrls[0];
+      console.log(`[task ${taskId}] 📷 OG 封面未配置时使用首张商品主图: ${pageImageUrl}`);
+    }
     
     updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
     
@@ -2403,6 +2422,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
       userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
       availableProducts: availableProductNames, // 🎯 关键：传递实际获取到的产品列表
+      articleImageUrls,
       onStatusUpdate: (message) => {
         // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
         if (!isTaskPaused(taskId)) {

@@ -1,6 +1,15 @@
 /**
- * Shopify Files CDN：文章配图、OG 封面等与 vertu.com  storefront 一致的素材域名。
- * 参考：https://cdn.shopify.com/s/files/1/0582/5501/6121/files/...
+ * 配图 URL 策略（本文件仍含 Shopify Files / OSS 兼容逻辑，名称历史原因保留）
+ *
+ * 1) 长文正文配图白名单（优先）：Shopify Admin 商品接口返回的 `images[0].src`（真实可访问）。
+ *
+ * 2) Sanity 侧（与主站 Studio 一致）：文档 `image` 字段 → asset → GROQ 取 `asset.url` 即 CDN 绝对地址；
+ *    前台再用 `urlFor` / `buildImageUrl` 加宽高与 `?w=&q=&auto=format` 等参数。无单独「自定义路径表」。
+ *    若要在本引擎里用同一批素材作备用，把 GROQ 或前端生成好的 **完整 https://cdn.sanity.io/images/...** 填进环境变量即可。
+ *
+ * 3) 环境变量备用列表（合并去重）：`ARTICLE_IMAGE_URLS`、`SANITY_ARTICLE_IMAGE_URLS`、`SHOPIFY_ARTICLE_IMAGE_URLS`（逗号分隔，任填 Sanity 或 Shopify 商品图 URL）。
+ *
+ * 4) OG 封面：`SHOPIFY_LUXURY_GUIDE_COVER_URL` 或 `SANITY_OG_COVER_URL`（任选其一，填完整 URL，可为 Sanity CDN）。
  */
 
 const DEFAULT_FILES_BASE = "https://cdn.shopify.com/s/files/1/0582/5501/6121/files";
@@ -36,13 +45,40 @@ export function shopifyCdnFileUrl(fileName: string, imageQuery?: string): string
   return `${base}/${encodeURIComponent(name)}?${query}`;
 }
 
-/** 模板4/5 Open Graph 封面（原 OSS 按 slug 生成的地址已失效） */
+function parseCommaSeparatedImageUrls(raw: string | undefined): string[] {
+  if (!raw?.trim()) return [];
+  return raw
+    .split(/[,，\n]/)
+    .map((s) => s.trim())
+    .filter((s) => /^https?:\/\//i.test(s));
+}
+
+/**
+ * 长文配图 / OG 的备用 URL：合并 `ARTICLE_IMAGE_URLS`、`SANITY_ARTICLE_IMAGE_URLS`、`SHOPIFY_ARTICLE_IMAGE_URLS`（去重）。
+ * Sanity 素材请粘贴 GROQ/`urlFor` 得到的完整 `cdn.sanity.io` 地址（含查询参数亦可）。
+ */
+export function getArticleImageUrlsFromEnv(): string[] {
+  const merged = [
+    ...parseCommaSeparatedImageUrls(process.env.ARTICLE_IMAGE_URLS),
+    ...parseCommaSeparatedImageUrls(process.env.SANITY_ARTICLE_IMAGE_URLS),
+    ...parseCommaSeparatedImageUrls(process.env.SHOPIFY_ARTICLE_IMAGE_URLS),
+  ];
+  return [...new Set(merged)];
+}
+
+/** 模板4/5 Open Graph 封面（完整 URL；可为 Sanity CDN 或商品图） */
 export function luxuryGuideOgCoverUrl(): string {
-  const full = process.env.SHOPIFY_LUXURY_GUIDE_COVER_URL?.trim();
+  const full =
+    process.env.SHOPIFY_LUXURY_GUIDE_COVER_URL?.trim() || process.env.SANITY_OG_COVER_URL?.trim();
   if (full) return full;
-  const fn = process.env.SHOPIFY_OG_COVER_FILENAME?.trim() || "Agent-Q-menu-banner.webp";
-  const q = process.env.SHOPIFY_OG_IMAGE_QUERY?.trim() || "width=1200&height=630&crop=center";
-  return shopifyCdnFileUrl(fn, q);
+  const fromEnvList = getArticleImageUrlsFromEnv();
+  if (fromEnvList.length > 0) return fromEnvList[0];
+  const fn = process.env.SHOPIFY_OG_COVER_FILENAME?.trim();
+  if (fn) {
+    const q = process.env.SHOPIFY_OG_IMAGE_QUERY?.trim() || "width=1200&height=630&crop=center";
+    return shopifyCdnFileUrl(fn, q);
+  }
+  return "";
 }
 
 /** 将正文中已失效的 OSS 图片 URL 转为 Shopify Files CDN（按路径最后一段文件名匹配） */
