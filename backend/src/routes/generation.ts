@@ -10,7 +10,7 @@ import {
   collectDistinctProductImageUrls,
 } from "../services/productProvider.js";
 import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
-import { publishStaticPage } from "../services/staticPublisher.js";
+import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
 import { publishToSanity } from "../services/sanityPublisher.js";
 /**
  * 智能判断链接是否需要加 nofollow
@@ -2516,6 +2516,13 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
       if (isTaskPaused(taskId)) {
         return;
+      }
+
+      try {
+        await updateStaticSiteSeoFiles(outputDir, baseUrl, published.pageUrl);
+        console.log(`[task ${taskId}] SEO: robots.txt / sitemap.xml 已更新（${published.pageUrl}）`);
+      } catch (seoErr) {
+        console.warn(`[task ${taskId}] SEO 文件更新失败（页面已写入）:`, seoErr);
       }
 
       console.log(`[task ${taskId}] 静态页面发布成功: ${published.pageUrl}`);

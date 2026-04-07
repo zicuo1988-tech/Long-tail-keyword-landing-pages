@@ -226,12 +226,13 @@ export function renderTemplate({
   // 生成Article结构化数据JSON
   let articleStructuredData = "";
   try {
-    const articleSchema = {
+    const articleSchema: Record<string, unknown> = {
       "@context": "https://schema.org",
       "@type": "Article",
       "headline": pageTitle,
       "description": (metaDescription || pageDescription || "").replace(/<[^>]*>/g, "").trim(),
       "url": pageUrl || "",
+      "inLanguage": "en-GB",
       "author": {
         "@type": "Organization",
         "name": "VERTU"
@@ -251,6 +252,10 @@ export function renderTemplate({
         "@id": pageUrl || ""
       }
     };
+    const img = pageImage?.trim();
+    if (img) {
+      articleSchema.image = img;
+    }
     articleStructuredData = JSON.stringify(articleSchema, null, 2);
   } catch (error) {
     console.warn(`[TemplateRenderer] Failed to generate Article structured data:`, error);
