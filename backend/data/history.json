@@ -1,5 +1,61 @@
 [
   {
+    "id": "f05e07f3-9092-4ef2-9812-e34d6e7effe4",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-charging-pad-for-android-phones-best-rated",
+    "createdAt": 1775528084861,
+    "updatedAt": 1775528211172,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "charging pad for android phones",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-charging-pad-for-android-phones-best-rated/"
+  },
+  {
+    "id": "eed2e150-78ab-490d-911f-37b0e259ce29",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-best-economical-android-phone",
+    "createdAt": 1775528022079,
+    "updatedAt": 1775528082061,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best economical android phone",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-best-economical-android-phone/"
+  },
+  {
+    "id": "32d1e5b0-c8c3-415d-85bb-48522a84479c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-best-android-phone-for-seniors-official-retailer",
+    "createdAt": 1775527939614,
+    "updatedAt": 1775528020447,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best android phone for seniors",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-best-android-phone-for-seniors-official-retailer/"
+  },
+  {
+    "id": "1d84a429-bc7f-4835-a152-7ad9f20e1c1b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-best-android-phone-for-pictures",
+    "createdAt": 1775527810315,
+    "updatedAt": 1775527891817,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best android phone for pictures",
+    "titleType": "most",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-best-android-phone-for-pictures/"
+  },
+  {
     "id": "ad909722-e65f-4055-bcfa-f47fcdcf6cda",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-quality-best-android-phone-for-photography-expert-review",
@@ -13942,61 +13998,5 @@
     "titleType": "commercial",
     "templateType": "template-4",
     "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-jewelry-miami-collection/"
-  },
-  {
-    "id": "76f70542-eb23-4889-81ab-d30732979a68",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138324",
-    "createdAt": 1771036744463,
-    "updatedAt": 1771036871540,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond jewelry earrings",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-diamond-jewelry-earrings-comparison-best-rated/"
-  },
-  {
-    "id": "d03b32d1-28dc-4026-8878-33c30bd6fdc4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138322",
-    "createdAt": 1771036672463,
-    "updatedAt": 1771036742377,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry brands men",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-jewelry-brands-men/"
-  },
-  {
-    "id": "98d83384-35ca-4c34-a2fe-76b5d1dd14e9",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138320",
-    "createdAt": 1771036606464,
-    "updatedAt": 1771036672027,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry men",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-jewelry-men-official-retailer/"
-  },
-  {
-    "id": "2bc461fe-de2e-4465-9552-22f2f0cfce8d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138318",
-    "createdAt": 1771036462473,
-    "updatedAt": 1771036604074,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury inspired jewelry",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-luxury-inspired-jewelry-popular-choices/"
   }
 ]

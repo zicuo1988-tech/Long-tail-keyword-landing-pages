@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
+import { shopifyCdnFileUrl } from "../config/shopifyCdn.js";
 
 // 多模型配置：支持多个模型轮换，降低限流风险
 // 注意：只包含当前API版本确实可用的模型
@@ -419,12 +420,35 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 \n\n` : ""}
 ${((): string => {
   if (!isLongFormTemplate) return "";
-  const base = "https://vertu-website-oss.vertu.com";
-  const phoneImgs = `${base}/2025/10/Agent-Q-menu-banner.webp, ${base}/2025/10/Ruby-Talk-Powered-by-AIGS.webp, ${base}/2025/10/The-Spirit-of-Craftsmanship.webp, ${base}/2025/10/Phone-menu-banner.webp, ${base}/2025/10/Redefine-Luxury-as-Data-Sovereignty.webp`;
-  const watchImgs = `${base}/2025/10/Agent-Q-menu-banner.webp, ${base}/2025/10/Phone-menu-banner.webp, ${base}/2026/01/WALNUT-11.webp`;
-  const ringImgs = `${base}/2025/10/Agent-Q-menu-banner.webp, ${base}/2026/01/WALNUT-11.webp, ${base}/2025/10/The-Spirit-of-Craftsmanship.webp`;
-  const earbudImgs = `${base}/2025/10/Phone-menu-banner.webp, ${base}/2025/10/The-Spirit-of-Craftsmanship.webp, ${base}/2026/01/WALNUT-11.webp`;
-  const generalImgs = `${base}/2025/10/Agent-Q-menu-banner.webp, ${base}/2025/10/The-Spirit-of-Craftsmanship.webp, ${base}/2026/01/WALNUT-11.webp, ${base}/2025/10/Phone-menu-banner.webp`;
+  const q = "width=800&height=450&crop=center";
+  const phoneImgs = [
+    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
+    shopifyCdnFileUrl("Ruby-Talk-Powered-by-AIGS.webp", q),
+    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
+    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
+    shopifyCdnFileUrl("Redefine-Luxury-as-Data-Sovereignty.webp", q),
+  ].join(", ");
+  const watchImgs = [
+    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
+    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
+    shopifyCdnFileUrl("WALNUT-11.webp", q),
+  ].join(", ");
+  const ringImgs = [
+    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
+    shopifyCdnFileUrl("WALNUT-11.webp", q),
+    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
+  ].join(", ");
+  const earbudImgs = [
+    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
+    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
+    shopifyCdnFileUrl("WALNUT-11.webp", q),
+  ].join(", ");
+  const generalImgs = [
+    shopifyCdnFileUrl("Agent-Q-menu-banner.webp", q),
+    shopifyCdnFileUrl("The-Spirit-of-Craftsmanship.webp", q),
+    shopifyCdnFileUrl("WALNUT-11.webp", q),
+    shopifyCdnFileUrl("Phone-menu-banner.webp", q),
+  ].join(", ");
   const urls = isWatchKeywordCombined ? watchImgs : isRingKeywordCombined ? ringImgs : isEarbudKeywordCombined ? earbudImgs : isPhoneKeyword ? phoneImgs : generalImgs;
   return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):

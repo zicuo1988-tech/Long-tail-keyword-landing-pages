@@ -8,6 +8,7 @@ import {
   mergeShopifyCredentialsFromEnv,
   resolveProductSource,
 } from "../services/productProvider.js";
+import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { publishStaticPage } from "../services/staticPublisher.js";
 import { publishToSanity } from "../services/sanityPublisher.js";
 /**
@@ -1146,14 +1147,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     // 为模板4和模板5生成封面图URL（基于页面标题生成）
     let pageImageUrl = "";
     if (payload.templateType === "template-4" || payload.templateType === "template-5") {
-      // 生成封面图URL，格式：https://vertu-website-oss.vertu.com/2025/12/screencapture-vertu-luxury-life-guides-{slug}-scaled.jpg
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-      // 使用baseSlug生成图片文件名（保持连字符格式）
-      const imageSlug = baseSlug;
-      pageImageUrl = `https://vertu-website-oss.vertu.com/${year}/${month}/screencapture-vertu-luxury-life-guides-${imageSlug}-scaled.jpg`;
-      console.log(`[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL已生成: ${pageImageUrl}`);
+      // 使用 Shopify Files CDN（原 OSS 按 slug 生成的封面已不可用）；可通过 SHOPIFY_LUXURY_GUIDE_COVER_URL 覆盖
+      pageImageUrl = luxuryGuideOgCoverUrl();
+      console.log(`[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL（Shopify CDN）: ${pageImageUrl}`);
     }
 
     // 为模板4、5、6和7准备特殊数据

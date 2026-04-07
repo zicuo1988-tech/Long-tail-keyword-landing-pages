@@ -1,5 +1,6 @@
 import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
+import { rewriteVertuOssContentToShopifyCdn } from "../config/shopifyCdn.js";
 
 Handlebars.registerHelper("safeHtml", (html: string) => new Handlebars.SafeString(html));
 Handlebars.registerHelper("truncateText", (text: string | undefined, maxLength: number = 40) => {
@@ -188,6 +189,12 @@ export function renderTemplate({
   externalResources = [],
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
+
+  const aiContentResolved = rewriteVertuOssContentToShopifyCdn(aiContent);
+  const extendedContentResolved = extendedContent
+    ? rewriteVertuOssContentToShopifyCdn(extendedContent)
+    : extendedContent;
+  const pageImageResolved = pageImage ? rewriteVertuOssContentToShopifyCdn(pageImage) : pageImage;
 
   // 生成当前日期（ISO格式，用于结构化数据）
   const now = new Date();
@@ -396,14 +403,14 @@ export function renderTemplate({
     META_DESCRIPTION: metaDescription || pageDescription || "", // SEO meta description
     META_KEYWORDS: metaKeywords || "", // SEO meta keywords
     PAGE_URL: pageUrl || "", // 页面URL（用于canonical和Open Graph）
-    PAGE_IMAGE: pageImage || "", // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
+    PAGE_IMAGE: pageImageResolved || "", // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
     DATE_PUBLISHED: datePublished, // 发布日期（ISO格式）
     CURRENT_DATE: new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }), // 当前日期（用于模板6底部显示）
     DATE_MODIFIED: dateModified, // 修改日期（ISO格式）
     ARTICLE_STRUCTURED_DATA: new Handlebars.SafeString(articleStructuredData), // Article结构化数据
     FAQ_STRUCTURED_DATA: new Handlebars.SafeString(faqStructuredData), // FAQ结构化数据
-    AI_GENERATED_CONTENT: new Handlebars.SafeString(aiContent),
-    AI_EXTENDED_CONTENT: (extendedContent && extendedContent.trim().length > 0) ? new Handlebars.SafeString(extendedContent) : "", // 扩展内容（用于模板3）
+    AI_GENERATED_CONTENT: new Handlebars.SafeString(aiContentResolved),
+    AI_EXTENDED_CONTENT: (extendedContentResolved && extendedContentResolved.trim().length > 0) ? new Handlebars.SafeString(extendedContentResolved) : "", // 扩展内容（用于模板3）
     products, // 第一排产品
     productsRow2: productsRow2 || [], // 第二排产品（如果未提供，使用空数组）
     relatedProducts, // 第三排产品
@@ -425,7 +432,7 @@ export function renderTemplate({
   // 调试日志：检查渲染结果
   console.log(`[TemplateRenderer] 渲染完成:`);
   console.log(`  - 页面标题: ${pageTitle}`);
-  console.log(`  - AI 内容长度: ${aiContent.length}`);
+  console.log(`  - AI 内容长度: ${aiContentResolved.length}`);
   console.log(`  - 产品数量: ${products.length}`);
   console.log(`  - 关联产品数量: ${relatedProducts.length}`);
   console.log(`  - FAQ 数量: ${faqItems.length}`);
