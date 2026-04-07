@@ -437,7 +437,7 @@
             padding: 12px 20px;
             border: 2px solid #000 !important;
             border-radius: 25px;
-            font-size: 14px;
+            font-size: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1383,8 +1383,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                    <a class="button" href="{{this.link}}">Shop now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                 </div>
             </div>
             {{/each}}
@@ -1454,6 +1454,9 @@
             </table>
         </div>
         <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic; text-align: center;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
+        {{#if COMPARISON_CLOSING}}
+        <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55; text-align: center;">{{COMPARISON_CLOSING}}</p>
+        {{/if}}
     </section>
     {{/if}}
 
@@ -1517,6 +1520,13 @@
     {{#if products.length}}
     <!-- Product Section -->
     <div class="product-section">
+        {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
+        {{#if PRODUCT_SECTION_INTRO}}
+        <div class="product-block-intro" style="max-width: 960px; margin: 0 auto 20px; padding: 0 20px;">
+            <h2 style="font-size: 1.25rem; margin-bottom: 8px;">{{PRODUCT_SECTION_TITLE}}</h2>
+            <p style="color: #555; font-size: 14px; line-height: 1.5; margin: 0;">{{PRODUCT_SECTION_INTRO}}</p>
+        </div>
+        {{/if}}
         <div class="products-grid">
             {{#each products}}
             <div class="product-card lazy-load lazy-loaded" data-product-id="{{this.id}}">
@@ -1569,8 +1579,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                    <a class="button" href="{{this.link}}">Shop now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                 </div>
             </div>
             {{/each}}
@@ -1662,8 +1672,8 @@
                 </span>
 
                 <div class="btn-group">
-                    <a class="button" href="{{this.link}}">Buy now</a>
-                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                    <a class="button" href="{{this.link}}">Shop now</a>
+                    <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                 </div>
             </div>
             {{/each}}

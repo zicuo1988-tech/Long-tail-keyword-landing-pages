@@ -2,6 +2,10 @@ import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
 import { rewriteVertuOssContentToShopifyCdn } from "../config/shopifyCdn.js";
 
+/** 商品区上方信任条（与 template-5 Quick Stats 互补，用于未含统计条的模板） */
+export const DEFAULT_TRUST_STRIP_HTML =
+  '<div class="trust-strip" role="region" aria-label="Official store benefits">Official VERTU store · Secure checkout · Concierge support</div>';
+
 Handlebars.registerHelper("safeHtml", (html: string) => new Handlebars.SafeString(html));
 Handlebars.registerHelper("truncateText", (text: string | undefined, maxLength: number = 40) => {
   if (!text) return "";
@@ -164,6 +168,13 @@ export interface RenderTemplateInput {
   // 模板6新增字段
   references?: Reference[]; // 参考文献列表
   externalResources?: ExternalResource[]; // 外部权威资源列表
+  /** 主商品区标题与导语（转化优化） */
+  productSectionTitle?: string;
+  productSectionIntro?: string;
+  /** 是否输出 DEFAULT_TRUST_STRIP_HTML（template-5 已有 Quick Stats，通常为 false） */
+  showTrustStrip?: boolean;
+  /** 对比表后的收口段落（template-4 / template-5） */
+  comparisonClosing?: string;
 }
 
 export function renderTemplate({
@@ -187,6 +198,10 @@ export function renderTemplate({
   externalLinks = [],
   references = [],
   externalResources = [],
+  productSectionTitle = "Shop the collection",
+  productSectionIntro = "",
+  showTrustStrip = false,
+  comparisonClosing = "",
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
 
@@ -538,6 +553,10 @@ export function renderTemplate({
     references: references || [], // 参考文献列表
     externalResources: externalResources || [], // 外部权威资源列表
     CITATIONS_STRUCTURED_DATA: citationsStructuredData ? new Handlebars.SafeString(citationsStructuredData) : "", // Citations结构化数据
+    PRODUCT_SECTION_TITLE: productSectionTitle,
+    PRODUCT_SECTION_INTRO: productSectionIntro,
+    TRUST_STRIP_HTML: showTrustStrip ? new Handlebars.SafeString(DEFAULT_TRUST_STRIP_HTML) : "",
+    COMPARISON_CLOSING: comparisonClosing,
   });
 
   // 调试日志：检查渲染结果

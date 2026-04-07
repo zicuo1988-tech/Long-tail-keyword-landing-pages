@@ -72,6 +72,16 @@ function attachLearnMoreLinks(items: ProductSummary[]): ProductSummary[] {
   });
 }
 
+/** 主商品区导语（转化：与关键词对齐，指向官方渠道） */
+function buildProductSectionIntro(keyword: string): string {
+  const safe = keyword.replace(/<[^>]*>/g, "").trim();
+  const clipped = safe.length > 110 ? `${safe.slice(0, 107)}…` : safe;
+  return `Curated VERTU models for “${clipped}”: shop the official selection below, then continue reading for the full guide.`;
+}
+
+const DEFAULT_COMPARISON_CLOSING =
+  "When you are ready to purchase, explore the VERTU models below on the official store for current pricing, available configurations, and Ruby Key concierge support.";
+
 function normalizeSiteUrl(url?: string): string {
   if (!url) return "";
   let normalized = url.trim();
@@ -1154,10 +1164,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     }
 
     // 为模板4、5、6和7准备特殊数据
+    const isTemplate1 = payload.templateType === "template-1";
+    const isTemplate2 = payload.templateType === "template-2";
+    const isTemplate3 = payload.templateType === "template-3";
+    const isContentTemplate = isTemplate1 || isTemplate2 || isTemplate3;
     const isTemplate4 = payload.templateType === "template-4";
     const isTemplate5 = payload.templateType === "template-5";
     const isTemplate6 = payload.templateType === "template-6";
     const isTemplate7 = payload.templateType === "template-7";
+    const needsMarketingBlocks = isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
     let topProducts: ProductSummary[] = [];
     let comparisonItems: Array<{ 
       name: string; 
@@ -1180,7 +1195,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     let references: Reference[] = [];
     let externalResources: Array<{ title: string; url: string; description?: string; type?: string; source?: string; linkType?: 'authoritative' | 'competitor' | 'commercial' | 'affiliate' | 'ugc' }> = [];
 
-    if (isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7) {
+    if (needsMarketingBlocks || isContentTemplate) {
       // 提前声明 keywordLower，避免在后续代码中使用时出现初始化错误
       const keywordLower = payload.keyword.toLowerCase();
       const pageTitleLower = (payload.pageTitle || "").toLowerCase();
@@ -1326,6 +1341,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       topProducts = allRelevantProducts.slice(0, 3);
       console.log(`  - Top Picks产品: ${topProducts.map(p => p.name).join(", ")}`);
       
+      if (needsMarketingBlocks) {
       // 对比表: 从前3个相关产品中提取对比信息（智能化、多元化，根据关键词动态调整对比维度）
       const productsForComparison = allRelevantProducts.slice(0, 3);
       
@@ -2350,6 +2366,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         });
       }
       
+      } // needsMarketingBlocks（对比表、内链、外链、模板6/7参考文献等）
+      
       // 优化：确保Top Picks中的产品不会在第一排产品中重复显示
       const topProductIds = new Set(topProducts.map(p => p.id));
       const filteredProductsRow1 = productsRow1.filter(p => !topProductIds.has(p.id));
@@ -2455,6 +2473,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         })()
       : productsRow1;
 
+    const productSectionIntro = buildProductSectionIntro(payload.keyword);
+    const showTrustStripFinal =
+      (isTemplate1 ||
+        isTemplate2 ||
+        isTemplate3 ||
+        isTemplate4 ||
+        isTemplate6 ||
+        isTemplate7) && !isTemplate5;
+
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
       pageTitle: finalPageTitle,
@@ -2478,6 +2505,10 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 模板6/7新增字段
       references: (isTemplate6 || isTemplate7) ? references : [],
       externalResources: (isTemplate6 || isTemplate7) ? externalResources : [],
+      productSectionTitle: "Shop the collection",
+      productSectionIntro,
+      showTrustStrip: showTrustStripFinal,
+      comparisonClosing: isTemplate4 || isTemplate5 || isTemplate6 ? DEFAULT_COMPARISON_CLOSING : "",
     });
 
     // 调试：检查渲染后的 HTML 内容

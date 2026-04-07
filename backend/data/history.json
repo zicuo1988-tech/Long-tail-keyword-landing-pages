@@ -1,5 +1,19 @@
 [
   {
+    "id": "1b0f636f-d987-4158-bede-20958b1198d5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-luxury-watch-brands-list",
+    "createdAt": 1775531443119,
+    "updatedAt": 1775531551548,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch brands list",
+    "titleType": "most",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-luxury-watch-brands-list/"
+  },
+  {
     "id": "315e8f0c-fca2-4746-9023-481c3eb25af1",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-gps-tracker-for-android-phones-highly-recommended",
@@ -13984,19 +13998,5 @@
     "titleType": "tech-insights",
     "templateType": "template-1",
     "pageUrl": "https://vertu.com/luxury-life-guides/luxury-earrings-store-tech-comparison/"
-  },
-  {
-    "id": "9210d8b9-b436-4087-a0f0-b71489b2cd3a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138333",
-    "createdAt": 1771037437466,
-    "updatedAt": 1771037618418,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury tennis bracelet",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-tennis-bracelet-usage-guide-complete-manual/"
   }
 ]

@@ -41,6 +41,11 @@
     {{{ARTICLE_STRUCTURED_DATA}}}
     </script>
     {{/if}}
+    {{#if ITEMLIST_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{ITEMLIST_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
     
     <style>
      
@@ -271,7 +276,7 @@
             padding: 8px 50px !important;
             border: 1px solid #000 !important;
             border-radius: 25px;
-            font-size: 1rem;
+            font-size: 10px;
             font-weight: 400;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -997,6 +1002,41 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
+
+        .trust-strip {
+            max-width: 100%;
+            margin: 0 auto 20px;
+            padding: 14px 20px;
+            background: #f7f7f7;
+            border: 1px solid #e8e8e8;
+            font-size: 13px;
+            color: #444;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .product-block-intro {
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+        .product-block-intro h2 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+        .product-block-intro p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
+        .top-picks-block {
+            margin-bottom: 36px;
+        }
+        .editor-picks-sub {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 
@@ -1009,14 +1049,79 @@
                 <p>{{PAGE_DESCRIPTION}}</p>
             </div>
             {{/if}}
+
+            {{#if topProducts.length}}
+            <section class="top-picks-block product-section" aria-label="Editor picks">
+                <div class="product-title">Editor’s picks</div>
+                <p class="editor-picks-sub">Matched to your search—official store, secure checkout.</p>
+                <div class="products-grid">
+                    {{#each topProducts}}
+                    <div class="product-card lazy-load lazy-loaded" data-product-id="{{this.id}}">
+                        {{#if this.onSale}}
+                        <div class="card-labels">
+                            <span class="product-tag">On Sale</span>
+                            {{#if this.tag}}
+                                {{#unless (isDuplicateSaleTag this.tag this.onSale)}}
+                                <span class="product-tag">{{this.tag}}</span>
+                                {{/unless}}
+                            {{/if}}
+                        </div>
+                        {{else}}
+                            {{#if this.tag}}
+                            <div class="card-labels">
+                                <span class="product-tag">{{this.tag}}</span>
+                            </div>
+                            {{/if}}
+                        {{/if}}
+                        <div class="product-card-img-wrap">
+                            <a href="{{this.link}}" class="product-image-link">
+                                {{#if this.imageUrl}}
+                                <img width="600" height="600" src="{{this.imageUrl}}" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                                {{else}}
+                                <img width="600" height="600" src="https://via.placeholder.com/600x600?text=No+Image" class="lazy" alt="{{this.name}}" loading="lazy" decoding="async">
+                                {{/if}}
+                            </a>
+                        </div>
+                        <h2 class="woocommerce-loop-product__title">
+                            <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
+                        </h2>
+                        <span class="price">
+                            {{#if this.price}}
+                                {{#if this.isPriceRange}}From {{/if}}<span class="woocommerce-Price-amount amount"><bdi>{{this.price}}</bdi></span>
+                                {{#if this.onSale}}
+                                    {{#if this.originalPrice}}
+                                        {{#if this.isPriceRange}}
+                                            <span class="original-price">From {{this.originalPrice}}</span>
+                                        {{else}}
+                                            <span class="original-price">{{this.originalPrice}}</span>
+                                        {{/if}}
+                                    {{/if}}
+                                {{/if}}
+                            {{else}}
+                                Price available on store
+                            {{/if}}
+                        </span>
+                        <div class="btn-group">
+                            <a class="button" href="{{this.link}}">Shop now</a>
+                            <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </section>
+            {{/if}}
         </div>
 
         {{#if products.length}}
         <!-- 产品展示区域 -->
         <div class="product-section">
-            <!-- <div class="product-header">
-                <h2 class="categories-title">Discover our Categories</h2>
-            </div> -->
+            {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
+            {{#if PRODUCT_SECTION_INTRO}}
+            <div class="product-block-intro">
+                <h2>{{PRODUCT_SECTION_TITLE}}</h2>
+                <p>{{PRODUCT_SECTION_INTRO}}</p>
+            </div>
+            {{/if}}
 
             <div class="products-grid">
                 {{#each products}}
@@ -1067,8 +1172,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
@@ -1142,8 +1247,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
@@ -1408,8 +1513,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}

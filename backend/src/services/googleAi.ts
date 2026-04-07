@@ -468,6 +468,10 @@ CRITICAL: KEYWORD-CONTENT TOPIC MATCHING (MANDATORY):
 - If the title mentions "phones" but you write about "watches", this is a SEVERE error that will hurt SEO
 - ALWAYS verify: Does my content match the keyword "${keyword}" and title "${pageTitle}"? If not, rewrite it.
 
+CONVERSION BRIDGE (PAGE LAYOUT - MANDATORY):
+- This page includes product grids below the article. In the FINAL paragraph of the main article (or a short closing paragraph immediately before any sign-off), add ONE natural sentence that guides readers to the featured models and shopping on the official VERTU site (vertu.com) below—calm, confident, not pushy. Do not add a standalone H2 only for this; weave it into the closing.
+- This sentence may mention "VERTU" and "official store" even when the title does not contain "VERTU", because it bridges to the on-page shop section.
+
 BRITISH ENGLISH REQUIREMENTS (CRITICAL - MUST FOLLOW):
 1. SPELLING (British English only):
    - Use "colour" NOT "color"
@@ -1076,6 +1080,7 @@ FAQ STRUCTURE (MUST FOLLOW THIS EXACT ORDER):
    - Use the EXACT questions and answers from the knowledge base
    - Do NOT modify or invent information
    - Choose diverse categories (e.g., one Shopping, one Payment, one Shipping/Return)
+   - Where possible, include at least one FAQ that supports a purchase decision (e.g. authenticity, official channels, warranty, or delivery) using EXACT wording from the knowledge base "GLOBAL SHOPPING / PAYMENT / SHIPPING / RETURN FAQ" section—do not invent policies
 
 KNOWLEDGE BASE (YOUR ONLY SOURCE OF TRUTH - use ONLY this data):
 ${filteredKbContent}

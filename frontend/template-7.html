@@ -347,7 +347,7 @@
             transform: translateY(-6px);
             box-shadow: 0 12px 28px rgba(0,0,0,0.12);
         }
-        .blog-product-card a { text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%; }
+        .blog-product-card-media { display: block; text-decoration: none; color: inherit; }
         .blog-product-labels {
             position: absolute;
             top: 12px;
@@ -421,6 +421,50 @@
             transition: background 0.2s, color 0.2s;
         }
         .blog-product-cta:hover { background: #333; color: #fff; }
+        .blog-product-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .blog-product-cta-secondary {
+            display: inline-block;
+            padding: 10px 18px;
+            background: #fff;
+            color: #000;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #ccc;
+            text-decoration: none;
+        }
+        .blog-product-cta-secondary:hover { background: #f5f5f5; color: #000; }
+        .blog-product-name-link {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            text-decoration: none;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 2.8em;
+        }
+        .blog-product-name-link:hover { text-decoration: underline; }
+        .trust-strip {
+            max-width: 900px;
+            margin: 0 auto 24px;
+            padding: 14px 20px;
+            background: #f7f7f7;
+            border: 1px solid #e8e8e8;
+            font-size: 13px;
+            color: #444;
+            text-align: center;
+        }
 
         /* FAQ */
         .blog-faq {
@@ -565,6 +609,10 @@
         {{#if products}}
         <section class="blog-products" aria-labelledby="products-heading">
             <h2 id="products-heading">Explore Our Collection</h2>
+            {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
+            {{#if PRODUCT_SECTION_INTRO}}
+            <p style="max-width: 900px; margin: 0 auto 24px; color: #555; font-size: 15px; line-height: 1.55;">{{PRODUCT_SECTION_INTRO}}</p>
+            {{/if}}
             <div class="blog-products-grid">
                 {{#each (limit products 10)}}
                 <div class="blog-product-card">
@@ -580,7 +628,7 @@
                     </div>
                     {{/if}}
                     {{/if}}
-                    <a href="{{this.link}}">
+                    <a href="{{this.link}}" class="blog-product-card-media">
                         <div class="blog-product-img">
                             {{#if this.imageUrl}}
                             <img src="{{this.imageUrl}}" alt="{{this.name}}" loading="lazy" decoding="async">
@@ -588,17 +636,20 @@
                             <img src="https://via.placeholder.com/400x400?text=No+Image" alt="{{this.name}}" loading="lazy">
                             {{/if}}
                         </div>
-                        <div class="blog-product-info">
-                            <div class="blog-product-name">{{this.name}}</div>
-                            {{#if this.price}}
-                            <div class="blog-product-price">
-                                {{#if this.isPriceRange}}From {{/if}}{{this.price}}
-                                {{#if this.onSale}}{{#if this.originalPrice}}<span class="original">{{this.originalPrice}}</span>{{/if}}{{/if}}
-                            </div>
-                            {{/if}}
-                            <span class="blog-product-cta">View</span>
-                        </div>
                     </a>
+                    <div class="blog-product-info">
+                        <a href="{{this.link}}" class="blog-product-name-link">{{this.name}}</a>
+                        {{#if this.price}}
+                        <div class="blog-product-price">
+                            {{#if this.isPriceRange}}From {{/if}}{{this.price}}
+                            {{#if this.onSale}}{{#if this.originalPrice}}<span class="original">{{this.originalPrice}}</span>{{/if}}{{/if}}
+                        </div>
+                        {{/if}}
+                        <div class="blog-product-actions">
+                            <a class="blog-product-cta" href="{{this.link}}">Shop now</a>
+                            <a class="blog-product-cta-secondary" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
+                        </div>
+                    </div>
                 </div>
                 {{/each}}
             </div>

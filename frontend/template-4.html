@@ -282,7 +282,7 @@
             padding: 8px 50px !important;
             border: 1px solid #000 !important;
             border-radius: 25px;
-            font-size: 1rem;
+            font-size: 10px;
             font-weight: 400;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -1017,6 +1017,32 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
+
+        .trust-strip {
+            max-width: 100%;
+            margin: 0 auto 20px;
+            padding: 14px 20px;
+            background: #f7f7f7;
+            border: 1px solid #e8e8e8;
+            font-size: 13px;
+            color: #444;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .product-block-intro {
+            margin-bottom: 20px;
+            padding: 0 4px;
+        }
+        .product-block-intro h2 {
+            font-size: 1.25rem;
+            margin-bottom: 8px;
+        }
+        .product-block-intro p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+        }
     </style>
 </head>
 
@@ -1091,8 +1117,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
@@ -1156,6 +1182,9 @@
                     </table>
                 </div>
                 <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
+                {{#if COMPARISON_CLOSING}}
+                <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55;">{{COMPARISON_CLOSING}}</p>
+                {{/if}}
             </div>
         </div>
         {{/if}}
@@ -1163,9 +1192,13 @@
         {{#if products.length}}
         <!-- 产品展示区域 -->
         <div class="product-section">
-            <!-- <div class="product-header">
-                <h2 class="categories-title">Discover our Categories</h2>
-            </div> -->
+            {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
+            {{#if PRODUCT_SECTION_INTRO}}
+            <div class="product-block-intro">
+                <h2>{{PRODUCT_SECTION_TITLE}}</h2>
+                <p>{{PRODUCT_SECTION_INTRO}}</p>
+            </div>
+            {{/if}}
 
             <div class="products-grid">
                 {{#each products}}
@@ -1220,8 +1253,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
@@ -1328,8 +1361,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
@@ -1608,8 +1641,8 @@
                     </span>
 
                     <div class="btn-group">
-                        <a class="button" href="{{this.link}}">Buy now</a>
-                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Learn more</a>
+                        <a class="button" href="{{this.link}}">Shop now</a>
+                        <a class="learn-more" href="{{#if this.learnMoreLink}}{{this.learnMoreLink}}{{else}}{{this.link}}{{/if}}">Full specifications</a>
                     </div>
                 </div>
                 {{/each}}
