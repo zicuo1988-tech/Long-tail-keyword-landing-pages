@@ -8,7 +8,6 @@
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{META_DESCRIPTION}}" />
-    <meta name="keywords" content="{{META_KEYWORDS}}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="author" content="VERTU" />
     <link rel="canonical" href="{{PAGE_URL}}" />
@@ -40,11 +39,6 @@
     {{#if ARTICLE_STRUCTURED_DATA}}
     <script type="application/ld+json">
     {{{ARTICLE_STRUCTURED_DATA}}}
-    </script>
-    {{/if}}
-    {{#if FAQ_STRUCTURED_DATA}}
-    <script type="application/ld+json">
-    {{{FAQ_STRUCTURED_DATA}}}
     </script>
     {{/if}}
     {{#if CITATIONS_STRUCTURED_DATA}}

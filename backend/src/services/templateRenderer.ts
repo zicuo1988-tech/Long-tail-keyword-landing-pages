@@ -201,62 +201,168 @@ export function renderTemplate({
   const datePublished = now.toISOString();
   const dateModified = now.toISOString();
 
-  // 生成FAQ结构化数据JSON（安全转义）
+  /** FAQ 并入主 @graph，不再单独输出第二段 script，避免重复 @context */
   let faqStructuredData = "";
-  if (faqItems && faqItems.length > 0) {
+
+  const pageTitlePlain = pageTitle.replace(/<[^>]*>/g, "").trim();
+
+  const VERTU_LOGO_URL = "https://vertu.com/wp-content/uploads/2024/10/vertu-logo.png";
+
+  /** 与 canonical URL 对齐的 BreadcrumbList（利于富结果与站点层级） */
+  function buildBreadcrumbListSchema(url: string, titlePlain: string): Record<string, unknown> | null {
     try {
-      const faqSchema = {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": faqItems.map(item => ({
-          "@type": "Question",
-          "name": item.question.replace(/<[^>]*>/g, "").trim(),
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": item.answer.replace(/<[^>]*>/g, "").trim()
-          }
-        }))
+      const u = new URL(url);
+      const origin = `${u.protocol}//${u.host}`;
+      const segments = u.pathname.replace(/\/+$/, "").split("/").filter(Boolean);
+      if (segments.length === 0) return null;
+      const itemListElement: Array<{
+        "@type": "ListItem";
+        position: number;
+        name: string;
+        item: string;
+      }> = [];
+      let pos = 1;
+      let acc = "";
+      itemListElement.push({
+        "@type": "ListItem",
+        position: pos++,
+        name: "Home",
+        item: `${origin}/`,
+      });
+      for (let i = 0; i < segments.length; i++) {
+        acc += `/${segments[i]}`;
+        const isLast = i === segments.length - 1;
+        let name: string;
+        if (segments[i] === "luxury-life-guides") {
+          name = "Luxury Life Guides";
+        } else if (isLast) {
+          name = titlePlain.slice(0, 110) || segments[i].replace(/-/g, " ");
+        } else {
+          name = segments[i]
+            .split("-")
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+        }
+        itemListElement.push({
+          "@type": "ListItem",
+          position: pos++,
+          name,
+          item: `${origin}${acc}/`,
+        });
+      }
+      return {
+        "@type": "BreadcrumbList",
+        itemListElement,
       };
-      faqStructuredData = JSON.stringify(faqSchema, null, 2);
-    } catch (error) {
-      console.warn(`[TemplateRenderer] Failed to generate FAQ structured data:`, error);
+    } catch {
+      return null;
     }
   }
 
-  // 生成Article结构化数据JSON
+  // Article + Organization + WebSite + BreadcrumbList + FAQPage（单 @graph）
   let articleStructuredData = "";
   try {
-    const articleSchema: Record<string, unknown> = {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": pageTitle,
-      "description": (metaDescription || pageDescription || "").replace(/<[^>]*>/g, "").trim(),
-      "url": pageUrl || "",
-      "inLanguage": "en-GB",
-      "author": {
-        "@type": "Organization",
-        "name": "VERTU"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "VERTU",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://vertu.com/wp-content/uploads/2024/10/vertu-logo.png"
-        }
-      },
-      "datePublished": datePublished,
-      "dateModified": dateModified,
-      "mainEntityOfPage": {
-        "@type": "WebPage",
-        "@id": pageUrl || ""
+    const pu = pageUrl?.trim() ?? "";
+    let orgId: string | undefined;
+    const graph: unknown[] = [];
+
+    if (pu) {
+      try {
+        const origin = new URL(pu).origin;
+        orgId = `${origin}/#organization`;
+        graph.push({
+          "@type": "Organization",
+          "@id": orgId,
+          name: "VERTU",
+          url: `${origin}/`,
+          logo: {
+            "@type": "ImageObject",
+            url: VERTU_LOGO_URL,
+          },
+        });
+        graph.push({
+          "@type": "WebSite",
+          "@id": `${origin}/#website`,
+          url: `${origin}/`,
+          name: "VERTU",
+          publisher: { "@id": orgId },
+          inLanguage: "en-GB",
+        });
+      } catch {
+        orgId = undefined;
       }
-    };
-    const img = pageImage?.trim();
-    if (img) {
-      articleSchema.image = img;
     }
-    articleStructuredData = JSON.stringify(articleSchema, null, 2);
+
+    const articleNode: Record<string, unknown> = {
+      "@type": "Article",
+      headline: pageTitlePlain,
+      description: (metaDescription || pageDescription || "").replace(/<[^>]*>/g, "").trim(),
+      url: pageUrl || "",
+      inLanguage: "en-GB",
+      datePublished: datePublished,
+      dateModified: dateModified,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": pageUrl || "",
+      },
+    };
+    if (orgId) {
+      articleNode.author = { "@id": orgId };
+      articleNode.publisher = { "@id": orgId };
+    } else {
+      articleNode.author = { "@type": "Organization", name: "VERTU" };
+      articleNode.publisher = {
+        "@type": "Organization",
+        name: "VERTU",
+        logo: {
+          "@type": "ImageObject",
+          url: VERTU_LOGO_URL,
+        },
+      };
+    }
+    const img = pageImageResolved?.trim() || pageImage?.trim();
+    if (img) {
+      articleNode.image = img;
+    }
+    graph.push(articleNode);
+
+    if (pu) {
+      const crumbs = buildBreadcrumbListSchema(pu, pageTitlePlain);
+      if (crumbs) graph.push(crumbs);
+    }
+
+    if (faqItems?.length) {
+      const mainEntity = faqItems
+        .map((item) => {
+          const name = item.question.replace(/<[^>]*>/g, "").trim();
+          const text = item.answer.replace(/<[^>]*>/g, "").trim();
+          if (!name || !text) return null;
+          return {
+            "@type": "Question",
+            name,
+            acceptedAnswer: {
+              "@type": "Answer",
+              text,
+            },
+          };
+        })
+        .filter(Boolean) as Array<Record<string, unknown>>;
+      if (mainEntity.length > 0) {
+        graph.push({
+          "@type": "FAQPage",
+          mainEntity,
+        });
+      }
+    }
+
+    articleStructuredData = JSON.stringify(
+      {
+        "@context": "https://schema.org",
+        "@graph": graph,
+      },
+      null,
+      2
+    );
   } catch (error) {
     console.warn(`[TemplateRenderer] Failed to generate Article structured data:`, error);
   }
