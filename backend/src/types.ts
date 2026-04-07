@@ -30,8 +30,10 @@ export interface GenerationRequestPayload {
     consumerSecret?: string;
   };
   shopify?: {
-    storeUrl: string; // 例如 https://your-store.myshopify.com
+    storeUrl: string; // 例如 https://your-store.myshopify.com（Admin API）
     accessToken: string; // Admin API Access Token
+    /** 前台产品链接使用的域名，如 https://vertu.com；不填则与 storeUrl 一致 */
+    publicStoreUrl?: string;
   };
   staticPublish?: {
     outputDir?: string; // 静态文件落盘目录

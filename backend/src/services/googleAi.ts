@@ -741,10 +741,11 @@ CRITICAL: KNOWLEDGE BASE FILTERING AND ACCURACY REQUIREMENTS:
   * Ruby Key is a concierge service included with all VERTU phone purchases
   * Ruby Talk is an AI-powered concierge service exclusively included with Agent Q phone purchases
   * DO NOT recommend Ruby Key or Ruby Talk as products - they are services that come with phones
-- If the keyword is about "rings" → ONLY use ring-related information (Meta Ring, AI Diamond Ring, AI Meta Ring)
+- If the keyword is about "rings" → ONLY use ring-related information (Aura Ring, AI Diamond Ring)
   * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products
   * DO NOT use phone specifications (Snapdragon, RAM, display sizes, battery capacity, etc.)
   * DO NOT invent specifications not in the knowledge base (e.g., if knowledge base says "5ATM", DO NOT write "10ATM")
+  * DO NOT claim blood glucose monitoring, blood oxygen (SpO2), or non-invasive glucose measurement for VERTU rings unless explicitly stated in the knowledge base above; if absent, omit these claims entirely
 - If the keyword is about "phones" → ONLY use phone-related information (Agent Q, Quantum Flip, Metavertu, etc.)
   * You MAY mention Ruby Key and Ruby Talk as services/privileges that come with phone purchases, but DO NOT recommend them as standalone products
 - If the keyword is about "watches" → ONLY use watch-related information (Grand Watch, Metawatch)
@@ -847,10 +848,11 @@ ${(() => {
 - DO NOT mention rings, earbuds, or other product categories. Focus ONLY on watch-related products and features from the knowledge base`;
   } else if (!hasUserProductGuidance && isRingKeywordCombined) {
     return productGuidance + `- CRITICAL: The keyword "${keyword}" is about RINGS/JEWELLERY
-- You MUST write about rings (Meta Ring, AI Diamond Ring, AI Meta Ring) ONLY
+- You MUST write about rings (Aura Ring, AI Diamond Ring) ONLY
 - DO NOT mention phones (Agent Q, Quantum Flip, Metavertu, etc.), watches, earbuds, or other product categories
 - DO NOT mention Ruby Key, Ruby Talk, or Concierge Service - these are EXCLUSIVE to phones ONLY
-- Focus ONLY on ring-related products and features from the knowledge base`;
+- Focus ONLY on ring-related products and features from the knowledge base
+- DO NOT claim blood glucose monitoring, blood oxygen (SpO2), or non-invasive glucose measurement for VERTU rings unless explicitly stated in the knowledge base; if absent, omit these claims entirely`;
   } else if (!hasUserProductGuidance && isEarbudKeywordCombined) {
     return productGuidance + `- CRITICAL: The keyword "${keyword}" is about EARBUDS/AUDIO
 - You MUST write about earbuds (Phantom Earbuds, OWS Earbuds) ONLY
@@ -1072,11 +1074,12 @@ CRITICAL: KNOWLEDGE BASE FILTERING FOR FAQ:
 - The knowledge base above has been FILTERED to include ONLY information relevant to "${keyword}"
 - You MUST ONLY use information from the filtered knowledge base above - DO NOT use external knowledge
 - DO NOT use information from products that are NOT listed in the "RELEVANT PRODUCTS" section above
-- If the keyword is about "rings" → ONLY use ring-related information (Meta Ring, AI Diamond Ring, AI Meta Ring)
+- If the keyword is about "rings" → ONLY use ring-related information (Aura Ring, AI Diamond Ring)
   * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products in FAQs
   * DO NOT use phone specifications (Snapdragon, RAM, display sizes, etc.)
   * Use EXACT specifications from knowledge base (e.g., if knowledge base says "5ATM", write "5ATM", NOT "10ATM")
   * DO NOT select FAQs about Ruby Key, Ruby Talk, or Concierge Service from the FAQ section
+  * DO NOT claim blood glucose monitoring, blood oxygen (SpO2), or non-invasive glucose measurement for VERTU rings unless explicitly stated in the knowledge base above; if absent, omit these claims entirely
 - If the keyword is about "phones" → ONLY use phone-related information (Agent Q, Quantum Flip, Metavertu, etc.)
 - If the keyword is about "watches" → ONLY use watch-related information (Grand Watch, Metawatch)
   * DO NOT mention Ruby Key, Ruby Talk, Concierge Service, Agent Q, or any phone products in FAQs
@@ -1928,9 +1931,8 @@ const ALL_KNOWN_PRODUCTS = [
   "Signature S+",
   "Signature V",
   "Signature Cobra",
-  "Meta Ring",
+  "Aura Ring",
   "AI Diamond Ring",
-  "AI Meta Ring",
   "Grand Watch",
   "Metawatch",
   "Phantom Earbuds",
@@ -2007,7 +2009,7 @@ function validateContentTopicMatch(
   const productCategoryKeywords = {
     watch: ["watch", "timepiece", "horology", "chronograph", "wristwatch", "grand watch", "metawatch"],
     phone: ["phone", "mobile", "smartphone", "handset", "device", "agent q", "quantum flip", "metavertu", "signature", "ivertu"],
-    ring: ["ring", "jewellery", "jewelry", "diamond ring", "meta ring"],
+    ring: ["ring", "jewellery", "jewelry", "diamond ring", "meta ring", "aura ring"],
     earbud: ["earbud", "earphone", "earphones", "audio", "phantom", "ows"],
   };
 
@@ -2370,7 +2372,7 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
   const productMatchesCategory = (product: string, category: "watch" | "ring" | "earbud"): boolean => {
     const nameLower = product.toLowerCase();
     if (category === "watch") return /(watch|timepiece|horology|chronograph|grand watch|metawatch)/i.test(nameLower);
-    if (category === "ring") return /(ring|jewellery|jewelry|meta ring|diamond)/i.test(nameLower);
+    if (category === "ring") return /(ring|jewellery|jewelry|meta ring|aura ring|diamond)/i.test(nameLower);
     if (category === "earbud") return /(earbud|earbuds|earphone|earphones|audio|ows|phantom)/i.test(nameLower);
     return false;
   };
@@ -2404,8 +2406,8 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
       productNames: ["Agent Q", "Quantum Flip", "Metavertu Max", "Metavertu", "Signature S", "Signature S+", "Signature V", "Signature Cobra", "iVERTU"], // 所有手机产品
     },
     {
-      keywords: ["ring", "jewellery", "jewelry", "wearable", "diamond", "meta ring"],
-      productNames: ["Meta Ring", "AI Diamond Ring", "AI Meta Ring"],
+      keywords: ["ring", "jewellery", "jewelry", "wearable", "diamond", "meta ring", "aura ring"],
+      productNames: ["Aura Ring", "AI Diamond Ring"],
     },
     {
       keywords: ["watch", "watches", "horology", "timepiece", "chronograph", "grand watch", "smart watch", "smartwatch", "luxury watch", "luxury watches"],

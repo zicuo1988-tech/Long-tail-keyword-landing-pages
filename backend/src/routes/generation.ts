@@ -1657,10 +1657,10 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         const ringOptions = [
           {
             name: "Oura Ring Gen 3",
-            feature: "Health Tracking Ring",
+            feature: "Wellness Tracking Ring",
             price: "$299 - $549",
             material: "Titanium",
-            keyFeature: "Health Monitoring, Sleep Tracking",
+            keyFeature: "Sleep and Activity Tracking",
             display: "N/A",
             battery: "7 Days",
             externalUrl: "https://ouraring.com/"
@@ -1670,14 +1670,14 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             feature: "Fitness Tracking Ring",
             price: "$349",
             material: "Titanium",
-            keyFeature: "Metabolic Health, Sleep Analysis",
+            keyFeature: "Fitness and Recovery, Sleep Analysis",
             display: "N/A",
             battery: "6 Days",
             externalUrl: "https://ultrahuman.com/"
           },
           {
             name: "Circular Ring",
-            feature: "Smart Health Ring",
+            feature: "Smart Activity Ring",
             price: "$279 - $349",
             material: "Titanium",
             keyFeature: "Activity Tracking, Sleep Monitoring",
@@ -1839,7 +1839,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       } else if (keywordLower.includes("ring") || keywordLower.includes("jewellery") || keywordLower.includes("jewelry")) {
         officialLinks.push(
           { title: "VERTU Smart Ring Collection", url: `${siteBaseUrl}/product-category/rings/` },
-          { title: "VERTU Meta Ring", url: `${siteBaseUrl}/aura-ring/` },
+          { title: "VERTU Aura Ring", url: `${siteBaseUrl}/aura-ring/` },
           { title: "VERTU AI Diamond Ring", url: `${siteBaseUrl}/smartring/` }
         );
       } else if (keywordLower.includes("earbud") || keywordLower.includes("earphone") || keywordLower.includes("audio")) {
@@ -2199,7 +2199,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             {
               author: "Wearable Technology Research",
               year: String(currentYear - 1),
-              title: "Smart Ring Technology and Health Monitoring",
+              title: "Smart Ring Technology and Luxury Wearables",
               publication: "Wearable Technology Review",
               url: "https://www.wareable.com/smart-rings",
               linkType: "authoritative" as const

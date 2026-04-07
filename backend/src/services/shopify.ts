@@ -4,6 +4,8 @@ import type { ProductFetchResult, ProductSummary } from "../types.js";
 export interface ShopifyCredentials {
   storeUrl: string;
   accessToken: string;
+  /** 对外展示的产品页基址（如 https://vertu.com）；不填则使用 storeUrl */
+  publicStoreUrl?: string;
 }
 
 interface ShopifyProduct {
@@ -26,6 +28,15 @@ function normalizeStoreUrl(url: string): string {
     normalized = `https://${normalized}`;
   }
   return normalized.replace(/\/+$/, "");
+}
+
+/** 产品详情 link 使用对外域名（如 vertu.com），API 仍用 storeUrl */
+function resolveProductLinkBase(credentials: ShopifyCredentials): string {
+  const pub = credentials.publicStoreUrl?.trim();
+  if (pub) {
+    return normalizeStoreUrl(pub);
+  }
+  return normalizeStoreUrl(credentials.storeUrl);
 }
 
 function createShopifyClient(credentials: ShopifyCredentials) {
@@ -76,7 +87,7 @@ function formatPriceRange(variants: ShopifyProduct["variants"]): {
   return { price, originalPrice, onSale, isPriceRange };
 }
 
-function toProductSummary(storeUrl: string, product: ShopifyProduct): ProductSummary {
+function toProductSummary(linkBaseUrl: string, product: ShopifyProduct): ProductSummary {
   const { price, originalPrice, onSale, isPriceRange } = formatPriceRange(product.variants);
   const firstTag = (product.tags || "")
     .split(",")
@@ -86,7 +97,7 @@ function toProductSummary(storeUrl: string, product: ShopifyProduct): ProductSum
   return {
     id: Number(product.id),
     name: product.title,
-    link: `${storeUrl}/products/${product.handle}`,
+    link: `${linkBaseUrl}/products/${product.handle}`,
     imageUrl: product.images?.[0]?.src,
     category: product.product_type || undefined,
     categorySlug: product.product_type
@@ -131,7 +142,7 @@ export async function fetchRelatedProducts(
   targetCategory?: string
 ): Promise<ProductFetchResult> {
   const client = createShopifyClient(credentials);
-  const storeUrl = normalizeStoreUrl(credentials.storeUrl);
+  const linkBase = resolveProductLinkBase(credentials);
 
   const response = await client.get("/products.json", {
     params: { status: "active", limit: 250 },
@@ -139,7 +150,7 @@ export async function fetchRelatedProducts(
 
   const rawProducts: ShopifyProduct[] = Array.isArray(response.data?.products) ? response.data.products : [];
   const matched = filterProducts(rawProducts, keyword, targetCategory);
-  const products = matched.slice(0, 40).map((p) => toProductSummary(storeUrl, p));
+  const products = matched.slice(0, 40).map((p) => toProductSummary(linkBase, p));
 
   return { products, relatedProducts: [] };
 }
@@ -150,7 +161,7 @@ export async function searchProductsByName(
 ): Promise<ProductSummary[]> {
   if (!productNames.length) return [];
   const client = createShopifyClient(credentials);
-  const storeUrl = normalizeStoreUrl(credentials.storeUrl);
+  const linkBase = resolveProductLinkBase(credentials);
 
   const response = await client.get("/products.json", {
     params: { status: "active", limit: 250 },
@@ -162,5 +173,5 @@ export async function searchProductsByName(
   return rawProducts
     .filter((p) => lowerNames.some((name) => p.title.toLowerCase().includes(name)))
     .slice(0, 30)
-    .map((p) => toProductSummary(storeUrl, p));
+    .map((p) => toProductSummary(linkBase, p));
 }

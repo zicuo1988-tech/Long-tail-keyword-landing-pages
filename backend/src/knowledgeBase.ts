@@ -264,7 +264,7 @@ METAVERTU MAX
 ----------------------------------------------------------------------
 ADDITIONAL PRODUCT PLACEHOLDERS
 ----------------------------------------------------------------------
-Include more VERTU products (Metavertu Curve, Metavertu Max variants, Metavertu Quantum, Meta Ring, AI Diamond Ring, Signature S+, Signature V, Signature Cobra, AI Meta Ring, Grand Watch, Metawatch, Phantom Earbuds, etc.) following the same structure when additional details are supplied.
+Include more VERTU products (Metavertu Curve, Metavertu Max variants, Metavertu Quantum, Aura Ring, AI Diamond Ring, Signature S+, Signature V, Signature Cobra, Grand Watch, Metawatch, Phantom Earbuds, etc.) following the same structure when additional details are supplied.
 
 ----------------------------------------------------------------------
 GLOBAL SHOPPING / PAYMENT / SHIPPING / RETURN FAQ

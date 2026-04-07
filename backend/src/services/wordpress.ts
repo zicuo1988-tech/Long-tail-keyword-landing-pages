@@ -41,7 +41,7 @@ const PRODUCT_KEYWORD_HINTS = [
   },
   {
     keywords: ["ring", "jewellery", "jewelry", "wearable", "diamond"],
-    productNames: ["Meta Ring", "AI Diamond Ring", "AI Meta Ring"],
+    productNames: ["Aura Ring", "AI Diamond Ring"],
   },
   {
     keywords: ["watch", "horology", "timepiece", "chronograph"],
@@ -72,9 +72,8 @@ const KNOWN_PRODUCT_NAMES = [
   "Signature S+",
   "Signature V",
   "Signature Cobra",
-  "Meta Ring",
+  "Aura Ring",
   "AI Diamond Ring",
-  "AI Meta Ring",
   "Grand Watch",
   "Metawatch",
   "Phantom Earbuds",
@@ -88,9 +87,8 @@ const PRODUCT_NAME_ALIASES: Record<string, string[]> = {
   "Metavertu Max": ["metavertu 2 max", "metavertu 2 pro", "metavertu max phone"],
   "Quantum Flip": ["vertu flip", "quantum folding phone"],
   "Agent Q": ["vertu agent q"],
-  "Meta Ring": ["vertu meta ring"],
+  "Aura Ring": ["vertu meta ring", "vertu aura ring", "meta ring", "meta ai ring"],
   "AI Diamond Ring": ["diamond smart ring", "vertu diamond ring"],
-  "AI Meta Ring": ["meta ai ring"],
   "Grand Watch": ["vertu grand watch"],
   "Metawatch": ["meta watch"],
   "Phantom Earbuds": ["phantom buds", "vertu phantom earbuds"],
@@ -101,7 +99,7 @@ const PRODUCT_NAME_ALIASES: Record<string, string[]> = {
 // 产品分类别名映射（用于优化分类搜索）
 const CATEGORY_ALIASES: Record<string, string[]> = {
   "grand watch": ["watch", "watches", "grand-watch", "grandwatch", "timepiece"],
-  "meta ring": ["ring", "rings", "meta-ring", "metaring", "smart ring", "smart-ring"],
+  "meta ring": ["ring", "rings", "meta-ring", "metaring", "smart ring", "smart-ring", "aura ring", "aura-ring"],
   "agent q": ["agent-q", "agentq", "phone", "phones", "smartphone"],
   "quantum flip": ["quantum-flip", "quantumflip", "flip", "phone", "phones"],
   "metavertu": ["metavertu-max", "metavertu max", "phone", "phones"],

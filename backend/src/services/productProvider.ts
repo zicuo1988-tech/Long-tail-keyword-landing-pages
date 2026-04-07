@@ -14,6 +14,7 @@ export type ProductSource = "wordpress" | "shopify";
 export function mergeShopifyCredentialsFromEnv(payload: GenerationRequestPayload): void {
   const url = process.env.SHOPIFY_STORE_URL?.trim();
   const token = process.env.SHOPIFY_ACCESS_TOKEN?.trim();
+  const publicUrl = process.env.SHOPIFY_PUBLIC_STORE_URL?.trim();
   if (!payload.shopify) {
     payload.shopify = { storeUrl: "", accessToken: "" };
   }
@@ -22,6 +23,9 @@ export function mergeShopifyCredentialsFromEnv(payload: GenerationRequestPayload
   }
   if (!payload.shopify.accessToken?.trim() && token) {
     payload.shopify.accessToken = token;
+  }
+  if (publicUrl && !payload.shopify.publicStoreUrl?.trim()) {
+    payload.shopify.publicStoreUrl = publicUrl;
   }
 }
 
