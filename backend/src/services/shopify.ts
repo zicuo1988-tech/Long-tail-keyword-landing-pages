@@ -8,6 +8,17 @@ export interface ShopifyCredentials {
   publicStoreUrl?: string;
 }
 
+interface ShopifyVariant {
+  price?: string;
+  compare_at_price?: string | null;
+  /** shopify | null | 第三方履约 handle；null 表示不跟踪库存，仍视为可售 */
+  inventory_management?: string | null;
+  /** deny：无库存不可售；continue：可继续售卖/预订 */
+  inventory_policy?: string;
+  /** 全地点聚合库存；与 inventory_policy deny 联用判断缺货 */
+  inventory_quantity?: number | null;
+}
+
 interface ShopifyProduct {
   id: number;
   title: string;
@@ -15,10 +26,7 @@ interface ShopifyProduct {
   product_type?: string;
   tags?: string;
   images?: Array<{ src: string }>;
-  variants?: Array<{
-    price?: string;
-    compare_at_price?: string | null;
-  }>;
+  variants?: ShopifyVariant[];
 }
 
 function normalizeStoreUrl(url: string): string {
@@ -53,6 +61,31 @@ function createShopifyClient(credentials: ShopifyCredentials) {
     proxy: false,
     timeout: 30000,
   });
+}
+
+/** 至少一个变体可售则保留商品（与 WooCommerce 缺货过滤语义一致） */
+function isVariantSellable(v: ShopifyVariant): boolean {
+  const policy = (v.inventory_policy || "deny").toLowerCase();
+  if (policy === "continue") {
+    return true;
+  }
+  const im = v.inventory_management;
+  if (im == null || im === "") {
+    return true;
+  }
+  const qty = v.inventory_quantity;
+  if (qty === undefined || qty === null) {
+    return true;
+  }
+  return qty > 0;
+}
+
+function isShopifyProductSellable(product: ShopifyProduct): boolean {
+  const variants = product.variants;
+  if (!variants || variants.length === 0) {
+    return false;
+  }
+  return variants.some(isVariantSellable);
 }
 
 function formatPriceRange(variants: ShopifyProduct["variants"]): {
@@ -149,7 +182,14 @@ export async function fetchRelatedProducts(
   });
 
   const rawProducts: ShopifyProduct[] = Array.isArray(response.data?.products) ? response.data.products : [];
-  const matched = filterProducts(rawProducts, keyword, targetCategory);
+  const sellable = rawProducts.filter((p) => {
+    const ok = isShopifyProductSellable(p);
+    if (!ok) {
+      console.log(`[Shopify] ⚠️ 过滤缺货/不可售产品: ${p.title} (id=${p.id})`);
+    }
+    return ok;
+  });
+  const matched = filterProducts(sellable, keyword, targetCategory);
   const products = matched.slice(0, 40).map((p) => toProductSummary(linkBase, p));
 
   return { products, relatedProducts: [] };
@@ -168,9 +208,16 @@ export async function searchProductsByName(
   });
 
   const rawProducts: ShopifyProduct[] = Array.isArray(response.data?.products) ? response.data.products : [];
+  const sellable = rawProducts.filter((p) => {
+    const ok = isShopifyProductSellable(p);
+    if (!ok) {
+      console.log(`[Shopify] ⚠️ 过滤缺货/不可售产品: ${p.title} (id=${p.id})`);
+    }
+    return ok;
+  });
   const lowerNames = productNames.map((n) => n.toLowerCase());
 
-  return rawProducts
+  return sellable
     .filter((p) => lowerNames.some((name) => p.title.toLowerCase().includes(name)))
     .slice(0, 30)
     .map((p) => toProductSummary(linkBase, p));

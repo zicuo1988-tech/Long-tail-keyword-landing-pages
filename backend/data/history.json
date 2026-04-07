@@ -1,5 +1,19 @@
 [
   {
+    "id": "315e8f0c-fca2-4746-9023-481c3eb25af1",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-gps-tracker-for-android-phones-highly-recommended",
+    "createdAt": 1775528478506,
+    "updatedAt": 1775528592695,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "gps tracker for android phones",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-gps-tracker-for-android-phones-highly-recommended/"
+  },
+  {
     "id": "106e0294-9154-48c5-911c-857600c8d8e5",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-dual-sim-android-mobile-phones",
@@ -13984,19 +13998,5 @@
     "titleType": "services-guides",
     "templateType": "template-7",
     "pageUrl": "https://vertu.com/luxury-life-guides/luxury-tennis-bracelet-usage-guide-complete-manual/"
-  },
-  {
-    "id": "2d5087da-14ba-4634-bade-52094ef254fc",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138330",
-    "createdAt": 1771037254468,
-    "updatedAt": 1771037436897,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "simple luxury necklace",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-simple-luxury-necklace-expert-recommendations/"
   }
 ]

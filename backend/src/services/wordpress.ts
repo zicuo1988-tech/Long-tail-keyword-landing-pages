@@ -825,6 +825,10 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
   
   // 检查产品是否缺货
   const isProductOutOfStock = (product: any): boolean => {
+    // WooCommerce：不可购买（含缺货、下架可购状态等）
+    if (product.purchasable === false) {
+      return true;
+    }
     // WooCommerce API 格式
     if (product.stock_status !== undefined) {
       // stock_status: "instock" 或 "outofstock"
@@ -833,6 +837,10 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
       }
       if (product.stock_status === "instock") {
         return false; // 有货
+      }
+      // onbackorder 仍视为可售（预订/补货中）
+      if (String(product.stock_status).toLowerCase() === "onbackorder") {
+        return false;
       }
     }
     
