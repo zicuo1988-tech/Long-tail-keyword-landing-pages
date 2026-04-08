@@ -6,6 +6,14 @@ import { rewriteVertuOssContentToShopifyCdn } from "../config/shopifyCdn.js";
 export const DEFAULT_TRUST_STRIP_HTML =
   '<div class="trust-strip" role="region" aria-label="Official store benefits">Official VERTU store · Secure checkout · Concierge support</div>';
 
+/** 为正文中的每个 <table> 外包 .table-wrapper，便于横向滚动与圆角阴影（模板7等） */
+export function wrapArticleTablesInScroll(html: string): string {
+  if (!html?.trim()) return html;
+  return html.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, (full) =>
+    full.includes("table-wrapper") ? full : `<div class="table-wrapper">${full}</div>`
+  );
+}
+
 Handlebars.registerHelper("safeHtml", (html: string) => new Handlebars.SafeString(html));
 Handlebars.registerHelper("truncateText", (text: string | undefined, maxLength: number = 40) => {
   if (!text) return "";
@@ -175,6 +183,8 @@ export interface RenderTemplateInput {
   showTrustStrip?: boolean;
   /** 对比表后的收口段落（template-4 / template-5） */
   comparisonClosing?: string;
+  /** 为 AI 正文中的 table 外包滚动容器（如模板7） */
+  normalizeBlogTables?: boolean;
 }
 
 export function renderTemplate({
@@ -202,13 +212,20 @@ export function renderTemplate({
   productSectionIntro = "",
   showTrustStrip = false,
   comparisonClosing = "",
+  normalizeBlogTables = false,
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
 
-  const aiContentResolved = rewriteVertuOssContentToShopifyCdn(aiContent);
-  const extendedContentResolved = extendedContent
+  let aiContentResolved = rewriteVertuOssContentToShopifyCdn(aiContent);
+  if (normalizeBlogTables) {
+    aiContentResolved = wrapArticleTablesInScroll(aiContentResolved);
+  }
+  let extendedContentResolved = extendedContent
     ? rewriteVertuOssContentToShopifyCdn(extendedContent)
     : extendedContent;
+  if (normalizeBlogTables && extendedContentResolved) {
+    extendedContentResolved = wrapArticleTablesInScroll(extendedContentResolved);
+  }
   const pageImageResolved = pageImage ? rewriteVertuOssContentToShopifyCdn(pageImage) : pageImage;
 
   // 生成当前日期（ISO格式，用于结构化数据）

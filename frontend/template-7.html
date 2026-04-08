@@ -48,8 +48,6 @@
     {{/if}}
     
     <style>
-  
-
         /* Hero - editorial style */
         .blog-hero {
             padding: 64px 0 48px;
@@ -68,14 +66,12 @@
             color: #000;
             margin-bottom: 16px;
         }
-        {{#if (isNotEmpty PAGE_DESCRIPTION)}}
         .blog-lead {
             font-size: 1.25rem;
             color: #444;
             line-height: 1.6;
             margin-top: 12px;
         }
-        {{/if}}
 
         .blog-byline {
             display: flex;
@@ -97,6 +93,8 @@
         .blog-article-inner {
             max-width: 900px;
             margin: 0 auto;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .blog-article .content {
             font-size: 1.125rem;
@@ -191,16 +189,30 @@
             color: #555;
             line-height: 1.5;
         }
-        /* In-article tables - 与正文块留白一致 */
+        /* In-article tables（含无 thead、全 td 的模型输出） */
+        .blog-article .content .table-wrapper {
+            overflow-x: auto;
+            margin: 1.75em 0;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .blog-article .content .table-wrapper table {
+            margin: 0;
+        }
+        .blog-article .content .table-wrapper .table-wrapper {
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
         .blog-article .content table {
             width: 100%;
-            max-width: 100%;
-            margin: 2em 0;
+            min-width: 480px;
             border-collapse: collapse;
             font-size: 0.95rem;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-            border-radius: 8px;
-            overflow: hidden;
+            table-layout: fixed;
+            background: #fff;
         }
         .blog-article .content thead {
             background: #1a1a1a;
@@ -210,20 +222,46 @@
             padding: 14px 16px;
             text-align: left;
             font-weight: 600;
+            vertical-align: top;
+            word-break: break-word;
+            hyphens: auto;
         }
         .blog-article .content td {
             padding: 12px 16px;
             border-bottom: 1px solid #e8e8e8;
+            vertical-align: top;
+            word-break: break-word;
+            hyphens: auto;
         }
         .blog-article .content tbody tr:last-child td { border-bottom: none; }
         .blog-article .content tbody tr:nth-child(even) { background: #fafafa; }
         .blog-article .content tbody tr:hover { background: #f5f5f5; }
-        .blog-article .content .table-wrapper {
-            overflow-x: auto;
-            margin: 1.5em 0;
-            -webkit-overflow-scrolling: touch;
+        /* 无 thead 时首行视为表头（常见于 AI 全 <td> 输出） */
+        .blog-article .content table:not(:has(thead)) > tbody > tr:first-child > td,
+        .blog-article .content table:not(:has(thead)) > tr:first-child > td {
+            background: #1a1a1a;
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 1px solid #333;
         }
-        .blog-article .content .table-wrapper table { margin: 0; }
+        .blog-article .content table:not(:has(thead)) > tbody > tr:first-child:hover > td,
+        .blog-article .content table:not(:has(thead)) > tr:first-child:hover > td {
+            background: #2a2a2a;
+        }
+        /* 模型用 pre/纯文本冒充表格时的可读性 */
+        .blog-article .content pre {
+            margin: 1.75em 0;
+            padding: 1rem 1.25rem;
+            background: #f6f6f6;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+        }
 
         .blog-article .content-extended {
             margin-top: 3rem;
@@ -538,6 +576,41 @@
             .blog-product-info { padding: 14px; }
             .blog-product-name { font-size: 0.9rem; min-height: auto; }
         }
+
+        /* 无商品数据时的官方店入口 */
+        .blog-products-empty {
+            text-align: center;
+            padding: 40px 24px 56px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .blog-products-empty h2 {
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #000;
+        }
+        .blog-products-empty p {
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .blog-products-empty .shop-cta {
+            display: inline-block;
+            padding: 14px 28px;
+            background: #000;
+            color: #fff !important;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none !important;
+            border-radius: 8px;
+        }
+        .blog-products-empty .shop-cta:hover {
+            background: #333;
+            color: #fff !important;
+        }
     </style>
 </head>
 <body>
@@ -606,8 +679,8 @@
         </section>
         {{/if}}
 
-        {{#if products}}
         <section class="blog-products" aria-labelledby="products-heading">
+            {{#if products.length}}
             <h2 id="products-heading">Explore Our Collection</h2>
             {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
             {{#if PRODUCT_SECTION_INTRO}}
@@ -653,8 +726,14 @@
                 </div>
                 {{/each}}
             </div>
+            {{else}}
+            <div class="blog-products-empty">
+                <h2 id="products-heading">Shop VERTU</h2>
+                <p>Browse the official VERTU collection—phones, watches, audio, and more—with secure checkout and concierge support.</p>
+                <a class="shop-cta" href="https://vertu.com/shop">Visit the official store</a>
+            </div>
+            {{/if}}
         </section>
-        {{/if}}
 
         {{#if faqItems}}
         <section class="blog-faq" aria-labelledby="faq-heading">

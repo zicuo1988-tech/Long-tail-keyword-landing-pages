@@ -149,6 +149,11 @@ function includesAny(text: string, terms: string[]): boolean {
   return terms.some((t) => lower.includes(t.toLowerCase()));
 }
 
+function isPaymentLinkProductTitle(title: string): boolean {
+  const t = (title || "").toLowerCase();
+  return t.includes("payment link") || t.includes("payment-link");
+}
+
 function filterProducts(products: ShopifyProduct[], keyword: string, targetCategory?: string): ShopifyProduct[] {
   const categoryTerms = (targetCategory || "")
     .split(",")
@@ -160,6 +165,9 @@ function filterProducts(products: ShopifyProduct[], keyword: string, targetCateg
     .filter((t) => t.length >= 3);
 
   return products.filter((p) => {
+    if (isPaymentLinkProductTitle(p.title)) {
+      return false;
+    }
     const searchable = `${p.title} ${p.product_type || ""} ${p.tags || ""}`;
     if (categoryTerms.length) {
       return includesAny(searchable, categoryTerms);
@@ -218,6 +226,7 @@ export async function searchProductsByName(
   const lowerNames = productNames.map((n) => n.toLowerCase());
 
   return sellable
+    .filter((p) => !isPaymentLinkProductTitle(p.title))
     .filter((p) => lowerNames.some((name) => p.title.toLowerCase().includes(name)))
     .slice(0, 30)
     .map((p) => toProductSummary(linkBase, p));

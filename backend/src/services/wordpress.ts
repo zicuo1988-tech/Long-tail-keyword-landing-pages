@@ -766,6 +766,20 @@ export async function fetchRelatedProducts(
   throw lastError || new Error("无法获取产品：所有端点都失败");
 }
 
+/** 产品名称/标题含 Payment Link 时排除（与按分类排除互补） */
+function isPaymentLinkProductByName(product: any): boolean {
+  const raw =
+    typeof product?.name === "string"
+      ? product.name
+      : product?.title?.rendered
+        ? String(product.title.rendered)
+        : typeof product?.title === "string"
+          ? product.title
+          : String(product?.slug || "");
+  const s = raw.toLowerCase();
+  return s.includes("payment link") || s.includes("payment-link");
+}
+
 // 解析产品数据的辅助函数
 function parseProductsData(productsData: any[], apiType: string): ProductSummary[] {
   // 需要排除的分类（统一列表）
@@ -974,6 +988,11 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
         console.log(`[WordPress] ⚠️ 过滤缺货产品: ${productName}`);
         return false;
       }
+      if (isPaymentLinkProductByName(product)) {
+        const productName = product.name || product.title?.rendered || product.slug || "Unknown";
+        console.log(`[WordPress] ⚠️ 过滤名称含 Payment Link 的产品: ${productName}`);
+        return false;
+      }
       // 过滤掉属于排除分类的产品
       return !isProductExcluded(product);
     })
@@ -1022,6 +1041,12 @@ function parseProductsData(productsData: any[], apiType: string): ProductSummary
     }
   })
     .filter((product) => {
+      const nameLower = (product.name || "").toLowerCase();
+      if (nameLower.includes("payment link") || nameLower.includes("payment-link")) {
+        console.log(`[WordPress] ⚠️ 过滤产品（名称含 Payment Link）: ${product.name}`);
+        return false;
+      }
+
       const categoryLower = product.category?.toLowerCase().trim() || "";
       const categorySlugLower = product.categorySlug?.toLowerCase().trim() || "";
       
@@ -1826,14 +1851,18 @@ function extractTargetProductNames(keyword: string): string[] {
 }
 
 function filterRawProductsByTargetNames(productsData: any[], targetNames: string[], originalSearchTerm?: string): any[] {
+  const stripPaymentLink = (data: any[]) => data.filter((p) => !isPaymentLinkProductByName(p));
+
   if (!targetNames.length) {
-    return productsData;
+    return stripPaymentLink(productsData);
   }
 
   const normalizedTargets = targetNames.map(normalizePhrase).filter(Boolean);
   if (!normalizedTargets.length) {
-    return productsData;
+    return stripPaymentLink(productsData);
   }
+
+  productsData = stripPaymentLink(productsData);
 
   // 重要优化：如果原始搜索词是通用类别关键词（如"phone"、"ring"），
   // 应该返回所有相关类别的产品，而不仅仅是知识库中定义的特定产品

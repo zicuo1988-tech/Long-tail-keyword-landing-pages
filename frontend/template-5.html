@@ -1387,6 +1387,83 @@
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
+
+        /* AI 正文：表格/pre 防御排版（仅 .ai-article-body，不影响对比表等其它 .content） */
+        .content-container .content.ai-article-body {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            max-width: 100%;
+        }
+        .content-container .content.ai-article-body .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5em 0;
+            max-width: 100%;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+        }
+        .content-container .content.ai-article-body .table-wrapper table {
+            margin: 0;
+        }
+        .content-container .content.ai-article-body .table-wrapper .table-wrapper {
+            margin: 0;
+            box-shadow: none;
+            border-radius: 0;
+        }
+        .content-container .content.ai-article-body table {
+            width: 100%;
+            min-width: 480px;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            table-layout: fixed;
+            background: #fff;
+        }
+        .content-container .content.ai-article-body thead {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .content-container .content.ai-article-body th {
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            vertical-align: top;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        .content-container .content.ai-article-body td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #e8e8e8;
+            vertical-align: top;
+            word-break: break-word;
+            hyphens: auto;
+        }
+        .content-container .content.ai-article-body tbody tr:last-child td { border-bottom: none; }
+        .content-container .content.ai-article-body tbody tr:nth-child(even) { background: #fafafa; }
+        .content-container .content.ai-article-body tbody tr:hover { background: #f5f5f5; }
+        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child > td,
+        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child > td {
+            background: #1a1a1a;
+            color: #fff;
+            font-weight: 600;
+            border-bottom: 1px solid #333;
+        }
+        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child:hover > td,
+        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child:hover > td {
+            background: #2a2a2a;
+        }
+        .content-container .content.ai-article-body pre {
+            margin: 1.5em 0;
+            padding: 1rem 1.25rem;
+            background: #f6f6f6;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-width: 100%;
+        }
     </style>
 </head>
 
@@ -1631,7 +1708,7 @@
 
     <!-- Content Section -->
     <div class="content-container">
-        <div class="content">
+        <div class="content ai-article-body">
             {{{AI_GENERATED_CONTENT}}}
         </div>
     </div>
@@ -1802,7 +1879,7 @@
     {{#if (isNotEmpty AI_EXTENDED_CONTENT)}}
     <!-- Extended Content (append at the end for long-form templates) -->
     <div class="content-container">
-        <div class="content">
+        <div class="content ai-article-body">
             {{{AI_EXTENDED_CONTENT}}}
         </div>
     </div>

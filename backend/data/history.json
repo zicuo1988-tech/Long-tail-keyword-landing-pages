@@ -1,5 +1,1181 @@
 [
   {
+    "id": "1ff1e30d-f66e-4fc5-8613-db02542b5557",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-luxury-fathers-day-gifts",
+    "createdAt": 1775628001711,
+    "updatedAt": 1775628107592,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury father's day gifts",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-luxury-fathers-day-gifts/"
+  },
+  {
+    "id": "0dd25e6d-3755-4f0a-a319-9b32166e5c32",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-luxury-womens-sunglasses",
+    "createdAt": 1775627464436,
+    "updatedAt": 1775627521903,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury women's sunglasses",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-womens-sunglasses/"
+  },
+  {
+    "id": "77f3dc42-ec38-4555-8e0d-a878d738626c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-the-best-luxury-belts-women-expert-guide",
+    "createdAt": 1775627427204,
+    "updatedAt": 1775627462605,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury belts women",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-belts-women-expert-guide/"
+  },
+  {
+    "id": "9dfcade6-ddf7-4631-813a-78d396eb1bb5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-luxury-ball-pen",
+    "createdAt": 1775627244202,
+    "updatedAt": 1775627425571,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury ball pen",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-luxury-ball-pen/"
+  },
+  {
+    "id": "13383fbe-14fb-4fda-ba4d-023ee19cfb60",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-luxury-designer-sunglasses-complete-ranking-list",
+    "createdAt": 1775627097201,
+    "updatedAt": 1775627242602,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury designer sunglasses",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-designer-sunglasses-complete-ranking-list/"
+  },
+  {
+    "id": "ebf28e75-d023-45da-a231-c3b9ba62b5f1",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-luxury-wedding-ring-brands-premium-choices-reviewed",
+    "createdAt": 1775626930217,
+    "updatedAt": 1775627095774,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury wedding ring brands",
+    "titleType": "top",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-wedding-ring-brands-premium-choices-reviewed/"
+  },
+  {
+    "id": "b9a4efdc-124f-4682-81ab-763c9625ad6c",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1775626738202,
+    "updatedAt": 1775626928503,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury office supplies",
+    "titleType": "best",
+    "templateType": "template-4",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "1218230c-921b-4cd5-bffb-7ad89cdd37ea",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-professional-review-of-luxury-bracelets-for-mens",
+    "createdAt": 1775626528203,
+    "updatedAt": 1775626735863,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury bracelets for mens",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-luxury-bracelets-for-mens/"
+  },
+  {
+    "id": "8dd452fe-86fb-4fc2-b5a4-06594802812b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-home-decoration-comparison",
+    "createdAt": 1775626422649,
+    "updatedAt": 1775626527922,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury home decoration",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-home-decoration-comparison/"
+  },
+  {
+    "id": "d760ca7b-f6f9-4e56-b5be-b9c7a05ff8f3",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-office-accessories-comparison-tech-insights",
+    "createdAt": 1775626384206,
+    "updatedAt": 1775626422160,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury office accessories",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-office-accessories-comparison-tech-insights/"
+  },
+  {
+    "id": "7be9bc88-d236-4247-b3bc-4859f780beb7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-getting-started-with-luxury-diamond-necklace",
+    "createdAt": 1775626236863,
+    "updatedAt": 1775626383974,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury diamond necklace",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-diamond-necklace/"
+  },
+  {
+    "id": "c928bf35-28ab-4dd4-8fdb-eae81371cfa5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-luxury-jewellery-shop-expert-recommendations",
+    "createdAt": 1775626108193,
+    "updatedAt": 1775626235711,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury jewellery shop",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-luxury-jewellery-shop-expert-recommendations/"
+  },
+  {
+    "id": "ab74ea34-1686-41da-8d03-885be8e63d40",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775625670340,
+    "updatedAt": 1775626108102,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury men's jewellery",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "bcea0031-89df-4979-a9db-cee233e8817f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-exclusive-luxury-promise-rings-for-couples-selection",
+    "createdAt": 1775625533475,
+    "updatedAt": 1775625668721,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury promise rings for couples",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-luxury-promise-rings-for-couples-selection/"
+  },
+  {
+    "id": "b6adcf03-2b06-411c-8165-405887598288",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-french-luxury-jeweler-review-top-rated-models",
+    "createdAt": 1775625301201,
+    "updatedAt": 1775625531930,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "french luxury jeweler",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/french-luxury-jeweler-review-top-rated-models/"
+  },
+  {
+    "id": "46e483b9-b562-46b7-9e14-81d4f0fb1332",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-luxury-gold-earrings",
+    "createdAt": 1775625247251,
+    "updatedAt": 1775625299813,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gold earrings",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-gold-earrings/"
+  },
+  {
+    "id": "c223a3b5-0596-4dcb-a8fa-d2c137fe2322",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-the-best-luxury-mens-cufflinks-expert-guide",
+    "createdAt": 1775625207768,
+    "updatedAt": 1775625244452,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury mens cufflinks",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-mens-cufflinks-expert-guide/"
+  },
+  {
+    "id": "9e3ef0f2-5d01-4a1d-8f04-6ae40c02c855",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-mens-bracelet-luxury-official-retailer",
+    "createdAt": 1775619177304,
+    "updatedAt": 1775619261645,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mens bracelet luxury",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-mens-bracelet-luxury-official-retailer/"
+  },
+  {
+    "id": "922280f4-dca7-4605-8a91-528ce7dd8c5f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-professional-review-of-luxury-gold-watches",
+    "createdAt": 1775540872519,
+    "updatedAt": 1775541317905,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gold watches",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-luxury-gold-watches/"
+  },
+  {
+    "id": "1d49a8af-245d-46b5-9468-214b89c315d3",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-branded-couple-watch-set-comparison-which-is-better",
+    "createdAt": 1775540809541,
+    "updatedAt": 1775540872057,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury branded couple watch set",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-branded-couple-watch-set-comparison-which-is-better/"
+  },
+  {
+    "id": "bb8b9439-79fe-466b-9112-3e6972986748",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-sport-watches-for-men-comparison-tech-insights",
+    "createdAt": 1775540728540,
+    "updatedAt": 1775540808390,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury sport watches for men",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-sport-watches-for-men-comparison-tech-insights/"
+  },
+  {
+    "id": "c86277a5-ecc7-4698-9c15-2c6bc3f92585",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-biggest-luxury-yacht-service-guide",
+    "createdAt": 1775540560579,
+    "updatedAt": 1775540725892,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "biggest luxury yacht",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/biggest-luxury-yacht-service-guide/"
+  },
+  {
+    "id": "38c06af9-e7ad-4ac4-8142-afb3c603d576",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-luxury-watch-dealers-highly-recommended",
+    "createdAt": 1775540380527,
+    "updatedAt": 1775540558556,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch dealers",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-watch-dealers-highly-recommended/"
+  },
+  {
+    "id": "67a8eea1-1d7e-4e76-8a5f-7897267c2b8d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-buy-luxury-watches-for-small-wrists-ladies",
+    "createdAt": 1775540221533,
+    "updatedAt": 1775540378480,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watches for small wrists ladies",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-watches-for-small-wrists-ladies/"
+  },
+  {
+    "id": "7ea4f7d6-06a8-4544-8a7f-36d06e134f6f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-official-ranking-luxury-watch-brands-store",
+    "createdAt": 1775540051516,
+    "updatedAt": 1775540220495,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "ranking luxury watch brands",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-ranking-luxury-watch-brands-store/"
+  },
+  {
+    "id": "6b72c898-1895-4d42-9894-5ac8f0eba980",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-mens-watch-brands-top-rated-and-reviews",
+    "createdAt": 1775539916522,
+    "updatedAt": 1775540050577,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury mens watch brands",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-mens-watch-brands-top-rated-and-reviews/"
+  },
+  {
+    "id": "8612349b-e851-4f76-a53b-e1388a0f4be6",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-all-you-need-to-know-about-high-luxury-watch-brands",
+    "createdAt": 1775539850513,
+    "updatedAt": 1775539915032,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "high luxury watch brands",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-high-luxury-watch-brands/"
+  },
+  {
+    "id": "5ae098bc-a655-4baa-bc51-71571dd3f031",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-luxury-mens-watches-brands-official-retailer",
+    "createdAt": 1775539769514,
+    "updatedAt": 1775539850455,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury mens watches brands",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-mens-watches-brands-official-retailer/"
+  },
+  {
+    "id": "e114abf4-b9ae-4421-bac9-74f9d601e695",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-swiss-luxury-watch-manufacturer",
+    "createdAt": 1775539613519,
+    "updatedAt": 1775539769147,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "swiss luxury watch manufacturer",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-swiss-luxury-watch-manufacturer/"
+  },
+  {
+    "id": "e29d4ba3-2d8a-4c8d-afd6-59050037c9d9",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-luxury-gold-mens-watches-complete-ranking-list",
+    "createdAt": 1775539412522,
+    "updatedAt": 1775539612204,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gold mens watches",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-gold-mens-watches-complete-ranking-list/"
+  },
+  {
+    "id": "e02aed2d-efbc-413d-aa53-4b005162b01d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-luxury-watch-winder-picks-premium-selection",
+    "createdAt": 1775539262617,
+    "updatedAt": 1775539411489,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch winder",
+    "titleType": "top",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-watch-winder-picks-premium-selection/"
+  },
+  {
+    "id": "5e94422b-7e66-4d64-aa2b-100d0e702c54",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-diamond-watches-for-women-quality-and-performance-guide",
+    "createdAt": 1775539127517,
+    "updatedAt": 1775539260667,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury diamond watches for women",
+    "titleType": "best",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-diamond-watches-for-women-quality-and-performance-guide/"
+  },
+  {
+    "id": "d4bdd80b-f78a-4588-9f2c-f3d8c3882454",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-swiss-luxury-watchmaker-expert-buying-guide",
+    "createdAt": 1775538975515,
+    "updatedAt": 1775539124525,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "swiss luxury watchmaker",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/swiss-luxury-watchmaker-expert-buying-guide/"
+  },
+  {
+    "id": "a4a0e7a6-7a98-4103-a50f-910266606533",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-high-end-luxury-watch-brands-comparison",
+    "createdAt": 1775538912516,
+    "updatedAt": 1775538974006,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "high end luxury watch brands",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-high-end-luxury-watch-brands-comparison/"
+  },
+  {
+    "id": "fd57ce7a-bdf2-4210-b8f0-e20dc6859abf",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-mens-luxury-watches-brands-tech-comparison",
+    "createdAt": 1775538829529,
+    "updatedAt": 1775538911839,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "men's luxury watches brands",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/mens-luxury-watches-brands-tech-comparison/"
+  },
+  {
+    "id": "8086faa8-9f1a-4363-beac-38985cf17188",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-automatic-watches-user-guide",
+    "createdAt": 1775538644515,
+    "updatedAt": 1775538827380,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury automatic watches",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-automatic-watches-user-guide/"
+  },
+  {
+    "id": "31634f9e-d775-4765-98cb-a505da3267ab",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-high-end-luxury-watch-top-picks",
+    "createdAt": 1775538509515,
+    "updatedAt": 1775538642653,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "high end luxury watch",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-high-end-luxury-watch-top-picks/"
+  },
+  {
+    "id": "2f390c5f-b7a6-4ea3-b9e5-67bb4108f6b5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-choose-the-best-luxury-pocket-watches",
+    "createdAt": 1775538347525,
+    "updatedAt": 1775538507507,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury pocket watches",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-pocket-watches/"
+  },
+  {
+    "id": "d92bdec5-7f5f-4b07-b5b7-53e740cf3c9d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-official-luxury-wall-clock-store",
+    "createdAt": 1775538188555,
+    "updatedAt": 1775538344899,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury wall clock",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-wall-clock-store/"
+  },
+  {
+    "id": "a273e227-3d20-444a-9bca-94f636d5f007",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-watch-boxes-review-top-rated-models",
+    "createdAt": 1775538047530,
+    "updatedAt": 1775538187342,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch boxes",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watch-boxes-review-top-rated-models/"
+  },
+  {
+    "id": "c97f9133-641d-4b45-a0ad-94b3698eb742",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-united-luxury-watches-reviews",
+    "createdAt": 1775537984534,
+    "updatedAt": 1775538045857,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "united luxury watches reviews",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-united-luxury-watches-reviews/"
+  },
+  {
+    "id": "7db6ebc5-9ddd-4225-a983-ff2b16419c6f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-luxury-watches-replica-official-retailer",
+    "createdAt": 1775537903518,
+    "updatedAt": 1775537983977,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watches replica",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-watches-replica-official-retailer/"
+  },
+  {
+    "id": "d571a454-a932-4ba5-9184-f4a719a75e83",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-luxury-watch-retailers",
+    "createdAt": 1775537711526,
+    "updatedAt": 1775537902886,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch retailers",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-luxury-watch-retailers/"
+  },
+  {
+    "id": "d5fba2e7-8781-49f6-9267-3ac2bf5ccde8",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-luxury-engagement-gifts-complete-ranking-list",
+    "createdAt": 1775537546519,
+    "updatedAt": 1775537710095,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury engagement gifts",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-engagement-gifts-complete-ranking-list/"
+  },
+  {
+    "id": "bb646660-99a5-4920-8e7a-23a6903e25a1",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-luxury-gift-for-women-premium-choices-reviewed",
+    "createdAt": 1775537388515,
+    "updatedAt": 1775537544586,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gift for women",
+    "titleType": "top",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-gift-for-women-premium-choices-reviewed/"
+  },
+  {
+    "id": "1a28516d-7934-4886-89c3-f74cc35dae5b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-designer-phone-cases-quality-and-performance-guide",
+    "createdAt": 1775537248509,
+    "updatedAt": 1775537386657,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury designer phone cases",
+    "titleType": "best",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-designer-phone-cases-quality-and-performance-guide/"
+  },
+  {
+    "id": "8dcc308e-e0e6-4691-8d15-6aa8c75f6772",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-in-depth-analysis-of-mens-luxury-slides",
+    "createdAt": 1775537074509,
+    "updatedAt": 1775537247095,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "mens luxury slides",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/in-depth-analysis-of-mens-luxury-slides/"
+  },
+  {
+    "id": "0ad4e5e2-5ffc-4714-9da0-e9afc1532856",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-spectacle-frames-comparison-which-is-better",
+    "createdAt": 1775537014536,
+    "updatedAt": 1775537073164,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury spectacle frames",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-spectacle-frames-comparison-which-is-better/"
+  },
+  {
+    "id": "ae531a00-7cd0-4d23-9910-b0f9143cc6f7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-mothers-day-presents-feature-comparison",
+    "createdAt": 1775536930526,
+    "updatedAt": 1775537013138,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury mothers day presents",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-mothers-day-presents-feature-comparison/"
+  },
+  {
+    "id": "263ca165-9efd-45b8-a8c4-366ae928c6c6",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-small-luxury-gifts-user-guide",
+    "createdAt": 1775536765510,
+    "updatedAt": 1775536930252,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "small luxury gifts",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/small-luxury-gifts-user-guide/"
+  },
+  {
+    "id": "1fddc2f5-67e7-4e73-81f8-33e104a362d2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-gifts-for-men-luxury-top-picks",
+    "createdAt": 1775536609518,
+    "updatedAt": 1775536764431,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "gifts for men luxury",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-gifts-for-men-luxury-top-picks/"
+  },
+  {
+    "id": "0f89f549-075e-4eb7-9b6f-a88e6f89272a",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-buy-luxury-sports-watches",
+    "createdAt": 1775536465515,
+    "updatedAt": 1775536609335,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury sports watches",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-sports-watches/"
+  },
+  {
+    "id": "2518734d-f647-4703-83ac-b44a91c88c7b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-official-luxury-gifts-for-dad-store",
+    "createdAt": 1775536318513,
+    "updatedAt": 1775536463262,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gifts for dad",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-gifts-for-dad-store/"
+  },
+  {
+    "id": "39c68b9d-ecfe-4c42-b9a1-c76b7a87ceca",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-wedding-bands-top-rated-and-reviews",
+    "createdAt": 1775536105513,
+    "updatedAt": 1775536318141,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury wedding bands",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-wedding-bands-top-rated-and-reviews/"
+  },
+  {
+    "id": "6eccf8d0-5592-4dc6-904f-f88363d9a38d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-card-holder-luxury",
+    "createdAt": 1775536042589,
+    "updatedAt": 1775536103943,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "card holder luxury",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-card-holder-luxury/"
+  },
+  {
+    "id": "92e701a0-c914-4f1a-b8c3-aae7d2f54c44",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-luxury-shades-for-men-premium-selection",
+    "createdAt": 1775535961536,
+    "updatedAt": 1775536042029,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury shades for men",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-shades-for-men-premium-selection/"
+  },
+  {
+    "id": "38a31afe-2d75-418b-ae29-fdd81de33b8c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-luxury-bracelets-for-men",
+    "createdAt": 1775535739530,
+    "updatedAt": 1775535960008,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury bracelets for men",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-luxury-bracelets-for-men/"
+  },
+  {
+    "id": "b43081e6-8a3c-4ceb-937e-4c7b686f3cbb",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-luxury-fine-jewelry-brands-complete-ranking-list",
+    "createdAt": 1775535595512,
+    "updatedAt": 1775535737343,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury fine jewelry brands",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-fine-jewelry-brands-complete-ranking-list/"
+  },
+  {
+    "id": "5b5f9a6e-bc23-4363-a95b-b82fc130aeb6",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-italian-luxury-jewelry",
+    "createdAt": 1775535466510,
+    "updatedAt": 1775535594691,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "italian luxury jewelry",
+    "titleType": "top",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-italian-luxury-jewelry/"
+  },
+  {
+    "id": "732739ee-0b2b-4980-9ffc-bc807780e5da",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-top-luxury-watch-shops-pittsburgh-quality-and-performance-guide",
+    "createdAt": 1775535251605,
+    "updatedAt": 1775535463784,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "top luxury watch shops pittsburgh",
+    "titleType": "best",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-top-luxury-watch-shops-pittsburgh-quality-and-performance-guide/"
+  },
+  {
+    "id": "f0fd6d01-9b93-4ca3-affc-cebf78b0075e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-professional-review-of-imitation-luxury-watches",
+    "createdAt": 1775535087507,
+    "updatedAt": 1775535250280,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "imitation luxury watches",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-imitation-luxury-watches/"
+  },
+  {
+    "id": "8211cf54-acf3-4150-a400-f14a5b3c135d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-comparing-womens-luxury-watch-brands-options",
+    "createdAt": 1775535027526,
+    "updatedAt": 1775535086383,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "women's luxury watch brands",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-womens-luxury-watch-brands-options/"
+  },
+  {
+    "id": "7562533e-1b27-4e1a-bd9d-838011f872d5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-which-luxury-designer-watches-is-better",
+    "createdAt": 1775534943508,
+    "updatedAt": 1775535025251,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury designer watches",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/which-luxury-designer-watches-is-better/"
+  },
+  {
+    "id": "8942fb01-299b-436e-bcb5-649694784e1d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-getting-started-with-aucoin-hart-jewelers-luxury-watches",
+    "createdAt": 1775534745525,
+    "updatedAt": 1775534940852,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "aucoin-hart jewelers luxury watches",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-aucoin-hart-jewelers-luxury-watches/"
+  },
+  {
+    "id": "29ecce8f-4f34-464c-afdc-6b7cc19e15a7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-swiss-watchmaker-luxury-top-picks",
+    "createdAt": 1775534586506,
+    "updatedAt": 1775534745099,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "swiss watchmaker luxury",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-swiss-watchmaker-luxury-top-picks/"
+  },
+  {
+    "id": "ece3f518-c1fb-49de-9482-c923240e0658",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-buy-female-watches-luxury",
+    "createdAt": 1775534397525,
+    "updatedAt": 1775534584770,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "female watches luxury",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-female-watches-luxury/"
+  },
+  {
+    "id": "be4f341d-1cb1-4996-9203-2d74544aa45e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-luxury-swiss-made-watches-collection",
+    "createdAt": 1775534211510,
+    "updatedAt": 1775534394953,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury swiss made watches",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-swiss-made-watches-collection/"
+  },
+  {
+    "id": "55c3a01c-ace0-4f82-8f9d-54a7f3583ec8",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-luxury-swiss-watchmaker-best-rated",
+    "createdAt": 1775534022506,
+    "updatedAt": 1775534209281,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury swiss watchmaker",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-swiss-watchmaker-best-rated/"
+  },
+  {
+    "id": "65226612-fe15-402d-975f-beeebab59109",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-ladies-watches-luxury",
+    "createdAt": 1775533959511,
+    "updatedAt": 1775534021679,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "ladies watches luxury",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-ladies-watches-luxury/"
+  },
+  {
+    "id": "e740cdbe-4d6d-4eaa-aceb-60207e298825",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-luxury-watches-company-premium-selection",
+    "createdAt": 1775533878506,
+    "updatedAt": 1775533958120,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watches company",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-watches-company-premium-selection/"
+  },
+  {
+    "id": "4cb04f0d-5f8b-448e-9b09-a517b0d972f0",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-luxury-watch-cases",
+    "createdAt": 1775533719505,
+    "updatedAt": 1775533876004,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch cases",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-luxury-watch-cases/"
+  },
+  {
+    "id": "03050bf1-37ec-41e5-ab28-e9f3e6748744",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-watch-stores-pennsylvania-rankings-comprehensive-list",
+    "createdAt": 1775533530509,
+    "updatedAt": 1775533718560,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch stores pennsylvania",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watch-stores-pennsylvania-rankings-comprehensive-list/"
+  },
+  {
+    "id": "59175764-27d3-44c4-a84c-5f4b2f9660b7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-luxury-digital-watch",
+    "createdAt": 1775533335512,
+    "updatedAt": 1775533528484,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury digital watch",
+    "titleType": "top",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-luxury-digital-watch/"
+  },
+  {
+    "id": "38f15857-5bd1-407e-8827-fedb4dd426ad",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-swiss-watch-quality-and-performance-guide",
+    "createdAt": 1775533191536,
+    "updatedAt": 1775533334427,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury swiss watch",
+    "titleType": "best",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-swiss-watch-quality-and-performance-guide/"
+  },
+  {
+    "id": "8b292092-14b4-41a4-a328-5dd65383f522",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-professional-review-of-luxury-quartz-watch",
+    "createdAt": 1775533056530,
+    "updatedAt": 1775533188998,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury quartz watch",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-luxury-quartz-watch/"
+  },
+  {
+    "id": "ac7c6680-2107-460f-8a97-e2d3c446598c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-watch-case-vs-alternatives",
+    "createdAt": 1775532951512,
+    "updatedAt": 1775533056254,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury watch case",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watch-case-vs-alternatives/"
+  },
+  {
+    "id": "8d7835b5-199f-435b-bc55-69e028e9ecf2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-men-gifts-comparison-tech-insights",
+    "createdAt": 1775532912506,
+    "updatedAt": 1775532950776,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury men gifts",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-men-gifts-comparison-tech-insights/"
+  },
+  {
+    "id": "676ba828-f501-4f83-89d9-32189f6a61d7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-writing-instruments-service-guide",
+    "createdAt": 1775532702521,
+    "updatedAt": 1775532910954,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury writing instruments",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-writing-instruments-service-guide/"
+  },
+  {
+    "id": "abe676e3-df53-46c3-8a8d-a897ba0a7549",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mens-luxury-shades-highly-recommended",
+    "createdAt": 1775532525505,
+    "updatedAt": 1775532702298,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "men's luxury shades",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-mens-luxury-shades-highly-recommended/"
+  },
+  {
+    "id": "1c2d685f-0666-4bcc-b36a-bfb5a1c23343",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-luxury-push-present-ideas",
+    "createdAt": 1775532330538,
+    "updatedAt": 1775532523824,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury push present ideas",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-push-present-ideas/"
+  },
+  {
+    "id": "baee82a7-27cc-4037-914e-d5eab31481e3",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-exclusive-luxury-business-card-holder-selection",
+    "createdAt": 1775532130523,
+    "updatedAt": 1775532327608,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury business card holder",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-luxury-business-card-holder-selection/"
+  },
+  {
+    "id": "dfafdd34-8059-44a2-b020-522f718ed8ae",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-leather-strap-watches-review-top-rated-models",
+    "createdAt": 1775531954517,
+    "updatedAt": 1775532127585,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury leather strap watches",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-leather-strap-watches-review-top-rated-models/"
+  },
+  {
+    "id": "a0ec60d4-7e2c-4172-a409-c4c7cd6ba860",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-all-you-need-to-know-about-luxury-piercing-jewelry",
+    "createdAt": 1775531844523,
+    "updatedAt": 1775531952520,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury piercing jewelry",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-luxury-piercing-jewelry/"
+  },
+  {
+    "id": "6603a062-e846-4c2f-93c6-f6befa9a6221",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-the-best-popular-luxury-brands-expert-guide",
+    "createdAt": 1775531810447,
+    "updatedAt": 1775531843728,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "popular luxury brands",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-popular-luxury-brands-expert-guide/"
+  },
+  {
     "id": "1b0f636f-d987-4158-bede-20958b1198d5",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-luxury-watch-brands-list",
@@ -12822,1181 +13998,5 @@
     "titleType": "informational",
     "templateType": "template-2",
     "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-executive-gifts/"
-  },
-  {
-    "id": "9a14787e-5484-49ed-89db-693a5805173c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138690",
-    "createdAt": 1771912924506,
-    "updatedAt": 1771913012160,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury corporate gifts australia",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-corporate-gifts-australia-official-retailer/"
-  },
-  {
-    "id": "719e7daa-6969-481b-84e5-b76d15fa23e6",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138682",
-    "createdAt": 1771912189799,
-    "updatedAt": 1771912382922,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for bride",
-    "titleType": "review",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-gifts-for-bride-top-rated-and-reviews/"
-  },
-  {
-    "id": "d4b629e1-49b1-4a20-94e8-24caf6d83cbb",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904909186,
-    "updatedAt": 1771904994110,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "top luxury gifts for women",
-    "titleType": "top",
-    "templateType": "template-5",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "d6a3193c-5e73-4de7-9649-cda871c2888f",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904791770,
-    "updatedAt": 1771904907139,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury fine rings for women",
-    "titleType": "best",
-    "templateType": "template-4",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "cbc039c3-de3d-48d3-afb0-c57648b097db",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904728769,
-    "updatedAt": 1771904791457,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury gold cufflinks",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "6d9b88a2-4900-4e16-ad9d-4a78ddc7644f",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904668770,
-    "updatedAt": 1771904728442,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury plastic glasses",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "ae68c89a-107d-432a-ae79-d704fcd56944",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904611772,
-    "updatedAt": 1771904668441,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury brand with cross",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "50678767-84da-4f69-9aa1-8fd85cd1c0c2",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904506769,
-    "updatedAt": 1771904611440,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury men's jewelry brands",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "dda9a713-7aa9-4fb1-8e0c-84a43cb372f7",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904440787,
-    "updatedAt": 1771904503884,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "cat eye designer luxury",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "4ed6430f-1635-4ec0-a2ae-548ed5390dcc",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904371770,
-    "updatedAt": 1771904439511,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury men's accessories gift ideas",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "89418792-3567-450b-8113-975dbf1b7736",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904261769,
-    "updatedAt": 1771904371307,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury engagement ring brands",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "493441cf-579b-44d2-a66e-2f2db920c49e",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904198772,
-    "updatedAt": 1771904259789,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury bow tie collection",
-    "titleType": "review",
-    "templateType": "template-3",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "066ab2b0-5246-474e-8e26-0cc57b612b05",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904091772,
-    "updatedAt": 1771904196777,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury wooden watches for men",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "6cd00afd-b085-4cde-9ee9-fdcd02fdd008",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771904028771,
-    "updatedAt": 1771904090415,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury round sunglasses",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "bcdf5000-2a13-40b1-b668-df84657cc3ad",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903965782,
-    "updatedAt": 1771904025992,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury flower bracelet",
-    "titleType": "most",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "c8cc1142-d9be-44aa-b31b-071104ca8842",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903887793,
-    "updatedAt": 1771903962935,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "mens luxury leather bracelets",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "93e13f14-20d2-485c-a4c0-3101cfe0a162",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903782770,
-    "updatedAt": 1771903887401,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury indian jewelry",
-    "titleType": "top",
-    "templateType": "template-5",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "6eee2abc-00a6-4057-ae40-b896bfa8c516",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903713771,
-    "updatedAt": 1771903781143,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury house gifts",
-    "titleType": "best",
-    "templateType": "template-4",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "38a43379-d0f8-456e-b825-c68d10ff6c61",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903654099,
-    "updatedAt": 1771903712650,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "men's luxury necklaces",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "26adccb4-65d8-47c0-9246-177c269579e8",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903596786,
-    "updatedAt": 1771903651379,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "black bag luxury",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "a03730b5-80ca-4ce3-a34c-a5eb5edce088",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903539774,
-    "updatedAt": 1771903596650,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury black leather",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "1f2641b3-056c-4f55-9b8e-4c0dfc1013d4",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903476768,
-    "updatedAt": 1771903538594,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury gift sets for men",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "7bb75aee-22fe-4d6f-8814-18322fd326b6",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771903413779,
-    "updatedAt": 1771903476194,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "money clip luxury",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "9b2bb20e-8373-44f9-9428-35f1c230890f",
-    "status": "failed",
-    "message": "WordPress API 返回了 HTML 页面而不是 JSON 数据。可能的原因：\n1. WordPress REST API 未启用\n2. 认证失败，返回了登录页面\n3. 权限不足\n\n请检查：\n- WordPress URL 是否正确: https://vertu.com/\n- 用户名和应用密码是否正确\n- 用户是否有发布页面的权限",
-    "createdAt": 1771903251770,
-    "updatedAt": 1771903412666,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury women necklace",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "error": "WordPress API 返回了 HTML 页面而不是 JSON 数据。可能的原因：\n1. WordPress REST API 未启用\n2. 认证失败，返回了登录页面\n3. 权限不足\n\n请检查：\n- WordPress URL 是否正确: https://vertu.com/\n- 用户名和应用密码是否正确\n- 用户是否有发布页面的权限"
-  },
-  {
-    "id": "4d0929cf-f25a-4349-983e-233a2b06ec3a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138652",
-    "createdAt": 1771903066780,
-    "updatedAt": 1771903249719,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts from paris",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-gifts-from-paris-store/"
-  },
-  {
-    "id": "b19a0b4c-9f3d-48de-90c3-1e9f3a53079c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138650",
-    "createdAt": 1771902862778,
-    "updatedAt": 1771903063980,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury frames glasses",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-frames-glasses-best-rated/"
-  },
-  {
-    "id": "74ab65aa-a1f8-4ddc-b320-c3b13f642943",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138648",
-    "createdAt": 1771902778770,
-    "updatedAt": 1771902861999,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold perfume",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-gold-perfume/"
-  },
-  {
-    "id": "5f08bedb-4806-4654-b324-082ffd6939cd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138646",
-    "createdAt": 1771902709770,
-    "updatedAt": 1771902776901,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond bracelet",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-diamond-bracelet-premium-selection/"
-  },
-  {
-    "id": "2df9a7f4-60b8-489b-8f30-41034ae4327b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138644",
-    "createdAt": 1771902560775,
-    "updatedAt": 1771902707460,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "semi luxury jewelry steel",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-semi-luxury-jewelry-steel-best-selling-models/"
-  },
-  {
-    "id": "e37037c6-ee4d-41a7-9555-e63d20c9e605",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138642",
-    "createdAt": 1771902398781,
-    "updatedAt": 1771902560444,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond stud earrings",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-diamond-stud-earrings-list-comprehensive-rankings/"
-  },
-  {
-    "id": "aecf9a93-9898-4991-a7ab-c7029424866a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138638",
-    "createdAt": 1771902211776,
-    "updatedAt": 1771902395790,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men necklace",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-men-necklace-premium-choices-reviewed/"
-  },
-  {
-    "id": "ea7c2243-c194-4cb8-bae3-82dfbfcadf79",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138632",
-    "createdAt": 1771902043222,
-    "updatedAt": 1771902211001,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "most popular men's watches luxury",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-most-popular-mens-watches-luxury-top-rated-and-reviews/"
-  },
-  {
-    "id": "192da4b3-6cea-4ff8-b1bf-dab5e0c29aff",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771901964954,
-    "updatedAt": 1771902041588,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury fine bracelets for women",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "d63ab5df-bbda-4a61-9690-654ba59b8e42",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138630",
-    "createdAt": 1771901878770,
-    "updatedAt": 1771901964010,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury pens engraved",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-pens-engraved-comparison-which-is-better/"
-  },
-  {
-    "id": "55cdb1a5-634b-4386-9a83-e29ad1dc6e3e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138625",
-    "createdAt": 1771901785768,
-    "updatedAt": 1771901878727,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for groom",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-gifts-for-groom-tech-comparison/"
-  },
-  {
-    "id": "5c9429e0-5376-4fcd-be09-c685d4899f70",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771901746765,
-    "updatedAt": 1771901784642,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "black earrings luxury",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "9c8470a2-b8ea-42f3-94ad-c148995471d1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138623",
-    "createdAt": 1771901606768,
-    "updatedAt": 1771901745840,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury mini gifts",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-mini-gifts-highly-recommended/"
-  },
-  {
-    "id": "5af31a81-cceb-4a1a-ba8a-ceef5e6380bd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138621",
-    "createdAt": 1771901417779,
-    "updatedAt": 1771901606638,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "pearl necklace luxury",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-pearl-necklace-luxury/"
-  },
-  {
-    "id": "1943cd61-59b7-44ba-8f48-5c3cf2fe841e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138619",
-    "createdAt": 1771901224769,
-    "updatedAt": 1771901415884,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury reading glasses for men",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-reading-glasses-for-men-store/"
-  },
-  {
-    "id": "3d61486e-ee5d-4393-8a8b-82523203708e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138617",
-    "createdAt": 1771901032767,
-    "updatedAt": 1771901224586,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury names for girl",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-names-for-girl-review-top-rated-models/"
-  },
-  {
-    "id": "a7d98008-1480-4956-b25c-cd690965e8e2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138615",
-    "createdAt": 1771900943520,
-    "updatedAt": 1771901031527,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury mens christmas gifts",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-mens-christmas-gifts/"
-  },
-  {
-    "id": "7102e87c-1ae5-4d96-857d-033be1fe0389",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138613",
-    "createdAt": 1771900880785,
-    "updatedAt": 1771900942941,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond rings for women",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/buy-luxury-diamond-rings-for-women-official-store/"
-  },
-  {
-    "id": "4e9e5a35-2a28-4f86-87d6-fd925f062665",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138611",
-    "createdAt": 1771900708552,
-    "updatedAt": 1771900879953,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch men automatic tourbillon",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-luxury-watch-men-automatic-tourbillon-popular-choices/"
-  },
-  {
-    "id": "03dde53e-a060-4672-89be-4f8756a6b4be",
-    "status": "failed",
-    "message": "Client network socket disconnected before secure TLS connection was established",
-    "createdAt": 1771900521856,
-    "updatedAt": 1771900708374,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury computer bags",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "error": "Client network socket disconnected before secure TLS connection was established"
-  },
-  {
-    "id": "d246e25d-715c-41dc-88ec-b980fad827fe",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138609",
-    "createdAt": 1771900309068,
-    "updatedAt": 1771900520550,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury bronze gifts for him",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-luxury-bronze-gifts-for-him/"
-  },
-  {
-    "id": "4a2552fc-0734-4c40-ba2b-f6bae3e96463",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138607",
-    "createdAt": 1771900144397,
-    "updatedAt": 1771900307529,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury french watch brands",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-french-watch-brands-top-rated-and-reviews/"
-  },
-  {
-    "id": "ea1f7be5-18c7-4b1d-bf24-2e9e3efbf874",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138605",
-    "createdAt": 1771899965602,
-    "updatedAt": 1771900143417,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury engagement ring designers",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/in-depth-analysis-of-luxury-engagement-ring-designers/"
-  },
-  {
-    "id": "86ab2704-a9bc-48a2-ab0e-0e579ef4decb",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138603",
-    "createdAt": 1771899897333,
-    "updatedAt": 1771899964382,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond choker",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-diamond-choker-comparison/"
-  },
-  {
-    "id": "64d3e514-f15b-48c0-8f69-6c5825b2442e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138601",
-    "createdAt": 1771899814993,
-    "updatedAt": 1771899896266,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury baby gift sets",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-baby-gift-sets-tech-comparison/"
-  },
-  {
-    "id": "e651a073-c863-4c54-a325-f1b1443e19bc",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138599",
-    "createdAt": 1771899610293,
-    "updatedAt": 1771899813894,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury planner cover",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-planner-cover/"
-  },
-  {
-    "id": "adc1760d-5ca4-4c7e-8aee-65d03568b51a",
-    "status": "failed",
-    "message": "Client network socket disconnected before secure TLS connection was established",
-    "createdAt": 1771899459796,
-    "updatedAt": 1771899609167,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "entry level luxury watches brands",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "error": "Client network socket disconnected before secure TLS connection was established"
-  },
-  {
-    "id": "5687cab7-af03-467a-b146-ef9048e9d80c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138597",
-    "createdAt": 1771899281767,
-    "updatedAt": 1771899457988,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "liberty luxury perfume",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-liberty-luxury-perfume/"
-  },
-  {
-    "id": "65e21b19-e684-4f8f-a58f-f0421daed697",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138593",
-    "createdAt": 1771899131768,
-    "updatedAt": 1771899281469,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury home accesories",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-home-accesories-store/"
-  },
-  {
-    "id": "34fe7980-6007-4171-b8e2-cd8f9fe85000",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138588",
-    "createdAt": 1771898926771,
-    "updatedAt": 1771899129675,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "rollerball luxury pens",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rollerball-luxury-pens-top-rated-and-reviews/"
-  },
-  {
-    "id": "abba7c5e-f4f3-4178-b435-67f89d72857d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138585",
-    "createdAt": 1771898842486,
-    "updatedAt": 1771898926525,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury card holder keychain",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-card-holder-keychain/"
-  },
-  {
-    "id": "fcfe096b-336e-461e-ad9a-6fa8752a97fe",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138583",
-    "createdAt": 1771898774229,
-    "updatedAt": 1771898841687,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury chain watches for men",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-chain-watches-for-men-premium-selection/"
-  },
-  {
-    "id": "4c065f88-3ec3-4bad-ba40-2a1db882d78c",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898572780,
-    "updatedAt": 1771898654166,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury planner cover",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "2ec8a35a-02ed-4f28-a61a-32100b182dd9",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898470772,
-    "updatedAt": 1771898571759,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "entry level luxury watches brands",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "b823702b-e15e-4477-a068-ac1fbefff21b",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898404799,
-    "updatedAt": 1771898468700,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "liberty luxury perfume",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "d3912fda-4ab0-457f-bdcf-4eae9efee4e4",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898335773,
-    "updatedAt": 1771898402282,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury home accesories",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "7f91e601-18f6-4ffe-aa83-16570010999f",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898269781,
-    "updatedAt": 1771898334180,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "rollerball luxury pens",
-    "titleType": "review",
-    "templateType": "template-3",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "59437985-c4e9-4a70-a774-bca34c4969b3",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898203804,
-    "updatedAt": 1771898269102,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury card holder keychain",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "b73b2cb8-ddbf-42e4-98a6-6c003f087f28",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771898101718,
-    "updatedAt": 1771898203610,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury chain watches for men",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "91b51fb9-c118-4f77-9257-3d54d99ae256",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138373",
-    "createdAt": 1771040677469,
-    "updatedAt": 1771040873330,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury accessory brands",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-luxury-accessory-brands-best-selling-models/"
-  },
-  {
-    "id": "5eb17d58-badc-4ee9-9b7b-5fb1e1f4091f",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138371",
-    "createdAt": 1771040471469,
-    "updatedAt": 1771040676592,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury leather desk sets",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-leather-desk-sets-list-comprehensive-rankings/"
-  },
-  {
-    "id": "802fd88a-e7e9-4022-9856-8d45405eb3a6",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138369",
-    "createdAt": 1771040282475,
-    "updatedAt": 1771040469994,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury necklace for men",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-necklace-for-men-picks-premium-selection/"
-  },
-  {
-    "id": "92fa10af-c9f4-417c-a9f2-377de26209a7",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138367",
-    "createdAt": 1771040108476,
-    "updatedAt": 1771040280122,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "buy luxury jewelry online",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-buy-luxury-jewelry-online-quality-guide/"
-  },
-  {
-    "id": "1109a8c0-0b4a-456e-b286-69c739561203",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138365",
-    "createdAt": 1771039946475,
-    "updatedAt": 1771040108358,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "engagement rings luxury brands",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-engagement-rings-luxury-brands/"
-  },
-  {
-    "id": "83bd4870-17ae-4534-a1a2-11694d351ef5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138363",
-    "createdAt": 1771039856470,
-    "updatedAt": 1771039945055,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer notebook",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-luxury-designer-notebook-options/"
-  },
-  {
-    "id": "73a5c7f3-3ed4-4757-a882-c56242a57129",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138361",
-    "createdAt": 1771039766469,
-    "updatedAt": 1771039854786,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold bangles",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-gold-bangles-comparison-tech-insights/"
-  },
-  {
-    "id": "fb5fb783-ee8d-4b65-b6fb-fa28af087eb4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138359",
-    "createdAt": 1771039577482,
-    "updatedAt": 1771039764004,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury ring simple",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-ring-simple-usage-guide-complete-manual/"
-  },
-  {
-    "id": "88521563-336d-4a72-9dab-b50de30f13c5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138357",
-    "createdAt": 1771039379468,
-    "updatedAt": 1771039575038,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mens card holder luxury",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-mens-card-holder-luxury-top-picks/"
-  },
-  {
-    "id": "c3428283-7f5d-400f-9269-6916c283d5ef",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138355",
-    "createdAt": 1771039197475,
-    "updatedAt": 1771039377777,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury charm bracelets",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-charm-bracelets/"
-  },
-  {
-    "id": "fa32a4e6-3253-4596-81ff-0717ef82c35e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138353",
-    "createdAt": 1771039044477,
-    "updatedAt": 1771039195165,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "bangle design luxury",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-bangle-design-luxury-collection/"
-  },
-  {
-    "id": "f3d343b3-ed62-4927-9042-c6fabddd7af0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138351",
-    "createdAt": 1771038812466,
-    "updatedAt": 1771039042245,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mens luxury pendants",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-mens-luxury-pendants-best-rated/"
-  },
-  {
-    "id": "8031bbf3-42c9-4faa-b0be-702a0d6132ca",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138349",
-    "createdAt": 1771038728475,
-    "updatedAt": 1771038810003,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold neckalces",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-gold-neckalces/"
-  },
-  {
-    "id": "dd7ed5b3-8f19-4336-91bd-cf26af0fd6ec",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138347",
-    "createdAt": 1771038632470,
-    "updatedAt": 1771038726770,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "popular luxury bracelets",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-popular-luxury-bracelets-premium-selection/"
-  },
-  {
-    "id": "7bd0b9c1-64f5-4923-9b86-c48c0976ab0c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138345",
-    "createdAt": 1771038437471,
-    "updatedAt": 1771038631376,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury bracelets women",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-luxury-bracelets-women/"
-  },
-  {
-    "id": "7db91501-5dbc-4ae3-993a-d3cd1f2f2451",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138343",
-    "createdAt": 1771038245474,
-    "updatedAt": 1771038436799,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury women bracelet",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-women-bracelet-list-comprehensive-rankings/"
-  },
-  {
-    "id": "a9e48034-ca9e-49ce-bf20-96e118369ffe",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138341",
-    "createdAt": 1771038041466,
-    "updatedAt": 1771038242797,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "key chain luxury",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-key-chain-luxury-premium-choices-reviewed/"
-  },
-  {
-    "id": "62aaf125-1a3f-4930-8b5c-fe01658d092a",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1771037927490,
-    "updatedAt": 1771038040668,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury gold bracelets for women",
-    "titleType": "best",
-    "templateType": "template-4",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "84290ed2-80e9-45a9-9e1e-507680e092df",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138339",
-    "createdAt": 1771037757479,
-    "updatedAt": 1771037925114,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "gold luxury earrings",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/in-depth-analysis-of-gold-luxury-earrings/"
-  },
-  {
-    "id": "0a1464a7-b461-4abb-9f5b-08ea28896bcf",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138337",
-    "createdAt": 1771037686483,
-    "updatedAt": 1771037756627,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "classic luxury jewelry",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-classic-luxury-jewelry-comparison/"
-  },
-  {
-    "id": "7a19b7c6-6fe2-4535-a04d-5cc9379f86a6",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138335",
-    "createdAt": 1771037620468,
-    "updatedAt": 1771037683586,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury earrings store",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-earrings-store-tech-comparison/"
   }
 ]

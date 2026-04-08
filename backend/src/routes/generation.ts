@@ -2463,7 +2463,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`  - Meta 描述长度: ${(generatedContent.metaDescription || "").length}`);
 
     // 模板7：产品区展示前10个，且优先展示知识库/排名对应产品（Top Picks 优先，再补足其他相关产品）
-    const productsForRender = isTemplate7
+    let productsForRender: ProductSummary[] = isTemplate7
       ? (() => {
           const combined = [...(topProducts || []), ...productsRow1, ...(productsRow2 || []), ...(productsRow3 || [])];
           const byId = new Map(combined.map((p: ProductSummary) => [p.id, p]));
@@ -2472,6 +2472,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           return list;
         })()
       : productsRow1;
+
+    // 模板7：合并列表为空但店铺仍有商品时，用全量去重列表兜底（避免服务类关键词下 Top Picks 去重后整页无商品区）
+    if (isTemplate7 && productsForRender.length === 0 && allProducts.length > 0) {
+      const byId = new Map(allProducts.map((p: ProductSummary) => [p.id, p]));
+      productsForRender = Array.from(byId.values()).slice(0, 10);
+      console.log(
+        `[task ${taskId}] 模板7 产品兜底（全量前10）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
+      );
+    }
 
     const productSectionIntro = buildProductSectionIntro(payload.keyword);
     const showTrustStripFinal =
@@ -2509,6 +2518,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       productSectionIntro,
       showTrustStrip: showTrustStripFinal,
       comparisonClosing: isTemplate4 || isTemplate5 || isTemplate6 ? DEFAULT_COMPARISON_CLOSING : "",
+      normalizeBlogTables: true,
     });
 
     // 调试：检查渲染后的 HTML 内容
