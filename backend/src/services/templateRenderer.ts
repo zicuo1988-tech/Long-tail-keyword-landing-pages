@@ -1,6 +1,7 @@
 import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
 import { rewriteVertuOssContentToShopifyCdn } from "../config/shopifyCdn.js";
+import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 
 /** 商品区上方信任条（与 template-5 Quick Stats 互补，用于未含统计条的模板） */
 export const DEFAULT_TRUST_STRIP_HTML =
@@ -217,12 +218,16 @@ export function renderTemplate({
   const template = Handlebars.compile(templateContent);
 
   let aiContentResolved = rewriteVertuOssContentToShopifyCdn(aiContent);
+  aiContentResolved = markdownToHtmlIfNeeded(aiContentResolved);
   if (normalizeBlogTables) {
     aiContentResolved = wrapArticleTablesInScroll(aiContentResolved);
   }
   let extendedContentResolved = extendedContent
     ? rewriteVertuOssContentToShopifyCdn(extendedContent)
     : extendedContent;
+  if (extendedContentResolved) {
+    extendedContentResolved = markdownToHtmlIfNeeded(extendedContentResolved);
+  }
   if (normalizeBlogTables && extendedContentResolved) {
     extendedContentResolved = wrapArticleTablesInScroll(extendedContentResolved);
   }

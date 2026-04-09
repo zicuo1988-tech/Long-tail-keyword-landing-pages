@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 import { getArticleImageUrlsFromEnv } from "../config/shopifyCdn.js";
+import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 
 // 多模型配置：支持多个模型轮换，降低限流风险
 // 注意：只包含当前API版本确实可用的模型
@@ -420,6 +421,8 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 - RANKING / TOP-LIST PAGES (when the title or keyword is about rankings, e.g. "Top 10", "Top 5", "ranking", "best list"): (1) You MUST include a clearly numbered ranked list (e.g. "Top 10 …" or "Top 5 …") in the article. (2) The list MUST COMBINE two types of products: (a) Our products from the "RELEVANT PRODUCTS" list below—include them where they fit the topic and rank; describe them using ONLY the knowledge base (no invented specs or prices). (b) Other corresponding products: well-known, real products in the same category (e.g. competitor brands, other luxury phones/watches/rings/earbuds) so the ranking reads as a genuine, comprehensive roundup—not only our brand. (3) List up to 10 items when the theme is "top 10", or up to 5 when "top 5"; mix our products with other relevant options to fill the list. (4) Protect knowledge-base: for any VERTU/our product in the list, use ONLY facts from the knowledge base; for other brands you may use accurate, general market knowledge. Ensure our products appear in the ranking where they are a natural fit and are described accurately.
 
 - CONTENT SECTIONS (Template 7 – mandatory variety): The article MUST include BOTH (a) knowledge-base–based content (product details, specs, features, our offerings) AND (b) other editorial sections such as: industry or category context, why the topic matters, how to choose, what to look for, expert tips, or brief comparisons. Do not write only knowledge-base snippets; include at least 2–3 distinct H2 sections that are not purely product listings (e.g. "Why [topic] matters", "How to choose", "What to look for") so the page has multiple content blocks and feels like a complete guide, not only a product list.
+
+- PRODUCT FIGURES (Template 7 – aligns with luxury life guides): The "RICH CONTENT REQUIREMENTS" section below lists verified product image URLs. When you discuss specific models from the "RELEVANT PRODUCTS" list in depth, add an H2 or H3 for that model (knowledge base only for facts) and follow with one <figure> using the allowed URL that best matches that product—copy the URL exactly. Prefer distinct URLs for distinct flagship products where the list allows; use up to four figures in the body if URLs and topics support it, so the article echoes editorial guides with in-article imagery as well as the shop grid below.
 \n\n` : ""}
 ${((): string => {
   if (!isLongFormTemplate) return "";
@@ -910,6 +913,7 @@ CONTENT ENRICHMENT GUIDELINES:
 
 OUTPUT FORMAT (${isLongFormTemplate ? "COMPREHENSIVE" : "BRIEF"}, COMPLETE, SEO-Optimised HTML):
 - Output only valid HTML with proper semantic structure
+- CRITICAL: Do NOT use Markdown syntax (no ##, ###, **bold**, or line-start "- " / "* " lists). Use real HTML tags (<h2>, <h3>, <p>, <strong>, <ul>, <li>) only—never raw Markdown.
 - IMPORTANT: Do NOT use <h1> tags - the page already has one H1 (the page title)
 - Use semantic HTML tags: <h2>, <h3> (for headings), <p>, <ol>, <ul>, <li>
 ${isLongFormTemplate ? "- For long-form articles you MAY and SHOULD also use: <figure>, <img>, <figcaption> for images; <table>, <thead>, <tbody>, <tr>, <th>, <td> for at least one comparison or feature table" : ""}
@@ -1285,6 +1289,9 @@ The previous attempt was incomplete, too long, or did not follow the required BR
       .replace(/```\s*/g, "") // 移除所有剩余的 ```
       .replace(/^```|```$/gm, "") // 移除行首行尾的 ```
       .trim();
+
+    // 若模型误输出 Markdown（##、** 等），转为 HTML，便于质量校验与模板渲染
+    articleText = markdownToHtmlIfNeeded(articleText);
     
     // 将任何H1标签替换为H2（确保页面只有一个H1，即页面标题）
     articleText = articleText

@@ -1,5 +1,355 @@
 [
   {
+    "id": "138923cd-2c9c-4f03-ba21-bf2dc8f040bd",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775703014346,
+    "updatedAt": 1775703077671,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury watch brand for women",
+    "titleType": "review",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "7a361144-6887-49d9-b2a5-afad2885336a",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702968052,
+    "updatedAt": 1775703012679,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "ladies luxury watch",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "67a381f3-3c26-4ec7-b389-5f5a5126e769",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-the-best-swiss-watches-luxury-expert-guide",
+    "createdAt": 1775702938623,
+    "updatedAt": 1775702966798,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "swiss watches luxury",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-swiss-watches-luxury-expert-guide/"
+  },
+  {
+    "id": "4341adcd-f4a4-4e4a-9f2a-c30bdb03f999",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702828052,
+    "updatedAt": 1775702887286,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury women's accessories",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "b0e8b741-bdfd-4079-8843-d26490af1693",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702768054,
+    "updatedAt": 1775702827061,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "engraved luxury pens",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "ef50627d-1090-423a-a603-222e94b728f1",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702705053,
+    "updatedAt": 1775702766420,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury gift sets men",
+    "titleType": "review",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "632cf2e0-2173-45ce-8b6c-30aeffc24275",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702645058,
+    "updatedAt": 1775702703419,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury gifts for father",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "34c2dc84-38f2-4f66-89a1-31747c5cf03f",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702587045,
+    "updatedAt": 1775702643424,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "watch travel case luxury",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "6165e281-2a69-4891-a790-c1c81595c4d3",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702527058,
+    "updatedAt": 1775702586064,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "golden luxury auto",
+    "titleType": "most",
+    "templateType": "template-7",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "fd754578-ac1a-4aa7-b3d6-e10549c42806",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702465351,
+    "updatedAt": 1775702525214,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury bow ties",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "a9e94f01-c6fa-43c1-9e1f-95c3a99ad824",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702404867,
+    "updatedAt": 1775702464878,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "mens luxury card holder",
+    "titleType": "top",
+    "templateType": "template-5",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "e678312d-ea04-4741-b16c-d26db8bf38dc",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702344380,
+    "updatedAt": 1775702404565,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "short sets luxury designer",
+    "titleType": "best",
+    "templateType": "template-4",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "bf24bdc3-0c88-4b31-9999-97c0fe84117f",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702282012,
+    "updatedAt": 1775702344350,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury eye frames",
+    "titleType": "expert",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "e0ae44af-7bcc-4279-a961-c05b9edc4e57",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702221627,
+    "updatedAt": 1775702281343,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "luxury flashes telegram",
+    "titleType": "comparison",
+    "templateType": "template-2",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "2b4d78b4-da27-47e4-b5a1-c2b7fb914166",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1775702165343,
+    "updatedAt": 1775702221348,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "inexpensive luxury gifts",
+    "titleType": "tech-insights",
+    "templateType": "template-1",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "a0cd3af0-5826-472c-aab8-e7e5f5f67cbb",
+    "status": "failed",
+    "message": "Client network socket disconnected before secure TLS connection was established",
+    "createdAt": 1775701717275,
+    "updatedAt": 1775702163455,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury glasses for men",
+    "titleType": "services-guides",
+    "templateType": "template-7",
+    "error": "Client network socket disconnected before secure TLS connection was established"
+  },
+  {
+    "id": "87a76f11-878f-40ff-b0cd-65554adfb3b3",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-luxury-designer-brooches-top-picks",
+    "createdAt": 1775701562638,
+    "updatedAt": 1775701716164,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury designer brooches",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-designer-brooches-top-picks/"
+  },
+  {
+    "id": "39f0fd0e-a54f-40dc-81be-1b8f9bf87b98",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-buy-luxury-rollerball-pens",
+    "createdAt": 1775701403901,
+    "updatedAt": 1775701561088,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury rollerball pens",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-rollerball-pens/"
+  },
+  {
+    "id": "585b491b-1159-4f74-bc88-58f91ca9d2cd",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-exclusive-luxury-custom-stationery-selection",
+    "createdAt": 1775701170929,
+    "updatedAt": 1775701403255,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury custom stationery",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-luxury-custom-stationery-selection/"
+  },
+  {
+    "id": "41122bc9-8d22-44a6-b7c0-86a926677578",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-little-luxury-nails-best-rated",
+    "createdAt": 1775701034059,
+    "updatedAt": 1775701168923,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "little luxury nails",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-little-luxury-nails-best-rated/"
+  },
+  {
+    "id": "c91309e3-cd94-4de1-8e95-ea42bb97aa76",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-luxury-fathers-day-gifts",
+    "createdAt": 1775700976046,
+    "updatedAt": 1775701033664,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury father's day gifts",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-fathers-day-gifts/"
+  },
+  {
+    "id": "da8d22af-93a7-4368-9bcb-6ed551458121",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-buy-luxury-gifts-for-daughter-in-law-official-store",
+    "createdAt": 1775700941743,
+    "updatedAt": 1775700975579,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury gifts for daughter in law",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/buy-luxury-gifts-for-daughter-in-law-official-store/"
+  },
+  {
+    "id": "da05add4-fbe9-47f3-bd93-bbb6d9fdf851",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-watch-travel-case-luxury",
+    "createdAt": 1775698944837,
+    "updatedAt": 1775699013426,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "watch travel case luxury",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-watch-travel-case-luxury/"
+  },
+  {
+    "id": "878d4a2e-89f3-4240-bc3f-462856dab963",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-valued-watch-travel-case-luxury-popular-choices",
+    "createdAt": 1775698538284,
+    "updatedAt": 1775698697395,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "watch travel case luxury",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-watch-travel-case-luxury-popular-choices/"
+  },
+  {
+    "id": "e82079d2-603b-454a-b974-c6d54e24f1c0",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-valued-watch-travel-case-luxury-popular-choices",
+    "createdAt": 1775697958989,
+    "updatedAt": 1775698060987,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "watch travel case luxury",
+    "titleType": "most",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-watch-travel-case-luxury-popular-choices/"
+  },
+  {
     "id": "1ff1e30d-f66e-4fc5-8613-db02542b5557",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-luxury-fathers-day-gifts",
@@ -13648,355 +13998,5 @@
     "titleType": "purchase",
     "templateType": "template-1",
     "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-jewellery-brand-names-official-retailer/"
-  },
-  {
-    "id": "1229b1af-a563-46eb-94ad-0eae8f117c55",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1772003100602,
-    "updatedAt": 1772003157530,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury gifts for home",
-    "titleType": "most",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "01f7c090-6754-4817-9133-c0d37cbfb62d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138847",
-    "createdAt": 1772002894605,
-    "updatedAt": 1772003098165,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold charms",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-gold-charms-list-comprehensive-rankings/"
-  },
-  {
-    "id": "ac132144-13a2-4099-9815-876eedf31601",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1772002837627,
-    "updatedAt": 1772002894401,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury cap brands",
-    "titleType": "top",
-    "templateType": "template-5",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "f0b21ffd-0c4f-4cd7-9cb2-af7dc6124844",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138840",
-    "createdAt": 1772002643616,
-    "updatedAt": 1772002836820,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "china luxury bag scandal",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-china-luxury-bag-scandal-options-top-choices/"
-  },
-  {
-    "id": "ea0b7755-c4e4-4b1f-aaae-8b2d7f313933",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138832",
-    "createdAt": 1772002454607,
-    "updatedAt": 1772002642368,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury earrings side pearl",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/professional-review-of-luxury-earrings-side-pearl/"
-  },
-  {
-    "id": "0e2cb012-5a2d-41af-8539-81d12d30edb6",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138825",
-    "createdAt": 1772002359600,
-    "updatedAt": 1772002453446,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "love luxury mini kelly",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-love-luxury-mini-kelly-options/"
-  },
-  {
-    "id": "84d9402a-cf45-457c-a2fe-d0a08206eaba",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138816",
-    "createdAt": 1772002270600,
-    "updatedAt": 1772002358051,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "golden luxury tableware",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/golden-luxury-tableware-tech-comparison/"
-  },
-  {
-    "id": "4a6e290e-7910-457b-a3c2-d10a047c5c51",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138807",
-    "createdAt": 1772002118097,
-    "updatedAt": 1772002267698,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury leather wallet womens",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-leather-wallet-womens/"
-  },
-  {
-    "id": "db81308b-b5ed-45a4-b731-b683428682ed",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138803",
-    "createdAt": 1772001915614,
-    "updatedAt": 1772002116345,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "bracelets for women luxury",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-bracelets-for-women-luxury-expert-recommendations/"
-  },
-  {
-    "id": "8b4b1af6-01b7-41b0-b127-ad9b20a59dcd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138798",
-    "createdAt": 1772001723677,
-    "updatedAt": 1772001912869,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury brooch for men",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-luxury-brooch-for-men/"
-  },
-  {
-    "id": "f07109b1-4185-40b4-8677-9ed3de0e66f5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138795",
-    "createdAt": 1772001529601,
-    "updatedAt": 1772001721725,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury women's bag",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-luxury-womens-bag-selection/"
-  },
-  {
-    "id": "e484a8ee-5c63-41fc-876f-6e337e21c4f1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138793",
-    "createdAt": 1772001357963,
-    "updatedAt": 1772001529170,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gift for wife",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-gift-for-wife-best-rated/"
-  },
-  {
-    "id": "a573c4c3-5c9b-433f-aa70-bb5429b26102",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1772001298802,
-    "updatedAt": 1772001355456,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury toy brands",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "66618e3a-61ce-4dc9-a773-855415b0c481",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138791",
-    "createdAt": 1772001229362,
-    "updatedAt": 1772001297808,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "hoops luxury diamonds",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/buy-hoops-luxury-diamonds-official-store/"
-  },
-  {
-    "id": "81646f38-c612-491d-817f-e66ca76f9dd4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138708",
-    "createdAt": 1771914536455,
-    "updatedAt": 1771914710347,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury holiday gifts for him",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-holiday-gifts-for-him-premium-choices-reviewed/"
-  },
-  {
-    "id": "85cdfc0d-768d-4dcf-ba23-0119f15ceee0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138706",
-    "createdAt": 1771914356438,
-    "updatedAt": 1771914535186,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for pregnant women",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-gifts-for-pregnant-women-quality-and-performance-guide/"
-  },
-  {
-    "id": "d54ad06f-f15a-4493-9449-a16ed098ec67",
-    "status": "failed",
-    "message": "Client network socket disconnected before secure TLS connection was established",
-    "createdAt": 1771914185432,
-    "updatedAt": 1771914354874,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for new parents",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "error": "Client network socket disconnected before secure TLS connection was established"
-  },
-  {
-    "id": "bf01c539-bbbd-49c5-ae95-82c8d686ce58",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138704",
-    "createdAt": 1771914074424,
-    "updatedAt": 1771914184720,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for cyclists",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-gifts-for-cyclists-vs-alternatives/"
-  },
-  {
-    "id": "9a785647-29d0-4542-a7a0-0ac2169e04ce",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138702",
-    "createdAt": 1771913996435,
-    "updatedAt": 1771914073773,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for couples who have everything",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-gifts-for-couples-who-have-everything-feature-comparison/"
-  },
-  {
-    "id": "984644ad-63bd-4b1d-89c1-a327b4896c54",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138700",
-    "createdAt": 1771913813423,
-    "updatedAt": 1771913995195,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for business partners",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-gifts-for-business-partners/"
-  },
-  {
-    "id": "1deb9edf-d1d1-4b47-9f73-7c0bb2a2bc9e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138698",
-    "createdAt": 1771913628442,
-    "updatedAt": 1771913811016,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for boss male",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-gifts-for-boss-male-top-picks/"
-  },
-  {
-    "id": "7da3f17b-77a3-4cc6-ad08-1087196d5d11",
-    "status": "failed",
-    "message": "Client network socket disconnected before secure TLS connection was established",
-    "createdAt": 1771913457431,
-    "updatedAt": 1771913628133,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for boss",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "error": "Client network socket disconnected before secure TLS connection was established"
-  },
-  {
-    "id": "46a33536-757f-454d-bc49-1875293d08d1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138696",
-    "createdAt": 1771913274420,
-    "updatedAt": 1771913456561,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for boaters",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-gifts-for-boaters-store/"
-  },
-  {
-    "id": "e1b47d7c-a3ad-4ef0-98d5-9c4e00fcfeca",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138694",
-    "createdAt": 1771913093205,
-    "updatedAt": 1771913273459,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gift for boss female",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-gift-for-boss-female-top-rated-and-reviews/"
-  },
-  {
-    "id": "6377fce4-9e53-40e3-9c53-b1f1a3ee8f34",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 138692",
-    "createdAt": 1771913012431,
-    "updatedAt": 1771913091932,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury executive gifts",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-executive-gifts/"
   }
 ]

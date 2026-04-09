@@ -198,7 +198,13 @@ export async function fetchRelatedProducts(
     return ok;
   });
   const matched = filterProducts(sellable, keyword, targetCategory);
-  const products = matched.slice(0, 40).map((p) => toProductSummary(linkBase, p));
+  const pool = matched.length > 0 ? matched : sellable;
+  if (matched.length === 0 && sellable.length > 0) {
+    console.warn(
+      `[Shopify] 关键词与分类未匹配到商品，使用全店可售列表兜底（${sellable.length} 件，关键词: "${keyword}"）`
+    );
+  }
+  const products = pool.slice(0, 40).map((p) => toProductSummary(linkBase, p));
 
   return { products, relatedProducts: [] };
 }

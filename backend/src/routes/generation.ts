@@ -1201,16 +1201,22 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       const pageTitleLower = (payload.pageTitle || "").toLowerCase();
       const combinedText = `${keywordLower} ${pageTitleLower}`;
       
-      // 检测性别关键词
+      // 检测性别关键词（含 Father's Day / dad 等礼品场景，与 AI 提示中的 GENDER 规则一致）
       const isMenTarget = combinedText.includes("丈夫") || combinedText.includes("husband") || 
                           combinedText.includes("men") || combinedText.includes("men's") ||
                           combinedText.includes("male") || combinedText.includes("gift for him") ||
-                          combinedText.includes("for him") || combinedText.includes("his");
+                          combinedText.includes("for him") || combinedText.includes("his") ||
+                          /\bfather'?s\b/.test(combinedText) || /\bfather\b/.test(combinedText) ||
+                          /\bdad\b/.test(combinedText) || /\bdaddy\b/.test(combinedText) ||
+                          combinedText.includes("papa");
       const isWomenTarget = combinedText.includes("妻子") || combinedText.includes("wife") ||
                             combinedText.includes("women") || combinedText.includes("women's") ||
                             combinedText.includes("ladies") || combinedText.includes("lady") ||
                             combinedText.includes("female") || combinedText.includes("gift for her") ||
-                            combinedText.includes("for her") || combinedText.includes("her");
+                            combinedText.includes("for her") ||
+                            /\bmother'?s\b/.test(combinedText) || /\bmother\b/.test(combinedText) ||
+                            /\bmom\b/.test(combinedText) || /\bmummy\b/.test(combinedText) ||
+                            /\bmum\b/.test(combinedText);
       
       // 检测产品类型关键词（同时检查关键词和标题）
       const isPhoneKeyword = keywordLower.includes("phone") || keywordLower.includes("smartphone") || 
@@ -1225,7 +1231,14 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       const isEarbudKeyword = keywordLower.includes("earbud") || keywordLower.includes("earphone") ||
                               keywordLower.includes("audio") || keywordLower.includes("headphone") ||
                               pageTitleLower.includes("earbud") || pageTitleLower.includes("earphone");
-      
+
+      // 模板 7 / 礼品与指南类主题：放宽匹配，避免笔、公文包等配件被默认 token 滤掉
+      const isGiftGuideOrEditorialTopic =
+        isTemplate7 ||
+        /\b(gift|gifts|present|presents|mother'?s|mom'?s|mum'?s|mother\b|mom\b|mum\b|day\b|guide|guides|editorial|luxury life|for her|christmas|holiday)\b/i.test(
+          combinedText
+        );
+
       // 产品相关性过滤函数：确保产品与关键词相关
       const filterRelevantProducts = (products: ProductSummary[]): ProductSummary[] => {
         const relevantKeywords: string[] = [];
@@ -1243,6 +1256,41 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         } else if (keywordLower.includes("security") || keywordLower.includes("secure") || keywordLower.includes("privacy")) {
           // 安全相关关键词：优先手机产品
           relevantKeywords.push("phone", "smartphone", "mobile", "agent", "quantum", "metavertu", "ivertu");
+        } else if (isGiftGuideOrEditorialTopic) {
+          // 节庆/礼品/博客长文：覆盖全品类与常见配件名
+          relevantKeywords.push(
+            "phone",
+            "smartphone",
+            "mobile",
+            "watch",
+            "timepiece",
+            "ring",
+            "earbud",
+            "earphone",
+            "headphone",
+            "ows",
+            "audio",
+            "agent",
+            "quantum",
+            "metavertu",
+            "ivertu",
+            "signature",
+            "pen",
+            "briefcase",
+            "leather",
+            "vault",
+            "shield",
+            "neo",
+            "vertu",
+            "grand",
+            "flip",
+            "diamond",
+            "jewellery",
+            "jewelry",
+            "calfskin",
+            "accessories",
+            "accessory"
+          );
         } else {
           // 默认：包含所有产品类型关键词
           relevantKeywords.push("phone", "watch", "ring", "earbud", "agent", "quantum", "metavertu", "ivertu");
@@ -1306,6 +1354,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         console.log(`  - 产品类型: 戒指`);
       } else if (isEarbudKeyword) {
         console.log(`  - 产品类型: 耳机`);
+      }
+      if (isGiftGuideOrEditorialTopic) {
+        console.log(`  - 产品匹配模式: 礼品/指南/模板7（宽关键词，含配件）`);
       }
       console.log(`  - 第一排原始产品数: ${productsRow1.length}`);
       console.log(`  - 过滤后相关产品数: ${relevantProductsRow1.length}`);
@@ -2482,6 +2533,28 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       );
     }
 
+    // 模板7：合并后不足 10 个时从全量去重列表补足（与文末网格、配图白名单更一致）
+    if (isTemplate7 && productsForRender.length > 0 && productsForRender.length < 10 && allProducts.length > 0) {
+      const seen = new Set(productsForRender.map((p: ProductSummary) => p.id));
+      const filled = [...productsForRender];
+      for (const p of allProducts) {
+        if (filled.length >= 10) break;
+        if (!seen.has(p.id)) {
+          seen.add(p.id);
+          filled.push(p);
+        }
+      }
+      if (filled.length > productsForRender.length) {
+        console.log(
+          `[task ${taskId}] 模板7 产品补足: ${productsForRender.length} → ${filled.length}（${filled
+            .slice(productsForRender.length)
+            .map((x: ProductSummary) => x.name)
+            .join(", ")}）`
+        );
+        productsForRender = filled;
+      }
+    }
+
     const productSectionIntro = buildProductSectionIntro(payload.keyword);
     const showTrustStripFinal =
       (isTemplate1 ||
@@ -2514,7 +2587,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 模板6/7新增字段
       references: (isTemplate6 || isTemplate7) ? references : [],
       externalResources: (isTemplate6 || isTemplate7) ? externalResources : [],
-      productSectionTitle: "Shop the collection",
+      productSectionTitle: isTemplate7 ? "Explore Our Collection" : "Shop the collection",
       productSectionIntro,
       showTrustStrip: showTrustStripFinal,
       comparisonClosing: isTemplate4 || isTemplate5 || isTemplate6 ? DEFAULT_COMPARISON_CLOSING : "",
