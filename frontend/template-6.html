@@ -9,7 +9,7 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{META_DESCRIPTION}}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="author" content="VERTU" />
+    <meta name="author" content="{{META_AUTHOR}}" />
     <link rel="canonical" href="{{PAGE_URL}}" />
     
     <!-- Open Graph / Facebook -->
@@ -59,30 +59,6 @@
     {{{CITATIONS_STRUCTURED_DATA}}}
     </script>
     {{/if}}
-    
-    <!-- BreadcrumbList Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://vertu.com"
-      }, {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Blog",
-        "item": "https://vertu.com/blog"
-      }, {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "{{PAGE_TITLE}}",
-        "item": "{{PAGE_URL}}"
-      }]
-    }
-    </script>
     
     <style>
 
@@ -1395,13 +1371,25 @@
             <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
             {{/if}}
             <div class="hero-cta">
-                <a href="#products" class="cta-primary">Shop Now</a>
-                <a href="#comparison" class="cta-secondary">Compare Products</a>
+                <a href="#guide-content" class="cta-primary">Read the guide</a>
+                <a href="#comparison" class="cta-secondary">Compare models</a>
             </div>
         </div>
     </section>
 
- 
+    <!-- Content Section: answer-first for organic search -->
+    <div class="content-container" id="guide-content">
+        {{#if (isNotEmpty AUTHOR_NAME)}}
+        <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
+            <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
+            {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
+        </aside>
+        {{/if}}
+        {{{EDITORIAL_LEAD_HTML}}}
+        <div class="content ai-article-body">
+            {{{AI_GENERATED_CONTENT}}}
+        </div>
+    </div>
 
     {{#if topProducts.length}}
     <!-- Top Picks Section -->
@@ -1469,13 +1457,6 @@
         </div>
     </section>
     {{/if}}
-
-    <!-- Content Section -->
-    <div class="content-container">
-        <div class="content ai-article-body">
-            {{{AI_GENERATED_CONTENT}}}
-        </div>
-    </div>
 
     {{#if comparisonItems.length}}
     <!-- Comparison Section -->
@@ -1789,7 +1770,7 @@
                 <div class="seo-bottom-content">
                     <p>This comprehensive guide has been meticulously researched and compiled by VERTU's expert team to provide you with authoritative information about {{PAGE_TITLE}}. Our content is regularly reviewed and updated to ensure accuracy and relevance.</p>
                     <p style="margin-top: 12px; font-size: 14px; color: #666;">
-                        <strong>Last Updated:</strong> <time datetime="{{CURRENT_DATE}}">{{CURRENT_DATE}}</time>
+                        <strong>Last Updated:</strong> <time datetime="{{DATE_MODIFIED}}">{{LAST_UPDATED_LABEL}}</time>
                     </p>
                 </div>
             </div>
@@ -1922,7 +1903,7 @@
                         <strong>No Endorsement:</strong> Mention of specific products or brands does not constitute endorsement unless explicitly stated.
                     </li>
                     <li>
-                        <strong>Last Updated:</strong> This content was last reviewed on <time datetime="{{CURRENT_DATE}}">{{CURRENT_DATE}}</time>.
+                        <strong>Last Updated:</strong> This content was last reviewed on <time datetime="{{DATE_MODIFIED}}">{{LAST_UPDATED_LABEL}}</time>.
                     </li>
                 </ul>
             </div>
@@ -1990,6 +1971,7 @@
             }
         })();
     </script>
+{{{PAGE_UX_SCRIPT}}}
 </body>
 </html>
 

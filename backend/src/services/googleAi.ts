@@ -39,6 +39,50 @@ const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
 const MIN_PARAGRAPH_COUNT = 3; // 至少 3 个段落（介绍 + 支持段落 + 结论）
 
+/** 指南/评测类意图：即使用模板1/2 也放宽字数与结构，避免「一屏短文」与搜索意图错位 */
+function shouldTreatAsLongFormGuideArticle(
+  templateType: string | undefined,
+  keyword: string,
+  pageTitle: string,
+  titleType?: string
+): boolean {
+  const isBuiltInLongForm =
+    templateType === "template-3" ||
+    templateType === "template-4" ||
+    templateType === "template-5" ||
+    templateType === "template-6" ||
+    templateType === "template-7";
+  if (isBuiltInLongForm) return true;
+
+  const isShortTemplate =
+    templateType === "template-1" ||
+    templateType === "template-2" ||
+    templateType === undefined ||
+    templateType === "";
+  if (!isShortTemplate) return false;
+
+  const guideTitleTypes = new Set([
+    "informational",
+    "review",
+    "how-to",
+    "recommendations",
+    "comparison",
+    "expert",
+    "best",
+    "top",
+    "top-ranking",
+    "most",
+    "services-guides",
+    "tech-insights",
+  ]);
+  if (titleType && guideTitleTypes.has(titleType)) return true;
+
+  const text = `${keyword} ${pageTitle || ""}`.toLowerCase();
+  return /\b(how\s+to|what\s+is|what\s+are|why\s|when\s|where\s|best\b|top\s+\d|vs\.?\b|versus\b|review|reviews|guides?\b|comparison|comparisons|price|prices|buy(ing)?|choose|choosing|worth\b|tips\b|ranking|recommended)\b/.test(
+    text
+  );
+}
+
 export interface GenerateContentOptions {
   apiKey?: string; // 可选：如果提供则直接使用，否则从管理器获取
   keyword: string;
@@ -95,15 +139,16 @@ async function generateWithKey(
   const isTemplate7 = templateType === "template-7";
   const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
   const isTemplate4Or5 = isTemplate4 || isTemplate5;
+  const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(templateType, keyword, pageTitle, titleType);
   const currentMinLength = MIN_ARTICLE_LENGTH;
-  const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH; // 模板3/4/5/6/7 允许更长的内容
+  const currentMaxLength = useLongFormArticleLimits ? 12000 : MAX_ARTICLE_LENGTH; // 长模板或指南类短模板：允许更长正文
   
   // 获取当前年份（动态，避免硬编码）
   const currentYear = new Date().getFullYear();
   
   // 智能模型选择：根据任务复杂度选择最佳模型，降低限流风险
   // 如果指定了preferredModel，优先使用（用于模型轮换）
-  const isComplexTask = isLongFormTemplate || !!userPrompt || keyword.length > 50;
+  const isComplexTask = useLongFormArticleLimits || !!userPrompt || keyword.length > 50;
   let modelName = preferredModel || selectModel(templateType, isComplexTask);
   
   // 初始化 Google AI 客户端
@@ -112,7 +157,7 @@ async function generateWithKey(
   // 获取模型实例（根据模板类型和模型类型调整 maxOutputTokens）
   // Flash模型通常有更高的配额限制，但输出token可能更少
   const isFlashModel = modelName.includes("flash");
-  const maxOutputTokens = isLongFormTemplate 
+  const maxOutputTokens = useLongFormArticleLimits 
     ? 8192 // 长内容模板使用8192
     : 4096; // 简单任务使用4096
   
@@ -377,7 +422,7 @@ CRITICAL REQUIREMENTS:
 ═══════════════════════════════════════════════════════════════`
     : "";
 
-  const articlePrompt = `You are an expert SEO content strategist specialising in high-value content. ${isLongFormTemplate ? "Write a COMPREHENSIVE, DETAILED article" : "Write a BRIEF, SEO-optimised article"} about "${keyword}" that directly answers the user's search query${isLongFormTemplate ? ", providing richer depth while remaining factual and tightly aligned to the title" : " without unnecessary length"}.
+  const articlePrompt = `You are an expert SEO content strategist specialising in high-value content. ${useLongFormArticleLimits ? "Write a COMPREHENSIVE, DETAILED article" : "Write a BRIEF, SEO-optimised article"} about "${keyword}" that directly answers the user's search query${useLongFormArticleLimits ? ", providing richer depth while remaining factual and tightly aligned to the title" : " without unnecessary length"}.
 
 ${userPromptSection}
 
@@ -391,6 +436,11 @@ TITLE-INTENT LOCK (CRITICAL):
 - Brand naming rule: ONLY use "VERTU" in headings/phrasing if the title或keyword明确包含 "VERTU"；否则保持中性表达（写 "wearables" 而不是 "VERTU wearables"），避免强行加品牌前缀。
 - Use knowledge base facts only when they are relevant to the title intent; ignore irrelevant KB parts.
 - It is BETTER to add new, relevant, factual detail that fits the title than to include off-topic KB snippets.
+
+ANSWER-FIRST OPENING & LOCAL CONSISTENCY (CRITICAL):
+- The article appears before product grids: many readers arrive from organic search. Open with a direct, scannable answer to the question implied by the page title "${pageTitle}" and keyword "${keyword}". The first <p> after the first <h2> must state the main takeaway (what to choose, key criteria, or where to start); avoid opening with generic brand history or filler.
+- If the title, keyword, or topic clearly names a country or region (e.g. India, Pakistan, UAE, UK), keep buying guidance, shipping, price discussion, and retailer context aligned to that market. Do not switch to another territory unless you explicitly label a separate comparison.
+- For VERTU products: specifications, materials, services, and prices MUST come only from the knowledge base. If the knowledge base does not state a fact, do not invent it—omit or direct readers to the official site for current confirmation.
 
 GENDER AND TARGET AUDIENCE MATCHING (CRITICAL):
 - If the title/keyword mentions "husband", "men", "men's", "male", "for him", "gift for him" → content MUST focus on products suitable for MEN/HUSBANDS, NOT women's products
@@ -425,7 +475,7 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 - PRODUCT FIGURES (Template 7 – aligns with luxury life guides): The "RICH CONTENT REQUIREMENTS" section below lists verified product image URLs. When you discuss specific models from the "RELEVANT PRODUCTS" list in depth, add an H2 or H3 for that model (knowledge base only for facts) and follow with one <figure> using the allowed URL that best matches that product—copy the URL exactly. Prefer distinct URLs for distinct flagship products where the list allows; use up to four figures in the body if URLs and topics support it, so the article echoes editorial guides with in-article imagery as well as the shop grid below.
 \n\n` : ""}
 ${((): string => {
-  if (!isLongFormTemplate) return "";
+  if (!useLongFormArticleLimits) return "";
   const merged = [
     ...new Set([...(articleImageUrls || []).filter(Boolean), ...getArticleImageUrlsFromEnv()]),
   ].slice(0, 12);
@@ -472,7 +522,7 @@ CRITICAL: KEYWORD-CONTENT TOPIC MATCHING (MANDATORY):
 - ALWAYS verify: Does my content match the keyword "${keyword}" and title "${pageTitle}"? If not, rewrite it.
 
 CONVERSION BRIDGE (PAGE LAYOUT - MANDATORY):
-- This page includes product grids below the article. In the FINAL paragraph of the main article (or a short closing paragraph immediately before any sign-off), add ONE natural sentence that guides readers to the featured models and shopping on the official VERTU site (vertu.com) below—calm, confident, not pushy. Do not add a standalone H2 only for this; weave it into the closing.
+- The article body is followed on the page by product grids and comparison sections. In the FINAL paragraph of the main article (or a short closing paragraph immediately before any sign-off), add ONE natural sentence that guides readers to the featured models and shopping on the official VERTU site (vertu.com) further down the page—calm, confident, not pushy. Do not add a standalone H2 only for this; weave it into the closing.
 - This sentence may mention "VERTU" and "official store" even when the title does not contain "VERTU", because it bridges to the on-page shop section.
 
 BRITISH ENGLISH REQUIREMENTS (CRITICAL - MUST FOLLOW):
@@ -911,12 +961,12 @@ CONTENT ENRICHMENT GUIDELINES:
 - Use varied sentence structures and descriptive language while staying factual. Connect different aspects of the knowledge base to create comprehensive content.
 - Only include knowledge base facts that are directly relevant to the title intent; drop anything that feels off-topic or forced.
 
-OUTPUT FORMAT (${isLongFormTemplate ? "COMPREHENSIVE" : "BRIEF"}, COMPLETE, SEO-Optimised HTML):
+OUTPUT FORMAT (${useLongFormArticleLimits ? "COMPREHENSIVE" : "BRIEF"}, COMPLETE, SEO-Optimised HTML):
 - Output only valid HTML with proper semantic structure
 - CRITICAL: Do NOT use Markdown syntax (no ##, ###, **bold**, or line-start "- " / "* " lists). Use real HTML tags (<h2>, <h3>, <p>, <strong>, <ul>, <li>) only—never raw Markdown.
 - IMPORTANT: Do NOT use <h1> tags - the page already has one H1 (the page title)
 - Use semantic HTML tags: <h2>, <h3> (for headings), <p>, <ol>, <ul>, <li>
-${isLongFormTemplate ? "- For long-form articles you MAY and SHOULD also use: <figure>, <img>, <figcaption> for images; <table>, <thead>, <tbody>, <tr>, <th>, <td> for at least one comparison or feature table" : ""}
+${useLongFormArticleLimits ? "- For long-form articles you MAY and SHOULD also use: <figure>, <img>, <figcaption> for images; <table>, <thead>, <tbody>, <tr>, <th>, <td> for at least one comparison or feature table" : ""}
 - Ensure proper nesting and closing tags
 - Do NOT include <html>, <head>, or <body> tags (just the content fragment)
 - Do NOT add markdown code blocks (\`\`\`html, \`\`\`, etc.)
@@ -929,7 +979,7 @@ ${isLongFormTemplate ? "- For long-form articles you MAY and SHOULD also use: <f
 - Ensure the main H2 heading includes "${keyword}" naturally
 - Use H2 tags for all headings (main heading and question-based subheadings)
 - Keep HTML clean and semantic for better SEO crawling
-- Total content must be at least ${currentMinLength} characters${isLongFormTemplate ? " (no strict upper limit for templates 3/4/5; provide as much factual, title-aligned detail as needed)" : ` and no more than ${currentMaxLength} characters (one screen)`}
+- Total content must be at least ${currentMinLength} characters${useLongFormArticleLimits ? " (no strict upper limit for long-form / guide-intent pages; provide as much factual, title-aligned detail as needed)" : ` and no more than ${currentMaxLength} characters (one screen)`}
 
 EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REFINED TONE):
 <h2>Where to Buy a ${keyword} - Expert Guide</h2>
@@ -956,7 +1006,7 @@ EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REF
 NOTE: Notice the proper use of articles (a/an/the) throughout, and the refined, professional tone (private butler, not salesperson).
 
 IMPORTANT: 
-${isLongFormTemplate ? "- No hard word limit: prioritise depth, completeness, and factual richness while staying tightly aligned to the title and keyword\n- Aim to cover the topic thoroughly so readers do not need to look elsewhere" : "- Keep total word count between 400-600 words"}
+${useLongFormArticleLimits ? "- No hard word limit: prioritise depth, completeness, and factual richness while staying tightly aligned to the title and keyword\n- Aim to cover the topic thoroughly so readers do not need to look elsewhere" : "- Keep total word count between 400-600 words"}
 - Every sentence must be complete
 - No incomplete thoughts or cut-off content
 - Focus on directly answering the keyword question`;
@@ -1190,19 +1240,28 @@ Output only the JSON, no additional text or Chinese characters.`;
           ? articlePrompt
           : `${articlePrompt}
 
-The previous attempt was incomplete, too long, or did not follow the required BRIEF, ONE-SCREEN structure. You MUST:
+The previous attempt was incomplete, too long, or did not follow the required structure. You MUST:
 1. IMPORTANT: Do NOT use <h1> tags - use <h2> for the main heading (the page already has one H1)
 2. Include a main <h2> heading at the start that includes "${keyword}" naturally (ONE line only)
-3. Add a BRIEF introduction paragraph (2 sentences MAX) that includes "${keyword}" in the first sentence
-4. Use 2-3 question-format subheadings (<h2> tags with question marks) that include "${keyword}" or semantic variations
-4. Include ONE concise numbered list (<ol> with 3-5 <li> items) under each question heading
-5. Add ONE brief supporting paragraph (1-2 sentences) after each numbered list
-6. Include a BRIEF conclusion paragraph (1-2 sentences) at the end
-7. Keep content between ${currentMinLength} and ${currentMaxLength} characters${isTemplate3 ? " (no strict limit for template-3)" : " (ONE SCREEN MAXIMUM)"}
-8. Ensure ALL content is COMPLETE - no incomplete sentences, no cut-off content
-9. Use specific numbers, specifications, and features from the knowledge base ONLY (but be concise)
-10. Focus on directly answering the keyword question - eliminate unnecessary content
-11. Every sentence must be complete and add value - no filler content`;
+3. Follow ANSWER-FIRST OPENING & LOCAL CONSISTENCY: first substantive <p> after that <h2> must give a direct takeaway; align any region-specific advice with the title/keyword; use knowledge base only for VERTU product facts
+${useLongFormArticleLimits ? `4. Write a substantive introduction (2–4 sentences) that states the answer angle and includes "${keyword}" in the first sentence
+5. Use multiple <h2> sections (question-style where helpful) with full paragraphs; include at least one <table> and/or <figure> when image URLs were provided in the prompt
+6. Add numbered or bullet lists where they improve scannability (not mandatory in every section)
+7. Close with a concise takeaway paragraph
+8. Keep content between ${currentMinLength} and ${currentMaxLength} characters (full guide depth—not a one-screen teaser)
+9. Ensure ALL content is COMPLETE - no incomplete sentences, no cut-off content
+10. Use specific numbers, specifications, and features from the knowledge base ONLY
+11. Focus on directly answering the keyword question with depth and clear structure
+12. Every sentence must be complete and add value - no filler content` : `4. Add a BRIEF introduction paragraph (2 sentences MAX) that includes "${keyword}" in the first sentence
+5. Use 2-3 question-format subheadings (<h2> tags with question marks) that include "${keyword}" or semantic variations
+6. Include ONE concise numbered list (<ol> with 3-5 <li> items) under each question heading
+7. Add ONE brief supporting paragraph (1-2 sentences) after each numbered list
+8. Include a BRIEF conclusion paragraph (1-2 sentences) at the end
+9. Keep content between ${currentMinLength} and ${currentMaxLength} characters (ONE SCREEN MAXIMUM)
+10. Ensure ALL content is COMPLETE - no incomplete sentences, no cut-off content
+11. Use specific numbers, specifications, and features from the knowledge base ONLY (but be concise)
+12. Focus on directly answering the keyword question - eliminate unnecessary content
+13. Every sentence must be complete and add value - no filler content`}`;
 
       const articleResult = await requestWithRetry(() => model.generateContent(promptToUse), "article.generateContent");
       const articleResponse = await articleResult.response;
@@ -1260,7 +1319,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
         }
       }
 
-      if (isArticleRich(articleText, templateType)) {
+      if (isArticleRich(articleText, templateType, keyword, pageTitle, titleType)) {
         break;
       }
 
@@ -1268,7 +1327,7 @@ The previous attempt was incomplete, too long, or did not follow the required BR
         `[GoogleAI] Attempt ${attempt} article is below quality threshold (length/headings/paragraphs).`
       );
 
-      if (attempt === 2 && !isArticleRich(articleText, templateType)) {
+      if (attempt === 2 && !isArticleRich(articleText, templateType, keyword, pageTitle, titleType)) {
         console.warn(`[GoogleAI] Using best-effort article despite failing quality checks.`);
       }
     }
@@ -1300,11 +1359,11 @@ The previous attempt was incomplete, too long, or did not follow the required BR
 
     // 验证内容长度（确保不超过一屏）
     const plainTextLength = stripHtmlTags(articleText).replace(/\s+/g, " ").trim().length;
-    if (!isTemplate3 && plainTextLength > currentMaxLength) {
+    if (!useLongFormArticleLimits && plainTextLength > currentMaxLength) {
       console.warn(`[GoogleAI] ⚠️ 内容过长 (${plainTextLength} 字符)，超过一屏限制 (${currentMaxLength} 字符)`);
       console.warn(`[GoogleAI] 提示：内容需要精简，确保不超过一屏`);
-    } else if (isTemplate3) {
-      console.log(`[GoogleAI] ✅ 模板3：内容长度 ${plainTextLength} 字符（无字数限制）`);
+    } else if (useLongFormArticleLimits) {
+      console.log(`[GoogleAI] ✅ 长文/指南意图：内容长度 ${plainTextLength} 字符（无严格一屏上限）`);
     }
     
     // 检查内容是否完整（没有未完成的句子）
@@ -3090,21 +3149,32 @@ function formatTitleCase(title: string): string {
   return formattedWords.join(" ");
 }
 
-function isArticleRich(html: string, templateType?: string): boolean {
+function isArticleRich(
+  html: string,
+  templateType?: string,
+  keyword?: string,
+  pageTitle?: string,
+  titleType?: string
+): boolean {
   const plainText = stripHtmlTags(html).replace(/\s+/g, " ").trim();
   
-  // 根据模板类型设置内容长度限制
   const isTemplate3 = templateType === "template-3";
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
   const isTemplate6 = templateType === "template-6";
   const isTemplate7 = templateType === "template-7";
   const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
+  const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(
+    templateType,
+    keyword ?? "",
+    pageTitle ?? "",
+    titleType
+  );
   const currentMinLength = MIN_ARTICLE_LENGTH;
-  const currentMaxLength = isLongFormTemplate ? 12000 : MAX_ARTICLE_LENGTH;
+  const currentMaxLength = useLongFormArticleLimits ? 12000 : MAX_ARTICLE_LENGTH;
 
-  // 检查内容长度
-  const isWithinLength = plainText.length >= currentMinLength && (isLongFormTemplate || plainText.length <= currentMaxLength);
+  const isWithinLength =
+    plainText.length >= currentMinLength && (useLongFormArticleLimits || plainText.length <= currentMaxLength);
 
   // 检查内容是否完整（没有未完成的句子）
   const isComplete = /[.!?]\s*$|<\/p>|<\/li>|<\/h[1-6]>|<\/ol>/.test(html.trim());
@@ -3117,8 +3187,13 @@ function isArticleRich(html: string, templateType?: string): boolean {
   const headingCount = (html.match(/<h[2-3][^>]*>/gi) || []).length;
   const paragraphCount = (html.match(/<p[^>]*>/gi) || []).length;
 
-  // 模板7为博客式长文：不强制编号列表与问题式标题
-  if (isTemplate7) {
+  const relaxedArticleStructure =
+    isTemplate7 ||
+    (useLongFormArticleLimits &&
+      !isLongFormTemplate &&
+      (templateType === "template-1" || templateType === "template-2"));
+
+  if (relaxedArticleStructure) {
     return (
       isWithinLength &&
       isComplete &&
@@ -3544,7 +3619,8 @@ async function generateWithModelRotation(
   const isTemplate6 = templateType === "template-6";
   const isTemplate7 = templateType === "template-7";
   const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
-  const isComplexTask = isLongFormTemplate || !!userPrompt || keyword.length > 50;
+  const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(templateType, keyword, pageTitle, titleType);
+  const isComplexTask = useLongFormArticleLimits || !!userPrompt || keyword.length > 50;
   
   // 选择模型（优先使用未尝试过的模型）
   let modelName = selectModel(templateType, isComplexTask);

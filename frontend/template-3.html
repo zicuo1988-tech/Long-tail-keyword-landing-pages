@@ -9,7 +9,7 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{META_DESCRIPTION}}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="author" content="VERTU" />
+    <meta name="author" content="{{META_AUTHOR}}" />
     <link rel="canonical" href="{{PAGE_URL}}" />
     
     <!-- Open Graph / Facebook -->
@@ -1124,9 +1124,23 @@
                 <p>{{PAGE_DESCRIPTION}}</p>
             </div>
             {{/if}}
+        </div>
+
+        <!-- 内容区域（第一段）— answer-first for organic search -->
+        <div class="content-container" id="guide-content">
+            {{#if (isNotEmpty AUTHOR_NAME)}}
+            <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
+                <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
+                {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
+            </aside>
+            {{/if}}
+            <div class="content ai-article-body">
+                {{{AI_GENERATED_CONTENT}}}
+            </div>
+        </div>
 
             {{#if topProducts.length}}
-            <section class="top-picks-block product-section" aria-label="Editor picks">
+            <section class="top-picks-block product-section" id="top-picks" aria-label="Editor picks">
                 <div class="product-title">Editor’s picks</div>
                 <p class="editor-picks-sub">Matched to your search—official store, secure checkout.</p>
                 <div class="products-grid">
@@ -1185,7 +1199,6 @@
                 </div>
             </section>
             {{/if}}
-        </div>
 
         {{#if products.length}}
         <!-- 产品展示区域 -->
@@ -1252,13 +1265,6 @@
                     </div>
                 </div>
                 {{/each}}
-            </div>
-        </div>
-
-        <!-- 内容区域（第一段） -->
-        <div class="content-container">
-            <div class="content ai-article-body">
-                {{{AI_GENERATED_CONTENT}}}
             </div>
         </div>
 

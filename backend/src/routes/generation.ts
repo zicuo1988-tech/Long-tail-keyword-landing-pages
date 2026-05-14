@@ -2592,6 +2592,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       showTrustStrip: showTrustStripFinal,
       comparisonClosing: isTemplate4 || isTemplate5 || isTemplate6 ? DEFAULT_COMPARISON_CLOSING : "",
       normalizeBlogTables: true,
+      articleDatePublishedISO: payload.articleDatePublishedISO,
+      articleDateModifiedISO: payload.articleDateModifiedISO,
+      articleAuthorName: payload.articleAuthorName,
+      articleAuthorJobTitle: payload.articleAuthorJobTitle,
+      articleAuthorBio: payload.articleAuthorBio,
     });
 
     // 调试：检查渲染后的 HTML 内容

@@ -18,6 +18,14 @@ export interface GenerationRequestPayload {
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   targetCategory?: string; // 可选：用户指定的产品分类，页面将只显示该分类下的产品
   templateType?: string; // 模板类型：template-1, template-2, template-3
+  /** 可选：Article JSON-LD 的 datePublished（ISO 8601）。不填则使用渲染时刻。 */
+  articleDatePublishedISO?: string;
+  /** 可选：Article JSON-LD 的 dateModified（ISO 8601）。不填则与发布日期或渲染时刻一致。 */
+  articleDateModifiedISO?: string;
+  /** 可选：署名作者（用于正文 byline 与 Article JSON-LD Person.author）；不填则仅 Organization */
+  articleAuthorName?: string;
+  articleAuthorJobTitle?: string;
+  articleAuthorBio?: string;
   templateContent: string;
   googleApiKey?: string;
   useElementor?: boolean; // 是否使用 Elementor 保存页面

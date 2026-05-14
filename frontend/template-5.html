@@ -9,7 +9,7 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="{{META_DESCRIPTION}}" />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="author" content="VERTU" />
+    <meta name="author" content="{{META_AUTHOR}}" />
     <link rel="canonical" href="{{PAGE_URL}}" />
     
     <!-- Open Graph / Facebook -->
@@ -52,30 +52,6 @@
     {{{PRODUCT_STRUCTURED_DATA}}}
     </script>
     {{/if}}
-    
-    <!-- BreadcrumbList Structured Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [{
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": "https://vertu.com"
-      }, {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Luxury Life Guides",
-        "item": "https://vertu.com/luxury-life-guides"
-      }, {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "{{PAGE_TITLE}}",
-        "item": "{{PAGE_URL}}"
-      }]
-    }
-    </script>
     
     <style>
  
@@ -1484,14 +1460,28 @@
             <p class="hero-subtitle">{{META_DESCRIPTION}}</p>
             {{/if}}
             <div class="hero-cta">
-                <a href="#top-picks" class="cta-primary">Shop Now</a>
-                <a href="#comparison" class="cta-secondary">Compare Products</a>
+                <a href="#guide-content" class="cta-primary">Read the guide</a>
+                <a href="#comparison" class="cta-secondary">Compare models</a>
             </div>
             
         </div>
     </section>
 
-    <!-- Quick Stats -->
+    <!-- Content Section: answer-first for organic search (TOC script targets .ai-article-body) -->
+    <div class="content-container" id="guide-content">
+        {{#if (isNotEmpty AUTHOR_NAME)}}
+        <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
+            <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
+            {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
+        </aside>
+        {{/if}}
+        {{{EDITORIAL_LEAD_HTML}}}
+        <div class="content ai-article-body">
+            {{{AI_GENERATED_CONTENT}}}
+        </div>
+    </div>
+
+    <!-- Quick Stats (after editorial so the first scroll is substance, not generic proof) -->
     <section class="quick-stats">
         <div class="stat-item">
             <span class="stat-number">27+</span>
@@ -1706,13 +1696,6 @@
         </div>
     </div>
     {{/if}}
-
-    <!-- Content Section -->
-    <div class="content-container">
-        <div class="content ai-article-body">
-            {{{AI_GENERATED_CONTENT}}}
-        </div>
-    </div>
 
     {{#if internalLinks.length}}
     <!-- Internal Links -->
@@ -2067,5 +2050,6 @@
             }
         })();
     </script>
+{{{PAGE_UX_SCRIPT}}}
 </body>
 </html>

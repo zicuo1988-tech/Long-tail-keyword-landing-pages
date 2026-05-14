@@ -15,6 +15,95 @@ export function wrapArticleTablesInScroll(html: string): string {
   );
 }
 
+function formatIsoDateForDisplay(iso: string): string {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return iso;
+  return new Date(t).toLocaleDateString("en-GB", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+/** TOC + GA4/dataLayer 事件（站点已加载 gtag 时生效） */
+function buildPageUxScript(): string {
+  return `<script>(function(){
+function llTrack(n,p){try{if(typeof gtag==='function'){gtag('event',n,p||{});}else if(Array.isArray(window.dataLayer)){window.dataLayer.push(Object.assign({event:n},p||{}));}}catch(e){}}
+document.addEventListener('click',function(e){
+  var t=e.target;
+  if(!t)return;
+  var acc=t.closest&&t.closest('.accordion-header');
+  if(acc){llTrack('faq_toggle',{section:'faq'});return;}
+  var a=t.closest&&t.closest('a.cta-primary,a.cta-secondary,a.button,a.blog-product-cta,a.shop-cta');
+  if(a&&a.href){llTrack('ll_cta_click',{link_url:a.href,link_text:(a.textContent||'').trim().slice(0,120)});}
+},true);
+function llScrollDepth(){
+  var thresholds=[25,50,75,90];
+  var fired={};
+  function pct(){
+    var el=document.documentElement;
+    var sh=el.scrollHeight-window.innerHeight;
+    if(sh<=0)return 100;
+    return Math.min(100,Math.round(100*window.scrollY/sh));
+  }
+  function check(){
+    var p=pct();
+    for(var i=0;i<thresholds.length;i++){
+      var t=thresholds[i];
+      if(p>=t&&!fired[t]){
+        fired[t]=1;
+        llTrack('scroll_depth',{percent_scrolled:t});
+      }
+    }
+  }
+  var ticking=false;
+  function onScroll(){
+    if(ticking)return;
+    ticking=true;
+    requestAnimationFrame(function(){ticking=false;check();});
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true});
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',function(){setTimeout(check,400);});
+  else setTimeout(check,400);
+}
+function llEngagementTimer(){
+  setTimeout(function(){
+    if(window.llTimer30)return;
+    window.llTimer30=1;
+    llTrack('ll_engagement_timer',{engagement_time_msec:30000});
+  },30000);
+}
+function buildToc(){
+  var root=document.querySelector('.content.ai-article-body');
+  if(!root)return;
+  var h2s=root.querySelectorAll('h2');
+  if(!h2s||h2s.length<2)return;
+  var wrap=document.createElement('nav');
+  wrap.className='ll-on-this-page';
+  wrap.setAttribute('aria-label','On this page');
+  wrap.style.cssText='margin:0 0 1.25rem;padding:12px 14px;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;font-size:14px;line-height:1.5';
+  wrap.innerHTML='<p class="ll-toc-title" style="margin:0 0 8px;font-weight:700;font-size:15px;color:#111">On this page</p><ol class="ll-toc-list" style="margin:0;padding-left:1.25rem;color:#333"></ol>';
+  var ol=wrap.querySelector('.ll-toc-list');
+  for(var i=0;i<h2s.length;i++){
+    var h=h2s[i];
+    if(!h.id)h.id='ll-sec-'+(i+1);
+    var li=document.createElement('li');
+    var l=document.createElement('a');
+    l.href='#'+h.id;
+    l.style.color='#1a5fb4';
+    l.textContent=(h.textContent||'').replace(/\\s+/g,' ').trim().slice(0,140);
+    li.appendChild(l);
+    if(ol)ol.appendChild(li);
+  }
+  root.insertBefore(wrap,root.firstChild);
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildToc);else buildToc();
+llScrollDepth();
+llEngagementTimer();
+})();<\/script>`;
+}
+
 Handlebars.registerHelper("safeHtml", (html: string) => new Handlebars.SafeString(html));
 Handlebars.registerHelper("truncateText", (text: string | undefined, maxLength: number = 40) => {
   if (!text) return "";
@@ -186,6 +275,14 @@ export interface RenderTemplateInput {
   comparisonClosing?: string;
   /** 为 AI 正文中的 table 外包滚动容器（如模板7） */
   normalizeBlogTables?: boolean;
+  /** 可选：Article JSON-LD 与页面「更新」展示的 datePublished（ISO 8601） */
+  articleDatePublishedISO?: string;
+  /** 可选：Article JSON-LD 与页面「更新」展示的 dateModified（ISO 8601） */
+  articleDateModifiedISO?: string;
+  /** 可选：Person 作者（与 JSON-LD 一致）；仅姓名必填时展示 byline */
+  articleAuthorName?: string;
+  articleAuthorJobTitle?: string;
+  articleAuthorBio?: string;
 }
 
 export function renderTemplate({
@@ -214,6 +311,11 @@ export function renderTemplate({
   showTrustStrip = false,
   comparisonClosing = "",
   normalizeBlogTables = false,
+  articleDatePublishedISO,
+  articleDateModifiedISO,
+  articleAuthorName,
+  articleAuthorJobTitle,
+  articleAuthorBio,
 }: RenderTemplateInput) {
   const template = Handlebars.compile(templateContent);
 
@@ -233,10 +335,22 @@ export function renderTemplate({
   }
   const pageImageResolved = pageImage ? rewriteVertuOssContentToShopifyCdn(pageImage) : pageImage;
 
-  // 生成当前日期（ISO格式，用于结构化数据）
   const now = new Date();
-  const datePublished = now.toISOString();
-  const dateModified = now.toISOString();
+  const publishedIso =
+    articleDatePublishedISO?.trim() ||
+    articleDateModifiedISO?.trim() ||
+    now.toISOString();
+  const modifiedIso = articleDateModifiedISO?.trim() || publishedIso;
+  const datePublished = publishedIso;
+  const dateModified = modifiedIso;
+  const LAST_UPDATED_LABEL = formatIsoDateForDisplay(dateModified);
+
+  const editorialLeadHtml = `<p class="ll-editorial-lead" role="note" style="margin:0 0 1.1rem;font-size:15px;line-height:1.55;color:#333;background:#f8f8f8;border-left:4px solid #111;padding:12px 14px;border-radius:0 6px 6px 0"><strong>Editorial note:</strong> This guide reflects our product knowledge base at the time of writing. <span style="white-space:nowrap">Updated <time datetime="${dateModified}">${LAST_UPDATED_LABEL}</time>.</span></p>`;
+
+  const authorNamePlain = (articleAuthorName ?? "").replace(/<[^>]*>/g, "").trim();
+  const authorJobPlain = (articleAuthorJobTitle ?? "").replace(/<[^>]*>/g, "").trim();
+  const authorBioPlain = (articleAuthorBio ?? "").replace(/<[^>]*>/g, "").trim();
+  const metaAuthor = authorNamePlain || "VERTU";
 
   /** FAQ 并入主 @graph，不再单独输出第二段 script，避免重复 @context */
   let faqStructuredData = "";
@@ -325,6 +439,24 @@ export function renderTemplate({
           publisher: { "@id": orgId },
           inLanguage: "en-GB",
         });
+
+        if (authorNamePlain) {
+          try {
+            const pageIdBase = new URL(pu).href.replace(/\/+$/, "");
+            const personId = `${pageIdBase}#author`;
+            const personNode: Record<string, unknown> = {
+              "@type": "Person",
+              "@id": personId,
+              name: authorNamePlain,
+            };
+            if (authorJobPlain) personNode.jobTitle = authorJobPlain;
+            if (authorBioPlain) personNode.description = authorBioPlain;
+            personNode.worksFor = { "@id": orgId };
+            graph.push(personNode);
+          } catch {
+            /* ignore invalid pageUrl for Person @id */
+          }
+        }
       } catch {
         orgId = undefined;
       }
@@ -343,7 +475,30 @@ export function renderTemplate({
         "@id": pageUrl || "",
       },
     };
-    if (orgId) {
+    let authorRef: Record<string, unknown> | undefined;
+    if (pu && authorNamePlain) {
+      try {
+        const pageIdBase = new URL(pu).href.replace(/\/+$/, "");
+        authorRef = { "@id": `${pageIdBase}#author` };
+      } catch {
+        authorRef = undefined;
+      }
+    }
+    if (authorRef) {
+      articleNode.author = authorRef;
+      if (orgId) {
+        articleNode.publisher = { "@id": orgId };
+      } else {
+        articleNode.publisher = {
+          "@type": "Organization",
+          name: "VERTU",
+          logo: {
+            "@type": "ImageObject",
+            url: VERTU_LOGO_URL,
+          },
+        };
+      }
+    } else if (orgId) {
       articleNode.author = { "@id": orgId };
       articleNode.publisher = { "@id": orgId };
     } else {
@@ -553,7 +708,7 @@ export function renderTemplate({
     PAGE_URL: pageUrl || "", // 页面URL（用于canonical和Open Graph）
     PAGE_IMAGE: pageImageResolved || "", // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
     DATE_PUBLISHED: datePublished, // 发布日期（ISO格式）
-    CURRENT_DATE: new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' }), // 当前日期（用于模板6底部显示）
+    CURRENT_DATE: LAST_UPDATED_LABEL,
     DATE_MODIFIED: dateModified, // 修改日期（ISO格式）
     ARTICLE_STRUCTURED_DATA: new Handlebars.SafeString(articleStructuredData), // Article结构化数据
     FAQ_STRUCTURED_DATA: new Handlebars.SafeString(faqStructuredData), // FAQ结构化数据
@@ -579,6 +734,13 @@ export function renderTemplate({
     PRODUCT_SECTION_INTRO: productSectionIntro,
     TRUST_STRIP_HTML: showTrustStrip ? new Handlebars.SafeString(DEFAULT_TRUST_STRIP_HTML) : "",
     COMPARISON_CLOSING: comparisonClosing,
+    LAST_UPDATED_LABEL,
+    EDITORIAL_LEAD_HTML: new Handlebars.SafeString(editorialLeadHtml),
+    PAGE_UX_SCRIPT: new Handlebars.SafeString(buildPageUxScript()),
+    META_AUTHOR: metaAuthor,
+    AUTHOR_NAME: authorNamePlain,
+    AUTHOR_JOB: authorJobPlain,
+    AUTHOR_BIO: authorBioPlain,
   });
 
   // 调试日志：检查渲染结果
