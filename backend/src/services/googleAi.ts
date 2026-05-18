@@ -3,6 +3,7 @@ import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 import { getArticleImageUrlsFromEnv } from "../config/shopifyCdn.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
+import { shouldTreatAsLongFormGuideArticle } from "../utils/guideIntent.js";
 
 // 多模型配置：支持多个模型轮换，降低限流风险
 // 注意：只包含当前API版本确实可用的模型
@@ -38,50 +39,6 @@ const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
 const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
 const MIN_PARAGRAPH_COUNT = 3; // 至少 3 个段落（介绍 + 支持段落 + 结论）
-
-/** 指南/评测类意图：即使用模板1/2 也放宽字数与结构，避免「一屏短文」与搜索意图错位 */
-function shouldTreatAsLongFormGuideArticle(
-  templateType: string | undefined,
-  keyword: string,
-  pageTitle: string,
-  titleType?: string
-): boolean {
-  const isBuiltInLongForm =
-    templateType === "template-3" ||
-    templateType === "template-4" ||
-    templateType === "template-5" ||
-    templateType === "template-6" ||
-    templateType === "template-7";
-  if (isBuiltInLongForm) return true;
-
-  const isShortTemplate =
-    templateType === "template-1" ||
-    templateType === "template-2" ||
-    templateType === undefined ||
-    templateType === "";
-  if (!isShortTemplate) return false;
-
-  const guideTitleTypes = new Set([
-    "informational",
-    "review",
-    "how-to",
-    "recommendations",
-    "comparison",
-    "expert",
-    "best",
-    "top",
-    "top-ranking",
-    "most",
-    "services-guides",
-    "tech-insights",
-  ]);
-  if (titleType && guideTitleTypes.has(titleType)) return true;
-
-  const text = `${keyword} ${pageTitle || ""}`.toLowerCase();
-  return /\b(how\s+to|what\s+is|what\s+are|why\s|when\s|where\s|best\b|top\s+\d|vs\.?\b|versus\b|review|reviews|guides?\b|comparison|comparisons|price|prices|buy(ing)?|choose|choosing|worth\b|tips\b|ranking|recommended)\b/.test(
-    text
-  );
-}
 
 export interface GenerateContentOptions {
   apiKey?: string; // 可选：如果提供则直接使用，否则从管理器获取
@@ -439,6 +396,8 @@ TITLE-INTENT LOCK (CRITICAL):
 
 ANSWER-FIRST OPENING & LOCAL CONSISTENCY (CRITICAL):
 - The article appears before product grids: many readers arrive from organic search. Open with a direct, scannable answer to the question implied by the page title "${pageTitle}" and keyword "${keyword}". The first <p> after the first <h2> must state the main takeaway (what to choose, key criteria, or where to start); avoid opening with generic brand history or filler.
+- For long-form pages: that first <p> after the first <h2> must be 2–4 complete sentences forming a decisive "key takeaway" (who it is for, the top 2–3 decision criteria, or an explicit "start here" recommendation). Do not bury the answer in later sections.
+- If the title or keyword names a broad device or category (e.g. modular phones, dumb phones, unlocked phones, durable smartphones, generic camera buying) and does NOT contain "VERTU", structure the opening H2 + first paragraphs as category education first (how to choose, what matters, common pitfalls), then introduce VERTU only where it naturally fits the criteria (e.g. luxury flagship tier)—do not open with a VERTU sales pitch before the reader understands the category.
 - If the title, keyword, or topic clearly names a country or region (e.g. India, Pakistan, UAE, UK), keep buying guidance, shipping, price discussion, and retailer context aligned to that market. Do not switch to another territory unless you explicitly label a separate comparison.
 - For VERTU products: specifications, materials, services, and prices MUST come only from the knowledge base. If the knowledge base does not state a fact, do not invent it—omit or direct readers to the official site for current confirmation.
 

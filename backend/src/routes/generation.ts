@@ -111,6 +111,7 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
 }
 import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
 import { publishPage } from "../services/wordpress.js";
+import { applyGuideIntentLongShellIfNeeded } from "../utils/templatePolicy.js";
 import { renderTemplate, type Reference } from "../services/templateRenderer.js";
 import { createSlug } from "../utils/slug.js";
 import { normalizePublicSiteRoot } from "../utils/publicSiteUrl.js";
@@ -315,6 +316,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         updateTaskStatus(taskId, "generating_title", `使用备用标题（类型: ${payload.titleType || '默认'}）: ${finalPageTitle}`);
       }
     }
+
+    applyGuideIntentLongShellIfNeeded(payload, finalPageTitle);
 
     // 【重要调整】先获取产品，再生成内容，确保 AI 只使用实际存在的产品
     // 这样可以避免内容提到的产品在实际显示中缺失的问题

@@ -79,6 +79,7 @@
 - **REST API 支持**：完整的 WordPress REST API 集成
 - **Elementor 支持**：可选的 Elementor HTML 小部件发布
 - **自定义 URL 前缀**：新页面自动添加 `/luxury-life-guides/` URL 前缀
+- **主题目录页（Hub）**：`wordpress-url-rewrite.php` 使 `/luxury-life-guides/` 返回 **200** 聚合页，列出所有带 `_custom_url_prefix` 的指南内链，并输出 `CollectionPage` + `ItemList` + `BreadcrumbList` JSON-LD（不再 301 到首页）
 - **SEO 元数据**：自动生成元描述、关键词、Open Graph 和结构化数据
 - **自定义字段**：将 URL 前缀和其他元数据存储为自定义字段
 - **URL 重写**：通过 WordPress 插件实现自定义 URL 结构，不影响现有页面
@@ -86,7 +87,7 @@
 ### 🔄 批量生成功能
 
 - **关键词池**：支持提供多个长尾关键词，系统会依次处理
-- **模板循环**：自动循环使用三个模板（模板 1、模板 2、模板 3）
+- **模板与标题类型匹配**：批量模式下 **购买/促销类**（`purchase`、`commercial`）轮换模板 1、2、4；其余指南类标题类型固定轮换 **模板 5、6、7**（长版式）。若单次提交仍选模板 1/2 但关键词与标题属指南意图，后端会自动升级为 5/6/7 并重新加载对应 HTML 壳
 - **标题类型循环**：自动循环使用所有标题类型
 - **批量进度显示**：显示批量任务进度（如 `[1/5] 生成标题中...`）
 - **批量结果汇总**：显示成功和失败的生成数量
@@ -109,6 +110,7 @@
 - **WordPress 服务**：WordPress/WooCommerce REST API 客户端
 - **模板渲染器**：基于 Handlebars 的模板渲染引擎
 - **任务管理**：异步任务处理，带状态跟踪
+- **指南意图模板升级**：当请求为模板 1/2 且属指南类关键词/标题时，从项目根目录的 `frontend/` 读取模板 5/6/7 覆盖 `templateContent`（生产部署时请保留与 `backend/` 同级的 `frontend/` 目录）
 - **API 密钥管理**：API 密钥轮换，带重试逻辑和错误处理
 - **历史记录存储**：内存存储生成历史记录（最多 1000 条）
 
@@ -153,7 +155,9 @@
 │   ├── default-template.html       # 模板 1
 │   ├── template-2.html             # 模板 2
 │   └── template-3.html             # 模板 3
-├── wordpress-url-rewrite.php       # WordPress URL 重写插件
+├── docs/
+│   └── ga4-cwv-playbook.md          # GA4 自定义事件与 CWV 排查说明
+├── wordpress-url-rewrite.php       # WordPress URL 重写 / hub
 └── package.json                     # 根 package.json
 ```
 

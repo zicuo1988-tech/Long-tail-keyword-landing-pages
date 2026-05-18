@@ -6,6 +6,7 @@
  * 或者作为独立插件使用
  * 
  * 功能：自动为带有 _custom_url_prefix 自定义字段的页面添加URL前缀 /luxury-life-guides/
+ * /luxury-life-guides/ 根路径返回 200 主题聚合页（含内链与 ItemList JSON-LD），不再 301 到首页
  * 不影响其他页面
  * 
  * 使用方法：
@@ -23,8 +24,7 @@ function luxury_life_guides_add_rewrite_rules() {
         'top'
     );
     
-    // 添加重写规则：luxury-life-guides/ -> 重定向到首页或返回200状态（避免404）
-    // 这可以防止 Google 因为目录页面404而无法识别URL结构
+    // /luxury-life-guides/ 由 luxury_life_guides_render_hub_page 输出聚合页（200）
     add_rewrite_rule(
         '^luxury-life-guides/?$',
         'index.php?pagename=luxury-life-guides-index',
@@ -71,10 +71,8 @@ function luxury_life_guides_parse_request($wp) {
     // 获取请求的路径
     $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
     
-    // 处理 /luxury-life-guides/ 目录页面（不带slug的情况）
+    // 处理 /luxury-life-guides/ 目录页面（不带 slug）：由 template_redirect 输出 hub
     if (preg_match('#^/luxury-life-guides/?$#', $request_uri)) {
-        // 重定向到首页，避免404错误
-        // 这可以防止 Google 因为目录页面404而无法识别URL结构
         $wp->query_vars['pagename'] = 'luxury-life-guides-index';
         $wp->query_vars['post_type'] = 'page';
         return;
@@ -106,17 +104,154 @@ function luxury_life_guides_parse_request($wp) {
 }
 add_action('parse_request', 'luxury_life_guides_parse_request', 5);
 
+/**
+ * 输出 /luxury-life-guides/ 主题 hub：列出所有带 _custom_url_prefix=luxury-life-guides 的已发布页面。
+ * 使用 200 + CollectionPage / ItemList 结构化数据，利于主题集群与内链。
+ */
+function luxury_life_guides_render_hub_page() {
+    if (is_admin()) {
+        return;
+    }
+    $req_path = isset($_SERVER['REQUEST_URI']) ? strtok($_SERVER['REQUEST_URI'], '?') : '';
+    if ($req_path === false || !preg_match('#^/luxury-life-guides/?$#', $req_path)) {
+        return;
+    }
+
+    global $wp_query;
+    status_header(200);
+    if ($wp_query) {
+        $wp_query->is_404 = false;
+        $wp_query->is_page = false;
+        $wp_query->is_singular = false;
+        $wp_query->is_home = false;
+        $wp_query->is_archive = false;
+    }
+
+    $hub_url = trailingslashit(home_url('/luxury-life-guides/'));
+    $q = new WP_Query(array(
+        'post_type'      => 'page',
+        'post_status'    => 'publish',
+        'posts_per_page' => -1,
+        'orderby'        => 'modified',
+        'order'          => 'DESC',
+        'meta_key'       => '_custom_url_prefix',
+        'meta_value'     => 'luxury-life-guides',
+    ));
+
+    $items = array();
+    if ($q->have_posts()) {
+        while ($q->have_posts()) {
+            $q->the_post();
+            $items[] = array(
+                'url'   => get_permalink(),
+                'title' => get_the_title(),
+            );
+        }
+        wp_reset_postdata();
+    }
+
+    $list_elements = array();
+    $position = 1;
+    foreach ($items as $row) {
+        $list_elements[] = array(
+            '@type'    => 'ListItem',
+            'position' => $position++,
+            'url'      => $row['url'],
+            'name'     => $row['title'],
+        );
+    }
+
+    $schema = array(
+        '@context' => 'https://schema.org',
+        '@graph'   => array(
+            array(
+                '@type'           => 'CollectionPage',
+                '@id'             => $hub_url . '#webpage',
+                'url'             => $hub_url,
+                'name'            => __('Luxury Life Guides', 'luxury-life-guides'),
+                'description'     => __('Editorial guides and buying advice from VERTU.', 'luxury-life-guides'),
+                'inLanguage'      => 'en-GB',
+                'isPartOf'        => array('@id' => trailingslashit(home_url('/')) . '#website'),
+                'breadcrumb'      => array('@id' => $hub_url . '#breadcrumb'),
+            ),
+            array(
+                '@type'           => 'BreadcrumbList',
+                '@id'             => $hub_url . '#breadcrumb',
+                'itemListElement' => array(
+                    array(
+                        '@type'    => 'ListItem',
+                        'position' => 1,
+                        'name'     => __('Home', 'luxury-life-guides'),
+                        'item'     => trailingslashit(home_url('/')),
+                    ),
+                    array(
+                        '@type'    => 'ListItem',
+                        'position' => 2,
+                        'name'     => __('Luxury Life Guides', 'luxury-life-guides'),
+                        'item'     => $hub_url,
+                    ),
+                ),
+            ),
+            array(
+                '@type'            => 'ItemList',
+                'name'             => __('Luxury Life Guides', 'luxury-life-guides'),
+                'numberOfItems'    => count($list_elements),
+                'itemListElement'  => $list_elements,
+            ),
+        ),
+    );
+
+    header('Content-Type: text/html; charset=' . get_option('blog_charset'));
+    ?><!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+    <meta charset="<?php bloginfo('charset'); ?>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><?php echo esc_html(get_bloginfo('name') . ' — Luxury Life Guides'); ?></title>
+    <meta name="description" content="<?php echo esc_attr(__('Browse VERTU luxury life guides: phones, wearables, and concierge-led buying advice.', 'luxury-life-guides')); ?>" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="<?php echo esc_url($hub_url); ?>" />
+    <script type="application/ld+json"><?php echo wp_json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); ?></script>
+    <?php wp_head(); ?>
+    <style>
+        body.llg-hub{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#fafafa;color:#111;line-height:1.5}
+        .llg-wrap{max-width:720px;margin:0 auto;padding:2rem 1.25rem 3rem}
+        .llg-wrap h1{font-size:1.5rem;font-weight:700;margin:0 0 .5rem}
+        .llg-wrap p.lead{margin:0 0 1.5rem;color:#444;font-size:1rem}
+        .llg-list{list-style:none;padding:0;margin:0}
+        .llg-list li{border-bottom:1px solid #e5e5e5}
+        .llg-list a{display:block;padding:.85rem 0;text-decoration:none;color:#0a3d91;font-weight:500}
+        .llg-list a:hover{text-decoration:underline}
+        .llg-home{margin-top:2rem;font-size:.95rem}
+        .llg-home a{color:#333}
+    </style>
+</head>
+<body class="llg-hub">
+    <main class="llg-wrap">
+        <h1><?php esc_html_e('Luxury Life Guides', 'luxury-life-guides'); ?></h1>
+        <p class="lead"><?php esc_html_e('Editorial guides and buying advice. Select a topic below.', 'luxury-life-guides'); ?></p>
+        <?php if (empty($items)) : ?>
+            <p><?php esc_html_e('No guides are published yet. Check back soon.', 'luxury-life-guides'); ?></p>
+        <?php else : ?>
+            <ul class="llg-list">
+                <?php foreach ($items as $row) : ?>
+                    <li><a href="<?php echo esc_url($row['url']); ?>"><?php echo esc_html($row['title']); ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+        <p class="llg-home"><a href="<?php echo esc_url(home_url('/')); ?>">&larr; <?php esc_html_e('Back to home', 'luxury-life-guides'); ?></a></p>
+    </main>
+    <?php wp_footer(); ?>
+</body>
+</html>
+    <?php
+    exit;
+}
+add_action('template_redirect', 'luxury_life_guides_render_hub_page', 0);
+
 // 在模板重定向时确保正确加载页面
 function luxury_life_guides_template_redirect() {
     global $wp_query;
-    
-    // 处理 /luxury-life-guides/ 目录页面请求
-    if (isset($wp_query->query_vars['pagename']) && $wp_query->query_vars['pagename'] === 'luxury-life-guides-index') {
-        // 重定向到首页，避免404错误
-        // 这可以防止 Google 因为目录页面404而无法识别URL结构
-        wp_redirect(home_url('/'), 301);
-        exit;
-    }
     
     // 如果查询变量中有我们设置的page_id，确保能正确加载页面
     if (isset($wp_query->query_vars['page_id'])) {

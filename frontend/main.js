@@ -638,13 +638,22 @@ form.addEventListener("submit", async (event) => {
       return;
     }
 
-    // 定义模板和标题类型循环数组
-    const templateTypes = ["template-1", "template-2", "template-3", "template-4", "template-5", "template-6", "template-7"];
+    // 定义标题类型循环数组（模板按意图匹配：指南类用长模板 5/6/7，购买/促销类用较短布局）
     const titleTypes = [
       "purchase", "informational", "review", "commercial", "how-to",
       "recommendations", "services-guides", "tech-insights", "comparison",
       "expert", "best", "top", "top-ranking", "most"
     ];
+
+    function pickBatchTemplate(index, titleType) {
+      const tt = String(titleType || "");
+      if (tt === "purchase" || tt === "commercial") {
+        const pool = ["template-1", "template-2", "template-4"];
+        return pool[index % pool.length];
+      }
+      const guidePool = ["template-5", "template-6", "template-7"];
+      return guidePool[index % guidePool.length];
+    }
 
     appendLog(`开始批量生成，共 ${keywords.length} 个关键词`, "info");
     updateProgress("submitted", `批量生成中：0/${keywords.length}`);
@@ -658,10 +667,9 @@ form.addEventListener("submit", async (event) => {
 
     // 处理单个关键词的函数
     async function processKeyword(keyword, index) {
-      const templateIndex = index % templateTypes.length;
       const titleIndex = index % titleTypes.length;
-      const currentTemplate = templateTypes[templateIndex];
       const currentTitleType = titleTypes[titleIndex];
+      const currentTemplate = pickBatchTemplate(index, currentTitleType);
 
       appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
       appendLog(`处理第 ${index + 1}/${keywords.length} 个关键词: "${keyword}"`, "info");

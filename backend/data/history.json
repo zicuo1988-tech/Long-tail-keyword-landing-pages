@@ -1,5 +1,285 @@
 [
   {
+    "id": "77f97ca0-1e08-497f-9b31-2084ecb222fc",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-sophisticated-mobile-devices-highly-recommended",
+    "createdAt": 1778738335819,
+    "updatedAt": 1778738471463,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Sophisticated mobile devices",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-sophisticated-mobile-devices-highly-recommended/"
+  },
+  {
+    "id": "f60ac4e7-3ee0-4bda-b939-595e73555d43",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-bespoke-technology",
+    "createdAt": 1778738188812,
+    "updatedAt": 1778738335487,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Bespoke technology",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-bespoke-technology/"
+  },
+  {
+    "id": "5923d377-edcc-4fa3-b56f-c30fef43b966",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-high-end-mobile-features-collection",
+    "createdAt": 1778738007825,
+    "updatedAt": 1778738186314,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "High-end mobile features",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-high-end-mobile-features-collection/"
+  },
+  {
+    "id": "c7a73751-a4c5-46b0-be79-e65f18886903",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-custom-luxury-solutions-comparison-best-rated",
+    "createdAt": 1778737859868,
+    "updatedAt": 1778738007572,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Custom luxury solutions",
+    "titleType": "review",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/custom-luxury-solutions-comparison-best-rated/"
+  },
+  {
+    "id": "5d999d76-4f4d-4f45-8cba-c0368170f3ca",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-luxury-brand-exclusivity",
+    "createdAt": 1778737700839,
+    "updatedAt": 1778737856867,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury brand exclusivity",
+    "titleType": "informational",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-brand-exclusivity/"
+  },
+  {
+    "id": "f7d795be-273f-4275-9a38-77eea5b2ca0a",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-buy-luxury-phones-design-official-store",
+    "createdAt": 1778737505820,
+    "updatedAt": 1778737698626,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury phones design",
+    "titleType": "purchase",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/buy-luxury-phones-design-official-store/"
+  },
+  {
+    "id": "19e68225-4fe2-4dc6-947f-f90c7f119d74",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-valued-premium-mobile-experience-popular-choices",
+    "createdAt": 1778737382821,
+    "updatedAt": 1778737503020,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Premium mobile experience",
+    "titleType": "most",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-premium-mobile-experience-popular-choices/"
+  },
+  {
+    "id": "2a6e5d41-3f12-44ab-804c-b315812fae5f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-innovative-luxury-technology-rankings-comprehensive-list",
+    "createdAt": 1778737239817,
+    "updatedAt": 1778737379888,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Innovative luxury technology",
+    "titleType": "top-ranking",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/innovative-luxury-technology-rankings-comprehensive-list/"
+  },
+  {
+    "id": "d151f341-f23c-4214-ac2e-0b322ad53b1b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-luxury-phones-accessories-premium-choices-reviewed",
+    "createdAt": 1778737083807,
+    "updatedAt": 1778737238221,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury phones accessories",
+    "titleType": "top",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-phones-accessories-premium-choices-reviewed/"
+  },
+  {
+    "id": "27da4914-1f48-470a-9b95-e2d224471a84",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-exquisite-craftsmanship-top-rated-and-reviews",
+    "createdAt": 1778736958852,
+    "updatedAt": 1778737081253,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Exquisite craftsmanship",
+    "titleType": "best",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-exquisite-craftsmanship-top-rated-and-reviews/"
+  },
+  {
+    "id": "d01755e9-2e02-4144-8f3c-1c105714a7e3",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-in-depth-analysis-of-luxury-lifestyle-products",
+    "createdAt": 1778736802825,
+    "updatedAt": 1778736957130,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury lifestyle products",
+    "titleType": "expert",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/in-depth-analysis-of-luxury-lifestyle-products/"
+  },
+  {
+    "id": "8eaebfaf-0c43-4a85-a786-a82fa33f4622",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-smartphone-concierge-comparison-which-is-better",
+    "createdAt": 1778736625822,
+    "updatedAt": 1778736800502,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Smartphone concierge",
+    "titleType": "comparison",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/smartphone-concierge-comparison-which-is-better/"
+  },
+  {
+    "id": "d7582947-1537-457c-98ac-aaa17dbd56d0",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-communication-feature-comparison",
+    "createdAt": 1778736448808,
+    "updatedAt": 1778736625197,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury communication",
+    "titleType": "tech-insights",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-communication-feature-comparison/"
+  },
+  {
+    "id": "162c4bb4-7c2b-4290-ab72-9ec6f9f5b856",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-tailored-mobile-services-user-guide",
+    "createdAt": 1778736344819,
+    "updatedAt": 1778736446633,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Tailored mobile services",
+    "titleType": "services-guides",
+    "templateType": "template-5",
+    "pageUrl": "https://vertu.com/luxury-life-guides/tailored-mobile-services-user-guide/"
+  },
+  {
+    "id": "3ac94df7-3856-4afe-a259-48c9cad2932b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-luxury-customer-experience-expert-recommendations",
+    "createdAt": 1778736231813,
+    "updatedAt": 1778736342882,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Luxury customer experience",
+    "titleType": "recommendations",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-luxury-customer-experience-expert-recommendations/"
+  },
+  {
+    "id": "d4a84521-0db4-441d-bc14-853a727cd898",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-buy-high-net-worth-individuals",
+    "createdAt": 1778736094819,
+    "updatedAt": 1778736230169,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "High-net-worth individuals",
+    "titleType": "how-to",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-high-net-worth-individuals/"
+  },
+  {
+    "id": "0ae888bf-3964-41ad-bcb9-460298df45ce",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-official-exclusive-smartphone-features-store",
+    "createdAt": 1778736010826,
+    "updatedAt": 1778736092948,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Exclusive smartphone features",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-exclusive-smartphone-features-store/"
+  },
+  {
+    "id": "0ed87d22-465f-4254-8dae-429be246c930",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-artisan-crafted-phone-review-top-rated-models",
+    "createdAt": 1778735854814,
+    "updatedAt": 1778736010538,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Artisan-crafted phone",
+    "titleType": "review",
+    "templateType": "template-7",
+    "pageUrl": "https://vertu.com/luxury-life-guides/artisan-crafted-phone-review-top-rated-models/"
+  },
+  {
+    "id": "567b885e-79f4-4dd7-ab85-dd5348631845",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-prestige-mobile-device",
+    "createdAt": 1778735403828,
+    "updatedAt": 1778735852535,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Prestige mobile device",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-prestige-mobile-device/"
+  },
+  {
+    "id": "727876c8-c8a0-4499-8016-cfcb1306148e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-elite-smartphone-official-retailer",
+    "createdAt": 1778735322108,
+    "updatedAt": 1778735403388,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "Elite smartphone",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-elite-smartphone-official-retailer/"
+  },
+  {
     "id": "bafbcce2-bcd2-4ab9-adf6-2ea8b4f3cd39",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-valued-luxury-technology-popular-choices",
@@ -13718,285 +13998,5 @@
     "titleType": "review",
     "templateType": "template-3",
     "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "58b4fe48-bb9b-47b5-8304-7b9a40ba57a7",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1773634996967,
-    "updatedAt": 1773635071926,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "luxury 10th wedding anniversary gifts",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "b0192342-47e2-4cdf-819b-4d8983dd708b",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1773634900969,
-    "updatedAt": 1773634995746,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "inexpensive luxury gifts",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "41466286-95bc-45af-b5b6-f5cd7b739157",
-    "status": "failed",
-    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
-    "createdAt": 1773634547966,
-    "updatedAt": 1773634900285,
-    "details": {
-      "previousStatus": "generating_content"
-    },
-    "keyword": "gift wrapping luxury",
-    "titleType": "most",
-    "templateType": "template-7",
-    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
-  },
-  {
-    "id": "ed3e47ec-1172-4125-a770-9e8d5ab553c0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141171",
-    "createdAt": 1773634337976,
-    "updatedAt": 1773634546876,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "custom luxury gifts",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/custom-luxury-gifts-rankings-comprehensive-list/"
-  },
-  {
-    "id": "4128376a-dacd-40f0-878c-ec6bdc002832",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141169",
-    "createdAt": 1773634158982,
-    "updatedAt": 1773634336901,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "women's luxury diamond watches",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-womens-luxury-diamond-watches-premium-choices-reviewed/"
-  },
-  {
-    "id": "401fe46a-e349-4e39-b1c8-8a54cff6b26a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141167",
-    "createdAt": 1773633955967,
-    "updatedAt": 1773634157950,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "pre-owned luxury watches",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-pre-owned-luxury-watches-quality-guide/"
-  },
-  {
-    "id": "1d30d5aa-2e30-4aef-9259-7c4732648d4b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141165",
-    "createdAt": 1773633800003,
-    "updatedAt": 1773633954070,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "popular luxury watch brands",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-popular-luxury-watch-brands/"
-  },
-  {
-    "id": "dbc115de-2e96-4fa9-a89f-4f93139ab0ca",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141163",
-    "createdAt": 1773633730985,
-    "updatedAt": 1773633798591,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury women's watch brands",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-womens-watch-brands-vs-alternatives/"
-  },
-  {
-    "id": "18e6b999-4da5-4053-a744-d7b56c2e8e07",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141161",
-    "createdAt": 1773633655975,
-    "updatedAt": 1773633728631,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watche brands",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watche-brands-comparison-tech-insights/"
-  },
-  {
-    "id": "2fc1b46c-88de-4dab-a709-d7bcb0e8e95f",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141159",
-    "createdAt": 1773633509981,
-    "updatedAt": 1773633653523,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch alternatives to rolex",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watch-alternatives-to-rolex-service-guide/"
-  },
-  {
-    "id": "7bddcce7-2630-4f70-a7e8-9456a9788eef",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141157",
-    "createdAt": 1773633338968,
-    "updatedAt": 1773633509574,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury square watches for men",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-square-watches-for-men-recommendations-top-choices/"
-  },
-  {
-    "id": "972e1706-8e94-4049-a0d1-64b5a63a5a05",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141155",
-    "createdAt": 1773633148981,
-    "updatedAt": 1773633337541,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury smart watches for men",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-smart-watches-for-men/"
-  },
-  {
-    "id": "871b645e-d8b0-4be9-b624-9ac9bd44e8bd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141153",
-    "createdAt": 1773632944991,
-    "updatedAt": 1773633148652,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold watches for men",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-gold-watches-for-men-collection/"
-  },
-  {
-    "id": "c2fa5ee0-9aa7-45a2-af75-042f60088a1b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141151",
-    "createdAt": 1773632747980,
-    "updatedAt": 1773632943082,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond watches for men",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-diamond-watches-for-men-top-rated-and-reviews/"
-  },
-  {
-    "id": "d272594d-76b6-47a6-997f-113c37f552e9",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141149",
-    "createdAt": 1773632675989,
-    "updatedAt": 1773632745100,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury couple watches",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-luxury-couple-watches/"
-  },
-  {
-    "id": "708b9884-fcba-4478-a806-11fcd4574f09",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141147",
-    "createdAt": 1773632573978,
-    "updatedAt": 1773632674628,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury brand watches for women",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-brand-watches-for-women-official-retailer/"
-  },
-  {
-    "id": "fc0c370c-7544-4740-ace0-3d8276d00d36",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141145",
-    "createdAt": 1773631934964,
-    "updatedAt": 1773632573841,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "entry luxury watches",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-entry-luxury-watches/"
-  },
-  {
-    "id": "7d73c8c0-1770-44fe-ad2d-ab49dd5dd5d1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141143",
-    "createdAt": 1773631376974,
-    "updatedAt": 1773631934449,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "entry luxury watch brands",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-entry-luxury-watch-brands-complete-ranking-list/"
-  },
-  {
-    "id": "6e77598b-a970-4cbd-b260-49853873be0a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141140",
-    "createdAt": 1773631205967,
-    "updatedAt": 1773631374515,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "dupe luxury watches",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-dupe-luxury-watches-picks-premium-selection/"
-  },
-  {
-    "id": "1d37eff5-1d7e-4954-8a35-e2b4c57135db",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141138",
-    "createdAt": 1773631052971,
-    "updatedAt": 1773631205600,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "classic luxury watches",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-classic-luxury-watches-quality-guide/"
   }
 ]
