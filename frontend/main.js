@@ -645,8 +645,35 @@ form.addEventListener("submit", async (event) => {
       "expert", "best", "top", "top-ranking", "most"
     ];
 
-    function pickBatchTemplate(index, titleType) {
+    function detectKeywordProductCategory(keyword) {
+      const k = String(keyword || "").toLowerCase();
+      if (/\b(watch|watches|timepiece|timepieces|horology|chronograph|wristwatch)\b/.test(k)) {
+        return "watch";
+      }
+      if (
+        /\b(ring|rings|jewellery|jewelry|smart\s+ring|diamond\s+ring)\b/.test(k) &&
+        !/\b(phone|phones|smartphone|smartphones|mobile)\b/.test(k)
+      ) {
+        return "ring";
+      }
+      if (/\b(earbud|earbuds|earphone|earphones|headphone|headphones|hearable)\b/.test(k)) {
+        return "earbud";
+      }
+      if (/\b(phone|phones|smartphone|smartphones|mobile|cellphone)\b/.test(k)) {
+        return "phone";
+      }
+      return "general";
+    }
+
+    function pickBatchTemplate(index, titleType, keyword) {
       const tt = String(titleType || "");
+      const category = detectKeywordProductCategory(keyword);
+      if (category === "watch" || category === "ring") {
+        return category === "ring" ? "template-7" : "template-6";
+      }
+      if (category === "earbud") {
+        return "template-7";
+      }
       if (tt === "purchase" || tt === "commercial") {
         const pool = ["template-1", "template-2", "template-4"];
         return pool[index % pool.length];
@@ -669,7 +696,7 @@ form.addEventListener("submit", async (event) => {
     async function processKeyword(keyword, index) {
       const titleIndex = index % titleTypes.length;
       const currentTitleType = titleTypes[titleIndex];
-      const currentTemplate = pickBatchTemplate(index, currentTitleType);
+      const currentTemplate = pickBatchTemplate(index, currentTitleType, keyword);
 
       appendLog(`\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`, "info");
       appendLog(`处理第 ${index + 1}/${keywords.length} 个关键词: "${keyword}"`, "info");

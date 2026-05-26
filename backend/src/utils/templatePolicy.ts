@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { GenerationRequestPayload } from "../types.js";
 import { shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
+import { detectPrimaryCategory } from "./productCategory.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -31,6 +32,56 @@ function hashKeyword(s: string): number {
   return Math.abs(h);
 }
 
+function loadTemplateIntoPayload(
+  payload: GenerationRequestPayload,
+  pick: string,
+  reason: string
+): boolean {
+  const fileName = TEMPLATE_FILE_BY_TYPE[pick];
+  if (!fileName) return false;
+  const fullPath = path.join(repoFrontendDir(), fileName);
+  if (!existsSync(fullPath)) {
+    console.warn(`[templatePolicy] ${reason} skipped: template file missing at ${fullPath}`);
+    return false;
+  }
+  const from = payload.templateType || "template-1";
+  payload.templateType = pick;
+  payload.templateContent = readFileSync(fullPath, "utf8");
+  console.log(`[templatePolicy] ${reason}: ${from} → ${pick} (keyword="${payload.keyword}")`);
+  return true;
+}
+
+/** Prefer editorial shells for category-specific guides (content before or around products). */
+function pickLongShellForCategory(keyword: string, pageTitle: string): string {
+  const primary = detectPrimaryCategory(keyword, pageTitle);
+  if (primary === "watch" || primary === "ring" || primary === "earbud") {
+    return primary === "earbud" ? "template-7" : "template-6";
+  }
+  return LONG_SHELL_ROTATION[hashKeyword(keyword) % LONG_SHELL_ROTATION.length];
+}
+
+/**
+ * Template-2 shows products above the article — high bounce when title/category mismatch.
+ * For watch/ring/earbud intents, switch to template-7 (blog-first) or template-1 (content-first).
+ */
+export function applyCategoryAwareTemplateFix(
+  payload: GenerationRequestPayload,
+  finalPageTitle: string
+): void {
+  const tt = (payload.templateType || "template-1").trim();
+  if (tt !== "template-2" && tt !== "template-3") return;
+
+  const primary = detectPrimaryCategory(payload.keyword, finalPageTitle);
+  if (primary !== "watch" && primary !== "ring" && primary !== "earbud") return;
+
+  const pick = primary === "ring" || primary === "watch" ? "template-7" : "template-6";
+  loadTemplateIntoPayload(
+    payload,
+    pick,
+    `Category-aware fix (${primary}): avoid product-first short shell`
+  );
+}
+
 /**
  * If the payload uses template-1/2 but the keyword/title/titleType imply a guide,
  * swap to a long-form shell (template 5/6/7) and reload template HTML from disk.
@@ -40,6 +91,12 @@ export function applyGuideIntentLongShellIfNeeded(
   finalPageTitle: string
 ): void {
   const tt = (payload.templateType || "template-1").trim();
+
+  applyCategoryAwareTemplateFix(payload, finalPageTitle);
+  if (payload.templateType !== tt && payload.templateType !== "template-1" && payload.templateType !== "template-2") {
+    return;
+  }
+
   if (tt !== "template-1" && tt !== "template-2") {
     return;
   }
@@ -49,21 +106,6 @@ export function applyGuideIntentLongShellIfNeeded(
     return;
   }
 
-  const pick = LONG_SHELL_ROTATION[hashKeyword(payload.keyword) % LONG_SHELL_ROTATION.length];
-  const fileName = TEMPLATE_FILE_BY_TYPE[pick];
-  if (!fileName) return;
-
-  const fullPath = path.join(repoFrontendDir(), fileName);
-  if (!existsSync(fullPath)) {
-    console.warn(
-      `[templatePolicy] Guide-intent upgrade skipped: template file missing at ${fullPath}`
-    );
-    return;
-  }
-
-  payload.templateType = pick;
-  payload.templateContent = readFileSync(fullPath, "utf8");
-  console.log(
-    `[templatePolicy] Upgraded shell from ${tt} to ${pick} for guide-intent keyword="${payload.keyword}"`
-  );
+  const pick = pickLongShellForCategory(payload.keyword, finalPageTitle);
+  loadTemplateIntoPayload(payload, pick, "Guide-intent upgrade");
 }

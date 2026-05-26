@@ -4,6 +4,12 @@ import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 import { getArticleImageUrlsFromEnv } from "../config/shopifyCdn.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 import { shouldTreatAsLongFormGuideArticle } from "../utils/guideIntent.js";
+import {
+  checkArticleTopicMismatch,
+  filterProductNamesToFlipOnly,
+  isFlipFormFactorProductName,
+  isFlipPhoneIntent,
+} from "../utils/productCategory.js";
 
 // 多模型配置：支持多个模型轮换，降低限流风险
 // 注意：只包含当前API版本确实可用的模型
@@ -70,6 +76,8 @@ export interface GeneratedContent {
   metaDescription?: string; // SEO meta description (150-160 characters)
   metaKeywords?: string; // SEO meta keywords (comma-separated)
   faqItems: Array<{ question: string; answer: string }>;
+  /** True when article body categories conflict with keyword/title (triggers product-grid re-filter upstream). */
+  topicContentMismatch?: boolean;
 }
 
 /**
@@ -203,6 +211,20 @@ async function generateWithKey(
     console.log(`[GoogleAI] 📝 未提供产品列表，从关键词 "${keyword}" 推测相关产品...`);
     relevantProducts = extractRelevantProductsFromKeyword(keyword, knownProducts);
     console.log(`[GoogleAI] 📋 从关键词推测到 ${relevantProducts.length} 个产品:`, relevantProducts.join(", "));
+  }
+
+  if (isFlipPhoneIntent(keyword, pageTitle)) {
+    const flipOnly = filterProductNamesToFlipOnly(relevantProducts);
+    if (flipOnly.length > 0) {
+      relevantProducts = flipOnly;
+    } else if (knownProducts.some((kp) => isFlipFormFactorProductName(kp))) {
+      relevantProducts = knownProducts.filter((kp) => isFlipFormFactorProductName(kp));
+    } else {
+      relevantProducts = ["Quantum Flip"];
+    }
+    console.log(
+      `[GoogleAI] Flip intent: RELEVANT PRODUCTS restricted to foldables only: ${relevantProducts.join(", ")}`
+    );
   }
   
   // 根据产品类型过滤知识库内容，只保留相关的产品信息（同时考虑 keyword + pageTitle，避免腕表页出现手机内容）
@@ -835,8 +857,7 @@ ${(() => {
   // 产品类型约束（如果没有用户提示词覆盖，则应用）
   if (!hasUserProductGuidance) {
     // 特殊关键词检测：翻盖手机
-    const isFoldableKeyword = /(flip|fold|foldable|folding|clamshell)/i.test(keyword) || 
-                              /(flip|fold|foldable|folding|clamshell)/i.test(pageTitle);
+    const isFoldableKeyword = isFlipPhoneIntent(keyword, pageTitle);
     // 特殊关键词检测：实体键盘手机
     const isKeyboardKeyword = /(keyboard|keypad|physical keyboard|qwerty)/i.test(keyword) || 
                               /(keyboard|keypad|physical keyboard|qwerty)/i.test(pageTitle);
@@ -1449,7 +1470,12 @@ ${useLongFormArticleLimits ? `4. Write a substantive introduction (2–4 sentenc
     validateContentAgainstKnowledgeBase(finalArticleContent, knownProducts, "article content");
     
     // 验证内容主题是否与关键词/标题匹配（SEO关键验证）
-    validateContentTopicMatch(finalArticleContent, keyword, pageTitle, "article content");
+    const topicContentMismatch = validateContentTopicMatch(
+      finalArticleContent,
+      keyword,
+      pageTitle,
+      "article content"
+    );
     
     // 验证内容中的年份信息是否准确（避免过时年份）
     validateYearAccuracy(finalArticleContent, currentYear, "article content");
@@ -1823,6 +1849,7 @@ Write the extended content in HTML format with proper tags (<h2>, <p>, <ol>, <ul
       metaDescription: metaDescription,
       metaKeywords: metaKeywords,
       faqItems: finalFaqItems.slice(0, 8), // 最多保留 8 个，但至少 5 个
+      topicContentMismatch,
     };
   } catch (error: any) {
     // 处理 SDK 错误，转换为统一格式
@@ -2038,115 +2065,33 @@ function validateContentTopicMatch(
   keyword: string,
   pageTitle: string,
   contentType: string
-): void {
-  if (!content || !keyword || !pageTitle) return;
+): boolean {
+  if (!content || !keyword) return false;
 
-  const contentLower = content.toLowerCase();
-  const keywordLower = keyword.toLowerCase();
-  const titleLower = pageTitle.toLowerCase();
-
-  // 定义产品类别关键词
-  const productCategoryKeywords = {
-    watch: ["watch", "timepiece", "horology", "chronograph", "wristwatch", "grand watch", "metawatch"],
-    phone: ["phone", "mobile", "smartphone", "handset", "device", "agent q", "quantum flip", "metavertu", "signature", "ivertu"],
-    ring: ["ring", "jewellery", "jewelry", "diamond ring", "meta ring", "aura ring"],
-    earbud: ["earbud", "earphone", "earphones", "audio", "phantom", "ows"],
-  };
-
-  // 检测关键词属于哪个类别
-  const detectCategory = (text: string): string[] => {
-    const categories: string[] = [];
-    for (const [category, keywords] of Object.entries(productCategoryKeywords)) {
-      if (keywords.some(kw => text.includes(kw))) {
-        categories.push(category);
-      }
+  const result = checkArticleTopicMismatch(content, keyword, pageTitle || "");
+  if (!result.mismatch) {
+    const contentLower = content.toLowerCase();
+    const keywordWords = keyword.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+    const hasKeywordWords =
+      keywordWords.length > 0 && keywordWords.some((word) => contentLower.includes(word));
+    if (!hasKeywordWords && keywordWords.length > 0) {
+      console.warn(
+        `[GoogleAI] ⚠️ WARNING: ${contentType} may not contain key words from keyword "${keyword}"`
+      );
+      console.warn(`[GoogleAI] ⚠️ Expected words: ${keywordWords.join(", ")}`);
     }
-    return categories;
-  };
-
-  const keywordCategories = detectCategory(keywordLower);
-  const titleCategories = detectCategory(titleLower);
-  const contentCategories = detectCategory(contentLower);
-
-  // 检查内容是否偏离主题
-  const isTopicMismatch = (keywordCats: string[], contentCats: string[]): boolean => {
-    if (keywordCats.length === 0) return false; // 无法确定类别，跳过检查
-    
-    // 如果关键词是手表，但内容提到手机（且没有提到手表）
-    if (keywordCats.includes("watch") && contentCats.includes("phone") && !contentCats.includes("watch")) {
-      return true;
-    }
-    // 如果关键词是手机，但内容提到手表（且没有提到手机）
-    if (keywordCats.includes("phone") && contentCats.includes("watch") && !contentCats.includes("phone")) {
-      return true;
-    }
-    // 如果关键词是手表，但内容提到戒指（且没有提到手表）
-    if (keywordCats.includes("watch") && contentCats.includes("ring") && !contentCats.includes("watch")) {
-      return true;
-    }
-    // 如果关键词是手机，但内容提到戒指（且没有提到手机）
-    if (keywordCats.includes("phone") && contentCats.includes("ring") && !contentCats.includes("phone")) {
-      return true;
-    }
-    // 如果关键词是手表，但内容提到耳机（且没有提到手表）
-    if (keywordCats.includes("watch") && contentCats.includes("earbud") && !contentCats.includes("watch")) {
-      return true;
-    }
-    // 如果关键词是手机，但内容提到耳机（且没有提到手机）
-    if (keywordCats.includes("phone") && contentCats.includes("earbud") && !contentCats.includes("phone")) {
-      return true;
-    }
-    
     return false;
-  };
-
-  // 检查关键词-内容匹配
-  if (isTopicMismatch(keywordCategories, contentCategories)) {
-    console.error(
-      `[GoogleAI] ⛔ SEVERE SEO ERROR: ${contentType} topic does NOT match keyword "${keyword}"!`
-    );
-    console.error(
-      `[GoogleAI] ⛔ Keyword category: ${keywordCategories.join(", ") || "unknown"}`
-    );
-    console.error(
-      `[GoogleAI] ⛔ Content category: ${contentCategories.join(", ") || "unknown"}`
-    );
-    console.error(
-      `[GoogleAI] ⛔ This is a CRITICAL SEO violation - content must match keyword topic!`
-    );
-    console.error(
-      `[GoogleAI] ⛔ Content preview: ${content.substring(0, 300)}...`
-    );
   }
 
-  // 检查标题-内容匹配
-  if (titleCategories.length > 0 && isTopicMismatch(titleCategories, contentCategories)) {
-    console.error(
-      `[GoogleAI] ⛔ SEVERE SEO ERROR: ${contentType} topic does NOT match page title "${pageTitle}"!`
-    );
-    console.error(
-      `[GoogleAI] ⛔ Title category: ${titleCategories.join(", ") || "unknown"}`
-    );
-    console.error(
-      `[GoogleAI] ⛔ Content category: ${contentCategories.join(", ") || "unknown"}`
-    );
-    console.error(
-      `[GoogleAI] ⛔ This is a CRITICAL SEO violation - content must match page title topic!`
-    );
-  }
-
-  // 检查内容是否包含关键词的主要词汇
-  const keywordWords = keywordLower.split(/\s+/).filter(w => w.length > 3);
-  const hasKeywordWords = keywordWords.length > 0 && keywordWords.some(word => contentLower.includes(word));
-  
-  if (!hasKeywordWords && keywordWords.length > 0) {
-    console.warn(
-      `[GoogleAI] ⚠️ WARNING: ${contentType} may not contain key words from keyword "${keyword}"`
-    );
-    console.warn(
-      `[GoogleAI] ⚠️ Expected words: ${keywordWords.join(", ")}`
-    );
-  }
+  const expected =
+    result.source === "title" ? result.titleCategories : result.keywordCategories;
+  console.error(
+    `[GoogleAI] ⛔ SEVERE SEO ERROR: ${contentType} topic does NOT match ${result.source === "title" ? `page title "${pageTitle}"` : `keyword "${keyword}"`}!`
+  );
+  console.error(`[GoogleAI] ⛔ Expected category: ${expected.join(", ") || "unknown"}`);
+  console.error(`[GoogleAI] ⛔ Content category: ${result.contentCategories.join(", ") || "unknown"}`);
+  console.error(`[GoogleAI] ⛔ Content preview: ${content.substring(0, 300)}...`);
+  return true;
 }
 
 // 验证内容是否包含与关键词无关的产品
@@ -2586,6 +2531,15 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
       const filtered = relevantProducts.filter(p => productMatchesCategory(p, "earbud"));
       if (filtered.length > 0) return filtered;
     }
+    if (isFlipPhoneIntent(keyword, "")) {
+      const flipOnly = filterProductNamesToFlipOnly(relevantProducts);
+      if (flipOnly.length > 0) return flipOnly;
+    }
+  }
+
+  if (isFlipPhoneIntent(keyword, "")) {
+    const flipOnly = filterProductNamesToFlipOnly(relevantProducts);
+    if (flipOnly.length > 0) return flipOnly;
   }
 
   return relevantProducts;
@@ -2613,7 +2567,7 @@ function filterKnowledgeBaseByProductType(
   const isEarbudKeyword = /(earbud|earbuds|earphone|earphones|audio|hearable|hearables|headphone|耳机)/i.test(combined);
   
   // 检测特定产品类型关键词
-  const isFoldableKeyword = /(flip|fold|foldable|folding|clamshell)/i.test(keyword);
+  const isFoldableKeyword = isFlipPhoneIntent(keyword, pageTitle || "");
   const isKeyboardKeyword = /(keyboard|keypad|physical keyboard|qwerty)/i.test(keyword);
   
   // 检查相关产品中是否包含 Agent Q
