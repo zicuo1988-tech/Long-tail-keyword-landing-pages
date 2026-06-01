@@ -1,5 +1,61 @@
 [
   {
+    "id": "4be31a9e-d888-4d22-8dfd-9ff4e6f4175f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-affordable-luxury-watches-official-retailer",
+    "createdAt": 1780282888850,
+    "updatedAt": 1780283059611,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "affordable luxury watches",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-affordable-luxury-watches-official-retailer/"
+  },
+  {
+    "id": "f120124c-d28a-4a4c-9a31-7128f92944be",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-engagement-rings-brands-top-rated-and-reviews",
+    "createdAt": 1780282476318,
+    "updatedAt": 1780282551602,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury engagement rings brands",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-engagement-rings-brands-top-rated-and-reviews/"
+  },
+  {
+    "id": "c587142d-7daf-4bb6-befb-879670da84b2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-recommended-mens-luxury-smartwatch",
+    "createdAt": 1780280651586,
+    "updatedAt": 1780280717465,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "men's luxury smartwatch",
+    "titleType": "most",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-mens-luxury-smartwatch/"
+  },
+  {
+    "id": "46164fc9-8a92-433e-aa2c-1be60e094959",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780280444318,
+    "updatedAt": 1780280633065,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "men's luxury smartwatch",
+    "titleType": "most",
+    "templateType": "template-1",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
     "id": "29cf1af2-3df3-4dee-a947-6476dbf05787",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-mobile-phone-android-quality-guide",
@@ -13942,61 +13998,5 @@
     "titleType": "how-to",
     "templateType": "template-5",
     "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-designer-rings/"
-  },
-  {
-    "id": "bbfd780a-bf73-4f76-bcce-5b81629aedd0",
-    "status": "failed",
-    "message": "Request failed with status code 504",
-    "createdAt": 1773802933597,
-    "updatedAt": 1773803099106,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men's jewelry",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "error": "Request failed with status code 504"
-  },
-  {
-    "id": "6046b4a2-5a73-4355-a70d-98e2719bbf92",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141670",
-    "createdAt": 1773802740512,
-    "updatedAt": 1773802932081,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry co",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-luxury-jewelry-co-best-rated/"
-  },
-  {
-    "id": "ca9a31f6-6bed-4f83-92d8-0e95c7955a0c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141668",
-    "createdAt": 1773802574507,
-    "updatedAt": 1773802739087,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry houses",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-jewelry-houses/"
-  },
-  {
-    "id": "1ed8dcb5-3582-4471-a5a0-18fcb4dd1689",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141666",
-    "createdAt": 1773802459889,
-    "updatedAt": 1773802574432,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "women's luxury jewelry",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/buy-womens-luxury-jewelry-official-store/"
   }
 ]
