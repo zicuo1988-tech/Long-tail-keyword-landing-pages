@@ -1,5 +1,25 @@
 [
   {
+    "id": "1b4cafd1-c3df-4887-a665-0fa3d098bb02",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mobile-phones-for-business-quality-guide",
+    "createdAt": 1780301748376,
+    "updatedAt": 1780301871657,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "mobile phones for business",
+    "titleType": "best",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-mobile-phones-for-business-quality-guide/"
+  },
+  {
     "id": "6cb1591b-ac83-445a-a45b-1f9a718a8b4d",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-popular-cell-phone-best-selling-models",
@@ -13984,19 +14004,5 @@
     "titleType": "top-ranking",
     "templateType": "template-6",
     "pageUrl": "https://vertu.com/luxury-life-guides/luxury-home-accents-rankings-comprehensive-list/"
-  },
-  {
-    "id": "36b85d49-b392-4040-85b0-26dd99b1ffff",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141687",
-    "createdAt": 1773804265797,
-    "updatedAt": 1773804429003,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch brands ranking",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-quality-luxury-watch-brands-ranking-expert-review/"
   }
 ]

@@ -99,4 +99,8 @@ export interface TaskProgress {
   pageTitle?: string;
   titleType?: string;
   templateType?: string;
+  /** Content alignment retry telemetry (keyword ↔ products ↔ article) */
+  alignmentAttempts?: number;
+  alignmentReasons?: string[];
+  finalAlignmentMismatch?: boolean;
 }

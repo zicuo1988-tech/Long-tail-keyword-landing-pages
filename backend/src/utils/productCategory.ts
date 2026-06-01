@@ -12,6 +12,32 @@ const PHONE_RE =
   /\b(phone|phones|smartphone|smartphones|mobile|cellphone|cell\s+phone|handset|handsets)\b/i;
 const GIFT_RE =
   /\b(gift|gifts|present|presents|mother'?s\s+day|father'?s\s+day|for\s+her|for\s+him|christmas|holiday)\b/i;
+const COMPARISON_RE = /\b(vs\.?|versus|compared?\s+to|comparison|compare)\b/i;
+
+/** Multi-category or explicit comparison keywords (e.g. smart ring vs smart watch). */
+export function isComparisonIntent(keyword: string, pageTitle = ""): boolean {
+  const combined = `${keyword || ""} ${pageTitle || ""}`.trim().toLowerCase();
+  if (!combined) return false;
+  if (COMPARISON_RE.test(combined)) {
+    const categoryHits = [RING_RE, WATCH_RE, PHONE_RE, EARBUD_RE].filter((re) => re.test(combined)).length;
+    if (categoryHits >= 2) return true;
+    if (/\b(vs\.?|versus)\b/i.test(combined)) return true;
+  }
+  const categoryHits = [RING_RE, WATCH_RE, PHONE_RE, EARBUD_RE].filter((re) => re.test(combined)).length;
+  return categoryHits >= 2;
+}
+
+/** Whether to apply single-category product filtering (skip for user category + comparison pages). */
+export function shouldApplyStrictCategoryFilter(
+  keyword: string,
+  pageTitle: string,
+  targetCategory?: string
+): boolean {
+  if (targetCategory?.trim()) return false;
+  if (isComparisonIntent(keyword, pageTitle)) return false;
+  if (isFlipPhoneIntent(keyword, pageTitle)) return false;
+  return isSpecificProductCategory(detectPrimaryCategory(keyword, pageTitle));
+}
 
 /** Flip / foldable phone intent (Quantum Flip, Ironflip — not bar phones). */
 export const FLIP_PHONE_INTENT_RE =
@@ -133,6 +159,142 @@ export function productMatchesPrimaryCategory(
   }
 }
 
+export type ProductAudienceFilter = {
+  isMenTarget: boolean;
+  isWomenTarget: boolean;
+};
+
+/** Gender + flip / primary-category filter shared by generation pipeline. */
+export function filterProductsForKeywordIntent(
+  productList: ProductSummary[],
+  keyword: string,
+  pageTitle: string,
+  primaryCategory: PrimaryProductCategory,
+  audience: ProductAudienceFilter,
+  targetCategory?: string
+): ProductSummary[] {
+  const { isMenTarget, isWomenTarget } = audience;
+
+  return productList.filter((product) => {
+    const productName = (product.name || "").toLowerCase();
+    const productCategory = (product.category || "").toLowerCase();
+
+    if (isFlipPhoneIntent(keyword, pageTitle)) {
+      return isFlipFormFactorProduct(product);
+    }
+
+    if (isMenTarget && !isWomenTarget) {
+      if (
+        productName.includes("women") ||
+        productName.includes("women's") ||
+        productName.includes("ladies") ||
+        productName.includes("lady") ||
+        productName.includes("female") ||
+        productCategory.includes("women") ||
+        productCategory.includes("ladies")
+      ) {
+        return false;
+      }
+    }
+    if (isWomenTarget && !isMenTarget) {
+      if (
+        productName.includes("men") ||
+        productName.includes("men's") ||
+        productName.includes("male") ||
+        productCategory.includes("men") ||
+        productCategory.includes("male")
+      ) {
+        return false;
+      }
+    }
+
+    if (shouldApplyStrictCategoryFilter(keyword, pageTitle, targetCategory)) {
+      const primary = isSpecificProductCategory(primaryCategory)
+        ? primaryCategory
+        : detectPrimaryCategory(keyword, pageTitle);
+      if (isSpecificProductCategory(primary) && !productMatchesPrimaryCategory(product, primary)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+}
+
+/** Apply flip / primary-category gate to a product list (skipped for comparison pages). */
+export function applyProductGateToList(
+  list: ProductSummary[],
+  keyword: string,
+  pageTitle: string,
+  primaryCategory: PrimaryProductCategory
+): ProductSummary[] {
+  if (isComparisonIntent(keyword, pageTitle)) {
+    return list;
+  }
+  if (isFlipPhoneIntent(keyword, pageTitle)) {
+    const flipOnly = filterToFlipPhonesOnly(list);
+    return flipOnly.length > 0 ? flipOnly : list;
+  }
+  return filterProductsByPrimaryCategory(list, primaryCategory);
+}
+
+/** Pool used by pageProductDedup backfill — never mix cross-category SKUs into any template row. */
+export function buildGatedProductPool(
+  pool: ProductSummary[],
+  keyword: string,
+  pageTitle: string,
+  primaryCategory: PrimaryProductCategory
+): ProductSummary[] {
+  const gated = applyProductGateToList(pool, keyword, pageTitle, primaryCategory);
+  return gated.length > 0 ? gated : pool;
+}
+
+/** Whether a product display name belongs on this keyword/page (all templates). */
+export type ExternalComparisonBranch = "watch" | "phone" | "ring" | "earbud" | "general";
+
+/** Which external competitor pool to use (template-4/5/6 comparison tables). */
+export function resolveExternalComparisonBranch(
+  keyword: string,
+  pageTitle: string,
+  primaryCategory: PrimaryProductCategory
+): ExternalComparisonBranch {
+  if (isComparisonIntent(keyword, pageTitle)) return "general";
+  if (isFlipPhoneIntent(keyword, pageTitle)) return "phone";
+  if (
+    primaryCategory === "watch" ||
+    primaryCategory === "ring" ||
+    primaryCategory === "earbud" ||
+    primaryCategory === "phone"
+  ) {
+    return primaryCategory;
+  }
+  const detected = detectPrimaryCategory(keyword, pageTitle);
+  if (
+    detected === "watch" ||
+    detected === "ring" ||
+    detected === "earbud" ||
+    detected === "phone"
+  ) {
+    return detected;
+  }
+  return "general";
+}
+
+export function productNameMatchesPageIntent(
+  name: string,
+  keyword: string,
+  pageTitle: string,
+  primaryCategory: PrimaryProductCategory
+): boolean {
+  const stub: ProductSummary = { id: 0, name: name.replace(/<[^>]*>/g, "").trim(), link: "" };
+  if (isComparisonIntent(keyword, pageTitle)) return true;
+  if (isFlipPhoneIntent(keyword, pageTitle)) return isFlipFormFactorProductName(name);
+  if (isSpecificProductCategory(primaryCategory)) {
+    return productMatchesPrimaryCategory(stub, primaryCategory);
+  }
+  return true;
+}
+
 export function filterProductsByPrimaryCategory(
   products: ProductSummary[],
   primary: PrimaryProductCategory
@@ -148,6 +310,11 @@ export function enforceCategoryConsistency(
   keyword: string,
   pageTitle: string
 ): { products: ProductSummary[]; primaryCategory: PrimaryProductCategory } {
+  if (isComparisonIntent(keyword, pageTitle)) {
+    console.log(`[productCategory] Comparison intent for "${keyword}" — skipping strict single-category gate`);
+    return { products, primaryCategory: "general" };
+  }
+
   if (isFlipPhoneIntent(keyword, pageTitle)) {
     const flipOnly = filterToFlipPhonesOnly(products);
     if (flipOnly.length > 0) {

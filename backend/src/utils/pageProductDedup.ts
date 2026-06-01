@@ -12,13 +12,12 @@ export type DedupePageProductOptions = {
   logPrefix?: string;
 };
 
-const TOP_MAX = 3;
-const ROW_MAX = 4;
-const TEMPLATE7_PRODUCTS_MAX = 10;
+/** 每排商品区目标数量（硬上限，不得超过） */
+export const PRODUCTS_PER_ROW = 4;
 
-function productsMainMax(templateType: string): number {
-  return templateType === "template-7" ? TEMPLATE7_PRODUCTS_MAX : ROW_MAX;
-}
+const TOP_MAX = PRODUCTS_PER_ROW;
+
+type SectionKey = keyof PageProductSections;
 
 type SectionAssignResult = {
   result: ProductSummary[];
@@ -26,11 +25,45 @@ type SectionAssignResult = {
   backfilled: ProductSummary[];
 };
 
+function usesThirdProductRow(templateType: string): boolean {
+  return templateType !== "template-5" && templateType !== "template-6";
+}
+
+/** 先填满各排商品区，再分配 Top Picks，避免顶部占满池子导致下面每排不足 4 个 */
+function getSectionAssignOrder(templateType: string): SectionKey[] {
+  const order: SectionKey[] = ["products", "productsRow2"];
+  if (usesThirdProductRow(templateType)) {
+    order.push("relatedProducts");
+  }
+  order.push("topProducts");
+  return order;
+}
+
+function getSectionMax(key: SectionKey): number {
+  return PRODUCTS_PER_ROW;
+}
+
+function collectReservedIds(
+  sections: PageProductSections,
+  assignOrder: SectionKey[],
+  currentKey: SectionKey
+): Set<number> {
+  const currentIdx = assignOrder.indexOf(currentKey);
+  const reserved = new Set<number>();
+  for (let i = currentIdx + 1; i < assignOrder.length; i++) {
+    for (const p of sections[assignOrder[i]]) {
+      reserved.add(p.id);
+    }
+  }
+  return reserved;
+}
+
 function assignSection(
   list: ProductSummary[],
   max: number,
   seenIds: Set<number>,
-  pool: ProductSummary[]
+  pool: ProductSummary[],
+  reservedIds: Set<number>
 ): SectionAssignResult {
   const result: ProductSummary[] = [];
   const skipped: ProductSummary[] = [];
@@ -49,26 +82,25 @@ function assignSection(
   if (result.length < max) {
     for (const p of pool) {
       if (result.length >= max) break;
-      if (!seenIds.has(p.id)) {
-        seenIds.add(p.id);
-        result.push(p);
-        backfilled.push(p);
-      }
+      if (seenIds.has(p.id) || reservedIds.has(p.id)) continue;
+      seenIds.add(p.id);
+      result.push(p);
+      backfilled.push(p);
     }
   }
 
-  return { result, skipped, backfilled };
+  return { result: result.slice(0, max), skipped, backfilled };
 }
 
 /**
- * Template 7 main grid: merge rows without Top Picks ids (rail stays separate).
+ * Template 7 主网格：合并三排（不含 Top Picks），最多 4 个。
  */
 export function buildTemplate7ProductsForRender(
   productsRow1: ProductSummary[],
   productsRow2: ProductSummary[],
   productsRow3: ProductSummary[],
   excludeIds: Set<number>,
-  max = TEMPLATE7_PRODUCTS_MAX
+  max = PRODUCTS_PER_ROW
 ): ProductSummary[] {
   const combined = [...productsRow1, ...productsRow2, ...productsRow3];
   const byId = new Map<number, ProductSummary>();
@@ -81,13 +113,13 @@ export function buildTemplate7ProductsForRender(
 }
 
 /**
- * Fill template-7 main grid up to max, skipping excluded and already-present ids.
+ * 补足主网格至 max（默认 4），排除 Top Picks 与已有 id。
  */
 export function fillTemplate7MainGrid(
   list: ProductSummary[],
   pool: ProductSummary[],
   excludeIds: Set<number>,
-  max = TEMPLATE7_PRODUCTS_MAX
+  max = PRODUCTS_PER_ROW
 ): ProductSummary[] {
   const seen = new Set<number>([...excludeIds, ...list.map((p) => p.id)]);
   const filled = [...list];
@@ -98,12 +130,11 @@ export function fillTemplate7MainGrid(
       filled.push(p);
     }
   }
-  return filled;
+  return filled.slice(0, max);
 }
 
 /**
- * Page-wide product dedup: topProducts → products → productsRow2 → relatedProducts.
- * Later sections drop duplicate ids and backfill from pool when below max.
+ * 页面级去重 + 每排最多 4 个；尽量从池子补足至 4。
  */
 export function dedupePageProductSections(
   sections: PageProductSections,
@@ -112,20 +143,30 @@ export function dedupePageProductSections(
 ): PageProductSections {
   const { templateType, logPrefix = "" } = options;
   const seenIds = new Set<number>();
-  const mainMax = productsMainMax(templateType);
+  const assignOrder = getSectionAssignOrder(templateType);
 
-  const top = assignSection(sections.topProducts, TOP_MAX, seenIds, pool);
-  const products = assignSection(sections.products, mainMax, seenIds, pool);
-  const row2 = assignSection(sections.productsRow2, ROW_MAX, seenIds, pool);
-  const related = assignSection(sections.relatedProducts, ROW_MAX, seenIds, pool);
+  const out: PageProductSections = {
+    topProducts: [],
+    products: [],
+    productsRow2: [],
+    relatedProducts: [],
+  };
 
-  const allSkipped = [...top.skipped, ...products.skipped, ...row2.skipped, ...related.skipped];
-  const allBackfilled = [
-    ...top.backfilled,
-    ...products.backfilled,
-    ...row2.backfilled,
-    ...related.backfilled,
-  ];
+  const allSkipped: ProductSummary[] = [];
+  const allBackfilled: ProductSummary[] = [];
+
+  for (const key of assignOrder) {
+    const max = getSectionMax(key);
+    const reserved = collectReservedIds(sections, assignOrder, key);
+    const assigned = assignSection(sections[key], max, seenIds, pool, reserved);
+    out[key] = assigned.result;
+    allSkipped.push(...assigned.skipped);
+    allBackfilled.push(...assigned.backfilled);
+  }
+
+  if (!usesThirdProductRow(templateType)) {
+    out.relatedProducts = [];
+  }
 
   if (logPrefix && (allSkipped.length > 0 || allBackfilled.length > 0)) {
     const prefix = logPrefix.endsWith(" ") ? logPrefix : `${logPrefix} `;
@@ -141,10 +182,12 @@ export function dedupePageProductSections(
     }
   }
 
-  return {
-    topProducts: top.result,
-    products: products.result,
-    productsRow2: row2.result,
-    relatedProducts: related.result,
-  };
+  if (logPrefix) {
+    const prefix = logPrefix.endsWith(" ") ? logPrefix : `${logPrefix} `;
+    console.log(
+      `${prefix}[pageProductDedup] ${templateType} 各排数量: products=${out.products.length}, row2=${out.productsRow2.length}, related=${out.relatedProducts.length}, top=${out.topProducts.length}（每排上限 ${PRODUCTS_PER_ROW}）`
+    );
+  }
+
+  return out;
 }

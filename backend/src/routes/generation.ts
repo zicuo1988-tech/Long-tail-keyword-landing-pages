@@ -1,6 +1,14 @@
 import express from "express";
 import { isAxiosError } from "axios";
-import { createTask, setTaskCompleted, setTaskError, updateTaskStatus, isTaskPaused, waitForTaskResume } from "../state/taskStore.js";
+import {
+  createTask,
+  getTask,
+  setTaskCompleted,
+  setTaskError,
+  updateTaskStatus,
+  isTaskPaused,
+  waitForTaskResume,
+} from "../state/taskStore.js";
 import type { GenerationRequestPayload, ProductSummary } from "../types.js";
 import { extractMentionedProductsFromContent } from "../services/googleAi.js";
 import {
@@ -117,7 +125,7 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
     return item;
   });
 }
-import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
+import { generateHtmlContent, generatePageTitle, type GeneratedContent } from "../services/googleAi.js";
 import { publishPage } from "../services/wordpress.js";
 import {
   applyCommercialShellIfNeeded,
@@ -126,17 +134,31 @@ import {
 import {
   buildProductSectionIntro,
   buildProductSectionTitle,
-  checkArticleTopicMismatch,
   detectPrimaryCategory,
   enforceCategoryConsistency,
   filterProductsByPrimaryCategory,
+  filterProductsForKeywordIntent,
   shouldAllowBespokeBackfill,
   shouldAllowPhoneBackfill,
   isFlipPhoneIntent,
   isFlipFormFactorProduct,
+  isComparisonIntent,
+  isSpecificProductCategory,
   filterToFlipPhonesOnly,
+  productMatchesPrimaryCategory,
+  productNameMatchesPageIntent,
+  buildGatedProductPool,
+  applyProductGateToList,
+  resolveExternalComparisonBranch,
   type PrimaryProductCategory,
 } from "../utils/productCategory.js";
+import {
+  MAX_ALIGNMENT_ATTEMPTS,
+  buildAlignmentRetryPrompt,
+  buildEmptyCatalogContentHint,
+  evaluateContentAlignment,
+  mergeUserPrompt,
+} from "../utils/contentAlignment.js";
 import { renderTemplate, type Reference } from "../services/templateRenderer.js";
 import { createSlug } from "../utils/slug.js";
 import { normalizePublicSiteRoot } from "../utils/publicSiteUrl.js";
@@ -351,6 +373,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageTitleForSeo
     );
     console.log(`[task ${taskId}] Primary product category: ${primaryCategory}`);
+    if (isComparisonIntent(payload.keyword, pageTitleForSeo)) {
+      console.log(`[task ${taskId}] Comparison intent detected — multi-category products allowed`);
+    }
 
     // 【重要调整】先获取产品，再生成内容，确保 AI 只使用实际存在的产品
     // 这样可以避免内容提到的产品在实际显示中缺失的问题
@@ -400,94 +425,18 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
                             combinedText.includes("female") || combinedText.includes("gift for her") ||
                             combinedText.includes("for her") || combinedText.includes("her");
       
-      // 检测产品类型
-      const isPhoneKeyword = keywordLower.includes("phone") || keywordLower.includes("smartphone") || 
-                            keywordLower.includes("mobile") || keywordLower.includes("cell") ||
-                            pageTitleLower.includes("phone") || pageTitleLower.includes("smartphone") ||
-                            pageTitleLower.includes("mobile") || pageTitleLower.includes("cell");
-      const isWatchKeyword = keywordLower.includes("watch") || keywordLower.includes("timepiece") ||
-                            pageTitleLower.includes("watch") || pageTitleLower.includes("timepiece");
-      const isRingKeyword = keywordLower.includes("ring") || keywordLower.includes("jewellery") ||
-                           keywordLower.includes("jewelry") || pageTitleLower.includes("ring") ||
-                           pageTitleLower.includes("jewellery") || pageTitleLower.includes("jewelry");
-      const isEarbudKeyword = keywordLower.includes("earbud") || keywordLower.includes("earphone") ||
-                              keywordLower.includes("audio") || keywordLower.includes("headphone") ||
-                              pageTitleLower.includes("earbud") || pageTitleLower.includes("earphone");
       const isFlipIntent = isFlipPhoneIntent(payload.keyword, pageTitleForSeo);
-      
-      // 过滤相关产品的函数
-      const filterProductsByRelevance = (productList: ProductSummary[]): ProductSummary[] => {
-        return productList.filter(product => {
-          const productName = product.name.toLowerCase();
-          const productCategory = (product.category || "").toLowerCase();
-          
-          // Flip / 折叠手机：仅保留 Quantum Flip、Ironflip 等翻盖机型
-          if (isFlipIntent) {
-            return isFlipFormFactorProduct(product);
-          }
-          
-          // 性别过滤（仅在没有指定分类时应用，或总是应用）
-          if (isMenTarget && !isWomenTarget) {
-            if (productName.includes("women") || productName.includes("women's") ||
-                productName.includes("ladies") || productName.includes("lady") ||
-                productName.includes("female") || productCategory.includes("women") ||
-                productCategory.includes("ladies")) {
-              return false;
-            }
-          }
-          if (isWomenTarget && !isMenTarget) {
-            if (productName.includes("men") || productName.includes("men's") ||
-                productName.includes("male") || productCategory.includes("men") ||
-                productCategory.includes("male")) {
-              return false;
-            }
-          }
-          
-          // 产品类型过滤（仅在没有指定分类时应用）
-          // 如果用户指定了分类，跳过基于关键词的产品类型过滤，因为用户已经明确了想要的产品
-          if (isPhoneKeyword) {
-            return productName.includes("phone") || productName.includes("smartphone") ||
-                   productName.includes("mobile") || productName.includes("agent") ||
-                   productName.includes("quantum") || productName.includes("metavertu") ||
-                   productName.includes("ivertu") || productName.includes("signature") ||
-                   productCategory.includes("phone");
-          } else if (isWatchKeyword) {
-            return productName.includes("watch") || productName.includes("timepiece") ||
-                   productName.includes("grand") || productName.includes("meta") ||
-                   productCategory.includes("watch");
-          } else if (isRingKeyword) {
-            // 严格过滤：只保留ring相关产品，排除手机产品
-            // 检查产品名称是否包含ring相关关键词
-            const hasRingKeyword = productName.includes("ring") || 
-                                   productName.includes("jewellery") || 
-                                   productName.includes("jewelry") || 
-                                   productName.includes("diamond") ||
-                                   productName.includes("aura");
-            // 检查产品分类是否包含ring
-            const hasRingCategory = productCategory.includes("ring") || 
-                                    productCategory.includes("jewellery") || 
-                                    productCategory.includes("jewelry");
-            // 排除手机产品（即使名称中包含"ring"但实际上是手机）
-            const isPhoneProduct = productName.includes("phone") || 
-                                  productName.includes("smartphone") ||
-                                  productName.includes("mobile") ||
-                                  productName.includes("agent") ||
-                                  productName.includes("quantum") ||
-                                  productName.includes("metavertu") ||
-                                  productName.includes("ivertu") ||
-                                  productName.includes("signature") ||
-                                  productCategory.includes("phone");
-            // 只有包含ring关键词且不是手机产品才保留
-            return (hasRingKeyword || hasRingCategory) && !isPhoneProduct;
-          } else if (isEarbudKeyword) {
-            return productName.includes("earbud") || productName.includes("earphone") ||
-                   productName.includes("audio") || productName.includes("headphone") ||
-                   productName.includes("ows") || productCategory.includes("earbud");
-          }
-          
-          return true; // 如果没有明确的产品类型要求，保留所有产品
-        });
-      };
+      const productAudience = { isMenTarget, isWomenTarget };
+
+      const filterProductsByRelevance = (productList: ProductSummary[]): ProductSummary[] =>
+        filterProductsForKeywordIntent(
+          productList,
+          payload.keyword,
+          pageTitleForSeo,
+          primaryCategory,
+          productAudience,
+          payload.targetCategory
+        );
       
       // 应用过滤
       // 重要：如果用户指定了产品分类，不要应用基于关键词的产品类型过滤
@@ -545,11 +494,13 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       console.log(`  - 指定分类: ${payload.targetCategory || "未指定"}`);
       if (isMenTarget) console.log(`  - 目标受众: 男性/丈夫`);
       if (isWomenTarget) console.log(`  - 目标受众: 女性/妻子`);
-      if (isPhoneKeyword) console.log(`  - 检测到产品类型: 手机`);
-      if (isWatchKeyword) console.log(`  - 检测到产品类型: 手表`);
-      if (isRingKeyword) console.log(`  - 检测到产品类型: 戒指`);
-      if (isEarbudKeyword) console.log(`  - 检测到产品类型: 耳机`);
+      if (primaryCategory !== "general" && primaryCategory !== "gift") {
+        console.log(`  - 主类目过滤: ${primaryCategory}`);
+      }
       if (isFlipIntent) console.log(`  - 检测到产品类型: 翻盖/折叠手机（仅 Quantum Flip / Ironflip）`);
+      if (isComparisonIntent(payload.keyword, pageTitleForSeo)) {
+        console.log(`  - 对比类关键词: 保留多品类商品`);
+      }
       console.log(`  - 过滤后主产品数: ${products.length}`);
       console.log(`  - 过滤后相关产品数: ${relatedProducts.length}`);
       if (products.length > 0) {
@@ -937,6 +888,18 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         if (keywordLower && productCategory.includes(keywordLower)) {
           score += 5;
         }
+
+        const groupPrimary = detectPrimaryCategory(keyword, pageTitle);
+        if (
+          !isComparisonIntent(keyword, pageTitle) &&
+          isSpecificProductCategory(groupPrimary)
+        ) {
+          if (productMatchesPrimaryCategory(product, groupPrimary)) {
+            score += 12;
+          } else {
+            score -= 8;
+          }
+        }
         
         // 特殊关键词匹配：flip/fold/folding → 推荐 Quantum Flip
         if (combinedText.includes("flip") || combinedText.includes("fold") || 
@@ -1175,7 +1138,19 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`[task ${taskId}] ====================================`);
     
     let allProducts = [...shuffledProducts, ...shuffledRelatedProducts];
-    const productGroups = getUniqueProductGroups(allProducts, numRows, productsPerRow, payload.keyword, pageTitleForSeo);
+    let gatedProductPool = buildGatedProductPool(
+      allProducts,
+      payload.keyword,
+      pageTitleForSeo,
+      primaryCategory
+    );
+    const productGroups = getUniqueProductGroups(
+      gatedProductPool.length > 0 ? gatedProductPool : allProducts,
+      numRows,
+      productsPerRow,
+      payload.keyword,
+      pageTitleForSeo
+    );
     
     // 第一排产品（product-section）
     let productsRow1 = productGroups[0] || [];
@@ -1304,9 +1279,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         /\b(gift|gifts|present|presents|mother'?s|mom'?s|mum'?s|mother\b|mom\b|mum\b|day\b|guide|guides|editorial|luxury life|for her|christmas|holiday)\b/i.test(
           combinedText
         );
+      const useBroadGiftProductFilter =
+        isGiftGuideOrEditorialTopic &&
+        !isComparisonIntent(payload.keyword, pageTitleForSeo) &&
+        !isSpecificProductCategory(primaryCategory);
 
-      // 产品相关性过滤函数：确保产品与关键词相关
+      // 产品相关性过滤函数：确保产品与关键词相关（template-1～7 共用）
       const filterRelevantProducts = (products: ProductSummary[]): ProductSummary[] => {
+        if (!useBroadGiftProductFilter) {
+          return filterProductsForKeywordIntent(
+            products,
+            payload.keyword,
+            pageTitleForSeo,
+            primaryCategory,
+            { isMenTarget, isWomenTarget },
+            payload.targetCategory
+          );
+        }
+
         if (isFlipIntentMarketing) {
           const flipOnly = products.filter(isFlipFormFactorProduct);
           return flipOnly.length > 0 ? flipOnly : products;
@@ -1453,14 +1443,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         console.log(`  - 从其他排补充后相关产品总数: ${allRelevantProducts.length}`);
       }
       
-      // 如果仍然没有相关产品，使用原始产品（避免空列表）
+      // 如果仍然没有相关产品，使用经类目 gate 的列表（避免空列表或跨品类回填）
       if (allRelevantProducts.length === 0) {
-        console.warn(`[task ${taskId}] ⚠️ 警告：未找到与关键词 "${payload.keyword}" 相关的产品，使用原始产品列表`);
-        allRelevantProducts = productsRow1.slice(0, 3);
+        console.warn(`[task ${taskId}] ⚠️ 警告：未找到与关键词 "${payload.keyword}" 相关的产品，使用 gate 后列表`);
+        const gatedFallback = applyProductGateToList(
+          productsRow1,
+          payload.keyword,
+          pageTitleForSeo,
+          primaryCategory
+        );
+        allRelevantProducts = (gatedFallback.length > 0 ? gatedFallback : productsRow1).slice(0, 4);
       }
       
-      // Top Picks: 取相关产品的前3个
-      topProducts = allRelevantProducts.slice(0, 3);
+      // Top Picks: 取相关产品的前 4 个（渲染前会再与各排去重并硬上限 4）
+      topProducts = allRelevantProducts.slice(0, 4);
       console.log(`  - Top Picks产品: ${topProducts.map(p => p.name).join(", ")}`);
       
       if (needsMarketingBlocks) {
@@ -1589,10 +1585,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         };
       });
       
-      // 添加1-3个外部类似产品对比（根据关键词类型，智能化调整对比维度）
+      // 添加1-3个外部类似产品对比（按主类目，避免手表页出现手机竞品等错位）
       const externalComparisons: Array<{ name: string; feature: string; price: string; material?: string; keyFeature?: string; display?: string; battery?: string; conciergeService?: string; isExternal?: boolean; externalUrl?: string }> = [];
+      const externalCompBranch = resolveExternalComparisonBranch(
+        payload.keyword,
+        pageTitleForSeo,
+        primaryCategory
+      );
       
-      if (keywordLower.includes("watch") || keywordLower.includes("timepiece")) {
+      if (externalCompBranch === "watch") {
         // 手表类：添加其他品牌手表对比（多样化选择）
         const watchOptions = [
           {
@@ -1658,7 +1659,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             isExternal: true
           });
         }
-      } else if (keywordLower.includes("phone") || keywordLower.includes("smartphone") || keywordLower.includes("mobile")) {
+      } else if (externalCompBranch === "phone") {
         // 手机类：根据关键词类型调整对比维度，提供更多样化的产品选择
         // 定义所有可用的外部产品选项（多样化产品池）
         const allPhoneOptions = [
@@ -1787,7 +1788,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             isExternal: true
           });
         }
-      } else if (keywordLower.includes("ring") || keywordLower.includes("jewellery") || keywordLower.includes("jewelry")) {
+      } else if (externalCompBranch === "ring") {
         // 戒指类：添加其他品牌智能戒指对比（多样化选择）
         const ringOptions = [
           {
@@ -1833,7 +1834,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             isExternal: true
           });
         }
-      } else if (keywordLower.includes("earbud") || keywordLower.includes("earphone") || keywordLower.includes("audio")) {
+      } else if (externalCompBranch === "earbud") {
         // 音频类：添加其他品牌耳机对比（多样化选择）
         const earbudOptions = [
           {
@@ -2275,7 +2276,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         const currentYear = new Date().getFullYear();
         
         // 生成参考文献（学术风格）- 使用真实、权威的外部资源链接
-        if (isPhoneKeyword) {
+        if (primaryCategory === "phone") {
           references = [
             {
               author: "NIST Cybersecurity Framework",
@@ -2302,7 +2303,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               linkType: "authoritative" as const
             }
           ];
-        } else if (isWatchKeyword) {
+        } else if (primaryCategory === "watch") {
           references = [
             {
               author: "Forbes Contributors",
@@ -2329,7 +2330,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               linkType: "authoritative" as const
             }
           ];
-        } else if (isRingKeyword) {
+        } else if (primaryCategory === "ring") {
           references = [
             {
               author: "Wearable Technology Research",
@@ -2348,7 +2349,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
               linkType: "authoritative" as const
             }
           ];
-        } else if (isEarbudKeyword) {
+        } else if (primaryCategory === "earbud") {
           references = [
             {
               author: "CNET Reviews",
@@ -2490,6 +2491,13 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       
       } // needsMarketingBlocks（对比表、内链、外链、模板6/7参考文献等）
 
+      gatedProductPool = buildGatedProductPool(
+        allProducts,
+        payload.keyword,
+        pageTitleForSeo,
+        primaryCategory
+      );
+
       const preAiDeduped = dedupePageProductSections(
         {
           topProducts,
@@ -2497,7 +2505,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
           productsRow2,
           relatedProducts: productsRow3,
         },
-        allProducts,
+        gatedProductPool,
         {
           templateType: payload.templateType || "template-1",
           logPrefix: `[task ${taskId}]`,
@@ -2562,25 +2570,113 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
     
-    updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
-    
-    const generatedContent = await generateHtmlContent({
-      apiKey, // 如果为 undefined，将使用 API Key 管理器
-      keyword: payload.keyword,
-      pageTitle: finalPageTitle,
-      titleType: payload.titleType, // 传递标题类型，用于调整内容风格和FAQ重点
-      templateType: payload.templateType || "template-1", // 传递模板类型，template-3无字数限制
-      userPrompt: payload.userPrompt, // 传递用户提示词，AI将按照此提示词生成内容
-      availableProducts: availableProductNames, // 🎯 关键：传递实际获取到的产品列表
-      articleImageUrls,
-      onStatusUpdate: (message) => {
-        // 在状态更新时检查暂停状态（不抛出错误，让后续检查处理）
-        if (!isTaskPaused(taskId)) {
-          // 更新任务状态，但不改变状态类型
-          updateTaskStatus(taskId, "generating_content", message);
-        }
+    const emptyCatalogHint = buildEmptyCatalogContentHint(primaryCategory, payload.keyword);
+    if (availableProductNames.length === 0 && emptyCatalogHint) {
+      console.warn(`[task ${taskId}] ⚠️ 无页面商品，AI 将按品类通用指南生成`);
+      updateTaskStatus(taskId, "generating_content", "未匹配到商品，按品类生成通用指南正文...");
+    } else {
+      updateTaskStatus(
+        taskId,
+        "generating_content",
+        payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ..."
+      );
+    }
+
+    let generatedContent: GeneratedContent | undefined;
+    let alignmentReasons: string[] = [];
+    let alignmentAttempts = 0;
+
+    for (let attempt = 1; attempt <= MAX_ALIGNMENT_ATTEMPTS; attempt++) {
+      alignmentAttempts = attempt;
+      await waitForTaskResume(taskId);
+      if (isTaskPaused(taskId)) {
+        return;
+      }
+
+      const retryHint =
+        alignmentReasons.length > 0
+          ? buildAlignmentRetryPrompt(
+              alignmentReasons,
+              availableProductNames,
+              primaryCategory,
+              payload.keyword,
+              pageTitleForSeo
+            )
+          : undefined;
+      const basePrompt = mergeUserPrompt(payload.userPrompt, emptyCatalogHint || undefined);
+      const mergedPrompt = mergeUserPrompt(basePrompt, retryHint);
+
+      if (attempt > 1) {
+        console.log(
+          `[task ${taskId}] alignment_attempt=${attempt} reasons=${alignmentReasons.join("; ")}`
+        );
+        updateTaskStatus(
+          taskId,
+          "generating_content",
+          `正文与关键词/商品不一致，第 ${attempt} 次重生成（${alignmentReasons.join("; ")}）`
+        );
+      }
+
+      generatedContent = await generateHtmlContent({
+        apiKey,
+        keyword: payload.keyword,
+        pageTitle: finalPageTitle,
+        titleType: payload.titleType,
+        templateType: payload.templateType || "template-1",
+        userPrompt: mergedPrompt,
+        availableProducts: availableProductNames,
+        articleImageUrls,
+        onStatusUpdate: (message) => {
+          if (!isTaskPaused(taskId)) {
+            updateTaskStatus(taskId, "generating_content", message);
+          }
+        },
+        shouldAbort: () => isTaskPaused(taskId),
+      });
+
+      if (isTaskPaused(taskId)) {
+        return;
+      }
+
+      const alignmentEval = evaluateContentAlignment({
+        articleContent: generatedContent.articleContent,
+        extendedContent: generatedContent.extendedContent,
+        faqItems: generatedContent.faqItems,
+        keyword: payload.keyword,
+        pageTitle: pageTitleForSeo,
+        availableProductNames,
+        primaryCategory,
+        topicContentMismatch: generatedContent.topicContentMismatch,
+      });
+
+      if (!alignmentEval.needsRetry) {
+        alignmentReasons = [];
+        break;
+      }
+
+      alignmentReasons = alignmentEval.reasons;
+      if (attempt === MAX_ALIGNMENT_ATTEMPTS) {
+        console.warn(
+          `[task ${taskId}] final_alignment_mismatch after ${MAX_ALIGNMENT_ATTEMPTS} attempts: ${alignmentReasons.join("; ")}`
+        );
+      }
+    }
+
+    if (!generatedContent) {
+      throw new Error(`[task ${taskId}] AI content generation produced no result`);
+    }
+
+    const priorDetails = (getTask(taskId)?.details as Record<string, unknown>) || {};
+    updateTaskStatus(taskId, "generating_content", "AI 内容生成完成", {
+      details: {
+        ...priorDetails,
+        alignmentAttempts,
+        alignmentReasons,
+        finalAlignmentMismatch: alignmentReasons.length > 0,
       },
-      shouldAbort: () => isTaskPaused(taskId), // 传递暂停检查回调
+      alignmentAttempts,
+      alignmentReasons,
+      finalAlignmentMismatch: alignmentReasons.length > 0,
     });
 
     // 生成内容后立即检查暂停状态
@@ -2628,14 +2724,20 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
     console.log(`  - Meta 描述长度: ${(generatedContent.metaDescription || "").length}`);
 
-    const topicCheck = checkArticleTopicMismatch(
-      `${generatedContent.articleContent} ${generatedContent.extendedContent || ""}`,
-      payload.keyword,
-      pageTitleForSeo
-    );
-    if (topicCheck.mismatch || generatedContent.topicContentMismatch) {
+    const finalAlignmentEval = evaluateContentAlignment({
+      articleContent: generatedContent.articleContent,
+      extendedContent: generatedContent.extendedContent,
+      faqItems: generatedContent.faqItems,
+      keyword: payload.keyword,
+      pageTitle: pageTitleForSeo,
+      availableProductNames,
+      primaryCategory,
+      topicContentMismatch: generatedContent.topicContentMismatch,
+    });
+
+    if (finalAlignmentEval.needsRetry && !isComparisonIntent(payload.keyword, pageTitleForSeo)) {
       console.warn(
-        `[task ${taskId}] ⚠️ 正文主题与${topicCheck.source === "title" ? "标题" : "关键词"}品类不一致，重新过滤商品区（期望: ${(topicCheck.source === "title" ? topicCheck.titleCategories : topicCheck.keywordCategories).join(", ")}；正文: ${topicCheck.contentCategories.join(", ")}）`
+        `[task ${taskId}] ⚠️ 对齐后仍不一致，重滤商品区: ${finalAlignmentEval.reasons.join("; ")}`
       );
       primaryCategory = detectPrimaryCategory(payload.keyword, pageTitleForSeo);
       const gateList = (list: ProductSummary[]) => {
@@ -2653,6 +2755,49 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         topProducts = gateList(topProducts);
       }
       allProducts = gateList(allProducts);
+      gatedProductPool = buildGatedProductPool(
+        allProducts,
+        payload.keyword,
+        pageTitleForSeo,
+        primaryCategory
+      );
+
+      const postAlignmentDedup = dedupePageProductSections(
+        {
+          topProducts,
+          products: productsRow1,
+          productsRow2,
+          relatedProducts: productsRow3,
+        },
+        gatedProductPool,
+        {
+          templateType: payload.templateType || "template-1",
+          logPrefix: `[task ${taskId}] post-alignment`,
+        }
+      );
+      topProducts = postAlignmentDedup.topProducts;
+      productsRow1 = postAlignmentDedup.products;
+      productsRow2 = postAlignmentDedup.productsRow2;
+      productsRow3 = postAlignmentDedup.relatedProducts;
+
+      if (needsMarketingBlocks && comparisonItems.length > 0) {
+        const before = comparisonItems.length;
+        comparisonItems = comparisonItems.filter((item) => {
+          if (item.isExternal) return true;
+          return productNameMatchesPageIntent(
+            item.name,
+            payload.keyword,
+            pageTitleForSeo,
+            primaryCategory
+          );
+        });
+        if (comparisonItems.length < before) {
+          console.log(
+            `[task ${taskId}] 对比表已按主类目 ${primaryCategory} 过滤 ${before - comparisonItems.length} 条内部 SKU`
+          );
+        }
+      }
+
       updateTaskStatus(
         taskId,
         "generating_content",
@@ -2671,32 +2816,39 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
             topProductIdsForT7
           );
           console.log(
-            `[task ${taskId}] 模板7 主网格（不含 Top Picks，最多10）: ${list.map((p: ProductSummary) => p.name).join(", ")}`
+            `[task ${taskId}] 模板7 主网格（不含 Top Picks，最多4）: ${list.map((p: ProductSummary) => p.name).join(", ")}`
           );
           return list;
         })()
       : productsRow1;
 
-    // 模板7：主网格为空时从全量池兜底（仍排除 Top Picks id）
-    if (isTemplate7 && productsForRender.length === 0 && allProducts.length > 0) {
+    gatedProductPool = buildGatedProductPool(
+      allProducts,
+      payload.keyword,
+      pageTitleForSeo,
+      primaryCategory
+    );
+
+    // 模板7：主网格为空时从已 gate 的全量池兜底（仍排除 Top Picks id）
+    if (isTemplate7 && productsForRender.length === 0 && gatedProductPool.length > 0) {
       const byId = new Map<number, ProductSummary>();
-      for (const p of allProducts) {
+      for (const p of gatedProductPool) {
         if (!topProductIdsForT7.has(p.id) && !byId.has(p.id)) {
           byId.set(p.id, p);
         }
       }
-      productsForRender = Array.from(byId.values()).slice(0, 10);
+      productsForRender = Array.from(byId.values()).slice(0, 4);
       console.log(
-        `[task ${taskId}] 模板7 主网格兜底（全量前10）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
+        `[task ${taskId}] 模板7 主网格兜底（全量前4）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
       );
     }
 
-    // 模板7：主网格不足 10 个时从全量池补足（排除 Top Picks 与已有 id）
-    if (isTemplate7 && productsForRender.length > 0 && productsForRender.length < 10 && allProducts.length > 0) {
+    // 模板7：主网格不足 4 个时从已 gate 的全量池补足（排除 Top Picks 与已有 id）
+    if (isTemplate7 && productsForRender.length > 0 && productsForRender.length < 4 && gatedProductPool.length > 0) {
       const beforeLen = productsForRender.length;
       productsForRender = fillTemplate7MainGrid(
         productsForRender,
-        allProducts,
+        gatedProductPool,
         topProductIdsForT7
       );
       if (productsForRender.length > beforeLen) {
@@ -2718,7 +2870,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         productsRow2,
         relatedProducts: productsRow3,
       },
-      allProducts,
+      gatedProductPool.length > 0 ? gatedProductPool : allProducts,
       {
         templateType: templateTypeForDedup,
         logPrefix: `[task ${taskId}] final`,
@@ -2804,7 +2956,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageImage: pageImageUrl, // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
       aiContent: generatedContent.articleContent,
       extendedContent: generatedContent.extendedContent, // 扩展内容（用于模板3/4/5的第二部分）
-      products: productsForRender, // 模板7 为前10且知识库优先；其他模板为第一排产品
+      products: productsForRender, // 模板7 主网格与第一排均为最多 4 个；各排经 pageProductDedup 硬上限
       productsRow2: productsRow2, // 第二排产品（最多4个）
       relatedProducts: productsRow3, // 第三排产品（最多4个）
       faqItems: generatedContent.faqItems,

@@ -3,7 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { GenerationRequestPayload } from "../types.js";
 import { isCommercialTitleType, shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
-import { detectPrimaryCategory } from "./productCategory.js";
+import { detectPrimaryCategory, isComparisonIntent } from "./productCategory.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -69,6 +69,7 @@ export function applyCategoryAwareTemplateFix(
   finalPageTitle: string
 ): void {
   if (payload.respectTemplateChoice) return;
+  if (isComparisonIntent(payload.keyword, finalPageTitle)) return;
 
   const tt = (payload.templateType || "template-1").trim();
   if (tt !== "template-2" && tt !== "template-3") return;
