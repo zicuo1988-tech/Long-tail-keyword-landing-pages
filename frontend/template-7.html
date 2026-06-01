@@ -61,8 +61,150 @@
     {{/if}}
     
     <style>
+        <!-- SHARED_LANDING_CSS -->
 
+        /* Template 7 — editorial blog (narrow column, content-first) */
+        body.template-7.layout-blog {
+            background: #faf9f7;
+            color: #1a1a1a;
+        }
 
+        .blog-masthead {
+            background: linear-gradient(180deg, #f5f3ef 0%, #faf9f7 100%);
+            border-bottom: 1px solid #e6e2dc;
+            padding: 48px 24px 32px;
+            text-align: left;
+        }
+
+        .blog-masthead-inner {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .blog-kicker {
+            font-size: 12px;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #6b6560;
+            margin: 0 0 12px;
+        }
+
+        .blog-masthead .blog-title {
+            font-size: clamp(1.75rem, 4vw, 2.35rem);
+            font-weight: 700;
+            line-height: 1.25;
+            margin: 0 0 16px;
+            color: #111;
+            text-transform: none;
+            letter-spacing: -0.02em;
+        }
+
+        .blog-deck {
+            font-size: 1.125rem;
+            line-height: 1.65;
+            color: #444;
+            margin: 0;
+            max-width: 640px;
+        }
+
+        .blog-article-wrap {
+            padding: 32px 24px 48px;
+        }
+
+        .blog-article-column {
+            max-width: 720px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #ebe8e3;
+            border-radius: 12px;
+            padding: 32px 36px 40px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .blog-article-column .content.ai-article-body {
+            font-size: 1.0625rem;
+            line-height: 1.75;
+        }
+
+        .blog-article-column .content.ai-article-body h2 {
+            font-size: 1.35rem !important;
+            margin-top: 2rem;
+        }
+
+        .template-7 .references-section,
+        .template-7 .external-resources-section {
+            max-width: 720px;
+            margin: 0 auto 40px;
+            padding: 0 24px;
+        }
+
+        .template-7 .references-section {
+            background: #fff;
+            border: 1px solid #ebe8e3;
+            border-radius: 12px;
+            padding: 28px 32px;
+        }
+
+        .template-7 .comparison-section {
+            max-width: 960px;
+            margin: 0 auto 40px;
+            padding: 0 24px;
+        }
+
+        .template-7 .blog-products-rail {
+            background: #f0eeea;
+            border-top: 1px solid #e0dcd4;
+            padding: 40px 24px 48px;
+        }
+
+        .template-7 .blog-products-rail .product-header,
+        .template-7 .blog-products-rail .product-title {
+            text-align: center;
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .template-7 .blog-products-rail .products-grid {
+            max-width: 720px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .template-7 .blog-products-rail .product-card {
+            max-width: none;
+            background: #fff;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e8e4de;
+        }
+
+        .template-7 .blog-products-rail .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .template-7 .blog-product-cta {
+            display: inline-block;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #1a5fb4;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .blog-article-column {
+                padding: 24px 20px;
+            }
+
+            .template-7 .blog-products-rail .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Legacy shell helpers (comparison, FAQ, etc.) */
         .content-container {
             background-color: #ffffff;
             padding-left: 160px;
@@ -1362,40 +1504,147 @@
     </style>
 </head>
 
-<body>
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">{{PAGE_TITLE}}</h1>
+<body class="template-7 layout-blog">
+    <header class="blog-masthead">
+        <div class="blog-masthead-inner">
+            <p class="blog-kicker">VERTU Luxury Life Guides</p>
+            <h1 class="blog-title">{{PAGE_TITLE}}</h1>
             {{#if PAGE_DESCRIPTION}}
-            <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
+            <p class="blog-deck">{{PAGE_DESCRIPTION}}</p>
+            {{else if (isNotEmpty META_DESCRIPTION)}}
+            <p class="blog-deck">{{META_DESCRIPTION}}</p>
             {{/if}}
-            <div class="hero-cta">
-                <a href="#guide-content" class="cta-primary">Read the guide</a>
-                <a href="#comparison" class="cta-secondary">Compare models</a>
+        </div>
+    </header>
+
+    <article class="blog-article-wrap" id="guide-content">
+        <div class="blog-article-column">
+            {{#if (isNotEmpty AUTHOR_NAME)}}
+            <aside class="ll-author-byline" aria-label="Article author" style="margin:0 0 1.25rem;padding:0;font-size:14px;line-height:1.5;color:#222;border-bottom:1px solid #eee;padding-bottom:1rem">
+                <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
+                {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
+            </aside>
+            {{/if}}
+            {{{EDITORIAL_LEAD_HTML}}}
+            <div class="content ai-article-body">
+                {{{AI_GENERATED_CONTENT}}}
             </div>
+            {{#if (isNotEmpty AI_EXTENDED_CONTENT)}}
+            <div class="content ai-article-body blog-extended-block" style="margin-top:2rem;padding-top:1.5rem;border-top:1px dashed #ddd">
+                {{{AI_EXTENDED_CONTENT}}}
+            </div>
+            {{/if}}
+        </div>
+    </article>
+
+    {{#if references.length}}
+    <section class="references-section" aria-label="References">
+        <h2 class="references-title">References</h2>
+        <ol class="references-list">
+            {{#each references}}
+            <li class="reference-item">
+                <span class="reference-number">{{add @index 1}}</span>
+                <div class="reference-content">
+                    {{#if this.author}}
+                    <span class="reference-author">{{this.author}}</span>
+                    {{#if this.year}}<span class="reference-year"> ({{this.year}})</span>{{/if}}.
+                    {{/if}}
+                    {{#if this.title}}
+                    <em>{{this.title}}</em>.
+                    {{/if}}
+                    {{#if this.publication}}
+                    {{this.publication}}.
+                    {{/if}}
+                    {{#if this.url}}
+                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}" class="reference-link">{{#if this.title}}{{this.title}}{{else}}{{this.url}}{{/if}}</a>
+                    {{/if}}
+                    {{#if this.doi}}
+                    DOI: <a href="https://doi.org/{{this.doi}}" rel="{{getRelAttribute 'authoritative'}}" class="reference-link">{{this.doi}}</a>
+                    {{/if}}
+                </div>
+            </li>
+            {{/each}}
+        </ol>
+    </section>
+    {{/if}}
+
+    {{#if externalResources.length}}
+    <section class="external-resources-section" aria-label="Further reading">
+        <h2 class="resources-title">Further Reading</h2>
+        <div class="resources-grid">
+            {{#each externalResources}}
+            <div class="resource-card">
+                {{#if this.type}}
+                <div class="resource-type">{{this.type}}</div>
+                {{/if}}
+                <h3 class="resource-title">
+                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
+                </h3>
+                {{#if this.description}}
+                <p class="resource-description">{{this.description}}</p>
+                {{/if}}
+                {{#if this.source}}
+                <div class="resource-source">Source: {{this.source}}</div>
+                {{/if}}
+            </div>
+            {{/each}}
         </div>
     </section>
+    {{/if}}
 
-    <!-- Content Section: answer-first for organic search -->
-    <div class="content-container" id="guide-content">
-        {{#if (isNotEmpty AUTHOR_NAME)}}
-        <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
-            <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
-            {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
-        </aside>
-        {{/if}}
-        {{{EDITORIAL_LEAD_HTML}}}
-        <div class="content ai-article-body">
-            {{{AI_GENERATED_CONTENT}}}
+    {{#if comparisonItems.length}}
+    <section class="comparison-section" id="comparison">
+        <h2 class="comparison-title">Comparison at a Glance</h2>
+        <p style="margin-bottom: 16px; color: #666; font-size: 14px; text-align: center;">Compare key features and specifications to support your reading.</p>
+        <div class="table-wrapper">
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Model</th>
+                        <th>Category</th>
+                        <th>Material</th>
+                        <th>Key Feature</th>
+                        <th>Display/Size</th>
+                        <th>Battery/Power</th>
+                        <th>Concierge Service</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each comparisonItems}}
+                    <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
+                        <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
+                            {{#if this.externalUrl}}
+                                <a href="{{this.externalUrl}}" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                            {{else if this.productLink}}
+                                <a href="{{this.productLink}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
+                            {{else}}
+                                {{this.name}}
+                            {{/if}}
+                        </td>
+                        <td>{{this.feature}}</td>
+                        <td>{{#if this.material}}{{this.material}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if this.keyFeature}}{{this.keyFeature}}{{else}}Premium{{/if}}</td>
+                        <td>{{#if this.display}}{{this.display}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if this.battery}}{{this.battery}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if this.conciergeService}}{{this.conciergeService}}{{else}}—{{/if}}</td>
+                        <td style="font-weight: 500;">{{this.price}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
         </div>
-    </div>
+        {{#if COMPARISON_CLOSING}}
+        <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55; text-align: center;">{{COMPARISON_CLOSING}}</p>
+        {{/if}}
+    </section>
+    {{/if}}
 
     {{#if topProducts.length}}
-    <!-- Top Picks Section -->
-    <section id="products" class="product-section">
+    <section id="products" class="blog-products-rail" aria-label="Related products">
         <div class="product-header">
-            <h2 class="product-title">Top Picks</h2>
+            <h2 class="product-title">Related products</h2>
+            <p style="text-align:center;color:#666;font-size:14px;margin:0 0 20px">Explore VERTU models mentioned in this guide</p>
         </div>
         <div class="products-grid">
             {{#each topProducts}}
@@ -1455,124 +1704,7 @@
             </div>
             {{/each}}
         </div>
-    </section>
-    {{/if}}
-
-    {{#if comparisonItems.length}}
-    <!-- Comparison Section -->
-    <section class="comparison-section" id="comparison">
-        <h2 class="comparison-title">Comparison at a Glance</h2>
-        <p style="margin-bottom: 16px; color: #666; font-size: 14px; text-align: center;">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
-        <div class="table-wrapper">
-            <table class="comparison-table">
-                <thead>
-                    <tr>
-                        <th>Model</th>
-                        <th>Category</th>
-                        <th>Material</th>
-                        <th>Key Feature</th>
-                        <th>Display/Size</th>
-                        <th>Battery/Power</th>
-                        <th>Concierge Service</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{#each comparisonItems}}
-                    <tr style="{{#if this.isExternal}}background-color: #fafafa;{{/if}}">
-                        <td style="font-weight: {{#if this.isExternal}}500{{else}}600{{/if}};">
-                            {{#if this.externalUrl}}
-                                <a href="{{this.externalUrl}}" rel="{{getRelAttribute 'competitor'}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
-                                <span style="color: #999; font-size: 12px; margin-left: 4px;">(External)</span>
-                            {{else if this.productLink}}
-                                <a href="{{this.productLink}}" style="color: #000; text-decoration: underline;">{{this.name}}</a>
-                            {{else}}
-                                {{this.name}}
-                            {{/if}}
-                        </td>
-                        <td>{{this.feature}}</td>
-                        <td>{{#if this.material}}{{this.material}}{{else}}N/A{{/if}}</td>
-                        <td>{{#if this.keyFeature}}{{this.keyFeature}}{{else}}Premium{{/if}}</td>
-                        <td>{{#if this.display}}{{this.display}}{{else}}N/A{{/if}}</td>
-                        <td>{{#if this.battery}}{{this.battery}}{{else}}N/A{{/if}}</td>
-                        <td style="{{#unless this.isExternal}}font-weight: 600; color: #d32f2f;{{/unless}}">
-                            {{#if this.conciergeService}}
-                                {{#if this.conciergeServiceLink}}
-                                    <a href="{{this.conciergeServiceLink}}" style="color: #d32f2f; text-decoration: underline; font-weight: 600;">{{this.conciergeService}}</a>
-                                {{else}}
-                                    <span style="color: #d32f2f; font-weight: 600;">{{this.conciergeService}}</span>
-                                {{/if}}
-                            {{else}}
-                                <span style="color: #999;">N/A</span>
-                            {{/if}}
-                        </td>
-                        <td style="font-weight: 500;">{{this.price}}</td>
-                    </tr>
-                    {{/each}}
-                </tbody>
-            </table>
-        </div>
-        <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic; text-align: center;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
-        {{#if COMPARISON_CLOSING}}
-        <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55; text-align: center;">{{COMPARISON_CLOSING}}</p>
-        {{/if}}
-    </section>
-    {{/if}}
-
-    {{#if references.length}}
-    <!-- References Section - 参考文献部分 -->
-    <section class="references-section">
-        <h2 class="references-title">References</h2>
-        <ol class="references-list">
-            {{#each references}}
-            <li class="reference-item">
-                <span class="reference-number">{{@index}}</span>
-                <div class="reference-content">
-                    {{#if this.author}}
-                    <span class="reference-author">{{this.author}}</span>
-                    {{#if this.year}}<span class="reference-year"> ({{this.year}})</span>{{/if}}.
-                    {{/if}}
-                    {{#if this.title}}
-                    <em>{{this.title}}</em>.
-                    {{/if}}
-                    {{#if this.publication}}
-                    {{this.publication}}.
-                    {{/if}}
-                    {{#if this.url}}
-                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}" class="reference-link">{{#if this.title}}{{this.title}}{{else}}{{this.url}}{{/if}}</a>
-                    {{/if}}
-                    {{#if this.doi}}
-                    DOI: <a href="https://doi.org/{{this.doi}}" rel="{{getRelAttribute 'authoritative'}}" class="reference-link">{{this.doi}}</a>
-                    {{/if}}
-                </div>
-            </li>
-            {{/each}}
-        </ol>
-    </section>
-    {{/if}}
-
-    {{#if externalResources.length}}
-    <!-- External Resources Section - 外部权威资源 -->
-    <section class="external-resources-section">
-        <h2 class="resources-title">External Resources & Further Reading</h2>
-        <div class="resources-grid">
-            {{#each externalResources}}
-            <div class="resource-card">
-                {{#if this.type}}
-                <div class="resource-type">{{this.type}}</div>
-                {{/if}}
-                <h3 class="resource-title">
-                    <a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>
-                </h3>
-                {{#if this.description}}
-                <p class="resource-description">{{this.description}}</p>
-                {{/if}}
-                {{#if this.source}}
-                <div class="resource-source">Source: {{this.source}}</div>
-                {{/if}}
-            </div>
-            {{/each}}
-        </div>
+        <p style="text-align:center;margin-top:8px"><a class="blog-product-cta" href="https://vertu.com/shop">View full collection at VERTU</a></p>
     </section>
     {{/if}}
 

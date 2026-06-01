@@ -86,6 +86,55 @@ async function loadTemplate(templateType = "template-1") {
 // 页面加载时自动加载默认模板
 loadTemplate("template-1");
 
+let cachedSharedLandingCss = null;
+
+async function fetchSharedLandingCss() {
+  if (cachedSharedLandingCss !== null) {
+    return cachedSharedLandingCss;
+  }
+  try {
+    const response = await fetch("shared/landing-base.css");
+    cachedSharedLandingCss = response.ok ? await response.text() : "";
+  } catch {
+    cachedSharedLandingCss = "";
+  }
+  return cachedSharedLandingCss;
+}
+
+function stripHandlebarsBlocks(html) {
+  let prev;
+  do {
+    prev = html;
+    html = html.replace(/\{\{#(?:if|each|unless)[^}]*\}\}[\s\S]*?\{\{\/(?:if|each|unless)\}\}/g, "");
+  } while (html !== prev);
+  return html.replace(/\{\{[#/]?[^}]+\}\}/g, "");
+}
+
+function prepareTemplatePreviewHtml(html, sharedCss) {
+  const sampleArticle =
+    "<p>This sample paragraph shows the <strong>layout shell</strong> typography and spacing for this template.</p>" +
+    "<h2>Sample section heading</h2>" +
+    "<p>Product grids, comparison tables, and FAQ blocks render when real data is available during generation.</p>";
+  let prepared = html.replace(/<!-- SHARED_LANDING_CSS -->/g, sharedCss || "");
+  prepared = stripHandlebarsBlocks(prepared);
+  return prepared
+    .replace(/\{\{\{AI_GENERATED_CONTENT\}\}\}/g, sampleArticle)
+    .replace(/\{\{\{AI_EXTENDED_CONTENT\}\}\}/g, "<p>Extended reading sample block for template 3.</p>")
+    .replace(/\{\{\{EDITORIAL_LEAD_HTML\}\}\}/g, "")
+    .replace(/\{\{\{TRUST_STRIP_HTML\}\}\}/g, "")
+    .replace(/\{\{\{PAGE_UX_SCRIPT\}\}\}/g, "")
+    .replace(/\{\{PAGE_TITLE\}\}/g, "Sample Page Title — Layout Preview")
+    .replace(/\{\{PAGE_DESCRIPTION\}\}/g, "Sample deck line showing subtitle placement in this template shell.")
+    .replace(/\{\{META_DESCRIPTION\}\}/g, "Sample meta description for layout preview.")
+    .replace(/\{\{PAGE_URL\}\}/g, "https://example.com/preview")
+    .replace(/\{\{LAST_UPDATED_LABEL\}\}/g, "1 January 2026")
+    .replace(/\{\{DATE_MODIFIED\}\}/g, "2026-01-01");
+}
+
+function getRespectTemplateChoice(formData) {
+  return formData.get("respectTemplateChoice") === "on";
+}
+
 // 任务控制按钮
 const pauseTaskBtn = document.getElementById("pause-task-btn");
 const resumeTaskBtn = document.getElementById("resume-task-btn");
@@ -252,6 +301,53 @@ previewModal.innerHTML = `
 `;
 document.body.appendChild(previewModal);
 
+const htmlPreviewModal = document.createElement("div");
+htmlPreviewModal.className = "preview-modal html-preview-modal";
+htmlPreviewModal.innerHTML = `
+  <div class="preview-modal-content html-preview-modal-content">
+    <button class="preview-modal-close html-preview-close" aria-label="关闭 HTML 预览">×</button>
+    <div class="html-preview-toolbar">HTML 布局预览（样例正文，非生成结果）</div>
+    <iframe class="html-preview-frame" title="Template HTML layout preview"></iframe>
+  </div>
+`;
+document.body.appendChild(htmlPreviewModal);
+
+const htmlPreviewFrame = htmlPreviewModal.querySelector(".html-preview-frame");
+const htmlPreviewCloseBtn = htmlPreviewModal.querySelector(".html-preview-close");
+
+function closeHtmlPreviewModal() {
+  htmlPreviewModal.classList.remove("active");
+  if (htmlPreviewFrame) {
+    htmlPreviewFrame.srcdoc = "";
+  }
+  if (!previewModal.classList.contains("active")) {
+    document.body.style.overflow = "";
+  }
+}
+
+async function openHtmlLayoutPreview(templateHtmlFile) {
+  if (!templateHtmlFile || !htmlPreviewFrame) {
+    return false;
+  }
+  try {
+    const [htmlResponse, sharedCss] = await Promise.all([
+      fetch(templateHtmlFile),
+      fetchSharedLandingCss(),
+    ]);
+    if (!htmlResponse.ok) {
+      return false;
+    }
+    const rawHtml = await htmlResponse.text();
+    htmlPreviewFrame.srcdoc = prepareTemplatePreviewHtml(rawHtml, sharedCss);
+    htmlPreviewModal.classList.add("active");
+    document.body.style.overflow = "hidden";
+    return true;
+  } catch (error) {
+    console.warn("HTML 布局预览失败:", error);
+    return false;
+  }
+}
+
 const previewImage = document.getElementById("preview-image");
 const previewImageContainer = previewModal.querySelector(".preview-image-container");
 const previewCloseBtn = previewModal.querySelector(".preview-modal-close");
@@ -304,15 +400,21 @@ function zoomImage(delta) {
 // 预览按钮点击事件
 function initPreviewButtons() {
   document.querySelectorAll(".preview-btn").forEach((btn) => {
-    btn.addEventListener("click", (e) => {
-      e.stopPropagation(); // 阻止事件冒泡到卡片点击事件
-      
+    btn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+
+      const previewHtmlFile = btn.getAttribute("data-preview-html");
+      if (previewHtmlFile) {
+        const opened = await openHtmlLayoutPreview(previewHtmlFile);
+        if (opened) {
+          return;
+        }
+      }
+
       const previewUrl = btn.getAttribute("data-preview");
       if (previewUrl && previewImage) {
-        // 重置缩放和位置
+        closeHtmlPreviewModal();
         resetImageTransform();
-        
-        // 添加加载状态
         previewImage.style.opacity = "0";
         previewImage.style.transition = "opacity 0.3s ease";
         previewImage.onload = () => {
@@ -324,7 +426,7 @@ function initPreviewButtons() {
         };
         previewImage.src = previewUrl;
         previewModal.classList.add("active");
-        document.body.style.overflow = "hidden"; // 防止背景滚动
+        document.body.style.overflow = "hidden";
       }
     });
   });
@@ -422,11 +524,11 @@ if (document.readyState === "loading") {
 // 关闭预览弹窗
 function closePreviewModal() {
   previewModal.classList.remove("active");
-  document.body.style.overflow = ""; // 恢复滚动
+  closeHtmlPreviewModal();
+  document.body.style.overflow = "";
   if (previewImage) {
     previewImage.src = "";
   }
-  // 重置缩放和位置
   resetImageTransform();
   isDragging = false;
 }
@@ -466,10 +568,35 @@ if (previewModalContent) {
 
 // ESC键关闭弹窗
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && previewModal.classList.contains("active")) {
+  if (e.key !== "Escape") return;
+  if (htmlPreviewModal.classList.contains("active")) {
+    closeHtmlPreviewModal();
+    return;
+  }
+  if (previewModal.classList.contains("active")) {
     closePreviewModal();
   }
 });
+
+if (htmlPreviewCloseBtn) {
+  htmlPreviewCloseBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeHtmlPreviewModal();
+  });
+}
+
+htmlPreviewModal.addEventListener("click", (e) => {
+  if (e.target === htmlPreviewModal || e.target.classList.contains("preview-modal")) {
+    closeHtmlPreviewModal();
+  }
+});
+
+const htmlPreviewModalContent = htmlPreviewModal.querySelector(".html-preview-modal-content");
+if (htmlPreviewModalContent) {
+  htmlPreviewModalContent.addEventListener("click", (e) => {
+    e.stopPropagation();
+  });
+}
 
 // 进度条相关元素
 const progressBar = document.getElementById("progress-bar");
@@ -717,6 +844,7 @@ form.addEventListener("submit", async (event) => {
         targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
         templateType: currentTemplate,
         templateContent: currentTemplateContent,
+        respectTemplateChoice: getRespectTemplateChoice(formData),
         useElementor: formData.get("useElementor") === "on",
         wordpress: {
           url: String(formData.get("wpUrl") ?? "").trim(),
@@ -875,6 +1003,7 @@ form.addEventListener("submit", async (event) => {
     targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
     templateType,
     templateContent,
+    respectTemplateChoice: getRespectTemplateChoice(formData),
     useElementor: formData.get("useElementor") === "on",
     wordpress: {
       url: String(formData.get("wpUrl") ?? "").trim(),

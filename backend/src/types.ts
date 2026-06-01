@@ -17,7 +17,9 @@ export interface GenerationRequestPayload {
   pageTitle?: string; // 可选：如果为空，将根据长尾词和选择的标题类型自动生成标题
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   targetCategory?: string; // 可选：用户指定的产品分类，页面将只显示该分类下的产品
-  templateType?: string; // 模板类型：template-1, template-2, template-3
+  templateType?: string; // 模板类型：template-1 … template-7
+  /** 为 true 时跳过后端 guide-intent 自动升级模板（严格使用用户所选壳） */
+  respectTemplateChoice?: boolean;
   /** 可选：Article JSON-LD 的 datePublished（ISO 8601）。不填则使用渲染时刻。 */
   articleDatePublishedISO?: string;
   /** 可选：Article JSON-LD 的 dateModified（ISO 8601）。不填则与发布日期或渲染时刻一致。 */

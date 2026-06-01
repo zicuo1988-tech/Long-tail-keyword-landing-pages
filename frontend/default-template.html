@@ -48,6 +48,31 @@
     {{/if}}
     
     <style>
+        <!-- SHARED_LANDING_CSS -->
+
+        /* Template 1 — editorial: content-first, no hero */
+        body.template-1.layout-editorial {
+            background: #faf9f7;
+        }
+
+        body.template-1.layout-editorial .content-container {
+            padding-top: 72px;
+        }
+
+        body.template-1.layout-editorial h1.title {
+            font-size: clamp(1.75rem, 3vw, 2.25rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-align: center;
+            max-width: 820px;
+            margin: 0 auto 1.5rem;
+            line-height: 1.25;
+        }
+
+        body.template-1.layout-editorial .product-section {
+            background: #f0eeea;
+            border-top: 1px solid #e0dcd4;
+        }
 
         .content-container {
             background-color: #ffffff;
@@ -1098,8 +1123,8 @@
     </style>
 </head>
 
-<body>
-    <div >
+<body class="template-1 layout-editorial">
+    <div>
         <div class="content-container">
             <h1 class="title">{{PAGE_TITLE}}</h1>
 

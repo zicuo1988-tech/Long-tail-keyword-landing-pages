@@ -68,6 +68,8 @@ export function applyCategoryAwareTemplateFix(
   payload: GenerationRequestPayload,
   finalPageTitle: string
 ): void {
+  if (payload.respectTemplateChoice) return;
+
   const tt = (payload.templateType || "template-1").trim();
   if (tt !== "template-2" && tt !== "template-3") return;
 
@@ -90,6 +92,8 @@ export function applyGuideIntentLongShellIfNeeded(
   payload: GenerationRequestPayload,
   finalPageTitle: string
 ): void {
+  if (payload.respectTemplateChoice) return;
+
   const tt = (payload.templateType || "template-1").trim();
 
   applyCategoryAwareTemplateFix(payload, finalPageTitle);

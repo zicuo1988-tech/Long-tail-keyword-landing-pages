@@ -48,7 +48,33 @@
     {{/if}}
     
     <style>
-  
+        <!-- SHARED_LANDING_CSS -->
+
+        /* Template 3 — extended long-form: accent sidebar on extended block */
+        body.template-3.layout-extended {
+            background: #f8f8f8;
+        }
+
+        body.template-3.layout-extended .ai-extended-panel {
+            max-width: 960px;
+            margin: 2rem auto 0;
+            padding: 28px 32px 32px 28px;
+            background: #fff;
+            border-left: 4px solid #1a1a1a;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        body.template-3.layout-extended .ai-extended-panel::before {
+            content: "Extended reading";
+            display: block;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #888;
+            margin-bottom: 12px;
+        }
+
         .content-container {
             background-color: #ffffff;
             padding-left: 160px;
@@ -1115,8 +1141,8 @@
     </style>
 </head>
 
-<body>
-    <div >
+<body class="template-3 layout-extended">
+    <div>
         <div class="content-container">
             <h1 class="title">{{PAGE_TITLE}}</h1>
             {{#if (isNotEmpty PAGE_DESCRIPTION)}}
@@ -1601,7 +1627,7 @@
         <!-- 内容区域（第二段 - 扩展内容） -->
         {{#if (isNotEmpty AI_EXTENDED_CONTENT)}}
         <div class="content-container">
-            <div class="content ai-article-body">
+            <div class="content ai-article-body ai-extended-panel">
                 {{{AI_EXTENDED_CONTENT}}}
             </div>
         </div>

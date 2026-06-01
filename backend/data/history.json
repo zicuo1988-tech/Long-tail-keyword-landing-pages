@@ -1,5 +1,75 @@
 [
   {
+    "id": "29cf1af2-3df3-4dee-a947-6476dbf05787",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-mobile-phone-android-quality-guide",
+    "createdAt": 1779846041810,
+    "updatedAt": 1779846175991,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile phone android",
+    "titleType": "best",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-mobile-phone-android-quality-guide/"
+  },
+  {
+    "id": "ff53a439-2ee9-44e0-9733-8de7f6587c76",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-military-watches-comparison-best-rated",
+    "createdAt": 1779844313150,
+    "updatedAt": 1779844456072,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury military watches",
+    "titleType": "review",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-military-watches-comparison-best-rated/"
+  },
+  {
+    "id": "80adbdfc-1bd5-4363-868a-23cdfc35988b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-all-you-need-to-know-about-luxury-military-watches",
+    "createdAt": 1779793400894,
+    "updatedAt": 1779793511125,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury military watches",
+    "titleType": "informational",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/all-you-need-to-know-about-luxury-military-watches/"
+  },
+  {
+    "id": "9a9f4c20-e14f-4b6e-ad4c-f6a47e762607",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-luxury-business-watches-men",
+    "createdAt": 1779789652847,
+    "updatedAt": 1779789886430,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury business watches men",
+    "titleType": "informational",
+    "templateType": "template-1",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-business-watches-men/"
+  },
+  {
+    "id": "90287353-aa9a-4db3-a243-dcd77dde4503",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-best-mobile-flip-phone",
+    "createdAt": 1779781518008,
+    "updatedAt": 1779781732943,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "best mobile flip phone",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-best-mobile-flip-phone/"
+  },
+  {
     "id": "0295b27e-5da9-451a-9861-d1896c08b3ae",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-best-mobile-flip-phone",
@@ -13928,75 +13998,5 @@
     "titleType": "purchase",
     "templateType": "template-1",
     "pageUrl": "https://vertu.com/luxury-life-guides/buy-womens-luxury-jewelry-official-store/"
-  },
-  {
-    "id": "55b6b624-b63e-425d-8b2b-454e64dd0dcf",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141658",
-    "createdAt": 1773744110666,
-    "updatedAt": 1773744212674,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "aucoin-hart jewelers luxury watches",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/aucoin-hart-jewelers-luxury-watches-comparison-which-is-better/"
-  },
-  {
-    "id": "0a492cfa-feaa-47a8-877f-e4f9b66c248a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141656",
-    "createdAt": 1773744050664,
-    "updatedAt": 1773744109130,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "swiss watchmaker luxury",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/swiss-watchmaker-luxury-comparison-tech-insights/"
-  },
-  {
-    "id": "2f3827e8-ae24-40ee-9cee-71ddb9c4f965",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141654",
-    "createdAt": 1773743913666,
-    "updatedAt": 1773744048644,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "female watches luxury",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-female-watches-luxury/"
-  },
-  {
-    "id": "d3a1bf9f-6a0a-4a77-b1e4-7326fd136035",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141652",
-    "createdAt": 1773743736668,
-    "updatedAt": 1773743911542,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury swiss made watches",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-swiss-made-watches-recommendations-top-choices/"
-  },
-  {
-    "id": "a5774d14-1dec-4d0d-ba27-088824d4706e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141650",
-    "createdAt": 1773743526711,
-    "updatedAt": 1773743733795,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury swiss watchmaker",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-swiss-watchmaker/"
   }
 ]

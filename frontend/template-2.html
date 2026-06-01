@@ -48,8 +48,44 @@
     {{/if}}
     
     <style>
-     
- 
+        <!-- SHARED_LANDING_CSS -->
+
+        /* Template 2 — product-first: dark band + 2-column picks */
+        body.template-2.layout-product-first {
+            background: #fff;
+        }
+
+        body.template-2.layout-product-first .content-container:first-of-type {
+            background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #fff;
+            padding-top: 56px;
+            padding-bottom: 32px;
+        }
+
+        body.template-2.layout-product-first .content-container:first-of-type h1.title,
+        body.template-2.layout-product-first .content-container:first-of-type .page-description p {
+            color: #fff;
+        }
+
+        body.template-2.layout-product-first .top-picks-block.product-section {
+            background: #2d2d2d;
+            padding-top: 0;
+            margin-top: -8px;
+        }
+
+        body.template-2.layout-product-first .top-picks-block .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 920px;
+        }
+
+        body.template-2.layout-product-first .top-picks-block .product-card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 10px;
+        }
+
         .content-container {
             background-color: #ffffff;
             padding-left: 160px;
@@ -1125,8 +1161,8 @@
     </style>
 </head>
 
-<body>
-    <div >
+<body class="template-2 layout-product-first">
+    <div>
         <div class="content-container">
             <h1 class="title">{{PAGE_TITLE}}</h1>
             {{#if (isNotEmpty PAGE_DESCRIPTION)}}
