@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "test:dedup": "tsx src/utils/pageProductDedup.test.ts",
+    "test:images": "tsx src/utils/articleImageMatching.test.ts"
   },
   "dependencies": {
     "@sanity/client": "^6.28.1",

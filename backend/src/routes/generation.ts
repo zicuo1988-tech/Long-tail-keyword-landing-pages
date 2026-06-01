@@ -11,6 +11,11 @@ import {
 import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { resolveLandingImages } from "../services/sanityImageLibrary.js";
 import { injectArticleFiguresIfMissing } from "../utils/articleImageInjector.js";
+import {
+  buildTemplate7ProductsForRender,
+  dedupePageProductSections,
+  fillTemplate7MainGrid,
+} from "../utils/pageProductDedup.js";
 import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
 import {
   createSanityWriteClient,
@@ -2484,30 +2489,25 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
       
       } // needsMarketingBlocks（对比表、内链、外链、模板6/7参考文献等）
-      
-      // 优化：确保Top Picks中的产品不会在第一排产品中重复显示
-      const topProductIds = new Set(topProducts.map(p => p.id));
-      const filteredProductsRow1 = productsRow1.filter(p => !topProductIds.has(p.id));
-      
-      // 如果过滤后第一排产品不足，从其他排补充（但排除Top Picks中的产品）
-      let finalProductsRow1 = filteredProductsRow1;
-      if (finalProductsRow1.length < 4) {
-        const allAvailableProducts = [
-          ...filteredProductsRow1,
-          ...productsRow2.filter(p => !topProductIds.has(p.id)),
-          ...productsRow3.filter(p => !topProductIds.has(p.id))
-        ];
-        // 去重
-        const uniqueAvailable = Array.from(new Map(allAvailableProducts.map(p => [p.id, p])).values());
-        finalProductsRow1 = uniqueAvailable.slice(0, 4);
-        console.log(`[task ${taskId}] ✅ 第一排产品已优化：排除Top Picks中的 ${topProducts.length} 个产品，避免重复显示`);
-        console.log(`  - 优化后第一排产品: ${finalProductsRow1.map(p => p.name).join(", ")}`);
-      } else {
-        console.log(`[task ${taskId}] ✅ 第一排产品已优化：已排除Top Picks中的产品，避免重复`);
-      }
-      
-      // 更新productsRow1为优化后的列表（避免重复）
-      productsRow1 = finalProductsRow1;
+
+      const preAiDeduped = dedupePageProductSections(
+        {
+          topProducts,
+          products: productsRow1,
+          productsRow2,
+          relatedProducts: productsRow3,
+        },
+        allProducts,
+        {
+          templateType: payload.templateType || "template-1",
+          logPrefix: `[task ${taskId}]`,
+        }
+      );
+      topProducts = preAiDeduped.topProducts;
+      productsRow1 = preAiDeduped.products;
+      productsRow2 = preAiDeduped.productsRow2;
+      productsRow3 = preAiDeduped.relatedProducts;
+      console.log(`[task ${taskId}] ✅ 页面商品区去重完成（AI 生成前）`);
     }
 
     // 【关键步骤】在所有产品准备完成后，提取产品名称并生成 AI 内容
@@ -2589,21 +2589,35 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     }
     
     if (articleImageUrls.length > 0) {
+      const isLongForm =
+        payload.templateType === "template-3" ||
+        payload.templateType === "template-4" ||
+        payload.templateType === "template-5" ||
+        payload.templateType === "template-6" ||
+        payload.templateType === "template-7";
+      const maxFigures = isTemplate7 ? 4 : isLongForm ? 3 : 1;
+      const caption = finalPageTitle || payload.keyword;
       const beforeLen = generatedContent.articleContent.length;
+      const beforeImgCount = (generatedContent.articleContent.match(/<img\b/gi) || []).length;
       generatedContent.articleContent = injectArticleFiguresIfMissing(
         generatedContent.articleContent,
         articleImageUrls,
-        finalPageTitle || payload.keyword
+        caption,
+        maxFigures
       );
       if (generatedContent.extendedContent?.trim()) {
         generatedContent.extendedContent = injectArticleFiguresIfMissing(
           generatedContent.extendedContent,
           articleImageUrls.slice(1),
-          finalPageTitle || payload.keyword
+          caption,
+          Math.max(1, maxFigures - 1)
         );
       }
-      if (generatedContent.articleContent.length > beforeLen) {
-        console.log(`[task ${taskId}] 📷 已在正文中自动插入 Sanity 配图（AI 未生成 figure 时）`);
+      const afterImgCount = (generatedContent.articleContent.match(/<img\b/gi) || []).length;
+      if (generatedContent.articleContent.length > beforeLen || afterImgCount > beforeImgCount) {
+        console.log(
+          `[task ${taskId}] 📷 已在正文中自动插入 Sanity 配图（${beforeImgCount} → ${afterImgCount} 张，白名单 ${articleImageUrls.length} 张）`
+        );
       }
     }
 
@@ -2646,47 +2660,75 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       );
     }
 
-    // 模板7：产品区展示前10个，且优先展示知识库/排名对应产品（Top Picks 优先，再补足其他相关产品）
+    // 模板7：主网格合并三排（不含 Top Picks rail，避免与顶部 Related products 重复）
+    const topProductIdsForT7 = new Set((topProducts || []).map((p) => p.id));
     let productsForRender: ProductSummary[] = isTemplate7
       ? (() => {
-          const combined = [...(topProducts || []), ...productsRow1, ...(productsRow2 || []), ...(productsRow3 || [])];
-          const byId = new Map(combined.map((p: ProductSummary) => [p.id, p]));
-          const list = Array.from(byId.values()).slice(0, 10);
-          console.log(`[task ${taskId}] 模板7 产品列表（前10，知识库产品优先）: ${list.map((p: ProductSummary) => p.name).join(", ")}`);
+          const list = buildTemplate7ProductsForRender(
+            productsRow1,
+            productsRow2,
+            productsRow3,
+            topProductIdsForT7
+          );
+          console.log(
+            `[task ${taskId}] 模板7 主网格（不含 Top Picks，最多10）: ${list.map((p: ProductSummary) => p.name).join(", ")}`
+          );
           return list;
         })()
       : productsRow1;
 
-    // 模板7：合并列表为空但店铺仍有商品时，用全量去重列表兜底（避免服务类关键词下 Top Picks 去重后整页无商品区）
+    // 模板7：主网格为空时从全量池兜底（仍排除 Top Picks id）
     if (isTemplate7 && productsForRender.length === 0 && allProducts.length > 0) {
-      const byId = new Map(allProducts.map((p: ProductSummary) => [p.id, p]));
+      const byId = new Map<number, ProductSummary>();
+      for (const p of allProducts) {
+        if (!topProductIdsForT7.has(p.id) && !byId.has(p.id)) {
+          byId.set(p.id, p);
+        }
+      }
       productsForRender = Array.from(byId.values()).slice(0, 10);
       console.log(
-        `[task ${taskId}] 模板7 产品兜底（全量前10）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
+        `[task ${taskId}] 模板7 主网格兜底（全量前10）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
       );
     }
 
-    // 模板7：合并后不足 10 个时从全量去重列表补足（与文末网格、配图白名单更一致）
+    // 模板7：主网格不足 10 个时从全量池补足（排除 Top Picks 与已有 id）
     if (isTemplate7 && productsForRender.length > 0 && productsForRender.length < 10 && allProducts.length > 0) {
-      const seen = new Set(productsForRender.map((p: ProductSummary) => p.id));
-      const filled = [...productsForRender];
-      for (const p of allProducts) {
-        if (filled.length >= 10) break;
-        if (!seen.has(p.id)) {
-          seen.add(p.id);
-          filled.push(p);
-        }
-      }
-      if (filled.length > productsForRender.length) {
+      const beforeLen = productsForRender.length;
+      productsForRender = fillTemplate7MainGrid(
+        productsForRender,
+        allProducts,
+        topProductIdsForT7
+      );
+      if (productsForRender.length > beforeLen) {
         console.log(
-          `[task ${taskId}] 模板7 产品补足: ${productsForRender.length} → ${filled.length}（${filled
-            .slice(productsForRender.length)
+          `[task ${taskId}] 模板7 主网格补足: ${beforeLen} → ${productsForRender.length}（${productsForRender
+            .slice(beforeLen)
             .map((x: ProductSummary) => x.name)
             .join(", ")}）`
         );
-        productsForRender = filled;
       }
     }
+
+    // 渲染前最终去重（含主题纠偏后的商品区，保证整页 data-product-id 唯一）
+    const templateTypeForDedup = payload.templateType || "template-1";
+    const finalDeduped = dedupePageProductSections(
+      {
+        topProducts,
+        products: productsForRender,
+        productsRow2,
+        relatedProducts: productsRow3,
+      },
+      allProducts,
+      {
+        templateType: templateTypeForDedup,
+        logPrefix: `[task ${taskId}] final`,
+      }
+    );
+    topProducts = finalDeduped.topProducts;
+    productsForRender = finalDeduped.products;
+    productsRow2 = finalDeduped.productsRow2;
+    productsRow3 = finalDeduped.relatedProducts;
+    console.log(`[task ${taskId}] ✅ 页面商品区去重完成（渲染前）`);
 
     const productSectionIntro = buildProductSectionIntro(
       payload.keyword,

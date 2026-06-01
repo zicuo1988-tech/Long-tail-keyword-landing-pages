@@ -180,11 +180,13 @@ export function scoreAssetRelevance(asset: SanityImageAssetLike, ctx: ArticleIma
   return score;
 }
 
-export function rankArticleAssets(
+export type ScoredSanityImageAsset = SanityImageAssetLike & { score: number };
+
+export function rankArticleAssetsWithScores(
   assets: SanityImageAssetLike[],
   ctx: ArticleImageSearchContext
-): SanityImageAssetLike[] {
-  const byId = new Map<string, SanityImageAssetLike & { score: number }>();
+): ScoredSanityImageAsset[] {
+  const byId = new Map<string, ScoredSanityImageAsset>();
   for (const asset of assets) {
     if (!asset?.url) continue;
     const prev = byId.get(asset._id);
@@ -194,6 +196,98 @@ export function rankArticleAssets(
     }
   }
   return [...byId.values()].sort((a, b) => b.score - a.score);
+}
+
+export function rankArticleAssets(
+  assets: SanityImageAssetLike[],
+  ctx: ArticleImageSearchContext
+): SanityImageAssetLike[] {
+  return rankArticleAssetsWithScores(assets, ctx);
+}
+
+/** 稳定哈希，用于按关键词/标题轮换配图顺序 */
+export function hashDiversitySeed(keyword: string, pageTitle: string): number {
+  const raw = `${keyword}\0${pageTitle}`.toLowerCase();
+  let h = 0;
+  for (let i = 0; i < raw.length; i++) {
+    h = (h * 31 + raw.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h) || 1;
+}
+
+function seededRandom(seed: number): () => number {
+  let state = seed % 2147483647;
+  if (state <= 0) state += 2147483646;
+  return () => {
+    state = (state * 16807) % 2147483647;
+    return (state - 1) / 2147483646;
+  };
+}
+
+function shuffleInPlace<T>(arr: T[], rand: () => number): void {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+/**
+ * 在保持相关性的前提下打散顺序：按得分分档、档内随机，再轮询各档取图，避免每页总是同一张首选图。
+ */
+export function pickDiverseRankedAssets(
+  ranked: ScoredSanityImageAsset[],
+  maxCount: number,
+  diversitySeed: number
+): ScoredSanityImageAsset[] {
+  if (ranked.length === 0 || maxCount <= 0) return [];
+
+  const rand = seededRandom(diversitySeed);
+  const bandKey = (score: number) => Math.floor(score / 30);
+  const bands = new Map<number, ScoredSanityImageAsset[]>();
+  for (const asset of ranked) {
+    const k = bandKey(asset.score);
+    if (!bands.has(k)) bands.set(k, []);
+    bands.get(k)!.push(asset);
+  }
+
+  const bandKeys = [...bands.keys()].sort((a, b) => b - a);
+  for (const k of bandKeys) {
+    shuffleInPlace(bands.get(k)!, rand);
+  }
+
+  const picked: ScoredSanityImageAsset[] = [];
+  const pickedIds = new Set<string>();
+  let round = 0;
+  const maxRounds = Math.max(ranked.length, maxCount) * 2;
+
+  while (picked.length < maxCount && round < maxRounds) {
+    let addedThisRound = false;
+    for (const k of bandKeys) {
+      const band = bands.get(k)!;
+      if (!band.length) continue;
+      const candidate = band[round % band.length];
+      if (candidate && !pickedIds.has(candidate._id)) {
+        picked.push(candidate);
+        pickedIds.add(candidate._id);
+        addedThisRound = true;
+        if (picked.length >= maxCount) break;
+      }
+    }
+    round++;
+    if (!addedThisRound) break;
+  }
+
+  const offset = diversitySeed % Math.max(1, ranked.length);
+  const rotated = [...ranked.slice(offset), ...ranked.slice(0, offset)];
+  for (const asset of rotated) {
+    if (picked.length >= maxCount) break;
+    if (!pickedIds.has(asset._id)) {
+      picked.push(asset);
+      pickedIds.add(asset._id);
+    }
+  }
+
+  return picked.slice(0, maxCount);
 }
 
 export function getTopicAlignedCategoryFallback(ctx: ArticleImageSearchContext): string | undefined {

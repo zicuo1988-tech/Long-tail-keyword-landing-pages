@@ -13,9 +13,18 @@ import {
 import { getArticleImageUrlsFromEnv, luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import {
   buildArticleImageSearchContext,
-  rankArticleAssets,
+  hashDiversitySeed,
+  pickDiverseRankedAssets,
+  rankArticleAssetsWithScores,
   type SanityImageAssetLike,
 } from "../utils/articleImageMatching.js";
+
+/** 正文配图白名单上限（传给 AI + 自动注入） */
+const DEFAULT_ARTICLE_MAX_URLS = 20;
+const FETCH_PER_PATTERN = 36;
+const RECENT_ASSET_POOL = 150;
+/** API 候选足够时不再混入工艺/分类槽位 fallback（避免总是那几张固定素材） */
+const MIN_API_URLS_SKIP_SLOT_FALLBACKS = 6;
 
 export interface SanityImageAsset {
   _id: string;
@@ -315,10 +324,11 @@ export async function getArticleImageUrls(options: {
   config?: SanityImageConfig;
   maxUrls?: number;
 }): Promise<string[]> {
-  const maxUrls = options.maxUrls ?? 12;
+  const maxUrls = options.maxUrls ?? DEFAULT_ARTICLE_MAX_URLS;
   const envFallback = getArticleImageUrlsFromEnv();
   const slotFallbacks = collectSlotFallbackUrls().map(toArticleUrl);
   const ctx = buildArticleImageSearchContext(options.keyword, options.pageTitle);
+  const diversitySeed = hashDiversitySeed(options.keyword, options.pageTitle);
 
   const topicAlignedCategoryUrl = ctx.topicCategoryImageUrl
     ? toArticleUrl(ctx.topicCategoryImageUrl)
@@ -326,9 +336,9 @@ export async function getArticleImageUrls(options: {
 
   if (!resolveSanityConfig(options.config)) {
     const offline = mergeArticleUrlPools([
-      topicAlignedCategoryUrl ? [topicAlignedCategoryUrl] : [],
       envFallback,
       slotFallbacks,
+      topicAlignedCategoryUrl ? [topicAlignedCategoryUrl] : [],
     ]).slice(0, maxUrls);
     console.log(
       `[SanityImageLibrary] 正文配图（离线）品类=${ctx.primaryCategory} flip=${ctx.isFlipIntent} 共 ${offline.length} 张`
@@ -336,34 +346,60 @@ export async function getArticleImageUrls(options: {
     return offline;
   }
 
-  const patternAssets = await fetchAssetsForPatterns(ctx.groqPatterns, options.config, 24);
-  let ranked = rankArticleAssets(patternAssets as SanityImageAssetLike[], ctx);
+  const broadPatterns = [
+    ...ctx.groqPatterns,
+    `${ARTICLE_IMAGE_PATTERN_PREFIX}*`,
+    "*luxury*",
+    "*editorial*",
+    "*lifestyle*",
+  ];
+  const uniquePatterns = [...new Set(broadPatterns)];
 
-  if (ranked.length < maxUrls) {
-    const recent = await listRecentAssets(100, options.config);
-    ranked = rankArticleAssets(
-      [...ranked, ...recent.filter((a) => !isMarketingSlotFilename((a.originalFilename || "").toLowerCase()))],
+  const patternAssets = await fetchAssetsForPatterns(
+    uniquePatterns,
+    options.config,
+    FETCH_PER_PATTERN
+  );
+  let ranked = rankArticleAssetsWithScores(patternAssets as SanityImageAssetLike[], ctx);
+
+  if (ranked.length < maxUrls * 2) {
+    const recent = await listRecentAssets(RECENT_ASSET_POOL, options.config);
+    ranked = rankArticleAssetsWithScores(
+      [
+        ...ranked,
+        ...recent.filter((a) => !isMarketingSlotFilename((a.originalFilename || "").toLowerCase())),
+      ],
       ctx
     );
   }
 
-  const rankedUrls = ranked.map((a) => toArticleUrl(a.url));
+  const diverseAssets = pickDiverseRankedAssets(ranked, maxUrls, diversitySeed);
+  const rankedUrls = diverseAssets.map((a) => toArticleUrl(a.url));
 
-  const unique = mergeArticleUrlPools([
-    topicAlignedCategoryUrl ? [topicAlignedCategoryUrl] : [],
-    rankedUrls,
-    envFallback,
-    slotFallbacks,
-  ]).slice(0, maxUrls);
+  let apiPool = mergeArticleUrlPools([rankedUrls]);
+  if (apiPool.length < 4 && topicAlignedCategoryUrl) {
+    apiPool = mergeArticleUrlPools([[topicAlignedCategoryUrl], rankedUrls]);
+  }
+
+  let unique: string[];
+  if (apiPool.length >= MIN_API_URLS_SKIP_SLOT_FALLBACKS) {
+    unique = apiPool.slice(0, maxUrls);
+  } else {
+    unique = mergeArticleUrlPools([apiPool, envFallback, slotFallbacks]).slice(0, maxUrls);
+  }
 
   console.log(
-    `[SanityImageLibrary] 正文配图 品类=${ctx.primaryCategory} flip=${ctx.isFlipIntent} API候选=${patternAssets.length} 输出=${unique.length} 张` +
-      (unique[0] ? ` 首选=${unique[0].slice(0, 72)}...` : "")
+    `[SanityImageLibrary] 正文配图 品类=${ctx.primaryCategory} flip=${ctx.isFlipIntent} API候选=${patternAssets.length} 排序=${ranked.length} 打散后=${diverseAssets.length} 输出=${unique.length} 张` +
+      (unique[0] ? ` 首选=${unique[0].slice(0, 72)}...` : "") +
+      ` seed=${diversitySeed}`
   );
 
   if (unique.length > 0) return unique;
 
-  return mergeArticleUrlPools([envFallback, slotFallbacks]).slice(0, maxUrls);
+  return mergeArticleUrlPools([envFallback, slotFallbacks, topicAlignedCategoryUrl ? [topicAlignedCategoryUrl] : []]).slice(
+    0,
+    maxUrls
+  );
 }
 
 function isMarketingSlotFilename(name: string): boolean {
@@ -416,7 +452,7 @@ export async function resolveLandingImages(options: {
       ...(imgCtx.isFlipIntent ? ["landing-og-flip*", "*og*flip*"] : []),
     ];
     const ogAssets = await fetchAssetsForPatterns(ogPatterns, config, 5);
-    const ogRanked = rankArticleAssets(ogAssets as SanityImageAssetLike[], imgCtx);
+    const ogRanked = rankArticleAssetsWithScores(ogAssets as SanityImageAssetLike[], imgCtx);
     if (ogRanked[0]?.url) {
       ogCoverUrl = toOgUrl(ogRanked[0].url);
       apiHits += 1;
