@@ -5,7 +5,8 @@ const SLUG_PREFIX = "luxury-life-guides/";
 
 /**
  * 与 backend/src/services/sanityPublisher.ts 写入字段对齐：
- * title, slug.current, html, excerpt, publishedAt, source
+ * title, slug, html/bodyHtml, excerpt, canonicalPath, ogImage, jsonLd,
+ * publishedAt, modifiedAt, primaryCategory, keyword, source
  *
  * Studio 注册：import luxuryLifeGuide from "./schemaTypes/luxuryLifeGuide";
  * schemaTypes: [luxuryLifeGuide, ...]
@@ -51,21 +52,63 @@ export default defineType({
     }),
     defineField({
       name: "html",
-      title: "HTML",
+      title: "HTML (body)",
       type: "text",
-      description: "Full HTML fragment from the generator (may include <style> etc.).",
+      description: "Body HTML + inline styles (no document <head>).",
       rows: 20,
-      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: "bodyHtml",
+      title: "Body HTML",
+      type: "text",
+      rows: 20,
+      description: "Same as html when published by the generator.",
     }),
     defineField({
       name: "excerpt",
-      title: "Excerpt",
+      title: "Meta description",
       type: "text",
       rows: 4,
     }),
     defineField({
+      name: "canonicalPath",
+      title: "Canonical path",
+      type: "string",
+      description: "e.g. /luxury-life-guides/my-slug/",
+    }),
+    defineField({
+      name: "ogImage",
+      title: "OG image URL",
+      type: "url",
+    }),
+    defineField({
+      name: "jsonLd",
+      title: "JSON-LD scripts",
+      type: "text",
+      rows: 8,
+      description: "JSON.stringify(string[]) of schema.org script bodies.",
+    }),
+    defineField({
+      name: "primaryCategory",
+      title: "Primary category",
+      type: "string",
+      options: {
+        list: ["phone", "watch", "ring", "earbud", "other"],
+      },
+    }),
+    defineField({
+      name: "keyword",
+      title: "Source keyword",
+      type: "string",
+    }),
+    defineField({
       name: "publishedAt",
       title: "Published at",
+      type: "datetime",
+    }),
+    defineField({
+      name: "modifiedAt",
+      title: "Modified at",
       type: "datetime",
     }),
     defineField({

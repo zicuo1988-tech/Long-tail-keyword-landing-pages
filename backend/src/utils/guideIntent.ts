@@ -44,3 +44,34 @@ export function shouldTreatAsLongFormGuideArticle(
     text
   );
 }
+
+const COMMERCIAL_TITLE_TYPES = new Set([
+  "purchase",
+  "commercial",
+  "best",
+  "top",
+  "top-ranking",
+  "most",
+]);
+
+const EDUCATIONAL_TITLE_TYPES = new Set([
+  "how-to",
+  "informational",
+  "services-guides",
+  "tech-insights",
+]);
+
+const EVALUATIVE_TITLE_TYPES = new Set(["comparison", "review", "expert"]);
+
+export type ConversionMode = "commercial" | "educational" | "evaluative";
+
+export function getConversionMode(titleType?: string): ConversionMode {
+  if (titleType && COMMERCIAL_TITLE_TYPES.has(titleType)) return "commercial";
+  if (titleType && EDUCATIONAL_TITLE_TYPES.has(titleType)) return "educational";
+  if (titleType && EVALUATIVE_TITLE_TYPES.has(titleType)) return "evaluative";
+  return "educational";
+}
+
+export function isCommercialTitleType(titleType?: string): boolean {
+  return getConversionMode(titleType) === "commercial";
+}

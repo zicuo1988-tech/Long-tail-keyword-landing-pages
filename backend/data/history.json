@@ -1,5 +1,47 @@
 [
   {
+    "id": "6cb1591b-ac83-445a-a45b-1f9a718a8b4d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-popular-cell-phone-best-selling-models",
+    "createdAt": 1780296767522,
+    "updatedAt": 1780297075955,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "most popular cell phone",
+    "titleType": "most",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-cell-phone-best-selling-models/"
+  },
+  {
+    "id": "5c48bffd-357d-40f5-85f7-f27f4085d766",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-business-smartphones-with-best-battery-performance",
+    "createdAt": 1780295843527,
+    "updatedAt": 1780296035639,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "business smartphones with best battery performance",
+    "titleType": "most",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-business-smartphones-with-best-battery-performance/"
+  },
+  {
+    "id": "fabb542c-f379-423c-978b-93cf5444e2cc",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-expensive-phone-on-the-market-highly-trusted",
+    "createdAt": 1780294360803,
+    "updatedAt": 1780294491247,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "most expensive phone on the market",
+    "titleType": "most",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-expensive-phone-on-the-market-highly-trusted/"
+  },
+  {
     "id": "76720ada-5c09-40ee-8df3-0d7b4f4cac3b",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-phone-most-expensive-premium-choices-reviewed",
@@ -13956,47 +13998,5 @@
     "titleType": "top",
     "templateType": "template-5",
     "pageUrl": "https://vertu.com/luxury-life-guides/top-quality-luxury-watch-brands-ranking-expert-review/"
-  },
-  {
-    "id": "d8b0491e-dbe4-4b97-9347-7d75c40e3dd6",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141684",
-    "createdAt": 1773804063513,
-    "updatedAt": 1773804265300,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury bracelets for women",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-bracelets-for-women-quality-and-performance-guide/"
-  },
-  {
-    "id": "bd4dbb6f-87e0-4a58-b21d-9e2606372679",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141682",
-    "createdAt": 1773803878516,
-    "updatedAt": 1773804062023,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men bracelet luxury",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/men-bracelet-luxury-expert-buying-guide/"
-  },
-  {
-    "id": "12d09b72-01cc-4b3d-b31c-0d0df71fa5b7",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141680",
-    "createdAt": 1773803795505,
-    "updatedAt": 1773803878289,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury sunglasses",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-mens-luxury-sunglasses-options/"
   }
 ]

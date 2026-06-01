@@ -2,7 +2,11 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
-import { shouldTreatAsLongFormGuideArticle } from "../utils/guideIntent.js";
+import {
+  getConversionMode,
+  shouldTreatAsLongFormGuideArticle,
+  type ConversionMode,
+} from "../utils/guideIntent.js";
 import {
   checkArticleTopicMismatch,
   filterProductNamesToFlipOnly,
@@ -227,7 +231,14 @@ async function generateWithKey(
   }
   
   // 根据产品类型过滤知识库内容，只保留相关的产品信息（同时考虑 keyword + pageTitle，避免腕表页出现手机内容）
-  const filteredKbContent = filterKnowledgeBaseByProductType(kbContent, keyword, relevantProducts, pageTitle);
+  const conversionMode = getConversionMode(titleType);
+  let filteredKbContent = filterKnowledgeBaseByProductType(
+    kbContent,
+    keyword,
+    relevantProducts,
+    pageTitle,
+    conversionMode
+  );
   
   // 检测性别和目标受众
   const combinedText = `${keyword.toLowerCase()} ${pageTitle.toLowerCase()}`;
@@ -377,6 +388,20 @@ async function generateWithKey(
 
   const contentStyleGuide = getContentStyleByType(titleType);
 
+  const conversionModeGuide: Record<ConversionMode, string> = {
+    commercial: `CONVERSION MODE (commercial — maximise qualified clicks to products):
+- Within the first 80 words after the first <h2>, state a clear recommendation and why VERTU fits the search intent for "${keyword}".
+- Include H2 sections such as "Comparison at a glance", "Pricing and what to expect", and "Who should buy" (use knowledge-base prices only; if no price, link to the official collection URL).
+- Every two H2 sections, add one soft CTA paragraph linking to #products or an official collection URL from the knowledge base (e.g. "Compare models in the collection below").
+- Do not use discount or "cheapest" language; use official store, authorised retailer, premium collection.`,
+    educational: `CONVERSION MODE (educational — E-E-A-T first):
+- Answer-first opening; minimise sales pressure in the first three H2 sections.
+- Cite knowledge-base facts; add References-aligned depth where the template supports it.`,
+    evaluative: `CONVERSION MODE (evaluative — comparison intent):
+- Include a comparison table or structured <ul> comparing key dimensions (price tier, materials, standout feature, best for whom).
+- End with an explicit "Our recommendation" paragraph naming the best fit for the title intent (VERTU models only from the knowledge base).`,
+  };
+
   // 处理用户提示词 - 放在更突出的位置，确保AI优先遵循
   const userPromptSection = userPrompt && userPrompt.trim() 
     ? `\n\n═══════════════════════════════════════════════════════════════
@@ -440,6 +465,8 @@ PRODUCT TYPE MATCHING (CRITICAL - but user prompt takes priority):
 - Product recommendations MUST match the product type specified in the title/keyword (unless user prompt specifies otherwise)
 
 ${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}
+${conversionModeGuide[conversionMode]}
+
 ${isTemplate7 ? `
 BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 - Write as a long-form blog or editorial piece: narrative, engaging, and readable. Weave knowledge base facts into a coherent, flowing article rather than a listicle.
@@ -1018,9 +1045,18 @@ CRITICAL REQUIREMENTS:
 ═══════════════════════════════════════════════════════════════\n\n`
     : "";
 
+  const faqPurchaseDecisionBlock =
+    conversionMode === "commercial" || conversionMode === "evaluative"
+      ? `
+PURCHASE-DECISION FAQs (MANDATORY):
+- At least 2 of the 6 FAQs MUST address buying decisions: pricing range (from knowledge base only), warranty/returns, or how VERTU compares for "${keyword}".
+- Do NOT duplicate exact H2 headings from the article; FAQs should complement the body.
+`
+      : "";
+
   const faqPrompt = `You are an expert SEO strategist and user experience specialist. Generate EXACTLY 6 highly relevant, keyword-focused FAQ items in British English for the search query "${keyword}".
 
-${faqUserPromptSection}CRITICAL REQUIREMENTS:
+${faqUserPromptSection}${faqPurchaseDecisionBlock}CRITICAL REQUIREMENTS:
 - You MUST generate EXACTLY 6 FAQ items (no more, no less)
 - You MUST write in British English (UK English) only
 - You MUST NOT include any Chinese characters, words, or phrases
@@ -1694,17 +1730,37 @@ Write the complete, detailed description paragraph now. Make sure it is STRONGLY
       if (descSource.length > 160) {
         metaDescription = descSource.substring(0, 157).trim() + "...";
       } else if (descSource.length < 120) {
-        // 如果太短，补充内容
-        metaDescription = descSource + " Expert guide with detailed information and recommendations.";
+        const ctaTail =
+          conversionMode === "commercial"
+            ? " Compare models and shop the official VERTU collection."
+            : " Read the full guide for expert insights.";
+        metaDescription = `${descSource.trim()}${ctaTail}`;
         if (metaDescription.length > 160) {
           metaDescription = metaDescription.substring(0, 157).trim() + "...";
         }
       } else {
         metaDescription = descSource;
       }
+      if (
+        conversionMode === "commercial" &&
+        metaDescription.length <= 150 &&
+        !/compare|shop|collection|official/i.test(metaDescription)
+      ) {
+        const suffix = " Compare models on the official store.";
+        metaDescription = (metaDescription + suffix).substring(0, 160).trim();
+        if (metaDescription.length > 160) {
+          metaDescription = metaDescription.substring(0, 157).trim() + "...";
+        }
+      }
     } catch (error) {
       console.warn(`[GoogleAI] Failed to generate meta description:`, error);
-      metaDescription = `${keyword} - Expert guide and recommendations. Discover the best options and detailed information.`;
+      metaDescription =
+        conversionMode === "commercial"
+          ? `${keyword}: compare VERTU luxury models, pricing from the official collection, and buying advice.`
+          : `${keyword}: expert VERTU guide with specifications and recommendations from our knowledge base.`;
+      if (metaDescription.length > 160) {
+        metaDescription = metaDescription.substring(0, 157).trim() + "...";
+      }
     }
 
     // 生成SEO meta keywords (相关关键词，逗号分隔)
@@ -2560,11 +2616,31 @@ function extractRelevantProductsFromKeyword(keyword: string, knownProducts: stri
  * 同时考虑 keyword + pageTitle，避免腕表/手表页混入手机内容
  * 重要：Ruby Talk 只有 Agent Q 才有，其他手机产品（Quantum Flip、Metavertu等）没有
  */
+function extractKbSection(kbContent: string, headerMarker: string): string {
+  const idx = kbContent.indexOf(headerMarker);
+  if (idx === -1) return "";
+  const rest = kbContent.slice(idx);
+  const nextHr = rest.indexOf("\n----------------------------------------------------------------------", headerMarker.length);
+  return nextHr === -1 ? rest.trim() : rest.slice(0, nextHr).trim();
+}
+
+function appendCommercialKbSections(
+  content: string,
+  fullKb: string,
+  conversionMode?: ConversionMode
+): string {
+  if (conversionMode !== "commercial") return content;
+  const conversionBlock = extractKbSection(fullKb, "CONVERSION COPY BLOCKS");
+  if (!conversionBlock || content.includes("CONVERSION COPY BLOCKS")) return content;
+  return `${content}\n\n${conversionBlock}`;
+}
+
 function filterKnowledgeBaseByProductType(
   kbContent: string,
   keyword: string,
   relevantProducts: string[],
-  pageTitle?: string
+  pageTitle?: string,
+  conversionMode?: ConversionMode
 ): string {
   if (!kbContent || !keyword) {
     return kbContent;
@@ -2587,7 +2663,7 @@ function filterKnowledgeBaseByProductType(
   
   // 如果没有明确的产品类型，返回完整知识库
   if (!isPhoneKeyword && !isWatchKeyword && !isRingKeyword && !isEarbudKeyword) {
-    return kbContent;
+    return appendCommercialKbSections(kbContent, kbContent, conversionMode);
   }
 
   // 如果有关联产品，只保留这些产品的信息
@@ -2773,7 +2849,7 @@ function filterKnowledgeBaseByProductType(
     
     console.log(`[GoogleAI] 知识库过滤: 关键词="${keyword}", 相关产品=${relevantProducts.join(', ')}, 包含Agent Q=${hasAgentQ}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
     
-    return filtered || kbContent; // 如果过滤后为空，返回原始内容
+    return appendCommercialKbSections(filtered || kbContent, kbContent, conversionMode);
   }
 
   // 如果没有相关产品，根据产品类型过滤
@@ -2880,7 +2956,7 @@ function filterKnowledgeBaseByProductType(
   
   console.log(`[GoogleAI] 知识库类型过滤: 关键词="${keyword}", 产品类型=${isRingKeyword ? 'ring' : isWatchKeyword ? 'watch' : isEarbudKeyword ? 'earbud' : isPhoneKeyword ? 'phone' : 'unknown'}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
   
-  return filtered || kbContent; // 如果过滤后为空，返回原始内容
+  return appendCommercialKbSections(filtered || kbContent, kbContent, conversionMode);
 }
 
 // 从文本中提取FAQ的辅助函数

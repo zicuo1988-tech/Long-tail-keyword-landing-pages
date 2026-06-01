@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { sanityReadClient } from "../../../lib/sanity.client";
+import { parseJsonLdScripts } from "../../../lib/jsonLd";
 
-/** 新发布的 Sanity 文档需即时可读，避免走纯静态缓存导致「假 404」 */
 export const dynamic = "force-dynamic";
 
 type Doc = {
   _id: string;
   title: string;
-  html: string;
+  html?: string;
+  bodyHtml?: string;
   excerpt?: string;
+  canonicalPath?: string;
+  ogImage?: string;
+  jsonLd?: string;
+  publishedAt?: string;
+  modifiedAt?: string;
 };
 
 function siteBaseUrl(): string {
   return (process.env.NEXT_PUBLIC_SITE_URL || "https://vertu.com").replace(/\/+$/, "");
 }
 
-/**
- * URL: /luxury-life-guides/<keyword-slug>/
- * 与后端一致：Sanity 里 slug.current === "luxury-life-guides/<keyword-slug>"
- */
 export async function generateMetadata({
   params,
 }: {
@@ -27,13 +29,28 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const fullSlug = `luxury-life-guides/${slug}`;
-  const doc = await sanityReadClient.fetch<{ title: string; excerpt?: string } | null>(
-    `*[_type == "luxuryLifeGuide" && slug.current == $fullSlug][0]{ title, excerpt }`,
+  const doc = await sanityReadClient.fetch<{
+    title: string;
+    excerpt?: string;
+    canonicalPath?: string;
+    ogImage?: string;
+    publishedAt?: string;
+    modifiedAt?: string;
+  } | null>(
+    `*[_type == "luxuryLifeGuide" && slug.current == $fullSlug][0]{
+      title,
+      excerpt,
+      canonicalPath,
+      ogImage,
+      publishedAt,
+      modifiedAt
+    }`,
     { fullSlug }
   );
   const base = siteBaseUrl();
-  const path = `/luxury-life-guides/${slug}/`;
-  const canonical = `${base}${path}`;
+  const path =
+    doc?.canonicalPath?.trim() || `/luxury-life-guides/${slug}/`;
+  const canonical = `${base}${path.startsWith("/") ? path : `/${path}`}`;
 
   if (!doc?.title) {
     return {
@@ -42,22 +59,29 @@ export async function generateMetadata({
     };
   }
 
+  const description = doc.excerpt || undefined;
+  const ogImage = doc.ogImage?.trim() || undefined;
+
   return {
     title: doc.title,
-    description: doc.excerpt || undefined,
+    description,
     alternates: { canonical },
     openGraph: {
       title: doc.title,
-      description: doc.excerpt || undefined,
+      description,
       url: canonical,
       type: "article",
       locale: "en_GB",
       siteName: "VERTU",
+      publishedTime: doc.publishedAt,
+      modifiedTime: doc.modifiedAt || doc.publishedAt,
+      ...(ogImage ? { images: [{ url: ogImage, width: 1200, height: 630, alt: doc.title }] } : {}),
     },
     twitter: {
-      card: "summary_large_image",
+      card: ogImage ? "summary_large_image" : "summary",
       title: doc.title,
-      description: doc.excerpt || undefined,
+      description,
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
     robots: { index: true, follow: true },
   };
@@ -76,7 +100,11 @@ export default async function LuxuryLifeGuidePage({
       _id,
       title,
       html,
-      excerpt
+      bodyHtml,
+      excerpt,
+      jsonLd,
+      publishedAt,
+      modifiedAt
     }`,
     { fullSlug }
   );
@@ -85,10 +113,22 @@ export default async function LuxuryLifeGuidePage({
     notFound();
   }
 
+  const bodyHtml = (doc.bodyHtml || doc.html || "").trim();
+  const jsonLdBlocks = parseJsonLdScripts(doc.jsonLd);
+
   return (
-    <main>
-      {/* 完整 HTML 落地页：与模板生成的文档结构一致 */}
-      <div dangerouslySetInnerHTML={{ __html: doc.html }} />
-    </main>
+    <>
+      {jsonLdBlocks.map((block, index) => (
+        <script
+          key={`jsonld-${index}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: block }}
+        />
+      ))}
+      <div
+        className="luxury-life-guide-body"
+        dangerouslySetInnerHTML={{ __html: bodyHtml }}
+      />
+    </>
   );
 }

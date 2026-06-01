@@ -12,7 +12,16 @@ import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { resolveLandingImages } from "../services/sanityImageLibrary.js";
 import { injectArticleFiguresIfMissing } from "../utils/articleImageInjector.js";
 import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
-import { publishToSanity } from "../services/sanityPublisher.js";
+import {
+  createSanityWriteClient,
+  fetchRelatedGuidesFromSanity,
+  publishToSanity,
+} from "../services/sanityPublisher.js";
+import {
+  canonicalPathFromPageUrl,
+  extractPublishHtml,
+  serializeJsonLdScripts,
+} from "../utils/htmlPublishExtract.js";
 /**
  * 智能判断链接是否需要加 nofollow
  * 根据链接类型和性质决定 rel 属性
@@ -105,7 +114,10 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
 }
 import { generateHtmlContent, generatePageTitle } from "../services/googleAi.js";
 import { publishPage } from "../services/wordpress.js";
-import { applyGuideIntentLongShellIfNeeded } from "../utils/templatePolicy.js";
+import {
+  applyCommercialShellIfNeeded,
+  applyGuideIntentLongShellIfNeeded,
+} from "../utils/templatePolicy.js";
 import {
   buildProductSectionIntro,
   buildProductSectionTitle,
@@ -326,6 +338,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     }
 
     applyGuideIntentLongShellIfNeeded(payload, finalPageTitle);
+    applyCommercialShellIfNeeded(payload, finalPageTitle);
 
     const pageTitleForSeo = finalPageTitle;
     let primaryCategory: PrimaryProductCategory = detectPrimaryCategory(
@@ -2694,6 +2707,51 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         isTemplate6 ||
         isTemplate7) && !isTemplate5;
 
+    let relatedGuides: Array<{ title: string; url: string }> = [];
+    if (publishTarget === "sanity") {
+      const sanityProjectId =
+        payload.sanity?.projectId || process.env.SANITY_PROJECT_ID || "";
+      const sanityDataset = payload.sanity?.dataset || process.env.SANITY_DATASET || "";
+      const sanityToken =
+        payload.sanity?.token || process.env.SANITY_API_TOKEN || "";
+      const sanityBaseUrl =
+        payload.sanity?.baseUrl || process.env.SANITY_BASE_URL || "";
+      if (sanityProjectId && sanityDataset && sanityToken && sanityBaseUrl) {
+        try {
+          const sanityClient = createSanityWriteClient({
+            projectId: sanityProjectId,
+            dataset: sanityDataset,
+            token: sanityToken,
+            apiVersion:
+              payload.sanity?.apiVersion ||
+              process.env.SANITY_API_VERSION ||
+              "2024-01-01",
+          });
+          relatedGuides = await fetchRelatedGuidesFromSanity(sanityClient, {
+            docType:
+              payload.sanity?.docType ||
+              process.env.SANITY_DOC_TYPE ||
+              "luxuryLifeGuide",
+            currentSlug: `luxury-life-guides/${baseSlug}`,
+            primaryCategory,
+            limit: 6,
+            baseUrl: sanityBaseUrl,
+          });
+          if (relatedGuides.length > 0) {
+            const existingUrls = new Set(internalLinks.map((l) => l.url));
+            for (const guide of relatedGuides) {
+              if (!existingUrls.has(guide.url) && internalLinks.length < 8) {
+                internalLinks.push({ title: guide.title, url: guide.url });
+                existingUrls.add(guide.url);
+              }
+            }
+          }
+        } catch (relatedErr) {
+          console.warn(`[task ${taskId}] Sanity related guides fetch failed:`, relatedErr);
+        }
+      }
+    }
+
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
       pageTitle: finalPageTitle,
@@ -2713,6 +2771,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       topProducts,
       comparisonItems,
       internalLinks,
+      relatedGuides,
       externalLinks,
       // 模板6/7新增字段
       references: (isTemplate6 || isTemplate7) ? references : [],
@@ -2784,11 +2843,23 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
     if ((payload.publishTarget ?? "wordpress") === "sanity") {
       updateTaskStatus(taskId, "publishing", "正在发布到 Sanity...");
+      const { bodyHtml, jsonLdScripts } = extractPublishHtml(finalHtml);
       const published = await publishToSanity({
         title: finalPageTitle,
         slug,
-        htmlContent: finalHtml,
+        bodyHtml,
         excerpt: generatedContent.metaDescription || "",
+        canonicalPath: canonicalPathFromPageUrl(expectedPageUrl),
+        ogImage: pageImageUrl || "",
+        jsonLd: serializeJsonLdScripts(jsonLdScripts),
+        publishedAt:
+          payload.articleDatePublishedISO || new Date().toISOString(),
+        modifiedAt:
+          payload.articleDateModifiedISO ||
+          payload.articleDatePublishedISO ||
+          new Date().toISOString(),
+        primaryCategory,
+        keyword: payload.keyword,
         projectId: payload.sanity?.projectId || process.env.SANITY_PROJECT_ID || "",
         dataset: payload.sanity?.dataset || process.env.SANITY_DATASET || "",
         token: payload.sanity?.token || process.env.SANITY_API_TOKEN || "",

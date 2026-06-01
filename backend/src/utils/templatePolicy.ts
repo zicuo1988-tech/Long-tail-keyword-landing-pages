@@ -2,7 +2,7 @@ import { readFileSync, existsSync } from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import type { GenerationRequestPayload } from "../types.js";
-import { shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
+import { isCommercialTitleType, shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
 import { detectPrimaryCategory } from "./productCategory.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -112,4 +112,24 @@ export function applyGuideIntentLongShellIfNeeded(
 
   const pick = pickLongShellForCategory(payload.keyword, finalPageTitle);
   loadTemplateIntoPayload(payload, pick, "Guide-intent upgrade");
+}
+
+/**
+ * Commercial / purchase intent: prefer template-5 (Hero + Top Picks + comparison) for conversion.
+ */
+export function applyCommercialShellIfNeeded(
+  payload: GenerationRequestPayload,
+  finalPageTitle: string
+): void {
+  if (payload.respectTemplateChoice) return;
+  if (!isCommercialTitleType(payload.titleType)) return;
+
+  const tt = (payload.templateType || "template-1").trim();
+  if (tt === "template-4" || tt === "template-5") return;
+
+  loadTemplateIntoPayload(
+    payload,
+    "template-5",
+    `Commercial titleType (${payload.titleType}): conversion shell`
+  );
 }

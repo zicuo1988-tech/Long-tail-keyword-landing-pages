@@ -262,6 +262,7 @@ export interface RenderTemplateInput {
   topProducts?: ProductSummary[]; // Top Picks产品（前3个）
   comparisonItems?: ComparisonItem[]; // 对比表数据
   internalLinks?: InternalLink[]; // 内链数据
+  relatedGuides?: InternalLink[]; // 同品类已发布指南（Sanity 集群内链）
   externalLinks?: ExternalLink[]; // 外链数据
   // 模板6新增字段
   references?: Reference[]; // 参考文献列表
@@ -307,6 +308,7 @@ export function renderTemplate({
   topProducts = [],
   comparisonItems = [],
   internalLinks = [],
+  relatedGuides = [],
   externalLinks = [],
   references = [],
   externalResources = [],
@@ -520,6 +522,22 @@ export function renderTemplate({
     if (img) {
       articleNode.image = img;
     }
+    if (references && references.length > 0) {
+      articleNode.citation = references
+        .map((ref) => {
+          const citation: Record<string, unknown> = { "@type": "CreativeWork" };
+          if (ref.title) citation.name = ref.title;
+          if (ref.author) citation.author = { "@type": "Person", name: ref.author };
+          if (ref.year) citation.datePublished = ref.year;
+          if (ref.publication) {
+            citation.publisher = { "@type": "Organization", name: ref.publication };
+          }
+          if (ref.url) citation.url = ref.url;
+          if (ref.doi) citation.identifier = `https://doi.org/${ref.doi}`;
+          return citation;
+        })
+        .filter((c) => Object.keys(c).length > 1);
+    }
     graph.push(articleNode);
 
     if (pu) {
@@ -677,32 +695,8 @@ export function renderTemplate({
     }
   }
 
-  // 生成 Citations 结构化数据（模板6：参考文献）
-  let citationsStructuredData = "";
-  if (references && references.length > 0) {
-    try {
-      const citationsSchema = {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        "headline": pageTitle,
-        "citation": references.map(ref => {
-          const citation: any = {
-            "@type": "CreativeWork"
-          };
-          if (ref.title) citation.name = ref.title;
-          if (ref.author) citation.author = { "@type": "Person", "name": ref.author };
-          if (ref.year) citation.datePublished = ref.year;
-          if (ref.publication) citation.publisher = { "@type": "Organization", "name": ref.publication };
-          if (ref.url) citation.url = ref.url;
-          if (ref.doi) citation.identifier = `https://doi.org/${ref.doi}`;
-          return citation;
-        })
-      };
-      citationsStructuredData = JSON.stringify(citationsSchema, null, 2);
-    } catch (error) {
-      console.warn(`[TemplateRenderer] Failed to generate Citations structured data:`, error);
-    }
-  }
+  /** Citations merged into main Article @graph; no second Article script */
+  const citationsStructuredData = "";
 
   const rendered = template({
     PAGE_TITLE: pageTitle,
@@ -727,6 +721,7 @@ export function renderTemplate({
     topProducts: topProducts || [], // Top Picks产品
     comparisonItems: comparisonItems || [], // 对比表数据
     internalLinks: internalLinks || [], // 内链数据
+    relatedGuides: relatedGuides || [],
     externalLinks: externalLinks || [], // 外链数据
     ITEMLIST_STRUCTURED_DATA: itemListStructuredData ? new Handlebars.SafeString(itemListStructuredData) : "", // ItemList结构化数据
     PRODUCT_STRUCTURED_DATA: productStructuredData ? new Handlebars.SafeString(productStructuredData) : "", // Product结构化数据

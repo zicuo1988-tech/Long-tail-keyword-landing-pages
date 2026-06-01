@@ -1904,14 +1904,23 @@
     <!-- SEO-Enhanced Bottom Content Section -->
     <section class="seo-bottom-section">
         <div class="seo-bottom-container">
-            <!-- Author/Expert Information -->
+            <!-- Related guides (dynamic cluster links) -->
+            {{#if relatedGuides.length}}
+            <div class="seo-bottom-block">
+                <h3 class="seo-bottom-title">Related Guides</h3>
+                <p class="seo-bottom-description">Explore more VERTU luxury life guides in this topic:</p>
+                <ul class="seo-bottom-links">
+                    {{#each relatedGuides}}
+                    <li><a href="{{this.url}}">{{this.title}}</a></li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+
             <div class="seo-bottom-block">
                 <h3 class="seo-bottom-title">About This Guide</h3>
                 <div class="seo-bottom-content">
-                    <p>This comprehensive guide has been meticulously researched and compiled by VERTU's expert team to provide you with authoritative information about {{PAGE_TITLE}}. Our content is regularly reviewed and updated to ensure accuracy and relevance.</p>
-                    <p style="margin-top: 12px; font-size: 14px; color: #666;">
-                        <strong>Last Updated:</strong> <time datetime="{{DATE_MODIFIED}}">{{LAST_UPDATED_LABEL}}</time>
-                    </p>
+                    <p>Editorial guide on {{PAGE_TITLE}}. Facts about VERTU products follow our official knowledge base. <strong>Last updated:</strong> <time datetime="{{DATE_MODIFIED}}">{{LAST_UPDATED_LABEL}}</time>.</p>
                 </div>
             </div>
 

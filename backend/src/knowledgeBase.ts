@@ -35,6 +35,12 @@ AGENT Q
 - Security stack combines military-grade chip, triple-system, and 10TB distributed storage.
 - Battery delivers 65W rapid charging for global travellers.
 
+### Buying angles (for commercial content only)
+- Primary buyer persona: executives and collectors who want an AI-agent phone with concierge-grade service, not a mass-market smartphone.
+- Top reasons vs generic luxury phones: Falcon-Wing engineering, 200+ specialised agents, five-layer data sovereignty, Ruby Key concierge access.
+- Objection handlers: price reflects hand assembly and materials—direct to official collection for current configurations; one-year global warranty and Concierge for after-sales.
+- Recommended links: https://vertu.com/agent-q/ | https://vertu.com/product-category/phones/agent-q/
+
 ----------------------------------------------------------------------
 RUBY KEY (CONCIERGE SERVICE - NOT A PRODUCT)
 ----------------------------------------------------------------------
@@ -265,6 +271,20 @@ METAVERTU MAX
 ADDITIONAL PRODUCT PLACEHOLDERS
 ----------------------------------------------------------------------
 Include more VERTU products (Metavertu Curve, Metavertu Max variants, Metavertu Quantum, Aura Ring, AI Diamond Ring, Signature S+, Signature V, Signature Cobra, Grand Watch, Metawatch, Phantom Earbuds, etc.) following the same structure when additional details are supplied.
+
+----------------------------------------------------------------------
+CONVERSION COPY BLOCKS (reusable — commercial meta and CTAs)
+----------------------------------------------------------------------
+### Standard CTA lines (British English)
+- Compare models in the official VERTU collection below.
+- Explore current configurations and pricing on the official store.
+- Speak with Concierge via the Ruby Key for personalised buying advice.
+
+### Trust signals (max ~40 words for meta/opening reuse)
+- Hand-assembled luxury devices, British heritage, 24/7 Concierge, and military-grade privacy—only facts from this knowledge base.
+
+### Shipping/returns one-liner
+- Orders ship in 1–2 business days; 7-day return and 15-day exchange with Concierge support (see GLOBAL SHOPPING FAQ).
 
 ----------------------------------------------------------------------
 GLOBAL SHOPPING / PAYMENT / SHIPPING / RETURN FAQ
