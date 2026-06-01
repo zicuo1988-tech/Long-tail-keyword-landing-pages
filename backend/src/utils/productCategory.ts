@@ -3,7 +3,7 @@ import type { ProductSummary } from "../types.js";
 export type PrimaryProductCategory = "phone" | "watch" | "ring" | "earbud" | "gift" | "general";
 
 const WATCH_RE =
-  /\b(watch|watches|timepiece|timepieces|wristwatch|horology|chronograph|腕表|手表)\b/i;
+  /\b(watch|watches|smartwatch|smartwatches|smart-watch|timepiece|timepieces|wristwatch|horology|chronograph|腕表|手表)\b/i;
 const RING_RE =
   /\b(ring|rings|jewellery|jewelry|smart\s+ring|diamond\s+ring|首饰)\b/i;
 const EARBUD_RE =

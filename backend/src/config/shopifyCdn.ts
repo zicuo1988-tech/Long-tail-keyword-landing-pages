@@ -1,6 +1,7 @@
 /**
  * 配图 URL 策略（文件名历史保留）：
- * - 内容图（正文配图 / OG）统一只读取 Sanity CDN 图片。
+ * - 内容图（正文配图 / OG / 分类工艺区）优先由 sanityImageLibrary.ts 经 GROQ API 拉取。
+ * - 本文件中的 SANITY_ARTICLE_IMAGE_URLS / SANITY_OG_COVER_URL 仅作 API 失败时的降级。
  * - Shopify Files / OSS 相关函数仅保留兼容，不参与内容图来源决策。
  */
 

@@ -283,6 +283,10 @@ export interface RenderTemplateInput {
   articleAuthorName?: string;
   articleAuthorJobTitle?: string;
   articleAuthorBio?: string;
+  /** Sanity 图库：分类区槽位 key → CDN URL */
+  categoryImages?: Record<string, string>;
+  /** Sanity 图库：工艺区槽位 key → CDN URL */
+  craftImages?: Record<string, string>;
 }
 
 export function renderTemplate({
@@ -316,6 +320,8 @@ export function renderTemplate({
   articleAuthorName,
   articleAuthorJobTitle,
   articleAuthorBio,
+  categoryImages = {},
+  craftImages = {},
 }: RenderTemplateInput) {
   const templateContentWithSharedCss = injectSharedLandingCss(templateContent);
   const template = Handlebars.compile(templateContentWithSharedCss);
@@ -739,6 +745,8 @@ export function renderTemplate({
     AUTHOR_NAME: authorNamePlain,
     AUTHOR_JOB: authorJobPlain,
     AUTHOR_BIO: authorBioPlain,
+    categoryImages,
+    craftImages,
   });
 
   // 调试日志：检查渲染结果

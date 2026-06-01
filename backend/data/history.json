@@ -1,5 +1,33 @@
 [
   {
+    "id": "76720ada-5c09-40ee-8df3-0d7b4f4cac3b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-phone-most-expensive-premium-choices-reviewed",
+    "createdAt": 1780293482571,
+    "updatedAt": 1780293633050,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "phone most expensive",
+    "titleType": "top",
+    "templateType": "template-3",
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-phone-most-expensive-premium-choices-reviewed/"
+  },
+  {
+    "id": "a42577e7-6e84-4c94-b226-afe574b34131",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-cell-phone-for-business-highly-recommended",
+    "createdAt": 1780292202060,
+    "updatedAt": 1780292333672,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "cell phone for business",
+    "titleType": "recommendations",
+    "templateType": "template-2",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-cell-phone-for-business-highly-recommended/"
+  },
+  {
     "id": "61cf00ed-5fd2-460e-9e36-2b5a6b048e5d",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-luxury-patek-philippe-watches",
@@ -13970,33 +13998,5 @@
     "titleType": "comparison",
     "templateType": "template-2",
     "pageUrl": "https://vertu.com/luxury-life-guides/comparing-mens-luxury-sunglasses-options/"
-  },
-  {
-    "id": "231e4254-2431-454f-b744-b9cde8bd5545",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141678",
-    "createdAt": 1773803694507,
-    "updatedAt": 1773803794447,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury engagement rings brands",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-engagement-rings-brands-tech-comparison/"
-  },
-  {
-    "id": "9adb4c10-b77c-42ad-9bb1-99d0dd00cdda",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141676",
-    "createdAt": 1773803556509,
-    "updatedAt": 1773803693162,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury key chains",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-key-chains/"
   }
 ]

@@ -8,7 +8,9 @@ import {
   mergeShopifyCredentialsFromEnv,
   resolveProductSource,
 } from "../services/productProvider.js";
-import { getArticleImageUrlsFromEnv, luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
+import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
+import { resolveLandingImages } from "../services/sanityImageLibrary.js";
+import { injectArticleFiguresIfMissing } from "../utils/articleImageInjector.js";
 import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
 import { publishToSanity } from "../services/sanityPublisher.js";
 /**
@@ -1203,15 +1205,10 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         : siteBaseUrl;
     const expectedPageUrl = `${publicRootForMeta}/luxury-life-guides/${baseSlug}/`;
 
-    // 为模板4和模板5生成封面图URL（基于页面标题生成）
+    // OG 封面图在 AI 生成前通过 Sanity 图库 API 解析（见 resolveLandingImages）
     let pageImageUrl = "";
-    if (payload.templateType === "template-4" || payload.templateType === "template-5") {
-      // 内容封面图统一使用 Sanity CDN（SANITY_OG_COVER_URL 或 SANITY_ARTICLE_IMAGE_URLS 首图）
-      pageImageUrl = luxuryGuideOgCoverUrl();
-      console.log(
-        `[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL（Sanity）: ${pageImageUrl}`
-      );
-    }
+    let categoryImages: Record<string, string> = {};
+    let craftImages: Record<string, string> = {};
 
     // 为模板4、5、6和7准备特殊数据
     const isTemplate1 = payload.templateType === "template-1";
@@ -2519,17 +2516,37 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     
     console.log(`[task ${taskId}] 📋 提取到 ${availableProductNames.length} 个可用产品:`, availableProductNames.join(", "));
 
-    const articleImageUrls = getArticleImageUrlsFromEnv();
+    const imageBundle = await resolveLandingImages({
+      keyword: payload.keyword,
+      pageTitle: finalPageTitle,
+      config: {
+        projectId: payload.sanity?.projectId || process.env.SANITY_PROJECT_ID,
+        dataset: payload.sanity?.dataset || process.env.SANITY_DATASET,
+        token:
+          payload.sanity?.token ||
+          process.env.SANITY_READ_TOKEN ||
+          process.env.SANITY_API_TOKEN,
+      },
+    });
+    const articleImageUrls = imageBundle.articleUrls;
+    categoryImages = imageBundle.categoryImages;
+    craftImages = imageBundle.craftImages;
     console.log(
-      `[task ${taskId}] 📷 正文配图白名单（Sanity）: ${articleImageUrls.length} 张（来自 SANITY_ARTICLE_IMAGE_URLS）`
+      `[task ${taskId}] 📷 Sanity 图库: 正文配图 ${articleImageUrls.length} 张（已按关键词/品类排序）, API 命中 ${imageBundle.stats.apiHits}, fallback ${imageBundle.stats.fallbacks}, source=${imageBundle.stats.source}`
     );
+    if (articleImageUrls[0]) {
+      console.log(`[task ${taskId}] 📷 正文首选图: ${articleImageUrls[0].slice(0, 100)}...`);
+    }
     if (
-      (payload.templateType === "template-4" || payload.templateType === "template-5") &&
-      !pageImageUrl?.trim() &&
-      articleImageUrls[0]
+      payload.templateType === "template-4" ||
+      payload.templateType === "template-5" ||
+      payload.templateType === "template-6" ||
+      payload.templateType === "template-7"
     ) {
-      pageImageUrl = articleImageUrls[0];
-      console.log(`[task ${taskId}] 📷 OG 封面未配置时使用首张 Sanity 内容图: ${pageImageUrl}`);
+      pageImageUrl = imageBundle.ogCoverUrl || luxuryGuideOgCoverUrl() || articleImageUrls[0] || "";
+      if (pageImageUrl) {
+        console.log(`[task ${taskId}] 📷 OG 封面 URL: ${pageImageUrl}`);
+      }
     }
     
     updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
@@ -2558,9 +2575,29 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       return; // 任务已暂停，丢弃结果并退出
     }
     
+    if (articleImageUrls.length > 0) {
+      const beforeLen = generatedContent.articleContent.length;
+      generatedContent.articleContent = injectArticleFiguresIfMissing(
+        generatedContent.articleContent,
+        articleImageUrls,
+        finalPageTitle || payload.keyword
+      );
+      if (generatedContent.extendedContent?.trim()) {
+        generatedContent.extendedContent = injectArticleFiguresIfMissing(
+          generatedContent.extendedContent,
+          articleImageUrls.slice(1),
+          finalPageTitle || payload.keyword
+        );
+      }
+      if (generatedContent.articleContent.length > beforeLen) {
+        console.log(`[task ${taskId}] 📷 已在正文中自动插入 Sanity 配图（AI 未生成 figure 时）`);
+      }
+    }
+
     console.log(`[task ${taskId}] ✅ AI 内容生成完成（基于实际 ${availableProductNames.length} 个产品）`);
     console.log(`[task ${taskId}] AI 内容检查:`);
     console.log(`  - AI 内容长度: ${generatedContent.articleContent.length}`);
+    console.log(`  - 正文含 figure/img: ${/<figure\b|<img\b/i.test(generatedContent.articleContent)}`);
     console.log(`  - FAQ 数量: ${generatedContent.faqItems.length}`);
     console.log(`  - Meta 描述长度: ${(generatedContent.metaDescription || "").length}`);
 
@@ -2690,6 +2727,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       articleAuthorName: payload.articleAuthorName,
       articleAuthorJobTitle: payload.articleAuthorJobTitle,
       articleAuthorBio: payload.articleAuthorBio,
+      categoryImages,
+      craftImages,
     });
 
     // 调试：检查渲染后的 HTML 内容

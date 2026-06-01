@@ -96,6 +96,7 @@
         p {
             margin-top: 30px;
             text-indent: 2em;
+            margin-bottom: 30px;
         }
         h2{
             font-size: 1.2rem !important;
@@ -457,20 +458,17 @@
         .category-thumb {
             width: 100%;
             aspect-ratio: 1 / 1;
-            /* 正方形 */
             background: #eee;
             border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #bbb;
-            font-size: 22px;
+            overflow: hidden;
+            display: block;
         }
 
         .category-thumb img {
-            width: 380px;
-            height: 400px;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            display: block;
         }
 
         .category-name {
@@ -1419,24 +1417,22 @@
                 <div class="category-grid">
                     <a href="https://vertu.com/product-category/phones/" class="category-card">
                         <div class="category-thumb"><img
-                                src="https://cdn.sanity.io/images/e0gp1l2g/production/42fadc1189fd18fe3c4669a12341d045bf01e102-2000x1200.webp?w=900&q=86&auto=format&fit=max" alt="phones">
+                                src="{{lookup categoryImages 'phones'}}" alt="Phones" loading="lazy" decoding="async" width="520" height="520">
                         </div>
                         <div class="category-name">Phones</div>
                     </a>
                     <a href="https://vertu.com/product-category/accessories/" class="category-card">
-                        <div class="category-thumb"><img src="https://cdn.sanity.io/images/e0gp1l2g/production/67885393a5e02f72217e8665aa4b3223a07dcf4a-2000x1200.webp?w=520&q=86&auto=format&fit=max"
-                                alt="phones"></div>
+                        <div class="category-thumb"><img src="{{lookup categoryImages 'accessories'}}" alt="Accessories" loading="lazy" decoding="async" width="520" height="520"></div>
                         <div class="category-name">Acc</div>
                     </a>
                     <a href="https://vertu.com/product-category/new/" class="category-card">
                         <div class="category-thumb"><img
-                                src="https://cdn.sanity.io/images/e0gp1l2g/production/6b5b785af5638f48ee908f7eff549fbe3586d5fa-2000x1200.webp?w=520&q=86&auto=format&fit=max" alt="phones">
+                                src="{{lookup categoryImages 'new'}}" alt="New products" loading="lazy" decoding="async" width="520" height="520">
                         </div>
                         <div class="category-name">New</div>
                     </a>
                     <a href="https://vertu.com/product-category/best-seller/" class="category-card">
-                        <div class="category-thumb"><img src="https://cdn.sanity.io/images/e0gp1l2g/production/4ff0cc50d53e4e44aeee062cb2c9e8d3906bda23-2000x1200.webp?w=520&q=86&auto=format&fit=max"
-                                alt="phones"></div>
+                        <div class="category-thumb"><img src="{{lookup categoryImages 'best-seller'}}" alt="Best sellers" loading="lazy" decoding="async" width="520" height="520"></div>
                         <div class="category-name">Best Seller</div>
                     </a>
                 </div>
@@ -1554,7 +1550,7 @@
                 <div class="craft-grid">
                     <div class="craft-card">
                         <img class="craft-img"
-                            src="https://cdn.sanity.io/images/e0gp1l2g/production/94b90af420294bbf8a7f07d191c431837af3e341-1500x1500.png?w=900&h=900&q=80&auto=format&fit=crop" alt="craft 1" />
+                            src="{{lookup craftImages 'craft-1'}}" alt="craft 1" />
                         <div class="craft-subtitle">Exquisite Craftsmanship</div>
                         <div class="craft-desc">Each Vertu is handcrafted by master artisans. We source and utilize only
                             the world's most precious and rare materials, from gold to gemstones, and the exotic
@@ -1562,7 +1558,7 @@
                         <a class="craft-link" href="https://vertu.com/shop">Shop</a>
                     </div>
                     <div class="craft-card">
-                        <img class="craft-img" src="https://cdn.sanity.io/images/e0gp1l2g/production/d4abc00172ddf6e8db5b8d99ae66bcf4b7fcd231-1500x1500.png?w=900&h=900&q=80&auto=format&fit=crop"
+                        <img class="craft-img" src="{{lookup craftImages 'craft-2'}}"
                             alt="craft 2" />
                         <div class="craft-subtitle">Bespoke Personalisation</div>
                         <div class="craft-desc">Define your individuality. Select from an extensive palette of precious
@@ -1572,7 +1568,7 @@
                             href="https://vertu.com/mto">Customize</a>
                     </div>
                     <div class="craft-card">
-                        <img class="craft-img" src="https://cdn.sanity.io/images/e0gp1l2g/production/6514cbe487d44df8ddc748c9c3a12475f32104d3-1500x1500.png?w=900&h=900&q=80&auto=format&fit=crop"
+                        <img class="craft-img" src="{{lookup craftImages 'craft-3'}}"
                             alt="craft 3" />
                         <div class="craft-subtitle">From Ruby Key to Ruby Talk</div>
                         <div class="craft-desc">Since 2002, the iconic Ruby Key has provided VERTU owners with a direct

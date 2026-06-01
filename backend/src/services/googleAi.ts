@@ -455,9 +455,9 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 - PRODUCT FIGURES (Template 7 – aligns with luxury life guides): The "RICH CONTENT REQUIREMENTS" section below lists verified product image URLs. When you discuss specific models from the "RELEVANT PRODUCTS" list in depth, add an H2 or H3 for that model (knowledge base only for facts) and follow with one <figure> using the allowed URL that best matches that product—copy the URL exactly. Prefer distinct URLs for distinct flagship products where the list allows; use up to four figures in the body if URLs and topics support it, so the article echoes editorial guides with in-article imagery as well as the shop grid below.
 \n\n` : ""}
 ${((): string => {
-  if (!useLongFormArticleLimits) return "";
   const merged = [...new Set((articleImageUrls || []).filter(Boolean))].slice(0, 12);
   if (merged.length === 0) {
+    if (!useLongFormArticleLimits) return "";
     return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 - Do NOT include <figure>, <img>, or any embedded images (no verified product image URLs were available for this page).
@@ -467,12 +467,25 @@ RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 \n`;
   }
   const urls = merged.join(", ");
+  const imageOrderNote =
+    " URLs are ordered by relevance to the page keyword/topic (use the FIRST URL for the hero inline image; additional URLs only if they clearly match a section about the same product type).";
+  if (!useLongFormArticleLimits) {
+    return `
+INLINE IMAGES (MANDATORY when URLs are listed):
+- Include exactly ONE <figure> in the article body using this structure:
+  <figure><img src="[URL below]" alt="[short descriptive alt text]" loading="lazy" width="800" height="450"><figcaption>[Brief caption]</figcaption></figure>
+- Use ONLY one of these Sanity CDN URLs (copy exactly, including query string).${imageOrderNote}
+  ${urls}
+- The image MUST visually match the article topic "${keyword}" (e.g. do not use a phone image in a watch article).
+\n`;
+  }
   return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 - Include 1–2 relevant images in the article. Use this exact HTML structure for each image:
   <figure><img src="[URL below]" alt="[short descriptive alt text]" loading="lazy" width="800" height="450"><figcaption>[Brief caption, e.g. key feature or product name]</figcaption></figure>
-- You MUST use ONLY the following image URLs (Sanity-hosted content imagery; copy each URL exactly as shown, character-for-character, including ? and &). Do not invent, guess, or substitute other URLs:
+- You MUST use ONLY the following image URLs (Sanity-hosted content imagery; copy each URL exactly as shown, character-for-character, including ? and &). Do not invent, guess, or substitute other URLs.${imageOrderNote}
   ${urls}
+- Each image must match the article topic "${keyword}" and product category discussed (no mismatched product types).
 - Include at least ONE HTML table in the article (e.g. key features comparison, specifications at a glance, or "What to look for" summary). Use semantic markup:
   <table><thead><tr><th>Feature</th><th>Details</th></tr></thead><tbody><tr><td>...</td><td>...</td></tr></tbody></table>
 - Make the article rich and substantial: use multiple H2 sections, several paragraphs, at least one table, and 1–2 figures so the page has clear visual and structural variety.

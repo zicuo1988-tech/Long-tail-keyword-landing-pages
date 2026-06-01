@@ -195,7 +195,7 @@
    # 参考 backend/.env.example
    ```
    
-   `.env` 文件示例：
+   `.env` 文件示例（完整字段见 [`backend/.env.example`](backend/.env.example)）：
    ```env
    GOOGLE_AI_API_KEYS=key1,key2,key3
    DEFAULT_MODEL=gemini-2.5-pro
@@ -203,7 +203,24 @@
    HTTPS_PROXY=http://proxy.example.com:8080
    NO_PROXY=localhost,127.0.0.1
    WORDPRESS_PROXY=https://proxy-vertu.vertu.com
+
+   # Sanity 图库（生成时拉取正文配图、分类/工艺区、OG 封面）
+   SANITY_PROJECT_ID=your-project-id
+   SANITY_DATASET=production
+   SANITY_READ_TOKEN=sk...   # 只读 token，用于 GROQ 查询 sanity.imageAsset
+   SANITY_API_TOKEN=sk...    # 发布文档用，可与 READ_TOKEN 相同
+   SANITY_API_VERSION=2023-10-01
+   # API 失败时降级（可选）
+   SANITY_ARTICLE_IMAGE_URLS=https://cdn.sanity.io/images/...
+   SANITY_OG_COVER_URL=https://cdn.sanity.io/images/...
    ```
+
+   **Sanity Media 命名约定**（`originalFilename`，小写）：分类区 `landing-category-phones*`（固定展示，不随关键词替换）；工艺区 `landing-craft-*`；正文配图建议 `landing-article-phone*` / `watch` / `ring` / `earbud` / `flip`，文件名含关键词更易被选中（如 `landing-article-watch-golf.webp`）。系统会按长尾词/标题品类打分排序后传给 AI。详见 [`backend/src/config/sanityImageSlots.ts`](backend/src/config/sanityImageSlots.ts) 与 [`backend/src/utils/articleImageMatching.ts`](backend/src/utils/articleImageMatching.ts)。
+
+   **页面上图片不显示时排查**：
+   1. 后端日志应有 `正文配图 N 张` 且 `N > 0`；若为 0，配置 `SANITY_READ_TOKEN` 或保留槽位 fallback（未配 token 时也会用内置 CDN fallback）。
+   2. 浏览器控制台若出现 **CSP** 拦截，需在站点（如 vertu.com）的 `Content-Security-Policy` 的 `img-src` 中加入 `https://cdn.sanity.io`（控制台里的 `prepare.js` 内联脚本错误通常与配图无关，是其它脚本被 `script-src` 拦截）。
+   3. 生成后的 HTML 应含 `cdn.sanity.io` 的 `src`；分类/工艺区使用 `{{lookup categoryImages 'phones'}}`，须走完整生成流程（不要直接打开未渲染的模板文件预览）。
 
 4. **启动开发服务器**
    ```bash
