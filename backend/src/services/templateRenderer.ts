@@ -1,6 +1,5 @@
 import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
-import { rewriteVertuOssContentToShopifyCdn } from "../config/shopifyCdn.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 import { injectSharedLandingCss } from "../utils/sharedLandingCss.js";
 
@@ -321,21 +320,18 @@ export function renderTemplate({
   const templateContentWithSharedCss = injectSharedLandingCss(templateContent);
   const template = Handlebars.compile(templateContentWithSharedCss);
 
-  let aiContentResolved = rewriteVertuOssContentToShopifyCdn(aiContent);
-  aiContentResolved = markdownToHtmlIfNeeded(aiContentResolved);
+  let aiContentResolved = markdownToHtmlIfNeeded(aiContent);
   if (normalizeBlogTables) {
     aiContentResolved = wrapArticleTablesInScroll(aiContentResolved);
   }
-  let extendedContentResolved = extendedContent
-    ? rewriteVertuOssContentToShopifyCdn(extendedContent)
-    : extendedContent;
+  let extendedContentResolved = extendedContent;
   if (extendedContentResolved) {
     extendedContentResolved = markdownToHtmlIfNeeded(extendedContentResolved);
   }
   if (normalizeBlogTables && extendedContentResolved) {
     extendedContentResolved = wrapArticleTablesInScroll(extendedContentResolved);
   }
-  const pageImageResolved = pageImage ? rewriteVertuOssContentToShopifyCdn(pageImage) : pageImage;
+  const pageImageResolved = pageImage;
 
   const now = new Date();
   const publishedIso =

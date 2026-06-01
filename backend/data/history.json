@@ -1,5 +1,33 @@
 [
   {
+    "id": "61cf00ed-5fd2-460e-9e36-2b5a6b048e5d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-luxury-patek-philippe-watches",
+    "createdAt": 1780290680624,
+    "updatedAt": 1780290875727,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "luxury patek philippe watches",
+    "titleType": "informational",
+    "templateType": "template-4",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-patek-philippe-watches/"
+  },
+  {
+    "id": "faf8c8f7-8b9b-4340-87ca-239ad72b0d6e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-brand-of-luxury-swiss-watches-official-retailer",
+    "createdAt": 1780290374525,
+    "updatedAt": 1780290499034,
+    "details": {
+      "previousStatus": "publishing"
+    },
+    "keyword": "brand of luxury swiss watches",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-brand-of-luxury-swiss-watches-official-retailer/"
+  },
+  {
     "id": "4be31a9e-d888-4d22-8dfd-9ff4e6f4175f",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-affordable-luxury-watches-official-retailer",
@@ -13970,33 +13998,5 @@
     "titleType": "services-guides",
     "templateType": "template-7",
     "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-luxury-key-chains/"
-  },
-  {
-    "id": "3f462d1a-0972-4b36-b2a3-1408a8e76ffd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141674",
-    "createdAt": 1773803370508,
-    "updatedAt": 1773803556399,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men's bracelets",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-mens-bracelets-highly-recommended/"
-  },
-  {
-    "id": "4b3a68d9-b95f-4986-bd8e-ff603bf50c64",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141672",
-    "createdAt": 1773803100508,
-    "updatedAt": 1773803370400,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer rings",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-designer-rings/"
   }
 ]

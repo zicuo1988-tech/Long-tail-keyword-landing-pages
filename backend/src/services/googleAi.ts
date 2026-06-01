@@ -1,7 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { withApiKey } from "./apiKeyManager.js";
 import { KNOWLEDGE_BASE } from "../knowledgeBase.js";
-import { getArticleImageUrlsFromEnv } from "../config/shopifyCdn.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 import { shouldTreatAsLongFormGuideArticle } from "../utils/guideIntent.js";
 import {
@@ -55,7 +54,7 @@ export interface GenerateContentOptions {
   userPrompt?: string; // 可选：用户提供的内容提示词和想法，AI将按照此提示词生成内容
   knowledgeBaseContent?: string;
   availableProducts?: string[]; // 可选：实际从 WordPress 获取到的产品名称列表，AI 将只使用这些产品生成内容
-  /** 长文配图：须为接口返回的真实商品主图 URL（勿用手工臆测的 Shopify /files/ 路径） */
+  /** 长文配图：仅允许传入 Sanity CDN 内容图 URL。 */
   articleImageUrls?: string[];
   onStatusUpdate?: (message: string) => void; // 可选：状态更新回调
   shouldAbort?: () => boolean; // 可选的检查是否应该中止的回调（用于暂停功能）
@@ -93,7 +92,7 @@ async function generateWithKey(
   knowledgeBaseContent?: string,
   preferredModel?: string, // 可选：指定优先使用的模型
   availableProducts?: string[], // 可选：实际从 WordPress 获取到的产品名称列表
-  articleImageUrls?: string[] // 可选：正文配图白名单（Shopify/Woo 商品主图）
+  articleImageUrls?: string[] // 可选：正文配图白名单（Sanity 内容图）
 ): Promise<GeneratedContent> {
   // 根据模板类型设置内容长度限制
   // template-3/4/5 为长内容模式，无严格字数上限
@@ -457,9 +456,7 @@ BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
 \n\n` : ""}
 ${((): string => {
   if (!useLongFormArticleLimits) return "";
-  const merged = [
-    ...new Set([...(articleImageUrls || []).filter(Boolean), ...getArticleImageUrlsFromEnv()]),
-  ].slice(0, 12);
+  const merged = [...new Set((articleImageUrls || []).filter(Boolean))].slice(0, 12);
   if (merged.length === 0) {
     return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
@@ -474,7 +471,7 @@ RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 - Include 1–2 relevant images in the article. Use this exact HTML structure for each image:
   <figure><img src="[URL below]" alt="[short descriptive alt text]" loading="lazy" width="800" height="450"><figcaption>[Brief caption, e.g. key feature or product name]</figcaption></figure>
-- You MUST use ONLY the following image URLs (real product imagery from our store feed; copy each URL exactly as shown, character-for-character, including ? and &). Do not invent, guess, or substitute other URLs:
+- You MUST use ONLY the following image URLs (Sanity-hosted content imagery; copy each URL exactly as shown, character-for-character, including ? and &). Do not invent, guess, or substitute other URLs:
   ${urls}
 - Include at least ONE HTML table in the article (e.g. key features comparison, specifications at a glance, or "What to look for" summary). Use semantic markup:
   <table><thead><tr><th>Feature</th><th>Details</th></tr></thead><tbody><tr><td>...</td><td>...</td></tr></tbody></table>

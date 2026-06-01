@@ -7,9 +7,8 @@ import {
   fetchProductsBySource,
   mergeShopifyCredentialsFromEnv,
   resolveProductSource,
-  collectDistinctProductImageUrls,
 } from "../services/productProvider.js";
-import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
+import { getArticleImageUrlsFromEnv, luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
 import { publishToSanity } from "../services/sanityPublisher.js";
 /**
@@ -1207,9 +1206,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     // 为模板4和模板5生成封面图URL（基于页面标题生成）
     let pageImageUrl = "";
     if (payload.templateType === "template-4" || payload.templateType === "template-5") {
-      // 使用 Shopify Files CDN（原 OSS 按 slug 生成的封面已不可用）；可通过 SHOPIFY_LUXURY_GUIDE_COVER_URL 覆盖
+      // 内容封面图统一使用 Sanity CDN（SANITY_OG_COVER_URL 或 SANITY_ARTICLE_IMAGE_URLS 首图）
       pageImageUrl = luxuryGuideOgCoverUrl();
-      console.log(`[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL（Shopify CDN）: ${pageImageUrl}`);
+      console.log(
+        `[task ${taskId}] ✅ ${payload.templateType === "template-4" ? "模板4" : "模板5"}封面图URL（Sanity）: ${pageImageUrl}`
+      );
     }
 
     // 为模板4、5、6和7准备特殊数据
@@ -2518,14 +2519,9 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     
     console.log(`[task ${taskId}] 📋 提取到 ${availableProductNames.length} 个可用产品:`, availableProductNames.join(", "));
 
-    const articleImageUrls = collectDistinctProductImageUrls([
-      ...productsRow1,
-      ...productsRow2,
-      ...productsRow3,
-      ...(topProducts || []),
-    ]);
+    const articleImageUrls = getArticleImageUrlsFromEnv();
     console.log(
-      `[task ${taskId}] 📷 正文配图白名单: ${articleImageUrls.length} 张（商品主图优先；无则合并 ARTICLE_IMAGE_URLS / SANITY_ARTICLE_IMAGE_URLS / SHOPIFY_ARTICLE_IMAGE_URLS 或不出图）`
+      `[task ${taskId}] 📷 正文配图白名单（Sanity）: ${articleImageUrls.length} 张（来自 SANITY_ARTICLE_IMAGE_URLS）`
     );
     if (
       (payload.templateType === "template-4" || payload.templateType === "template-5") &&
@@ -2533,7 +2529,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       articleImageUrls[0]
     ) {
       pageImageUrl = articleImageUrls[0];
-      console.log(`[task ${taskId}] 📷 OG 封面未配置时使用首张商品主图: ${pageImageUrl}`);
+      console.log(`[task ${taskId}] 📷 OG 封面未配置时使用首张 Sanity 内容图: ${pageImageUrl}`);
     }
     
     updateTaskStatus(taskId, "generating_content", payload.userPrompt ? "正在根据您的提示词生成 AI 内容和 FAQ..." : "正在生成 AI 内容和 FAQ...");
