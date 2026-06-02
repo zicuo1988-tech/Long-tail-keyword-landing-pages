@@ -14,11 +14,31 @@ const TEMPLATE_FILE_BY_TYPE: Record<string, string> = {
   "template-4": "template-4.html",
   "template-5": "template-5.html",
   "template-6": "template-6.html",
-  "template-7": "template-7.html",
 };
 
+/** Template 7 temporarily disabled — requests map here. */
+export const TEMPLATE_7_FALLBACK = "template-6";
+
+const DISABLED_TEMPLATE_TYPES = new Set(["template-7"]);
+
 /** Long shells for guide-intent pages when the client sent a short template by mistake. */
-const LONG_SHELL_ROTATION = ["template-5", "template-6", "template-7"] as const;
+const LONG_SHELL_ROTATION = ["template-5", "template-6"] as const;
+
+/** Map deprecated template ids to supported shells (reloads HTML from disk). */
+export function migrateDisabledTemplate(
+  payload: GenerationRequestPayload,
+  logPrefix = ""
+): boolean {
+  const tt = (payload.templateType || "").trim();
+  if (!DISABLED_TEMPLATE_TYPES.has(tt)) return false;
+  const prefix = logPrefix ? `${logPrefix} ` : "";
+  console.log(`${prefix}template-7 已停用，自动改用 ${TEMPLATE_7_FALLBACK}`);
+  return loadTemplateIntoPayload(
+    payload,
+    TEMPLATE_7_FALLBACK,
+    "Template-7 disabled (fallback to template-6)"
+  );
+}
 
 function repoFrontendDir(): string {
   return path.join(__dirname, "../../../frontend");
@@ -55,14 +75,14 @@ function loadTemplateIntoPayload(
 function pickLongShellForCategory(keyword: string, pageTitle: string): string {
   const primary = detectPrimaryCategory(keyword, pageTitle);
   if (primary === "watch" || primary === "ring" || primary === "earbud") {
-    return primary === "earbud" ? "template-7" : "template-6";
+    return "template-6";
   }
   return LONG_SHELL_ROTATION[hashKeyword(keyword) % LONG_SHELL_ROTATION.length];
 }
 
 /**
  * Template-2 shows products above the article — high bounce when title/category mismatch.
- * For watch/ring/earbud intents, switch to template-7 (blog-first) or template-1 (content-first).
+ * For watch/ring/earbud intents, switch to template-6 (long-form) instead of product-first short shells.
  */
 export function applyCategoryAwareTemplateFix(
   payload: GenerationRequestPayload,
@@ -77,7 +97,7 @@ export function applyCategoryAwareTemplateFix(
   const primary = detectPrimaryCategory(payload.keyword, finalPageTitle);
   if (primary !== "watch" && primary !== "ring" && primary !== "earbud") return;
 
-  const pick = primary === "ring" || primary === "watch" ? "template-7" : "template-6";
+  const pick = "template-6";
   loadTemplateIntoPayload(
     payload,
     pick,

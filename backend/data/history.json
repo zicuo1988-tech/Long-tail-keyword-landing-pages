@@ -1,5 +1,65 @@
 [
   {
+    "id": "cde7dd44-fa3f-4197-aa51-bbb2cf6a5155",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-android-flip-phone-premium-selection",
+    "createdAt": 1780303041409,
+    "updatedAt": 1780303219193,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android flip phone",
+    "titleType": "purchase",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-android-flip-phone-premium-selection/"
+  },
+  {
+    "id": "f68a25e2-1327-43f9-893a-d78d530324ab",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-best-mobile-phone-android",
+    "createdAt": 1780302527536,
+    "updatedAt": 1780302667336,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best mobile phone android",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-best-mobile-phone-android/"
+  },
+  {
+    "id": "3c781eb0-45ca-450f-98cb-98418fe8ed87",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-best-mobile-phone-android",
+    "createdAt": 1780301977315,
+    "updatedAt": 1780302093403,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best mobile phone android",
+    "titleType": "informational",
+    "templateType": "template-7",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-best-mobile-phone-android/"
+  },
+  {
     "id": "1b4cafd1-c3df-4887-a665-0fa3d098bb02",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mobile-phones-for-business-quality-guide",
@@ -13962,47 +14022,5 @@
     "titleType": "informational",
     "templateType": "template-2",
     "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-dress-watches/"
-  },
-  {
-    "id": "79e17b4e-bdf8-4385-8585-7e6b8a8d98d8",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141693",
-    "createdAt": 1773804804505,
-    "updatedAt": 1773804889013,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury maid of honor gifts",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-maid-of-honor-gifts-expert-guide/"
-  },
-  {
-    "id": "48010d9f-8374-4308-947b-c70b5421759f",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141691",
-    "createdAt": 1773804622506,
-    "updatedAt": 1773804803408,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gift for her",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-luxury-gift-for-her/"
-  },
-  {
-    "id": "2c0b879f-8721-4869-b820-05cc507aa0d1",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141689",
-    "createdAt": 1773804431516,
-    "updatedAt": 1773804620993,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury home accents",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-home-accents-rankings-comprehensive-list/"
   }
 ]

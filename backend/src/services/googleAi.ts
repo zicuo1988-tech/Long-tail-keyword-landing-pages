@@ -27,7 +27,7 @@ const FALLBACK_MODELS = ["gemini-2.0-flash"]; // 只保留确实可用的备选�
 // 模型选择策略：根据任务复杂度选择模型
 function selectModel(templateType?: string, isComplexTask: boolean = false): string {
   // 模板6、7需要高质量内容，优先使用pro模型
-  if (templateType === "template-6" || templateType === "template-7") {
+  if (templateType === "template-6") {
     return "gemini-2.5-pro";
   }
   
@@ -104,8 +104,7 @@ async function generateWithKey(
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
   const isTemplate6 = templateType === "template-6";
-  const isTemplate7 = templateType === "template-7";
-  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
   const isTemplate4Or5 = isTemplate4 || isTemplate5;
   const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(templateType, keyword, pageTitle, titleType);
   const currentMinLength = MIN_ARTICLE_LENGTH;
@@ -467,20 +466,6 @@ PRODUCT TYPE MATCHING (CRITICAL - but user prompt takes priority):
 ${contentStyleGuide ? `${contentStyleGuide}\n\n` : ""}
 ${conversionModeGuide[conversionMode]}
 
-${isTemplate7 ? `
-BLOG/EDITORIAL STYLE (Template 7 – follow this style for this template only):
-- Write as a long-form blog or editorial piece: narrative, engaging, and readable. Weave knowledge base facts into a coherent, flowing article rather than a listicle.
-- Structure: clear H2 sections and flowing paragraphs; use H3 for sub-themes where helpful. You may include bullet or numbered lists where they add clarity, but the overall piece should read like an article, not a listicle.
-- Tone: authoritative but approachable; informative and engaging. Aim for depth and authenticity—explain context, benefits, and real-world relevance so the reader feels they have read a complete, valuable piece.
-- Length: substantial (e.g. 800–2500 words) so the reader gets a full, satisfying read. Every section must be fully written with complete sentences.
-- CONTENT SOURCES (Template 7): (1) For ALL VERTU product details (specs, prices, features, materials, product names, services)—use ONLY the knowledge base. Do not invent or alter any product facts. (2) For general topic context (e.g. why luxury watches matter, industry trends, how to choose, what to look for, expert perspective)—you MAY add accurate, general information to enrich the article and provide external-style depth, as long as it is factual and does not contradict the knowledge base or invent brand-specific claims. This blend keeps product truthfulness while making the article more engaging and credible.
-
-- RANKING / TOP-LIST PAGES (when the title or keyword is about rankings, e.g. "Top 10", "Top 5", "ranking", "best list"): (1) You MUST include a clearly numbered ranked list (e.g. "Top 10 …" or "Top 5 …") in the article. (2) The list MUST COMBINE two types of products: (a) Our products from the "RELEVANT PRODUCTS" list below—include them where they fit the topic and rank; describe them using ONLY the knowledge base (no invented specs or prices). (b) Other corresponding products: well-known, real products in the same category (e.g. competitor brands, other luxury phones/watches/rings/earbuds) so the ranking reads as a genuine, comprehensive roundup—not only our brand. (3) List up to 10 items when the theme is "top 10", or up to 5 when "top 5"; mix our products with other relevant options to fill the list. (4) Protect knowledge-base: for any VERTU/our product in the list, use ONLY facts from the knowledge base; for other brands you may use accurate, general market knowledge. Ensure our products appear in the ranking where they are a natural fit and are described accurately.
-
-- CONTENT SECTIONS (Template 7 – mandatory variety): The article MUST include BOTH (a) knowledge-base–based content (product details, specs, features, our offerings) AND (b) other editorial sections such as: industry or category context, why the topic matters, how to choose, what to look for, expert tips, or brief comparisons. Do not write only knowledge-base snippets; include at least 2–3 distinct H2 sections that are not purely product listings (e.g. "Why [topic] matters", "How to choose", "What to look for") so the page has multiple content blocks and feels like a complete guide, not only a product list.
-
-- PRODUCT FIGURES (Template 7 – aligns with luxury life guides): The "RICH CONTENT REQUIREMENTS" section below lists verified product image URLs (many options—rotate across them). When you discuss specific models from the "RELEVANT PRODUCTS" list in depth, add an H2 or H3 for that model (knowledge base only for facts) and follow with one <figure> using a different allowed URL per section—copy each URL exactly. Never reuse the same image URL twice in one article; use up to four distinct figures when URLs and topics support it.
-\n\n` : ""}
 ${((): string => {
   const merged = [...new Set((articleImageUrls || []).filter(Boolean))].slice(0, 20);
   if (merged.length === 0) {
@@ -506,8 +491,7 @@ INLINE IMAGES (MANDATORY when URLs are listed):
 - The image MUST visually match the article topic "${keyword}" (e.g. do not use a phone image in a watch article).
 \n`;
   }
-  const figureCount =
-    isTemplate7 ? "2–4" : merged.length >= 6 ? "2–3" : "2";
+  const figureCount = merged.length >= 6 ? "2–3" : "2";
   return `
 RICH CONTENT REQUIREMENTS (IMAGES AND TABLES - for long-form articles):
 - Include ${figureCount} relevant images in the article, each under a different H2/H3 where possible. Use this exact HTML structure for each image:
@@ -1570,7 +1554,12 @@ ${useLongFormArticleLimits ? `4. Write a substantive introduction (2–4 sentenc
 
     // 生成页面描述（用于模板2、模板3、模板4和模板5，生成完整的描述段落）
     let pageDescription = "";
-    const needsFullDescription = templateType === "template-2" || templateType === "template-3" || templateType === "template-4" || templateType === "template-5" || templateType === "template-6" || templateType === "template-7";
+    const needsFullDescription =
+      templateType === "template-2" ||
+      templateType === "template-3" ||
+      templateType === "template-4" ||
+      templateType === "template-5" ||
+      templateType === "template-6";
     
     if (needsFullDescription) {
       try {
@@ -3164,8 +3153,7 @@ function isArticleRich(
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
   const isTemplate6 = templateType === "template-6";
-  const isTemplate7 = templateType === "template-7";
-  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
   const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(
     templateType,
     keyword ?? "",
@@ -3190,10 +3178,9 @@ function isArticleRich(
   const paragraphCount = (html.match(/<p[^>]*>/gi) || []).length;
 
   const relaxedArticleStructure =
-    isTemplate7 ||
-    (useLongFormArticleLimits &&
-      !isLongFormTemplate &&
-      (templateType === "template-1" || templateType === "template-2"));
+    useLongFormArticleLimits &&
+    !isLongFormTemplate &&
+    (templateType === "template-1" || templateType === "template-2");
 
   if (relaxedArticleStructure) {
     return (
@@ -3619,8 +3606,7 @@ async function generateWithModelRotation(
   const isTemplate4 = templateType === "template-4";
   const isTemplate5 = templateType === "template-5";
   const isTemplate6 = templateType === "template-6";
-  const isTemplate7 = templateType === "template-7";
-  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
+  const isLongFormTemplate = isTemplate3 || isTemplate4 || isTemplate5 || isTemplate6;
   const useLongFormArticleLimits = shouldTreatAsLongFormGuideArticle(templateType, keyword, pageTitle, titleType);
   const isComplexTask = useLongFormArticleLimits || !!userPrompt || keyword.length > 50;
   

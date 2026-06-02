@@ -12,8 +12,7 @@ export function shouldTreatAsLongFormGuideArticle(
     templateType === "template-3" ||
     templateType === "template-4" ||
     templateType === "template-5" ||
-    templateType === "template-6" ||
-    templateType === "template-7";
+    templateType === "template-6";
   if (isBuiltInLongForm) return true;
 
   const isShortTemplate =

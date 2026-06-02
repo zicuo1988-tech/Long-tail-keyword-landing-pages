@@ -19,11 +19,7 @@ import {
 import { luxuryGuideOgCoverUrl } from "../config/shopifyCdn.js";
 import { resolveLandingImages } from "../services/sanityImageLibrary.js";
 import { injectArticleFiguresIfMissing } from "../utils/articleImageInjector.js";
-import {
-  buildTemplate7ProductsForRender,
-  dedupePageProductSections,
-  fillTemplate7MainGrid,
-} from "../utils/pageProductDedup.js";
+import { dedupePageProductSections } from "../utils/pageProductDedup.js";
 import { publishStaticPage, updateStaticSiteSeoFiles } from "../services/staticPublisher.js";
 import {
   createSanityWriteClient,
@@ -130,6 +126,7 @@ import { publishPage } from "../services/wordpress.js";
 import {
   applyCommercialShellIfNeeded,
   applyGuideIntentLongShellIfNeeded,
+  migrateDisabledTemplate,
 } from "../utils/templatePolicy.js";
 import {
   buildProductSectionIntro,
@@ -280,6 +277,7 @@ generationRouter.post("/generate-page", (req, res) => {
 async function processTask(taskId: string, payload: GenerationRequestPayload) {
   try {
     mergeShopifyCredentialsFromEnv(payload);
+    migrateDisabledTemplate(payload, `[task ${taskId}]`);
 
     // 保存任务的关键信息到任务对象中（用于历史记录）
     updateTaskStatus(taskId, "queued", "任务已创建", {
@@ -1211,8 +1209,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     const isTemplate4 = payload.templateType === "template-4";
     const isTemplate5 = payload.templateType === "template-5";
     const isTemplate6 = payload.templateType === "template-6";
-    const isTemplate7 = payload.templateType === "template-7";
-    const needsMarketingBlocks = isTemplate4 || isTemplate5 || isTemplate6 || isTemplate7;
+    const needsMarketingBlocks = isTemplate4 || isTemplate5 || isTemplate6;
     let topProducts: ProductSummary[] = [];
     let comparisonItems: Array<{ 
       name: string; 
@@ -1275,7 +1272,6 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
 
       // 模板 7 / 礼品与指南类主题：放宽匹配，避免笔、公文包等配件被默认 token 滤掉
       const isGiftGuideOrEditorialTopic =
-        isTemplate7 ||
         /\b(gift|gifts|present|presents|mother'?s|mom'?s|mum'?s|mother\b|mom\b|mum\b|day\b|guide|guides|editorial|luxury life|for her|christmas|holiday)\b/i.test(
           combinedText
         );
@@ -2271,7 +2267,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       externalLinks = externalLinksList.slice(0, 4);
       
       // 模板6/7：生成参考文献和外部权威资源（博客式模板7同样需要参考文献与外部资源以增强真实性与可信度）
-      if (isTemplate6 || isTemplate7) {
+      if (isTemplate6) {
         // 根据关键词类型生成相关的参考文献和外部资源
         const currentYear = new Date().getFullYear();
         
@@ -2472,7 +2468,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         console.log(`  - 外部资源数量: ${externalResources.length}`);
       }
       
-      console.log(`[task ${taskId}] 模板${isTemplate4 ? '4' : isTemplate5 ? '5' : isTemplate6 ? '6' : isTemplate7 ? '7' : '4/5'}数据准备完成:`);
+      console.log(`[task ${taskId}] 模板${isTemplate4 ? "4" : isTemplate5 ? "5" : isTemplate6 ? "6" : "4/5"}数据准备完成:`);
       console.log(`  - Top Picks数量: ${topProducts.length}`);
       console.log(`  - 对比表项目数: ${comparisonItems.length}`);
       console.log(`  - 内链数量: ${internalLinks.length}`);
@@ -2561,8 +2557,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     if (
       payload.templateType === "template-4" ||
       payload.templateType === "template-5" ||
-      payload.templateType === "template-6" ||
-      payload.templateType === "template-7"
+      payload.templateType === "template-6"
     ) {
       pageImageUrl = imageBundle.ogCoverUrl || luxuryGuideOgCoverUrl() || articleImageUrls[0] || "";
       if (pageImageUrl) {
@@ -2689,9 +2684,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         payload.templateType === "template-3" ||
         payload.templateType === "template-4" ||
         payload.templateType === "template-5" ||
-        payload.templateType === "template-6" ||
-        payload.templateType === "template-7";
-      const maxFigures = isTemplate7 ? 4 : isLongForm ? 3 : 1;
+        payload.templateType === "template-6";
+      const maxFigures = isLongForm ? 3 : 1;
       const caption = finalPageTitle || payload.keyword;
       const beforeLen = generatedContent.articleContent.length;
       const beforeImgCount = (generatedContent.articleContent.match(/<img\b/gi) || []).length;
@@ -2805,22 +2799,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       );
     }
 
-    // 模板7：主网格合并三排（不含 Top Picks rail，避免与顶部 Related products 重复）
-    const topProductIdsForT7 = new Set((topProducts || []).map((p) => p.id));
-    let productsForRender: ProductSummary[] = isTemplate7
-      ? (() => {
-          const list = buildTemplate7ProductsForRender(
-            productsRow1,
-            productsRow2,
-            productsRow3,
-            topProductIdsForT7
-          );
-          console.log(
-            `[task ${taskId}] 模板7 主网格（不含 Top Picks，最多4）: ${list.map((p: ProductSummary) => p.name).join(", ")}`
-          );
-          return list;
-        })()
-      : productsRow1;
+    let productsForRender: ProductSummary[] = productsRow1;
 
     gatedProductPool = buildGatedProductPool(
       allProducts,
@@ -2828,38 +2807,6 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageTitleForSeo,
       primaryCategory
     );
-
-    // 模板7：主网格为空时从已 gate 的全量池兜底（仍排除 Top Picks id）
-    if (isTemplate7 && productsForRender.length === 0 && gatedProductPool.length > 0) {
-      const byId = new Map<number, ProductSummary>();
-      for (const p of gatedProductPool) {
-        if (!topProductIdsForT7.has(p.id) && !byId.has(p.id)) {
-          byId.set(p.id, p);
-        }
-      }
-      productsForRender = Array.from(byId.values()).slice(0, 4);
-      console.log(
-        `[task ${taskId}] 模板7 主网格兜底（全量前4）: ${productsForRender.map((p: ProductSummary) => p.name).join(", ")}`
-      );
-    }
-
-    // 模板7：主网格不足 4 个时从已 gate 的全量池补足（排除 Top Picks 与已有 id）
-    if (isTemplate7 && productsForRender.length > 0 && productsForRender.length < 4 && gatedProductPool.length > 0) {
-      const beforeLen = productsForRender.length;
-      productsForRender = fillTemplate7MainGrid(
-        productsForRender,
-        gatedProductPool,
-        topProductIdsForT7
-      );
-      if (productsForRender.length > beforeLen) {
-        console.log(
-          `[task ${taskId}] 模板7 主网格补足: ${beforeLen} → ${productsForRender.length}（${productsForRender
-            .slice(beforeLen)
-            .map((x: ProductSummary) => x.name)
-            .join(", ")}）`
-        );
-      }
-    }
 
     // 渲染前最终去重（含主题纠偏后的商品区，保证整页 data-product-id 唯一）
     const templateTypeForDedup = payload.templateType || "template-1";
@@ -2889,17 +2836,12 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     );
     const productSectionTitle = buildProductSectionTitle(
       primaryCategory,
-      isTemplate7,
+      false,
       payload.keyword,
       pageTitleForSeo
     );
     const showTrustStripFinal =
-      (isTemplate1 ||
-        isTemplate2 ||
-        isTemplate3 ||
-        isTemplate4 ||
-        isTemplate6 ||
-        isTemplate7) && !isTemplate5;
+      (isTemplate1 || isTemplate2 || isTemplate3 || isTemplate4 || isTemplate6) && !isTemplate5;
 
     let relatedGuides: Array<{ title: string; url: string }> = [];
     if (publishTarget === "sanity") {
@@ -2956,7 +2898,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageImage: pageImageUrl, // 页面封面图URL（用于Open Graph和Twitter Card，仅模板4）
       aiContent: generatedContent.articleContent,
       extendedContent: generatedContent.extendedContent, // 扩展内容（用于模板3/4/5的第二部分）
-      products: productsForRender, // 模板7 主网格与第一排均为最多 4 个；各排经 pageProductDedup 硬上限
+      products: productsForRender,
       productsRow2: productsRow2, // 第二排产品（最多4个）
       relatedProducts: productsRow3, // 第三排产品（最多4个）
       faqItems: generatedContent.faqItems,
@@ -2968,8 +2910,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       relatedGuides,
       externalLinks,
       // 模板6/7新增字段
-      references: (isTemplate6 || isTemplate7) ? references : [],
-      externalResources: (isTemplate6 || isTemplate7) ? externalResources : [],
+      references: isTemplate6 ? references : [],
+      externalResources: isTemplate6 ? externalResources : [],
       productSectionTitle,
       productSectionIntro,
       showTrustStrip: showTrustStripFinal,
