@@ -52,6 +52,11 @@
     {{{PRODUCT_STRUCTURED_DATA}}}
     </script>
     {{/if}}
+    {{#if HOWTO_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{HOWTO_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
     <style>
         <!-- SHARED_LANDING_CSS -->
 
@@ -1384,6 +1389,8 @@
             </div>
         </div>
         {{/if}}
+
+        {{{RELATED_GUIDES_HTML}}}
 
         {{#if externalLinks.length}}
         <!-- 外链区块 -->

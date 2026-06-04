@@ -46,6 +46,11 @@
     {{{ITEMLIST_STRUCTURED_DATA}}}
     </script>
     {{/if}}
+    {{#if HOWTO_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{HOWTO_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
     
     <style>
         <!-- SHARED_LANDING_CSS -->
@@ -1361,6 +1366,9 @@
             </div>
         </div>
         {{/if}}
+
+        {{{INTERNAL_LINKS_HTML}}}
+        {{{RELATED_GUIDES_HTML}}}
 
         {{#if faqItems.length}}
         <!-- FAQ 区域 -->

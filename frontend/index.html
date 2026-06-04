@@ -106,7 +106,13 @@
             <div class="form-row">
               <label for="keyword">长尾关键词</label>
               <input type="text" id="keyword" name="keyword" placeholder="女士最佳防水登山鞋推荐" />
-              <small>输入要生成内容的长尾关键词（英式英语）。如果使用关键词池，此字段可以为空。</small>
+              <small>输入要生成内容的长尾关键词（英式英语）。Tier A/B 品牌相关词优先；Tier D 泛配件词（如 charging cable）会被拦截。批量模式自动跳过 Tier D。</small>
+            </div>
+            <div class="form-row">
+              <label for="forceGenerate" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                <input type="checkbox" id="forceGenerate" name="forceGenerate" style="width: auto; margin: 0;" />
+                <span>强制生成 Tier D 低相关词（单条提交）</span>
+              </label>
             </div>
             <div class="form-row">
               <label for="useKeywordPool" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
@@ -256,6 +262,10 @@
               <label for="pageTitle">页面标题（可选）</label>
               <input type="text" id="pageTitle" name="pageTitle" placeholder="留空将根据长尾词和选择的类型自动生成标题" />
               <small>如果留空，系统将根据长尾词和选择的标题类型自动生成一个包含该关键词的标题（英式英语）</small>
+            </div>
+            <div class="form-row">
+              <label for="articleAuthorName">署名作者（可选）</label>
+              <input type="text" id="articleAuthorName" name="articleAuthorName" placeholder="留空使用默认：James Whitfield" />
             </div>
             <div class="form-row">
               <label for="userPrompt">内容提示词（可选）</label>

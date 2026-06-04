@@ -1,5 +1,845 @@
 [
   {
+    "id": "cf2b9357-b9e4-4849-a014-2ed24f4df06e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-expert-guide-to-british-luxury-watch-brands",
+    "createdAt": 1780557133167,
+    "updatedAt": 1780557380474,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 2,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "british luxury watch brands",
+    "titleType": "expert",
+    "templateType": "template-2",
+    "alignmentAttempts": 2,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-british-luxury-watch-brands/"
+  },
+  {
+    "id": "1a418528-fb51-4220-b55b-198eea37d4bc",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-golf-watch-quality-and-performance-guide",
+    "createdAt": 1780556811161,
+    "updatedAt": 1780557000136,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury golf watch",
+    "titleType": "best",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-golf-watch-quality-and-performance-guide/"
+  },
+  {
+    "id": "f7522f73-b4e8-4128-88e6-b2ecfc0b03dc",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-largest-android-phone-usage-guide-complete-manual",
+    "createdAt": 1780480053742,
+    "updatedAt": 1780480216369,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "largest android phone",
+    "titleType": "services-guides",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/largest-android-phone-usage-guide-complete-manual/"
+  },
+  {
+    "id": "8a238246-cee5-4689-9bec-c3aa0d8f883c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-charging-cable-for-android-phone-top-picks",
+    "createdAt": 1780479951688,
+    "updatedAt": 1780480052092,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "charging cable for android phone",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-charging-cable-for-android-phone-top-picks/"
+  },
+  {
+    "id": "ec6673ca-1841-44e3-90c8-6e5311cd8c21",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-android-phone-screen-repair",
+    "createdAt": 1780479792708,
+    "updatedAt": 1780479950846,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phone screen repair",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-android-phone-screen-repair/"
+  },
+  {
+    "id": "578bd8bd-3ab5-42dd-952f-06dcefc1def4",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-5g-android-phone-collection",
+    "createdAt": 1780479656703,
+    "updatedAt": 1780479790317,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "5g android phone",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-5g-android-phone-collection/"
+  },
+  {
+    "id": "837f1188-7d16-45a5-a93a-569c083c7d3e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-android-camera-phones-highly-rated",
+    "createdAt": 1780479471687,
+    "updatedAt": 1780479655800,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "top android camera phones",
+    "titleType": "review",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-android-camera-phones-highly-rated/"
+  },
+  {
+    "id": "568f614e-a4fe-4c48-9163-b9e74366be1b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-stylus-for-android-phone",
+    "createdAt": 1780479290688,
+    "updatedAt": 1780479470342,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "stylus for android phone",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-stylus-for-android-phone/"
+  },
+  {
+    "id": "97f9518d-ba4c-4753-9044-3137fd2a4401",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-old-android-phone-premium-selection",
+    "createdAt": 1780479172690,
+    "updatedAt": 1780479290401,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "old android phone",
+    "titleType": "purchase",
+    "templateType": "template-4",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-old-android-phone-premium-selection/"
+  },
+  {
+    "id": "08656275-47df-456f-b796-e4c5baa67815",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-popular-android-folding-phone-best-selling-models",
+    "createdAt": 1780478960690,
+    "updatedAt": 1780479170062,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android folding phone",
+    "titleType": "most",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-android-folding-phone-best-selling-models/"
+  },
+  {
+    "id": "f8963da1-29b0-4b29-bead-af8a149e08a1",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-refurbished-android-phones-list-comprehensive-rankings",
+    "createdAt": 1780478810692,
+    "updatedAt": 1780478957944,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "refurbished android phones",
+    "titleType": "top-ranking",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-refurbished-android-phones-list-comprehensive-rankings/"
+  },
+  {
+    "id": "9ee62842-2ece-4140-bb1c-3742d452ebdb",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-phone-cases-for-android-picks-premium-selection",
+    "createdAt": 1780478660694,
+    "updatedAt": 1780478809929,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "phone cases for android",
+    "titleType": "top",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-phone-cases-for-android-picks-premium-selection/"
+  },
+  {
+    "id": "e084b89b-b883-4907-bc85-cd14badd841e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-phone-apps-for-android-quality-guide",
+    "createdAt": 1780478522331,
+    "updatedAt": 1780478659549,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "phone apps for android",
+    "titleType": "best",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-phone-apps-for-android-quality-guide/"
+  },
+  {
+    "id": "928b5a93-4a9a-4b4a-947c-211fa659a31e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-expert-guide-to-new-phones-with-android",
+    "createdAt": 1780478327781,
+    "updatedAt": 1780478520389,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "new phones with android",
+    "titleType": "expert",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-new-phones-with-android/"
+  },
+  {
+    "id": "9e61dd3f-5c0b-4c4e-a1d8-914b497dda9f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-comparing-gps-program-for-android-phones-options",
+    "createdAt": 1780478134695,
+    "updatedAt": 1780478327050,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "gps program for android phones",
+    "titleType": "comparison",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-gps-program-for-android-phones-options/"
+  },
+  {
+    "id": "627ba911-379a-465f-a52e-88ed5227d6f4",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-free-antivirus-for-android-phone-feature-comparison",
+    "createdAt": 1780478000696,
+    "updatedAt": 1780478133753,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best free antivirus for android phone",
+    "titleType": "tech-insights",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-free-antivirus-for-android-phone-feature-comparison/"
+  },
+  {
+    "id": "876d6599-d59d-424d-bb33-95de0200c3cb",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-android-phones-with-pure-android-usage-guide-complete-manual",
+    "createdAt": 1780477846010,
+    "updatedAt": 1780477999104,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phones with pure android",
+    "titleType": "services-guides",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/android-phones-with-pure-android-usage-guide-complete-manual/"
+  },
+  {
+    "id": "3d82d85e-0467-4aae-b240-a6f31ea669f8",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-android-phone-vs-iphone-highly-recommended",
+    "createdAt": 1780477642764,
+    "updatedAt": 1780477844630,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phone vs iphone",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-android-phone-vs-iphone-highly-recommended/"
+  },
+  {
+    "id": "cccbb556-4268-4908-9681-55aacaa9db3f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-find-android-phone-repair",
+    "createdAt": 1780477479749,
+    "updatedAt": 1780477640907,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phone repair",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-android-phone-repair/"
+  },
+  {
+    "id": "dd250b7b-0673-4db4-a6c0-7a952bb08d17",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-android-phone-emulator-collection",
+    "createdAt": 1780477336727,
+    "updatedAt": 1780477477944,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phone emulator",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-android-phone-emulator-collection/"
+  },
+  {
+    "id": "41492aa0-e462-4246-bcf2-54234ffb0620",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-10-android-foldable-phone-best-rated",
+    "createdAt": 1780477128726,
+    "updatedAt": 1780477336147,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android foldable phone",
+    "titleType": "review",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-10-android-foldable-phone-best-rated/"
+  },
+  {
+    "id": "51731085-0e46-4be3-a3a0-1e4e64dd64c9",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-amazon-phone-cases-for-android",
+    "createdAt": 1780476970727,
+    "updatedAt": 1780477128272,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "amazon phone cases for android",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-amazon-phone-cases-for-android/"
+  },
+  {
+    "id": "967e3285-d493-4ee4-b318-f3fb40c6b402",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-best-android-camera-phone-expert-guide",
+    "createdAt": 1780476795194,
+    "updatedAt": 1780476970553,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best android camera phone",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-best-android-camera-phone-expert-guide/"
+  },
+  {
+    "id": "c34e2938-9576-4efc-baab-26fc48cfb711",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-android-phones-with-good-camera",
+    "createdAt": 1780399020862,
+    "updatedAt": 1780399152907,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phones with good camera",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-android-phones-with-good-camera/"
+  },
+  {
+    "id": "1a603011-e6a1-467b-af46-047a83745e63",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-verizon-wireless-android-phones-collection",
+    "createdAt": 1780398882863,
+    "updatedAt": 1780399018847,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "verizon wireless android phones",
+    "titleType": "commercial",
+    "templateType": "template-4",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-verizon-wireless-android-phones-collection/"
+  },
+  {
+    "id": "b3bbdefe-ebb8-4734-a3af-854c3c673b2b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-unlocked-android-cell-phones-top-rated-and-reviews",
+    "createdAt": 1780398705856,
+    "updatedAt": 1780398882434,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "unlocked android cell phones",
+    "titleType": "review",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-unlocked-android-cell-phones-top-rated-and-reviews/"
+  },
+  {
+    "id": "fc6774ef-ad5e-42b5-8e43-e2d93c383e80",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-top-android-phones",
+    "createdAt": 1780398570857,
+    "updatedAt": 1780398703118,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "top android phones",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-top-android-phones/"
+  },
+  {
+    "id": "036a2b12-4830-4da1-937e-39742ba49a55",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-newest-android-phones-official-retailer",
+    "createdAt": 1780398435855,
+    "updatedAt": 1780398570065,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "newest android phones",
+    "titleType": "purchase",
+    "templateType": "template-4",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-newest-android-phones-official-retailer/"
+  },
+  {
+    "id": "a470892a-74d7-47b6-bde2-0a40fc694132",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-trusted-mid-range-android-phones",
+    "createdAt": 1780398261845,
+    "updatedAt": 1780398434419,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "mid range android phones",
+    "titleType": "most",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-trusted-mid-range-android-phones/"
+  },
+  {
+    "id": "f3525306-c0cd-459d-a09d-ac56e58f2a0e",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-5-gps-tracker-for-android-phone-best-rankings",
+    "createdAt": 1780398100844,
+    "updatedAt": 1780398260391,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "gps tracker for android phone",
+    "titleType": "top-ranking",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-gps-tracker-for-android-phone-best-rankings/"
+  },
+  {
+    "id": "706e9a48-6367-47ee-bb97-3825b3f492be",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-straight-talk-android-phones",
+    "createdAt": 1780397992856,
+    "updatedAt": 1780398098322,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "straight talk android phones",
+    "titleType": "top",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-straight-talk-android-phones/"
+  },
+  {
+    "id": "0082f88b-362a-4cfb-930d-9d610ff234d9",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-small-android-phones-options-top-choices",
+    "createdAt": 1780397806856,
+    "updatedAt": 1780397990250,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "small android phones",
+    "titleType": "best",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-small-android-phones-options-top-choices/"
+  },
+  {
+    "id": "cfb147b5-6baa-4854-b4f3-e1367dc3b847",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-expert-guide-to-first-android-phone",
+    "createdAt": 1780397689854,
+    "updatedAt": 1780397804460,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "first android phone",
+    "titleType": "expert",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-first-android-phone/"
+  },
+  {
+    "id": "a1a7fd8b-98e5-43de-8904-57da98ca4e99",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-android-phone-mid-range-comparison-which-is-better",
+    "createdAt": 1780397542848,
+    "updatedAt": 1780397688578,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android phone mid range",
+    "titleType": "comparison",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/android-phone-mid-range-comparison-which-is-better/"
+  },
+  {
+    "id": "f622881f-82c4-42f3-b705-ddb3ad1de330",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-unlocked-android-phones-comparison-tech-insights",
+    "createdAt": 1780397404870,
+    "updatedAt": 1780397540667,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "unlocked android phones",
+    "titleType": "tech-insights",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/unlocked-android-phones-comparison-tech-insights/"
+  },
+  {
+    "id": "62ac7a4c-866f-4eea-9316-70e4f01aadcd",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-new-android-phones-user-guide",
+    "createdAt": 1780397209846,
+    "updatedAt": 1780397402030,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "new android phones",
+    "titleType": "services-guides",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/new-android-phones-user-guide/"
+  },
+  {
+    "id": "812c6774-8057-49df-9189-cbb33bec0da2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-recommended-android-flip-phone-top-picks",
+    "createdAt": 1780397017861,
+    "updatedAt": 1780397208666,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "android flip phone",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-android-flip-phone-top-picks/"
+  },
+  {
+    "id": "17fd2407-454b-43fc-9473-26dab361b230",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-find-newest-android-phone",
+    "createdAt": 1780396871042,
+    "updatedAt": 1780397015012,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "newest android phone",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-newest-android-phone/"
+  },
+  {
+    "id": "04e336ac-9117-4710-9b48-f9a85f06eb64",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-exclusive-find-android-phone-selection",
+    "createdAt": 1780396784872,
+    "updatedAt": 1780396870699,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "find android phone",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-find-android-phone-selection/"
+  },
+  {
+    "id": "520aacbc-cf03-48c4-bdfe-8e67554e1732",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-android-software-phone-top-rated-and-reviews",
+    "createdAt": 1780396628848,
+    "updatedAt": 1780396783595,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best android software phone",
+    "titleType": "review",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-android-software-phone-top-rated-and-reviews/"
+  },
+  {
+    "id": "d0c9a1c6-c0b7-40fb-8e55-6b81a542fce1",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-ultimate-guide-to-best-android-phone",
+    "createdAt": 1780396497859,
+    "updatedAt": 1780396627713,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best android phone",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-best-android-phone/"
+  },
+  {
+    "id": "4ffc641a-5d1d-40bb-a44a-6a49a92a08d2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-best-android-phones-official-retailer",
+    "createdAt": 1780396378590,
+    "updatedAt": 1780396497802,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "best android phones",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-best-android-phones-official-retailer/"
+  },
+  {
     "id": "cde7dd44-fa3f-4197-aa51-bbb2cf6a5155",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-android-flip-phone-premium-selection",
@@ -13434,593 +14274,5 @@
     "titleType": "expert",
     "templateType": "template-3",
     "pageUrl": "https://vertu.com/luxury-life-guides/mens-luxury-cufflinks-expert-buying-guide/"
-  },
-  {
-    "id": "4eb7ff44-3a75-45c5-85b0-ddd74b5010f2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141822",
-    "createdAt": 1773897739896,
-    "updatedAt": 1773897812998,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch women brands",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-luxury-watch-women-brands-options/"
-  },
-  {
-    "id": "545cf8e0-99b4-40d4-9879-6d3e677f7beb",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141820",
-    "createdAt": 1773897673892,
-    "updatedAt": 1773897737117,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men luxury watches brands",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/men-luxury-watches-brands-feature-comparison/"
-  },
-  {
-    "id": "614577d0-b9e5-4fcd-9765-f6c6130bdfe2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141818",
-    "createdAt": 1773897535890,
-    "updatedAt": 1773897671517,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "top luxury watches for women",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-watches-for-women-usage-guide-complete-manual/"
-  },
-  {
-    "id": "772ce550-baed-4ca0-8e95-6fe26f1b5fd0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141816",
-    "createdAt": 1773897391896,
-    "updatedAt": 1773897535661,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury brand watches",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-mens-luxury-brand-watches-top-picks/"
-  },
-  {
-    "id": "9174a81a-0f33-4641-8c91-4c204a74d064",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141814",
-    "createdAt": 1773897228896,
-    "updatedAt": 1773897389735,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "custom luxury watches",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-custom-luxury-watches/"
-  },
-  {
-    "id": "8e359135-a16d-4965-99ae-379abde6fb31",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141812",
-    "createdAt": 1773896986906,
-    "updatedAt": 1773897228773,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "automatic luxury watches",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/authorised-automatic-luxury-watches-retailer/"
-  },
-  {
-    "id": "bc7b9acb-ca64-475b-a7bb-e3fab19d0ec0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141810",
-    "createdAt": 1773896821914,
-    "updatedAt": 1773896985792,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury ladies watch brands",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-ladies-watch-brands-review-top-rated-models/"
-  },
-  {
-    "id": "499e4523-852e-4e89-9623-4237da6a1aca",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141808",
-    "createdAt": 1773896758907,
-    "updatedAt": 1773896819386,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "gold luxury watch women's",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-gold-luxury-watch-womens/"
-  },
-  {
-    "id": "db15edd2-2f6e-4d1a-b796-bbe3a6c2553c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141806",
-    "createdAt": 1773896665135,
-    "updatedAt": 1773896758145,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury shopping in st thomas",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-shopping-in-st-thomas-official-retailer/"
-  },
-  {
-    "id": "ff105a1e-1dd6-4208-8c65-fa1aaec3707b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141769",
-    "createdAt": 1773816374355,
-    "updatedAt": 1773816546774,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury nail designs",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-nail-designs-service-guide/"
-  },
-  {
-    "id": "d9976f6f-8423-4200-897f-a1219a404194",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141767",
-    "createdAt": 1773816221355,
-    "updatedAt": 1773816372021,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury green watches",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-green-watches-highly-recommended/"
-  },
-  {
-    "id": "16b18d73-6df6-45f0-9db4-caa5690d42b3",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141765",
-    "createdAt": 1773815853364,
-    "updatedAt": 1773816220816,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury presents for dad",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-luxury-presents-for-dad/"
-  },
-  {
-    "id": "6981f6b2-fd0e-4cfc-9332-349c1ff008cd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141763",
-    "createdAt": 1773815580355,
-    "updatedAt": 1773815851141,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury baby gifts girl",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-baby-gifts-girl-collection/"
-  },
-  {
-    "id": "d73669c7-8fb4-4830-86de-a69c79024d8d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141761",
-    "createdAt": 1773815412374,
-    "updatedAt": 1773815579939,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury cat carrier",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-cat-carrier-comparison-best-rated/"
-  },
-  {
-    "id": "3ebee5ae-a632-46b9-8a24-91c0999041f5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141759",
-    "createdAt": 1773815322356,
-    "updatedAt": 1773815411780,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "women sunglasses luxury",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-women-sunglasses-luxury/"
-  },
-  {
-    "id": "b4b85c51-77d4-49b0-8fff-724bd5bb6861",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141757",
-    "createdAt": 1773815092359,
-    "updatedAt": 1773815321303,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury ring designers",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-ring-designers-premium-selection/"
-  },
-  {
-    "id": "8620ebbe-1864-46b7-b5fa-f0aea6f8ff29",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141755",
-    "createdAt": 1773814904369,
-    "updatedAt": 1773815090416,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury key chain",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-recommended-luxury-key-chain/"
-  },
-  {
-    "id": "871f8d9e-99ef-48c2-91a3-16be43cfe0f7",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141753",
-    "createdAt": 1773814556355,
-    "updatedAt": 1773814903489,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury mens wedding bands",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-luxury-mens-wedding-bands-best-rankings/"
-  },
-  {
-    "id": "96953881-0a08-4d45-b289-6eadda122c80",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141751",
-    "createdAt": 1773814351365,
-    "updatedAt": 1773814555434,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury bracelets",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-mens-luxury-bracelets-premium-choices-reviewed/"
-  },
-  {
-    "id": "2e977a17-45c8-47cd-a664-26d3e587c85a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141748",
-    "createdAt": 1773814190351,
-    "updatedAt": 1773814350087,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury bracelet brands",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-mens-luxury-bracelet-brands-options-top-choices/"
-  },
-  {
-    "id": "b5e3ca7b-d7aa-442e-999e-f7616f7d23d4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141745",
-    "createdAt": 1773813979352,
-    "updatedAt": 1773814190101,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury earrings for women",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-luxury-earrings-for-women/"
-  },
-  {
-    "id": "b6cf1433-df5d-4794-bbca-7645ebdaad47",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141743",
-    "createdAt": 1773813887352,
-    "updatedAt": 1773813977757,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold bracelets",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/comparing-luxury-gold-bracelets-options/"
-  },
-  {
-    "id": "6c6bacef-c4fc-499d-89eb-ea74881c89c7",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141741",
-    "createdAt": 1773813797363,
-    "updatedAt": 1773813884517,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mens luxury necklaces",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/mens-luxury-necklaces-comparison-tech-insights/"
-  },
-  {
-    "id": "4157e036-dbbf-4828-be29-758b460ead2f",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141739",
-    "createdAt": 1773813641365,
-    "updatedAt": 1773813794375,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer bracelets",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-designer-bracelets-service-guide/"
-  },
-  {
-    "id": "1e50ced3-acb1-4dd1-af6f-e07c1ace07db",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141737",
-    "createdAt": 1773813491352,
-    "updatedAt": 1773813638481,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury key holder",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-key-holder-top-picks/"
-  },
-  {
-    "id": "456e8e85-70a6-4579-9638-c1818b7122a2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141735",
-    "createdAt": 1773813291350,
-    "updatedAt": 1773813490146,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury necklaces for women",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-necklaces-for-women/"
-  },
-  {
-    "id": "faba9f01-fe93-46b4-b831-212ce67fd2dc",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141732",
-    "createdAt": 1773813115355,
-    "updatedAt": 1773813290113,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury jewelry",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-mens-luxury-jewelry-collection/"
-  },
-  {
-    "id": "336d5d98-e83d-49c7-aacb-023f0ca1680a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141730",
-    "createdAt": 1773812905351,
-    "updatedAt": 1773813114505,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry for men",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-jewelry-for-men-review-top-rated-models/"
-  },
-  {
-    "id": "86e15d82-2b69-472b-b6f9-a6c9dbd6834d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141728",
-    "createdAt": 1773812786349,
-    "updatedAt": 1773812903002,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury mens jewelry box",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-mens-jewelry-box/"
-  },
-  {
-    "id": "441ed820-f83f-4f5c-abad-74a2c0ceba47",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141725",
-    "createdAt": 1773812666882,
-    "updatedAt": 1773812783819,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry designs",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-jewelry-designs-expert-guide/"
-  },
-  {
-    "id": "40a7d33a-914c-4a57-989e-634fe09e1a6b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141717",
-    "createdAt": 1773806789508,
-    "updatedAt": 1773806951046,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch market",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watch-market-rankings-comprehensive-list/"
-  },
-  {
-    "id": "2742c32e-5df7-43df-9e97-df8a50800304",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141715",
-    "createdAt": 1773806606514,
-    "updatedAt": 1773806789100,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer eyewear",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-designer-eyewear-premium-choices-reviewed/"
-  },
-  {
-    "id": "02d000c4-85ef-43f2-8f90-375a2ced2e4c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141713",
-    "createdAt": 1773806405530,
-    "updatedAt": 1773806605968,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury stationery brands",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-stationery-brands-quality-guide/"
-  },
-  {
-    "id": "ea40adbc-b52e-4c56-8515-9e87862e7acb",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141711",
-    "createdAt": 1773806210508,
-    "updatedAt": 1773806404536,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury cigar lighters",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-cigar-lighters-expert-buying-guide/"
-  },
-  {
-    "id": "c4e2f881-5ab1-44d8-a7d6-9902f56d1c54",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141709",
-    "createdAt": 1773806138509,
-    "updatedAt": 1773806207925,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury chronograph watch",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-chronograph-watch-vs-alternatives/"
-  },
-  {
-    "id": "130d1009-1651-473d-b397-673ff2a6fe2b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141707",
-    "createdAt": 1773806042504,
-    "updatedAt": 1773806135782,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "men's luxury black watches",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/mens-luxury-black-watches-feature-comparison/"
-  },
-  {
-    "id": "948f99d0-a764-416e-aa3b-dff5ce9be575",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141705",
-    "createdAt": 1773805820522,
-    "updatedAt": 1773806042097,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury items for women",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-items-for-women-user-guide/"
-  },
-  {
-    "id": "56c5f1cb-5bb9-40ff-bc22-46879b5369cf",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141703",
-    "createdAt": 1773805631514,
-    "updatedAt": 1773805818931,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men's gifts",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-mens-gifts-highly-recommended/"
-  },
-  {
-    "id": "7d640826-35c0-48fe-ba92-adac1c211034",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141701",
-    "createdAt": 1773805424521,
-    "updatedAt": 1773805630426,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer keychain",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-designer-keychain/"
-  },
-  {
-    "id": "a67f182d-80b0-40c9-8fc2-be4180af3ec8",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141699",
-    "createdAt": 1773805218531,
-    "updatedAt": 1773805422214,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury fine jewellery brands",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-fine-jewellery-brands-collection/"
-  },
-  {
-    "id": "249edaef-bbb6-4a25-b142-dbe4f8fb23a5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141697",
-    "createdAt": 1773804960504,
-    "updatedAt": 1773805217161,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury stores in new york city",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-stores-in-new-york-city-top-rated-and-reviews/"
-  },
-  {
-    "id": "8335ea0f-0f16-4bed-aefb-8f36c9d2a668",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141695",
-    "createdAt": 1773804891516,
-    "updatedAt": 1773804959798,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury dress watches",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-dress-watches/"
   }
 ]

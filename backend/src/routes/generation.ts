@@ -31,6 +31,12 @@ import {
   extractPublishHtml,
   serializeJsonLdScripts,
 } from "../utils/htmlPublishExtract.js";
+import { evaluateKeywordGate } from "../utils/keywordIntentGate.js";
+import { applyGuideIntentLongShellIfNeeded } from "../utils/templatePolicy.js";
+import {
+  buildKeywordAwareReferences,
+  resolveArticleAuthor,
+} from "../utils/referencePools.js";
 /**
  * 智能判断链接是否需要加 nofollow
  * 根据链接类型和性质决定 rel 属性
@@ -234,6 +240,20 @@ generationRouter.post("/generate-page", (req, res) => {
   if (!payload?.keyword?.trim()) {
     return res.status(400).json({ error: "Keyword is required" });
   }
+
+  const gate = evaluateKeywordGate(payload.keyword.trim(), {
+    pageTitle: payload.pageTitle,
+    titleType: payload.titleType,
+    forceGenerate: payload.forceGenerate,
+  });
+  if (!gate.allowed) {
+    return res.status(422).json({
+      error: `Keyword blocked (Tier ${gate.tier}): low brand/category fit for VERTU luxury guides. Reasons: ${gate.reasons.join("; ")}`,
+      tier: gate.tier,
+      score: gate.score,
+      reasons: gate.reasons,
+    });
+  }
   if (!payload?.templateContent?.trim()) {
     return res.status(400).json({ error: "Template content is required" });
   }
@@ -278,6 +298,14 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
   try {
     mergeShopifyCredentialsFromEnv(payload);
     migrateDisabledTemplate(payload, `[task ${taskId}]`);
+
+    const keywordGate = evaluateKeywordGate(payload.keyword.trim(), {
+      pageTitle: payload.pageTitle,
+      titleType: payload.titleType,
+    });
+    if (keywordGate.forceLongShell && !payload.respectTemplateChoice) {
+      applyGuideIntentLongShellIfNeeded(payload, payload.pageTitle?.trim() || payload.keyword);
+    }
 
     // 保存任务的关键信息到任务对象中（用于历史记录）
     updateTaskStatus(taskId, "queued", "任务已创建", {
@@ -2266,206 +2294,26 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       // 限制外链数量（最多4个），确保质量
       externalLinks = externalLinksList.slice(0, 4);
       
-      // 模板6/7：生成参考文献和外部权威资源（博客式模板7同样需要参考文献与外部资源以增强真实性与可信度）
-      if (isTemplate6) {
-        // 根据关键词类型生成相关的参考文献和外部资源
-        const currentYear = new Date().getFullYear();
-        
-        // 生成参考文献（学术风格）- 使用真实、权威的外部资源链接
-        if (primaryCategory === "phone") {
-          references = [
-            {
-              author: "NIST Cybersecurity Framework",
-              year: String(currentYear - 1),
-              title: "Mobile Device Security Guidelines",
-              publication: "National Institute of Standards and Technology",
-              url: "https://www.nist.gov/cyberframework",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "MIT Technology Review",
-              year: String(currentYear - 1),
-              title: "The Future of Smartphone Technology",
-              publication: "MIT Technology Review",
-              url: "https://www.technologyreview.com/tag/smartphones/",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "IEEE Communications Society",
-              year: String(currentYear - 2),
-              title: "Mobile Security and Privacy Research",
-              publication: "IEEE Communications Magazine",
-              url: "https://www.comsoc.org/publications/magazines",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else if (primaryCategory === "watch") {
-          references = [
-            {
-              author: "Forbes Contributors",
-              year: String(currentYear - 1),
-              title: "Luxury Watch Market Analysis and Trends",
-              publication: "Forbes",
-              url: "https://www.forbes.com/sites/forbes-personal-shopper/2024/01/15/best-luxury-watches/",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "Hodinkee Editorial Team",
-              year: String(currentYear - 1),
-              title: "Comprehensive Guide to Luxury Timepieces",
-              publication: "Hodinkee",
-              url: "https://www.hodinkee.com/",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "McKinsey & Company",
-              year: String(currentYear - 1),
-              title: "Luxury Watch Industry Report",
-              publication: "McKinsey Global Institute",
-              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else if (primaryCategory === "ring") {
-          references = [
-            {
-              author: "Wearable Technology Research",
-              year: String(currentYear - 1),
-              title: "Smart Ring Technology and Luxury Wearables",
-              publication: "Wearable Technology Review",
-              url: "https://www.wareable.com/smart-rings",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "TechCrunch Editorial",
-              year: String(currentYear - 1),
-              title: "The Evolution of Smart Ring Devices",
-              publication: "TechCrunch",
-              url: "https://techcrunch.com/tag/wearables/",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else if (primaryCategory === "earbud") {
-          references = [
-            {
-              author: "CNET Reviews",
-              year: String(currentYear - 1),
-              title: "Premium Audio Technology Analysis",
-              publication: "CNET",
-              url: "https://www.cnet.com/audio/",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "The Verge",
-              year: String(currentYear - 1),
-              title: "Wireless Audio Technology Trends",
-              publication: "The Verge",
-              url: "https://www.theverge.com/audio",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else {
-          // 通用参考文献 - 使用真实权威资源
-          references = [
-            {
-              author: "Harvard Business Review",
-              year: String(currentYear - 1),
-              title: "Luxury Technology Market Analysis",
-              publication: "Harvard Business Review",
-              url: "https://hbr.org/topic/technology",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "McKinsey & Company",
-              year: String(currentYear - 1),
-              title: "Luxury Goods Market Report",
-              publication: "McKinsey Global Institute",
-              url: "https://www.mckinsey.com/industries/retail/our-insights/the-state-of-fashion-2024",
-              linkType: "authoritative" as const
-            },
-            {
-              author: "Forbes Contributors",
-              year: String(currentYear - 1),
-              title: "Premium Technology Trends and Insights",
-              publication: "Forbes",
-              url: "https://www.forbes.com/innovation/",
-              linkType: "authoritative" as const
-            }
-          ];
-        }
-        
-        // 生成外部权威资源（更丰富的资源类型）
-        if (isPhoneKeyword) {
-          externalResources = [
-            {
-              title: "Mobile Security Best Practices - NIST",
-              url: "https://www.nist.gov/publications/mobile-security",
-              description: "National Institute of Standards and Technology guidelines on mobile device security",
-              type: "Government Report",
-              source: "NIST",
-              linkType: "authoritative" as const
-            },
-            {
-              title: "Smartphone Technology Trends - MIT Technology Review",
-              url: "https://www.technologyreview.com/tag/smartphones/",
-              description: "Latest research and analysis on smartphone technology from MIT",
-              type: "Academic Publication",
-              source: "MIT Technology Review",
-              linkType: "authoritative" as const
-            },
-            {
-              title: "Mobile Device Privacy Study - Stanford University",
-              url: "https://www.stanford.edu/research/mobile-privacy",
-              description: "Academic research on mobile device privacy and data protection",
-              type: "Academic Paper",
-              source: "Stanford University",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else if (isWatchKeyword) {
-          externalResources = [
-            {
-              title: "Luxury Watch Market Report - McKinsey & Company",
-              url: "https://www.mckinsey.com/industries/luxury-watches",
-              description: "Industry analysis and market insights on luxury timepieces",
-              type: "Industry Report",
-              source: "McKinsey & Company",
-              linkType: "authoritative" as const
-            },
-            {
-              title: "Horological Research - British Horological Institute",
-              url: "https://www.bhi.co.uk/research",
-              description: "Academic research and historical analysis of timepiece technology",
-              type: "Academic Resource",
-              source: "British Horological Institute",
-              linkType: "authoritative" as const
-            }
-          ];
-        } else {
-          // 通用外部资源
-          externalResources = [
-            {
-              title: "Luxury Technology Insights - Harvard Business Review",
-              url: "https://hbr.org/topic/luxury-technology",
-              description: "Business analysis and insights on luxury technology markets",
-              type: "Business Publication",
-              source: "Harvard Business Review",
-              linkType: "authoritative" as const
-            },
-            {
-              title: "Premium Product Research - Wharton School",
-              url: "https://www.wharton.upenn.edu/research/premium-products",
-              description: "Academic research on premium product markets and consumer behavior",
-              type: "Academic Research",
-              source: "Wharton School",
-              linkType: "authoritative" as const
-            }
-          ];
-        }
-        
-        console.log(`[task ${taskId}] 模板${isTemplate6 ? '6' : '7'}数据准备完成:`);
-        console.log(`  - 参考文献数量: ${references.length}`);
-        console.log(`  - 外部资源数量: ${externalResources.length}`);
+      // 模板5/6：关键词感知的参考文献与外部权威资源
+      if (isTemplate5 || isTemplate6) {
+        references = buildKeywordAwareReferences(
+          payload.keyword,
+          primaryCategory,
+          payload.titleType
+        );
+        externalResources = references
+          .filter((ref) => ref.url)
+          .map((ref) => ({
+            title: ref.title || ref.publication || "Reference",
+            url: ref.url!,
+            description: ref.publication ? `Published by ${ref.publication}` : undefined,
+            type: "Industry Reference",
+            source: ref.author || ref.publication,
+            linkType: "authoritative" as const,
+          }));
+        console.log(
+          `[task ${taskId}] 模板5/6 参考文献 ${references.length} 条, 外部资源 ${externalResources.length} 条`
+        );
       }
       
       console.log(`[task ${taskId}] 模板${isTemplate4 ? "4" : isTemplate5 ? "5" : isTemplate6 ? "6" : "4/5"}数据准备完成:`);
@@ -2888,6 +2736,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
+    const resolvedAuthor = resolveArticleAuthor(payload);
+
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
       pageTitle: finalPageTitle,
@@ -2910,8 +2760,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       relatedGuides,
       externalLinks,
       // 模板6/7新增字段
-      references: isTemplate6 ? references : [],
-      externalResources: isTemplate6 ? externalResources : [],
+      references: isTemplate5 || isTemplate6 ? references : [],
+      externalResources: isTemplate5 || isTemplate6 ? externalResources : [],
       productSectionTitle,
       productSectionIntro,
       showTrustStrip: showTrustStripFinal,
@@ -2919,9 +2769,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       normalizeBlogTables: true,
       articleDatePublishedISO: payload.articleDatePublishedISO,
       articleDateModifiedISO: payload.articleDateModifiedISO,
-      articleAuthorName: payload.articleAuthorName,
-      articleAuthorJobTitle: payload.articleAuthorJobTitle,
-      articleAuthorBio: payload.articleAuthorBio,
+      articleAuthorName: resolvedAuthor.name,
+      articleAuthorJobTitle: resolvedAuthor.jobTitle,
+      articleAuthorBio: resolvedAuthor.bio,
+      titleType: payload.titleType,
+      relatedGuidesCompact: isTemplate1 || isTemplate2,
       categoryImages,
       craftImages,
     });

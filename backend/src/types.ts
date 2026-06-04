@@ -20,6 +20,8 @@ export interface GenerationRequestPayload {
   templateType?: string; // 模板类型：template-1 … template-6（template-7 已停用，后端自动映射为 template-6）
   /** 为 true 时跳过后端 guide-intent 自动升级模板（严格使用用户所选壳） */
   respectTemplateChoice?: boolean;
+  /** Tier D 关键词仍强制生成（单条提交时可勾选） */
+  forceGenerate?: boolean;
   /** 可选：Article JSON-LD 的 datePublished（ISO 8601）。不填则使用渲染时刻。 */
   articleDatePublishedISO?: string;
   /** 可选：Article JSON-LD 的 dateModified（ISO 8601）。不填则与发布日期或渲染时刻一致。 */

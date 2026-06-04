@@ -10,7 +10,10 @@
     "start": "node dist/server.js",
     "test:dedup": "tsx src/utils/pageProductDedup.test.ts",
     "test:images": "tsx src/utils/articleImageMatching.test.ts",
-    "test:alignment": "tsx src/utils/contentAlignment.test.ts"
+    "test:alignment": "tsx src/utils/contentAlignment.test.ts",
+    "test:keyword-gate": "tsx src/utils/keywordIntentGate.test.ts",
+    "audit:history": "tsx src/scripts/auditHistoryPages.ts",
+    "audit:rewrite-queue": "tsx src/scripts/auditHistoryPages.ts --rewrite-queue"
   },
   "dependencies": {
     "@sanity/client": "^6.28.1",

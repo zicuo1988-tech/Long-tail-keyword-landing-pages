@@ -752,10 +752,31 @@ form.addEventListener("submit", async (event) => {
     }
 
     // 解析关键词池（每行一个）
-    const keywords = keywordPool
+    const rawKeywords = keywordPool
       .split("\n")
       .map(k => k.trim())
       .filter(k => k.length > 0);
+
+    /** Tier D 泛词（与 backend keywordIntentGate 对齐）— 批量模式自动跳过 */
+    function isTierDKeyword(kw) {
+      const t = String(kw || "").toLowerCase();
+      const tierDPatterns = [
+        /\b(charging\s+cable|charger|usb\s+c|power\s+adapter|wall\s+charger|wireless\s+charger)\b/,
+        /\b(screen\s+protector|tempered\s+glass|phone\s+case|phone\s+cover|silicone\s+case)\b/,
+        /\b(screen\s+repair|battery\s+replacement|fix\s+my\s+phone|repair\s+shop|cracked\s+screen)\b/,
+        /\b(cheapest|budget|affordable|under\s+\$?\d+|free\s+phone|refurbished\s+budget)\b/,
+        /\b(download\s+apk|mod\s+apk|crack|unlock\s+tool|root\s+guide|jailbreak)\b/,
+        /\b(sim\s+card\s+adapter|memory\s+card|sd\s+card|otg\s+cable)\b/,
+      ];
+      return tierDPatterns.some((p) => p.test(t));
+    }
+
+    const skippedKeywords = rawKeywords.filter(isTierDKeyword);
+    const keywords = rawKeywords.filter((k) => !isTierDKeyword(k));
+
+    if (skippedKeywords.length > 0) {
+      appendLog(`已跳过 ${skippedKeywords.length} 个 Tier D 低相关关键词: ${skippedKeywords.slice(0, 5).join(", ")}${skippedKeywords.length > 5 ? "…" : ""}`, "warn");
+    }
 
     if (keywords.length === 0) {
       updateProgress("failed", "关键词池为空");
@@ -844,6 +865,8 @@ form.addEventListener("submit", async (event) => {
         templateType: currentTemplate,
         templateContent: currentTemplateContent,
         respectTemplateChoice: getRespectTemplateChoice(formData),
+    forceGenerate: formData.get("forceGenerate") === "on",
+    articleAuthorName: String(formData.get("articleAuthorName") ?? "").trim() || undefined,
         useElementor: formData.get("useElementor") === "on",
         wordpress: {
           url: String(formData.get("wpUrl") ?? "").trim(),
@@ -1003,6 +1026,8 @@ form.addEventListener("submit", async (event) => {
     templateType,
     templateContent,
     respectTemplateChoice: getRespectTemplateChoice(formData),
+    forceGenerate: formData.get("forceGenerate") === "on",
+    articleAuthorName: String(formData.get("articleAuthorName") ?? "").trim() || undefined,
     useElementor: formData.get("useElementor") === "on",
     wordpress: {
       url: String(formData.get("wpUrl") ?? "").trim(),

@@ -45,16 +45,36 @@ function p(id: number, name: string, cat = ""): ProductSummary {
   assert.ok(result.reasons.some((r) => r.includes("topic mismatch") || r.includes("cross-category")));
 }
 
-// aligned watch copy → pass
+// aligned watch copy → pass (includes takeaway + question H2)
 {
   const result = evaluateContentAlignment({
-    articleContent: "<p>Grand Watch and Metawatch timepieces define VERTU horology.</p>",
+    articleContent: `<h2>What should you look for in a luxury smartwatch?</h2>
+<p>Start with Grand Watch or Metawatch if horology matters—these should top your shortlist when you compare luxury smartwatches for daily wear.</p>
+<p>Grand Watch and Metawatch timepieces define VERTU horology.</p>`,
     keyword: "luxury smartwatch",
     pageTitle: "Best Luxury Smartwatch",
     availableProductNames: ["Grand Watch", "Metawatch"],
     primaryCategory: "watch",
   });
   assert.equal(result.needsRetry, false);
+}
+
+// spec stacking → needsRetry
+{
+  const result = evaluateContentAlignment({
+    articleContent: `<h2>How to choose?</h2>
+<p>You should consider build quality and service before buying.</p>
+<ol>
+<li>16GB RAM - 512GB storage</li>
+<li>50MP camera - 64MP telephoto</li>
+<li>5655 mAh - 65W charging</li>
+</ol>`,
+    keyword: "luxury phone",
+    pageTitle: "Best Luxury Phone",
+    availableProductNames: ["Agent Q"],
+    primaryCategory: "phone",
+  });
+  assert.ok(result.reasons.some((r) => r.includes("spec list stacking")));
 }
 
 // off-list product mention

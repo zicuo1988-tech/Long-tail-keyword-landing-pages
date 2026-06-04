@@ -52,6 +52,11 @@
     {{{PRODUCT_STRUCTURED_DATA}}}
     </script>
     {{/if}}
+    {{#if HOWTO_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{HOWTO_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
     
     <style>
         <!-- SHARED_LANDING_CSS -->
@@ -1721,6 +1726,8 @@
     </div>
     {{/if}}
 
+    {{{RELATED_GUIDES_HTML}}}
+
     {{#if externalLinks.length}}
     <!-- External Links -->
     <div class="links-section">
@@ -1800,6 +1807,33 @@
             {{/each}}
         </div>
     </div>
+    {{/if}}
+
+    {{#if references.length}}
+    <section class="references-section" style="max-width:960px;margin:2rem auto;padding:0 20px">
+        <h2 class="references-title" style="font-size:1.35rem;margin-bottom:1rem">References</h2>
+        <ol class="references-list" style="margin:0;padding-left:1.25rem;line-height:1.7">
+            {{#each references}}
+            <li style="margin-bottom:0.75rem">
+                {{#if this.author}}<span>{{this.author}}</span>{{#if this.year}} ({{this.year}}){{/if}}. {{/if}}
+                {{#if this.title}}<em>{{this.title}}</em>. {{/if}}
+                {{#if this.publication}}{{this.publication}}. {{/if}}
+                {{#if this.url}}<a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a>{{/if}}
+            </li>
+            {{/each}}
+        </ol>
+    </section>
+    {{/if}}
+
+    {{#if externalResources.length}}
+    <section class="links-section" style="max-width:960px;margin:2rem auto;padding:0 20px">
+        <h2 class="links-title">Further Reading</h2>
+        <ul class="links-list">
+            {{#each externalResources}}
+            <li style="margin-bottom:8px"><a href="{{this.url}}" rel="{{getRelAttribute this.linkType}}">{{this.title}}</a></li>
+            {{/each}}
+        </ul>
+    </section>
     {{/if}}
 
     {{#if faqItems.length}}

@@ -2,6 +2,14 @@ import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 import { injectSharedLandingCss } from "../utils/sharedLandingCss.js";
+import {
+  buildAuthorBylineHtml,
+  buildHowToSchemaJson,
+  buildInternalLinksHtml,
+  buildRelatedGuidesHtml,
+  extractHowToStepsFromHtml,
+  injectServerSideToc,
+} from "../utils/landingPartialHtml.js";
 
 /** 商品区上方信任条（与 template-5 Quick Stats 互补，用于未含统计条的模板） */
 export const DEFAULT_TRUST_STRIP_HTML =
@@ -25,7 +33,6 @@ function formatIsoDateForDisplay(iso: string): string {
   });
 }
 
-/** TOC + GA4/dataLayer 事件（站点已加载 gtag 时生效） */
 function buildPageUxScript(): string {
   return `<script>(function(){
 function llTrack(n,p){try{if(typeof gtag==='function'){gtag('event',n,p||{});}else if(Array.isArray(window.dataLayer)){window.dataLayer.push(Object.assign({event:n},p||{}));}}catch(e){}}
@@ -74,31 +81,6 @@ function llEngagementTimer(){
     llTrack('ll_engagement_timer',{engagement_time_msec:30000});
   },30000);
 }
-function buildToc(){
-  var root=document.querySelector('.content.ai-article-body');
-  if(!root)return;
-  var h2s=root.querySelectorAll('h2');
-  if(!h2s||h2s.length<2)return;
-  var wrap=document.createElement('nav');
-  wrap.className='ll-on-this-page';
-  wrap.setAttribute('aria-label','On this page');
-  wrap.style.cssText='margin:0 0 1.25rem;padding:12px 14px;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;font-size:14px;line-height:1.5';
-  wrap.innerHTML='<p class="ll-toc-title" style="margin:0 0 8px;font-weight:700;font-size:15px;color:#111">On this page</p><ol class="ll-toc-list" style="margin:0;padding-left:1.25rem;color:#333"></ol>';
-  var ol=wrap.querySelector('.ll-toc-list');
-  for(var i=0;i<h2s.length;i++){
-    var h=h2s[i];
-    if(!h.id)h.id='ll-sec-'+(i+1);
-    var li=document.createElement('li');
-    var l=document.createElement('a');
-    l.href='#'+h.id;
-    l.style.color='#1a5fb4';
-    l.textContent=(h.textContent||'').replace(/\\s+/g,' ').trim().slice(0,140);
-    li.appendChild(l);
-    if(ol)ol.appendChild(li);
-  }
-  root.insertBefore(wrap,root.firstChild);
-}
-if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',buildToc);else buildToc();
 llScrollDepth();
 llEngagementTimer();
 })();<\/script>`;
@@ -288,6 +270,10 @@ export interface RenderTemplateInput {
   categoryImages?: Record<string, string>;
   /** Sanity 图库：工艺区槽位 key → CDN URL */
   craftImages?: Record<string, string>;
+  /** 标题类型 — 用于 HowTo schema 等 */
+  titleType?: string;
+  /** 长模板渲染 Related Guides 区块为 compact（模板 1/2） */
+  relatedGuidesCompact?: boolean;
 }
 
 export function renderTemplate({
@@ -324,11 +310,14 @@ export function renderTemplate({
   articleAuthorBio,
   categoryImages = {},
   craftImages = {},
+  titleType,
+  relatedGuidesCompact = false,
 }: RenderTemplateInput) {
   const templateContentWithSharedCss = injectSharedLandingCss(templateContent);
   const template = Handlebars.compile(templateContentWithSharedCss);
 
   let aiContentResolved = markdownToHtmlIfNeeded(aiContent);
+  aiContentResolved = injectServerSideToc(aiContentResolved);
   if (normalizeBlogTables) {
     aiContentResolved = wrapArticleTablesInScroll(aiContentResolved);
   }
@@ -698,6 +687,18 @@ export function renderTemplate({
   /** Citations merged into main Article @graph; no second Article script */
   const citationsStructuredData = "";
 
+  const authorBylineHtml = buildAuthorBylineHtml(authorNamePlain, authorJobPlain, authorBioPlain);
+  const relatedGuidesHtml = buildRelatedGuidesHtml(relatedGuides, {
+    compact: relatedGuidesCompact,
+  });
+  const internalLinksHtml = buildInternalLinksHtml(internalLinks);
+
+  let howToStructuredData = "";
+  if (titleType === "how-to" || titleType === "services-guides") {
+    const steps = extractHowToStepsFromHtml(aiContentResolved);
+    howToStructuredData = buildHowToSchemaJson(pageTitlePlain, pageUrl || "", steps);
+  }
+
   const rendered = template({
     PAGE_TITLE: pageTitle,
     PAGE_DESCRIPTION: pageDescription || "", // 页面描述（用于模板2和模板3）
@@ -740,6 +741,12 @@ export function renderTemplate({
     AUTHOR_NAME: authorNamePlain,
     AUTHOR_JOB: authorJobPlain,
     AUTHOR_BIO: authorBioPlain,
+    AUTHOR_BYLINE_HTML: new Handlebars.SafeString(authorBylineHtml),
+    RELATED_GUIDES_HTML: new Handlebars.SafeString(relatedGuidesHtml),
+    INTERNAL_LINKS_HTML: new Handlebars.SafeString(internalLinksHtml),
+    HOWTO_STRUCTURED_DATA: howToStructuredData
+      ? new Handlebars.SafeString(howToStructuredData)
+      : "",
     categoryImages,
     craftImages,
   });

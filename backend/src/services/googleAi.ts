@@ -44,8 +44,8 @@ function selectModel(templateType?: string, isComplexTask: boolean = false): str
   // 简单任务使用flash模型（配额更高，速度更快）
   return "gemini-2.0-flash";
 }
-const MIN_ARTICLE_LENGTH = 400; // 最少字符数（一屏内容）
-const MAX_ARTICLE_LENGTH = 800; // 最大字符数（确保不超过一屏）
+const MIN_ARTICLE_LENGTH = 2400; // short commercial shells: ~400 words
+const MAX_ARTICLE_LENGTH = 3600; // short commercial shells: ~600 words
 const MIN_HEADING_COUNT = 2; // 至少 2 个H2标题（主标题 + 2-3个子标题，不使用H1）
 const MIN_PARAGRAPH_COUNT = 3; // 至少 3 个段落（介绍 + 支持段落 + 结论）
 
@@ -236,7 +236,8 @@ async function generateWithKey(
     keyword,
     relevantProducts,
     pageTitle,
-    conversionMode
+    conversionMode,
+    useLongFormArticleLimits
   );
   
   // 检测性别和目标受众
@@ -445,6 +446,15 @@ ANSWER-FIRST OPENING & LOCAL CONSISTENCY (CRITICAL):
 - If the title or keyword names a broad device or category (e.g. modular phones, dumb phones, unlocked phones, durable smartphones, generic camera buying) and does NOT contain "VERTU", structure the opening H2 + first paragraphs as category education first (how to choose, what matters, common pitfalls), then introduce VERTU only where it naturally fits the criteria (e.g. luxury flagship tier)—do not open with a VERTU sales pitch before the reader understands the category.
 - If the title, keyword, or topic clearly names a country or region (e.g. India, Pakistan, UAE, UK), keep buying guidance, shipping, price discussion, and retailer context aligned to that market. Do not switch to another territory unless you explicitly label a separate comparison.
 - For VERTU products: specifications, materials, services, and prices MUST come only from the knowledge base. If the knowledge base does not state a fact, do not invent it—omit or direct readers to the official site for current confirmation.
+
+CONTENT LAYER STRUCTURE (MANDATORY — write like an editor, not a spec paste):
+${useLongFormArticleLimits ? `Layer 1 (Answer-first): First <h2> + first <p> — a scannable takeaway for "${pageTitle}" (2–4 sentences).
+Layer 2 (Decision framework): One <h2> with how to choose, trade-offs, or common mistakes for "${keyword}" (general category guidance allowed; no invented VERTU facts).
+Layer 3 (VERTU differentiation): One or more <h2> sections with KB-only specs, materials, prices, and services for relevant VERTU products.
+Layer 4 (Action): A closing section with a clear recommendation and ONE scenario drawn from "Buying angles" or "CONCIERGE SERVICE CASE STUDIES" in the knowledge base (paraphrase; do not invent details).` : `Layer 1: Direct answer in first <h2> + <p>.
+Layer 2: One decision or benefit <h2> with a short numbered list.
+Layer 3: VERTU-specific facts from the knowledge base only.
+Layer 4: One-sentence recommendation + soft link to official collection where relevant.`}
 
 GENDER AND TARGET AUDIENCE MATCHING (CRITICAL):
 - If the title/keyword mentions "husband", "men", "men's", "male", "for him", "gift for him" → content MUST focus on products suitable for MEN/HUSBANDS, NOT women's products
@@ -674,7 +684,7 @@ SEO OPTIMISATION REQUIREMENTS (Natural, Not Obvious):
    - Example: Instead of repeating "luxury phone" 5 times, use "premium device", "handcrafted phone", "luxury smartphone" as variations
 
 2. CONTENT LENGTH (CRITICAL - Must fit on one screen):
-   - Target: 400-600 words MAXIMUM (approximately one screen of content)
+   - Target: ${currentMinLength}-${currentMaxLength} characters (approximately 400–600 words; commercial short shells only)
    - Every word must add value - no filler content
    - Focus on directly answering the keyword question
    - Be concise but complete - ensure all sections are fully written
@@ -754,7 +764,7 @@ CONTENT STRUCTURE TEMPLATE (BRIEF, ONE-SCREEN FORMAT - follow this exact structu
    - AVOID: "VERTU offers ${keyword}..." (missing article) or "Don't miss out on..." (salesperson tone)
 
 CONTENT REQUIREMENTS (BRIEF, ONE-SCREEN, COMPLETE):
-- Target: 400-600 words MAXIMUM (must fit on one screen without scrolling)
+- Target: ${currentMinLength}-${currentMaxLength} characters (approximately 400–600 words; must be complete, not truncated)
 - Every section MUST be COMPLETE - no incomplete sentences, no cut-off content
 - Use concise, factual language (only knowledge base facts)
 - Include specific numbers, specifications, and features from knowledge base (but be brief)
@@ -1010,7 +1020,7 @@ EXAMPLE OUTPUT STRUCTURE (BRIEF, ONE-SCREEN FORMAT - WITH PROPER GRAMMAR AND REF
 NOTE: Notice the proper use of articles (a/an/the) throughout, and the refined, professional tone (private butler, not salesperson).
 
 IMPORTANT: 
-${useLongFormArticleLimits ? "- No hard word limit: prioritise depth, completeness, and factual richness while staying tightly aligned to the title and keyword\n- Aim to cover the topic thoroughly so readers do not need to look elsewhere" : "- Keep total word count between 400-600 words"}
+${useLongFormArticleLimits ? "- No hard character ceiling: prioritise depth, completeness, and factual richness while staying tightly aligned to the title and keyword\n- Aim to cover the topic thoroughly so readers do not need to look elsewhere" : `- Keep total plain-text length between ${currentMinLength} and ${currentMaxLength} characters (approximately 400–600 words)`}
 - Every sentence must be complete
 - No incomplete thoughts or cut-off content
 - Focus on directly answering the keyword question`;
@@ -2616,15 +2626,26 @@ function extractKbSection(kbContent: string, headerMarker: string): string {
   return nextHr === -1 ? rest.trim() : rest.slice(0, nextHr).trim();
 }
 
-function appendCommercialKbSections(
+function appendExtraKbSections(
   content: string,
   fullKb: string,
-  conversionMode?: ConversionMode
+  conversionMode?: ConversionMode,
+  useLongForm?: boolean
 ): string {
-  if (conversionMode !== "commercial") return content;
-  const conversionBlock = extractKbSection(fullKb, "CONVERSION COPY BLOCKS");
-  if (!conversionBlock || content.includes("CONVERSION COPY BLOCKS")) return content;
-  return `${content}\n\n${conversionBlock}`;
+  let out = content;
+  if (conversionMode === "commercial") {
+    const conversionBlock = extractKbSection(fullKb, "CONVERSION COPY BLOCKS");
+    if (conversionBlock && !out.includes("CONVERSION COPY BLOCKS")) {
+      out = `${out}\n\n${conversionBlock}`;
+    }
+  }
+  if (useLongForm) {
+    const caseStudies = extractKbSection(fullKb, "CONCIERGE SERVICE CASE STUDIES");
+    if (caseStudies && !out.includes("CONCIERGE SERVICE CASE STUDIES")) {
+      out = `${out}\n\n${caseStudies}`;
+    }
+  }
+  return out;
 }
 
 function filterKnowledgeBaseByProductType(
@@ -2632,7 +2653,8 @@ function filterKnowledgeBaseByProductType(
   keyword: string,
   relevantProducts: string[],
   pageTitle?: string,
-  conversionMode?: ConversionMode
+  conversionMode?: ConversionMode,
+  useLongForm?: boolean
 ): string {
   if (!kbContent || !keyword) {
     return kbContent;
@@ -2655,7 +2677,7 @@ function filterKnowledgeBaseByProductType(
   
   // 如果没有明确的产品类型，返回完整知识库
   if (!isPhoneKeyword && !isWatchKeyword && !isRingKeyword && !isEarbudKeyword) {
-    return appendCommercialKbSections(kbContent, kbContent, conversionMode);
+    return appendExtraKbSections(kbContent, kbContent, conversionMode, useLongForm);
   }
 
   // 如果有关联产品，只保留这些产品的信息
@@ -2841,7 +2863,7 @@ function filterKnowledgeBaseByProductType(
     
     console.log(`[GoogleAI] 知识库过滤: 关键词="${keyword}", 相关产品=${relevantProducts.join(', ')}, 包含Agent Q=${hasAgentQ}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
     
-    return appendCommercialKbSections(filtered || kbContent, kbContent, conversionMode);
+    return appendExtraKbSections(filtered || kbContent, kbContent, conversionMode, useLongForm);
   }
 
   // 如果没有相关产品，根据产品类型过滤
@@ -2948,7 +2970,7 @@ function filterKnowledgeBaseByProductType(
   
   console.log(`[GoogleAI] 知识库类型过滤: 关键词="${keyword}", 产品类型=${isRingKeyword ? 'ring' : isWatchKeyword ? 'watch' : isEarbudKeyword ? 'earbud' : isPhoneKeyword ? 'phone' : 'unknown'}, 原始长度=${kbContent.length}, 过滤后长度=${filtered.length}`);
   
-  return appendCommercialKbSections(filtered || kbContent, kbContent, conversionMode);
+  return appendExtraKbSections(filtered || kbContent, kbContent, conversionMode, useLongForm);
 }
 
 // 从文本中提取FAQ的辅助函数

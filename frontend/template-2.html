@@ -46,6 +46,11 @@
     {{{ITEMLIST_STRUCTURED_DATA}}}
     </script>
     {{/if}}
+    {{#if HOWTO_STRUCTURED_DATA}}
+    <script type="application/ld+json">
+    {{{HOWTO_STRUCTURED_DATA}}}
+    </script>
+    {{/if}}
     
     <style>
         <!-- SHARED_LANDING_CSS -->
@@ -1307,6 +1312,8 @@
 
         <!-- 内容区域 -->
         <div class="content-container">
+            {{{AUTHOR_BYLINE_HTML}}}
+            {{{EDITORIAL_LEAD_HTML}}}
             <div class="content ai-article-body">
                 {{{AI_GENERATED_CONTENT}}}
             </div>
@@ -1380,6 +1387,9 @@
             </div>
         </div>
         {{/if}}
+
+        {{{INTERNAL_LINKS_HTML}}}
+        {{{RELATED_GUIDES_HTML}}}
 
         {{#if faqItems.length}}
         <!-- FAQ 区域 -->
