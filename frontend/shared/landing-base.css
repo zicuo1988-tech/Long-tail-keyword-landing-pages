@@ -149,48 +149,135 @@
     box-sizing: border-box;
 }
 
-/* AI article tables */
-.content-container .content.ai-article-body {
+/* AI article tables — WordPress body + Sanity .ll-landing-root fragment */
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body,
+.luxury-life-guide-body .ai-article-body,
+.luxury-life-guide-body .content.ai-article-body {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     max-width: 100%;
 }
 
-.content-container .content.ai-article-body .table-wrapper {
-    overflow-x: auto;
-    margin: 1.5em 0;
-    max-width: 100%;
-    border-radius: 8px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body .table-wrapper,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body .table-wrapper,
+.luxury-life-guide-body .ai-article-body .table-wrapper,
+.luxury-life-guide-body .content.ai-article-body .table-wrapper {
+    overflow-x: auto !important;
+    margin: 1.5em 0 !important;
+    max-width: 100% !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
 }
 
-.content-container .content.ai-article-body table {
-    width: 100%;
-    min-width: 480px;
-    border-collapse: collapse;
-    font-size: 0.95rem;
-    table-layout: fixed;
-    background: #fff;
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table,
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table.ll-article-table,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body table,
+.luxury-life-guide-body .ai-article-body table,
+.luxury-life-guide-body .content.ai-article-body table,
+.ai-article-body table.ll-article-table {
+    width: 100% !important;
+    min-width: 480px !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    font-size: 0.95rem !important;
+    table-layout: fixed !important;
+    background: #fff !important;
+    margin: 0 !important;
 }
 
-.content-container .content.ai-article-body thead {
-    background: #1a1a1a;
-    color: #fff;
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body th,
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body td,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body th,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body td,
+.luxury-life-guide-body .ai-article-body th,
+.luxury-life-guide-body .ai-article-body td,
+.luxury-life-guide-body .content.ai-article-body th,
+.luxury-life-guide-body .content.ai-article-body td,
+.ai-article-body table.ll-article-table th,
+.ai-article-body table.ll-article-table td {
+    padding: 12px 16px !important;
+    border: 1px solid #e8e8e8 !important;
+    vertical-align: top !important;
+    word-break: break-word !important;
+    text-align: left !important;
+    line-height: 1.5 !important;
 }
 
-.content-container .content.ai-article-body th,
-.content-container .content.ai-article-body td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #e8e8e8;
-    vertical-align: top;
-    word-break: break-word;
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body thead,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body thead,
+.luxury-life-guide-body .ai-article-body thead {
+    background: #1a1a1a !important;
 }
 
-.content-container .content.ai-article-body tbody tr:nth-child(even) {
-    background: #fafafa;
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body thead th,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body thead th,
+.luxury-life-guide-body .ai-article-body thead th {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-color: #333 !important;
 }
 
-.content-container .content.ai-article-body pre {
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body tbody tr:nth-child(even) td,
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body tbody tr:nth-child(even) td,
+.luxury-life-guide-body .ai-article-body tbody tr:nth-child(even) td {
+    background: #fafafa !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table:not(:has(thead)) tbody tr:first-child th,
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table:not(:has(thead)) tbody tr:first-child td,
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table:not(:has(thead)) > tr:first-child th,
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body table:not(:has(thead)) > tr:first-child td,
+.luxury-life-guide-body .ai-article-body table:not(:has(thead)) tbody tr:first-child td {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-color: #333 !important;
+}
+
+/* Sanity / Next.js — broad table fallback (no .ai-article-body required) */
+.luxury-life-guide-body table,
+.ll-landing-root table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    font-size: 0.95rem !important;
+    background: #fff !important;
+    margin: 1em 0 !important;
+}
+
+.luxury-life-guide-body table th,
+.luxury-life-guide-body table td,
+.ll-landing-root table th,
+.ll-landing-root table td {
+    padding: 12px 16px !important;
+    border: 1px solid #e8e8e8 !important;
+    vertical-align: top !important;
+    word-break: break-word !important;
+    text-align: left !important;
+    line-height: 1.5 !important;
+}
+
+.luxury-life-guide-body table thead th,
+.ll-landing-root table thead th {
+    background: #1a1a1a !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    border-color: #333 !important;
+}
+
+.luxury-life-guide-body .table-wrapper,
+.ll-landing-root .table-wrapper {
+    overflow-x: auto !important;
+    margin: 1.5em 0 !important;
+    max-width: 100% !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .content-container .content.ai-article-body pre,
+.luxury-life-guide-body .content.ai-article-body pre {
     margin: 1.5em 0;
     padding: 1rem 1.25rem;
     background: #f6f6f6;
@@ -249,4 +336,107 @@
     margin: 0;
     padding-left: 1.25rem;
     line-height: 1.7;
+}
+
+/* ==========================================================================
+   landing-typography — titles + article body (WP body + Sanity .ll-landing-root)
+   ========================================================================== */
+
+:is(body, .ll-landing-root)[class*="template-"] {
+    --ll-page-title-size: clamp(1.75rem, 3vw, 2.25rem);
+    --ll-page-title-weight: 700;
+    --ll-page-title-transform: uppercase;
+    --ll-page-title-spacing: 1px;
+    --ll-page-title-color: #000;
+    --ll-page-title-align: center;
+    --ll-hero-title-size: clamp(2rem, 4vw, 3rem);
+    --ll-hero-title-color: #fff;
+    --ll-section-heading-size: clamp(1.25rem, 2vw, 1.5rem);
+}
+
+:is(body, .ll-landing-root)[class*="template-"].layout-editorial {
+    --ll-page-title-transform: none;
+    --ll-page-title-spacing: -0.02em;
+}
+
+:is(body, .ll-landing-root)[class*="template-"].layout-editorial h1.ll-page-title.title,
+:is(body, .ll-landing-root)[class*="template-"].layout-product-first h1.ll-page-title.title,
+:is(body, .ll-landing-root)[class*="template-"].layout-ranking h1.ll-page-title.title,
+:is(body, .ll-landing-root)[class*="template-"].layout-extended h1.ll-page-title.title {
+    font-size: var(--ll-page-title-size) !important;
+    font-weight: var(--ll-page-title-weight) !important;
+    line-height: 1.25 !important;
+    letter-spacing: var(--ll-page-title-spacing) !important;
+    text-transform: var(--ll-page-title-transform) !important;
+    color: var(--ll-page-title-color) !important;
+    text-align: var(--ll-page-title-align) !important;
+    margin: 0 auto 1.5rem !important;
+    max-width: 820px !important;
+    text-wrap: balance !important;
+    overflow-wrap: anywhere !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"].layout-conversion h1.ll-page-title.hero-title,
+:is(body, .ll-landing-root)[class*="template-"].layout-seo-trust h1.ll-page-title.hero-title {
+    font-size: var(--ll-hero-title-size) !important;
+    font-weight: 700 !important;
+    color: var(--ll-hero-title-color) !important;
+    text-align: center !important;
+    text-wrap: balance !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] h2.ll-section-heading {
+    font-size: var(--ll-section-heading-size) !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    line-height: 1.35 !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body h2,
+:is(body, .ll-landing-root)[class*="template-"] .content.ai-article-body h2,
+.luxury-life-guide-body .ai-article-body h2 {
+    font-size: clamp(1.35rem, 2.2vw, 1.75rem) !important;
+    font-weight: 700 !important;
+    color: #111 !important;
+    margin: 2em 0 0.75em !important;
+    padding-bottom: 0.35em !important;
+    border-bottom: 1px solid #eaeaea !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ai-article-body p,
+.luxury-life-guide-body .ai-article-body p {
+    font-size: 1rem !important;
+    line-height: 1.7 !important;
+    color: #333 !important;
+    margin: 1em 0 !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ll-author-byline,
+.luxury-life-guide-body .ll-author-byline {
+    max-width: 960px !important;
+    margin: 0 auto 1rem !important;
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ll-editorial-lead {
+    margin: 0 0 1.1rem !important;
+    padding: 12px 14px !important;
+    background: #f8f8f8 !important;
+    border-left: 4px solid #111 !important;
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+    color: #333 !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] .ast-container {
+    max-width: 100% !important;
+    padding-left: unset !important;
+    padding-right: unset !important;
+}
+
+:is(body, .ll-landing-root)[class*="template-"] h2.woocommerce-loop-product__title {
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    text-transform: none !important;
 }

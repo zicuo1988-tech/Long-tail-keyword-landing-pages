@@ -1,5 +1,435 @@
 [
   {
+    "id": "d29689b9-ed43-460d-87f4-1a662316e96c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-technology-top-rated-and-reviews",
+    "createdAt": 1780636555371,
+    "updatedAt": 1780636994655,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "Luxury technology",
+    "titleType": "best",
+    "templateType": "template-4",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-technology-top-rated-and-reviews/"
+  },
+  {
+    "id": "36c0f3a0-549c-426d-b317-37047012ce3d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-customer-experience-quality-and-performance-guide",
+    "createdAt": 1780628842898,
+    "updatedAt": 1780628976626,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "Luxury customer experience",
+    "titleType": "best",
+    "templateType": "template-3",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-customer-experience-quality-and-performance-guide/"
+  },
+  {
+    "id": "2820785a-5051-449c-aa02-b937790a9337",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxurious-mobile-phones-top-rated-and-reviews",
+    "createdAt": 1780623520072,
+    "updatedAt": 1780623754528,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxurious mobile phones",
+    "titleType": "best",
+    "templateType": "template-3",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxurious-mobile-phones-top-rated-and-reviews/"
+  },
+  {
+    "id": "7c542417-dec9-449b-864b-656dbcd9c43b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-ruby-jewelry-top-rated-and-reviews",
+    "createdAt": 1780572920686,
+    "updatedAt": 1780620626923,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury ruby jewelry",
+    "titleType": "review",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-ruby-jewelry-top-rated-and-reviews/"
+  },
+  {
+    "id": "e90fbe14-cddb-400e-934b-6c65617e02c2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-luxury-personalized-jewelry",
+    "createdAt": 1780572470684,
+    "updatedAt": 1780572919954,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "no catalog products on page but content names SKUs: AI Diamond Ring",
+        "opening lacks actionable takeaway after first H2"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "luxury personalized jewelry",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "no catalog products on page but content names SKUs: AI Diamond Ring",
+      "opening lacks actionable takeaway after first H2"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-personalized-jewelry/"
+  },
+  {
+    "id": "a4cbbb9c-f8a7-4945-ada0-47161c8b2bf7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-find-the-best-jewelry-brands-luxury-expert-guide",
+    "createdAt": 1780572062684,
+    "updatedAt": 1780572468150,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "no catalog products on page but content names SKUs: AI Diamond Ring"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "jewelry brands luxury",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "no catalog products on page but content names SKUs: AI Diamond Ring"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-jewelry-brands-luxury-expert-guide/"
+  },
+  {
+    "id": "529fd3ea-2ceb-431b-af08-bbd54326c342",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-most-valued-trending-luxury-jewelry-popular-choices",
+    "createdAt": 1780571667683,
+    "updatedAt": 1780572061660,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "no catalog products on page but content names SKUs: AI Diamond Ring",
+        "opening lacks actionable takeaway after first H2"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "trending luxury jewelry",
+    "titleType": "most",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "no catalog products on page but content names SKUs: AI Diamond Ring",
+      "opening lacks actionable takeaway after first H2"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-trending-luxury-jewelry-popular-choices/"
+  },
+  {
+    "id": "233f0dad-1cd5-4f54-a011-d0bb064ec588",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-custom-luxury-jewelry-list-comprehensive-rankings",
+    "createdAt": 1780571334681,
+    "updatedAt": 1780571667641,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "no catalog products on page but content names SKUs: AI Diamond Ring"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "custom luxury jewelry",
+    "titleType": "top-ranking",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "no catalog products on page but content names SKUs: AI Diamond Ring"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-custom-luxury-jewelry-list-comprehensive-rankings/"
+  },
+  {
+    "id": "cd5531eb-e9b2-4702-a6b9-40431826e459",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-rated-mens-used-luxury-watches",
+    "createdAt": 1780571223686,
+    "updatedAt": 1780571331677,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "mens used luxury watches",
+    "titleType": "top",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/top-rated-mens-used-luxury-watches/"
+  },
+  {
+    "id": "63b9e494-cdc9-4f1f-bd57-6d0d924e5433",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mens-entry-level-luxury-watches-quality-guide",
+    "createdAt": 1780571040683,
+    "updatedAt": 1780571222753,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "men's entry level luxury watches",
+    "titleType": "best",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-mens-entry-level-luxury-watches-quality-guide/"
+  },
+  {
+    "id": "d6ffdff2-ab91-4056-83e6-0264fbf181b2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-watches-for-men-silver-expert-buying-guide",
+    "createdAt": 1780570848683,
+    "updatedAt": 1780571039805,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury watches for men silver",
+    "titleType": "expert",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watches-for-men-silver-expert-buying-guide/"
+  },
+  {
+    "id": "250c476e-58eb-4a15-a756-37a96e5159d2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-sports-luxury-watches-comparison",
+    "createdAt": 1780570656687,
+    "updatedAt": 1780570846975,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "sports luxury watches",
+    "titleType": "comparison",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-sports-luxury-watches-comparison/"
+  },
+  {
+    "id": "fd25ab83-b72b-427c-b5c4-1699edd395ad",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-which-mens-luxury-skeleton-watch-is-better",
+    "createdAt": 1780570450695,
+    "updatedAt": 1780570656029,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "mens luxury skeleton watch",
+    "titleType": "tech-insights",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/which-mens-luxury-skeleton-watch-is-better/"
+  },
+  {
+    "id": "b4ea80f3-c67d-4263-b047-35ef09b5bccb",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-getting-started-with-finance-luxury-watch",
+    "createdAt": 1780570034683,
+    "updatedAt": 1780570448136,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "opening lacks actionable takeaway after first H2"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "finance luxury watch",
+    "titleType": "services-guides",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "opening lacks actionable takeaway after first H2"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/getting-started-with-finance-luxury-watch/"
+  },
+  {
+    "id": "ad52bbae-26e3-494b-807e-e935546eec7a",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-luxury-waterproof-watches-highly-recommended",
+    "createdAt": 1780569845691,
+    "updatedAt": 1780570031679,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury waterproof watches",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-waterproof-watches-highly-recommended/"
+  },
+  {
+    "id": "7e83e47a-1ef4-49d2-82b4-5ef3237e3797",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-choose-the-best-direct-luxury-watches",
+    "createdAt": 1780569682688,
+    "updatedAt": 1780569843736,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "direct luxury watches",
+    "titleType": "how-to",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-choose-the-best-direct-luxury-watches/"
+  },
+  {
+    "id": "96fd6db9-3390-4d27-a57e-c3cd222dc138",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-authorised-luxury-yacht-accessories-retailer",
+    "createdAt": 1780569438693,
+    "updatedAt": 1780569682113,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [
+        "opening lacks actionable takeaway after first H2",
+        "no question-style or intent-matching H2 headings"
+      ],
+      "finalAlignmentMismatch": true
+    },
+    "keyword": "luxury yacht accessories",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [
+      "opening lacks actionable takeaway after first H2",
+      "no question-style or intent-matching H2 headings"
+    ],
+    "finalAlignmentMismatch": true,
+    "pageUrl": "https://vertu.com/luxury-life-guides/authorised-luxury-yacht-accessories-retailer/"
+  },
+  {
+    "id": "f590da44-e7a2-4c1d-8532-96a39ff9b1e5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-classic-mens-luxury-watches-top-rated-and-reviews",
+    "createdAt": 1780569241689,
+    "updatedAt": 1780569436655,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "classic mens luxury watches",
+    "titleType": "review",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-classic-mens-luxury-watches-top-rated-and-reviews/"
+  },
+  {
+    "id": "f5b659f5-01e6-4de5-a086-ffb96c63969c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-luxury-diving-watch",
+    "createdAt": 1780568840717,
+    "updatedAt": 1780569240701,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury diving watch",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-diving-watch/"
+  },
+  {
+    "id": "0480de57-9503-475c-a25b-faa81fed64d5",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-purchase-luxury-watches-box-premium-selection",
+    "createdAt": 1780568686892,
+    "updatedAt": 1780568838600,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false
+    },
+    "keyword": "luxury watches box",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-watches-box-premium-selection/"
+  },
+  {
     "id": "cf2b9357-b9e4-4849-a014-2ed24f4df06e",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-expert-guide-to-british-luxury-watch-brands",
@@ -13994,285 +14424,5 @@
     "titleType": "review",
     "templateType": "template-3",
     "pageUrl": "https://vertu.com/luxury-life-guides/luxury-jewelry-necklace-review-top-rated-models/"
-  },
-  {
-    "id": "fb38cfee-1b10-4d32-9f31-bc8be750c134",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141980",
-    "createdAt": 1774228590056,
-    "updatedAt": 1774228684024,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mens luxury gold watch",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-mens-luxury-gold-watch/"
-  },
-  {
-    "id": "efe57215-e970-403c-b298-710f8bfc9fea",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141978",
-    "createdAt": 1774228523442,
-    "updatedAt": 1774228588532,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury fashion watches",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/purchase-luxury-fashion-watches-premium-selection/"
-  },
-  {
-    "id": "dc693555-77b3-4a62-ab84-0980e14edb68",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141861",
-    "createdAt": 1773901090891,
-    "updatedAt": 1773901255184,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "women's luxury gold watches",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-womens-luxury-gold-watches-list-comprehensive-rankings/"
-  },
-  {
-    "id": "fa2e245a-6eb5-4530-b2b1-87142d3e57e2",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141859",
-    "createdAt": 1773900910892,
-    "updatedAt": 1773901088776,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "used mens luxury watches",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-quality-used-mens-luxury-watches-expert-review/"
-  },
-  {
-    "id": "3b843bb3-6cab-47ca-97b5-12f17f19d24b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141856",
-    "createdAt": 1773900698899,
-    "updatedAt": 1773900908755,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "swiss luxury watchmakers",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-swiss-luxury-watchmakers-quality-guide/"
-  },
-  {
-    "id": "6d54bf9a-5dbc-40b0-9982-9b12174e26b9",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141854",
-    "createdAt": 1773900534484,
-    "updatedAt": 1773900698467,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury dress watch",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/expert-guide-to-luxury-dress-watch/"
-  },
-  {
-    "id": "c2bff760-746a-43ae-9013-8dc25112f2cb",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141852",
-    "createdAt": 1773900440888,
-    "updatedAt": 1773900534257,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury pens for women",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-pens-for-women-comparison-which-is-better/"
-  },
-  {
-    "id": "19207e3b-8187-48f0-9b44-0087fefdc95d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141850",
-    "createdAt": 1773900377901,
-    "updatedAt": 1773900440470,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches men gold",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/which-luxury-watches-men-gold-is-better/"
-  },
-  {
-    "id": "b797c490-d4a6-4446-97c5-682a41d8db82",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141848",
-    "createdAt": 1773900177645,
-    "updatedAt": 1773900375769,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches chicago",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-watches-chicago-user-guide/"
-  },
-  {
-    "id": "06a948ba-08b8-4cbb-9484-db70d117c762",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141846",
-    "createdAt": 1773899328895,
-    "updatedAt": 1773900177519,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury leather repair",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-leather-repair-highly-recommended/"
-  },
-  {
-    "id": "7ace4e3f-8569-4e07-ba66-6a0f51b2c588",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141843",
-    "createdAt": 1773899155897,
-    "updatedAt": 1773899326868,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch brands price increase",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-watch-brands-price-increase/"
-  },
-  {
-    "id": "0f05ffe5-c8d2-449e-8325-f8312d1b775a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141841",
-    "createdAt": 1773899028892,
-    "updatedAt": 1773899155270,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watch brands uk",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/premium-luxury-watch-brands-uk-collection/"
-  },
-  {
-    "id": "31c30047-d111-4861-bc92-1dc68ca5131a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141839",
-    "createdAt": 1773898881889,
-    "updatedAt": 1773899026421,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold watch",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-gold-watch-comparison-best-rated/"
-  },
-  {
-    "id": "1eff43bb-d9ce-46c2-85be-27488aad39d9",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141836",
-    "createdAt": 1773898815902,
-    "updatedAt": 1773898880176,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "chinese luxury watch brands",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-chinese-luxury-watch-brands/"
-  },
-  {
-    "id": "cdd4c9f0-5ae0-44bf-a962-6e730539bb12",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141834",
-    "createdAt": 1773898752898,
-    "updatedAt": 1773898814233,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "rose gold luxury watches",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/buy-rose-gold-luxury-watches-official-store/"
-  },
-  {
-    "id": "d918a4a9-4439-4d1d-8323-e2eb4d57fd23",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141832",
-    "createdAt": 1773898574893,
-    "updatedAt": 1773898752551,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men's grooming products",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-valued-luxury-mens-grooming-products-popular-choices/"
-  },
-  {
-    "id": "3b57bf6d-6350-4973-a0d6-a8b944c8db3c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141830",
-    "createdAt": 1773898419891,
-    "updatedAt": 1773898574668,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury expensive watches",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-expensive-watches-rankings-comprehensive-list/"
-  },
-  {
-    "id": "c2408870-d423-4a84-ba76-9eec64993bec",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141828",
-    "createdAt": 1773898168892,
-    "updatedAt": 1773898418050,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury timepieces uk",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-timepieces-uk-premium-choices-reviewed/"
-  },
-  {
-    "id": "cf84e43d-d370-4969-9e80-134c80cb70a3",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141826",
-    "createdAt": 1773898009892,
-    "updatedAt": 1773898168854,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches automatic",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-luxury-watches-automatic-quality-guide/"
-  },
-  {
-    "id": "dc022a1f-6bc8-41ed-9929-b6f1b3c8cdea",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141824",
-    "createdAt": 1773897814889,
-    "updatedAt": 1773898007927,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mens luxury cufflinks",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/mens-luxury-cufflinks-expert-buying-guide/"
   }
 ]

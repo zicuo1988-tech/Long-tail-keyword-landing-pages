@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import "../../../frontend/shared/landing-base.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(

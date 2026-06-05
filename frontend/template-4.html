@@ -60,7 +60,12 @@
     <style>
         <!-- SHARED_LANDING_CSS -->
 
-        body.template-4.layout-ranking h1.title {
+        body.template-4.layout-ranking {
+            --ll-page-title-size: clamp(1.5rem, 3vw, 2rem);
+            --ll-page-title-transform: none;
+        }
+
+        body.template-4.layout-ranking h1.ll-page-title.title {
             font-size: clamp(1.5rem, 3vw, 2rem);
             border-bottom: 3px solid #000;
             padding-bottom: 12px;
@@ -74,19 +79,14 @@
             margin: 0 80px 32px;
             max-width: calc(100% - 160px);
         }
-        p {
-            margin-top: 30px;
-        }
-        h2{
-            font-size: 1.2rem !important;
-            margin-top: 30px;
-        }
         .content-container {
             background-color: #ffffff;
             padding-left: 160px;
             padding-right: 160px;
             padding-top: 100px;
             padding-bottom: 40px;
+            max-width: 80%;
+    margin: auto;
         }
      
 
@@ -496,12 +496,6 @@
             color: #111;
         }
 
-        .ast-container {
-            max-width: 100% !important;
-            padding-left: unset;
-            padding-right: unset;
-        }
-
         /* 笔记本电脑适配 (1024px - 1440px) */
         @media (min-width: 1024px) and (max-width: 1440px) {
             .products-grid {
@@ -752,21 +746,6 @@
             }
         }
 
-        .title {
-            text-align: center;
-            font-size: 32px;
-            font-weight: bold;
-            line-height: 1.3;
-            margin-bottom: 16px;
-            color: #000;
-            /* SEO优化：确保标题清晰可读 */
-            word-wrap: break-word;
-            hyphens: auto;
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            color: #000000;
-            letter-spacing: 1px;
-        }
 
         .page-description {
             text-align: center;
@@ -788,9 +767,7 @@
 
         .content {
             text-align: left;
-            width: max-content;
             margin: 0 auto;
-            width: 80%;
         }
 
         .intro {
@@ -899,9 +876,6 @@
                 text-overflow: ellipsis;
             }
 
-            .title {
-                font-size: 24px;
-            }
 
             .page-description {
                 padding: 0 16px;
@@ -1056,92 +1030,11 @@
             margin-bottom: 20px;
             padding: 0 4px;
         }
-        .product-block-intro h2 {
-            font-size: 1.25rem;
-            margin-bottom: 8px;
-        }
         .product-block-intro p {
             color: #555;
             font-size: 14px;
             line-height: 1.5;
             margin: 0;
-        }
-
-        /* AI 正文：表格/pre 防御排版（仅 .ai-article-body，不影响对比表等其它 .content） */
-        .content-container .content.ai-article-body {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            max-width: 100%;
-        }
-        .content-container .content.ai-article-body .table-wrapper {
-            overflow-x: auto;
-            margin: 1.5em 0;
-            max-width: 100%;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        .content-container .content.ai-article-body .table-wrapper table {
-            margin: 0;
-        }
-        .content-container .content.ai-article-body .table-wrapper .table-wrapper {
-            margin: 0;
-            box-shadow: none;
-            border-radius: 0;
-        }
-        .content-container .content.ai-article-body table {
-            width: 100%;
-            min-width: 480px;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            table-layout: fixed;
-            background: #fff;
-        }
-        .content-container .content.ai-article-body thead {
-            background: #1a1a1a;
-            color: #fff;
-        }
-        .content-container .content.ai-article-body th {
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            vertical-align: top;
-            word-break: break-word;
-            hyphens: auto;
-        }
-        .content-container .content.ai-article-body td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e8e8e8;
-            vertical-align: top;
-            word-break: break-word;
-            hyphens: auto;
-        }
-        .content-container .content.ai-article-body tbody tr:last-child td { border-bottom: none; }
-        .content-container .content.ai-article-body tbody tr:nth-child(even) { background: #fafafa; }
-        .content-container .content.ai-article-body tbody tr:hover { background: #f5f5f5; }
-        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child > td,
-        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child > td {
-            background: #1a1a1a;
-            color: #fff;
-            font-weight: 600;
-            border-bottom: 1px solid #333;
-        }
-        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child:hover > td,
-        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child:hover > td {
-            background: #2a2a2a;
-        }
-        .content-container .content.ai-article-body pre {
-            margin: 1.5em 0;
-            padding: 1rem 1.25rem;
-            background: #f6f6f6;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            font-size: 0.88rem;
-            line-height: 1.55;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-width: 100%;
         }
     </style>
 </head>
@@ -1149,7 +1042,7 @@
 <body class="template-4 layout-ranking">
     <div>
         <div class="content-container">
-            <h1 class="title">{{PAGE_TITLE}}</h1>
+            <h1 class="ll-page-title title">{{PAGE_TITLE}}</h1>
             {{#if (isNotEmpty PAGE_DESCRIPTION)}}
             <div class="page-description">
                 <p>{{PAGE_DESCRIPTION}}</p>
@@ -1163,12 +1056,7 @@
 
         <!-- 内容区域（第一段）— answer-first for organic search -->
         <div class="content-container" id="guide-content">
-            {{#if (isNotEmpty AUTHOR_NAME)}}
-            <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
-                <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
-                {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
-            </aside>
-            {{/if}}
+            {{{AUTHOR_BYLINE_HTML}}}
             {{{EDITORIAL_LEAD_HTML}}}
             <div class="content ai-article-body">
                 <!-- CONTENT POLICY: Only use knowledge base facts; use current year; do not fabricate prices/specs. -->
@@ -1245,8 +1133,8 @@
         <!-- 对比表（保持内容容器样式，SEO优化：丰富的对比维度） -->
         <div class="content-container" id="comparison">
             <div class="content">
-                <h2>Comparison at a Glance</h2>
-                <p style="margin-bottom: 16px; color: #666; font-size: 14px;">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
+                <h2 class="ll-section-heading">Comparison at a Glance</h2>
+                <p class="ll-comparison-lead">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
                 <div class="table-wrapper" style="overflow-x:auto; margin-top: 20px;">
                     <table style="width:100%; border-collapse:collapse; font-size:14px; border: 1px solid #e6e6e6;">
                         <thead>
@@ -1296,9 +1184,9 @@
                         </tbody>
                     </table>
                 </div>
-                <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
+                <p class="ll-comparison-disclaimer">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
                 {{#if COMPARISON_CLOSING}}
-                <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55;">{{COMPARISON_CLOSING}}</p>
+                <p class="ll-comparison-closing">{{COMPARISON_CLOSING}}</p>
                 {{/if}}
             </div>
         </div>
@@ -1310,7 +1198,7 @@
             {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
             {{#if PRODUCT_SECTION_INTRO}}
             <div class="product-block-intro">
-                <h2>{{PRODUCT_SECTION_TITLE}}</h2>
+                <h2 class="ll-section-heading">{{PRODUCT_SECTION_TITLE}}</h2>
                 <p>{{PRODUCT_SECTION_INTRO}}</p>
             </div>
             {{/if}}
@@ -1380,10 +1268,10 @@
         <!-- 内链区块 -->
         <div class="content-container">
             <div class="content">
-                <h2>Related Guides</h2>
-                <ul style="list-style: disc; padding-left: 20px; margin-top: 12px;">
+                <h2 class="ll-section-heading">Related Guides</h2>
+                <ul class="links-list ll-links-list">
                     {{#each internalLinks}}
-                    <li style="margin-bottom:8px;"><a href="{{this.url}}" style="color: #000; text-decoration: underline;">{{this.title}}</a></li>
+                    <li class="ll-link-item"><a href="{{this.url}}">{{this.title}}</a></li>
                     {{/each}}
                 </ul>
             </div>
@@ -1396,13 +1284,13 @@
         <!-- 外链区块 -->
         <div class="content-container">
             <div class="content">
-                <h2>External Resources</h2>
-                <ul style="list-style: disc; padding-left: 20px; margin-top: 12px;">
+                <h2 class="ll-section-heading">External Resources</h2>
+                <ul class="links-list ll-links-list">
                     {{#each externalLinks}}
-                    <li style="margin-bottom:12px;">
-                        <a href="{{this.url}}" rel="nofollow" style="color: #000; text-decoration: underline; font-weight: 500;">{{this.title}}</a>
+                    <li class="ll-link-item ll-link-item--loose">
+                        <a href="{{this.url}}" rel="nofollow">{{this.title}}</a>
                         {{#if this.description}}
-                        <span style="display: block; color: #666; font-size: 14px; margin-top: 4px; padding-left: 0;">{{this.description}}</span>
+                        <span class="ll-external-desc">{{this.description}}</span>
                         {{/if}}
                     </li>
                     {{/each}}

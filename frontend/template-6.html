@@ -68,6 +68,10 @@
     <style>
         <!-- SHARED_LANDING_CSS -->
 
+        body.template-6.layout-seo-trust {
+            --ll-hero-title-size: clamp(2rem, 4vw, 3rem);
+        }
+
         body.template-6.layout-seo-trust .hero-section {
             border-bottom: 4px solid #c9a962;
         }
@@ -78,15 +82,8 @@
             padding-right: 160px;
             padding-top: 100px;
             padding-bottom: 40px;
-        }
-    
-        p {
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-        h2{
-            font-size: 1.2rem !important;
-            margin-top: 30px;
+            max-width: 80%;
+    margin: auto;
         }
         /* Hero Section - 首屏优化 */
         .hero-section {
@@ -117,11 +114,6 @@
             margin: 0 auto;
             padding: 0 20px;
             overflow: visible;
-        }
-        .ast-container{
-            max-width: 100% !important; 
-            padding-right: unset !important;
-            padding-left: unset !important;
         }
         .hero-title {
             font-size: 48px;
@@ -1298,83 +1290,6 @@
                 font-size: 14px;
             }
         }
-
-        /* AI 正文：表格/pre 防御排版（仅 .ai-article-body，不影响对比表等其它 .content） */
-        .content-container .content.ai-article-body {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            max-width: 100%;
-        }
-        .content-container .content.ai-article-body .table-wrapper {
-            overflow-x: auto;
-            margin: 1.5em 0;
-            max-width: 100%;
-            -webkit-overflow-scrolling: touch;
-            border-radius: 8px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-        }
-        .content-container .content.ai-article-body .table-wrapper table {
-            margin: 0;
-        }
-        .content-container .content.ai-article-body .table-wrapper .table-wrapper {
-            margin: 0;
-            box-shadow: none;
-            border-radius: 0;
-        }
-        .content-container .content.ai-article-body table {
-            width: 100%;
-            min-width: 480px;
-            border-collapse: collapse;
-            font-size: 0.95rem;
-            table-layout: fixed;
-            background: #fff;
-        }
-        .content-container .content.ai-article-body thead {
-            background: #1a1a1a;
-            color: #fff;
-        }
-        .content-container .content.ai-article-body th {
-            padding: 14px 16px;
-            text-align: left;
-            font-weight: 600;
-            vertical-align: top;
-            word-break: break-word;
-            hyphens: auto;
-        }
-        .content-container .content.ai-article-body td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #e8e8e8;
-            vertical-align: top;
-            word-break: break-word;
-            hyphens: auto;
-        }
-        .content-container .content.ai-article-body tbody tr:last-child td { border-bottom: none; }
-        .content-container .content.ai-article-body tbody tr:nth-child(even) { background: #fafafa; }
-        .content-container .content.ai-article-body tbody tr:hover { background: #f5f5f5; }
-        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child > td,
-        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child > td {
-            background: #1a1a1a;
-            color: #fff;
-            font-weight: 600;
-            border-bottom: 1px solid #333;
-        }
-        .content-container .content.ai-article-body table:not(:has(thead)) > tbody > tr:first-child:hover > td,
-        .content-container .content.ai-article-body table:not(:has(thead)) > tr:first-child:hover > td {
-            background: #2a2a2a;
-        }
-        .content-container .content.ai-article-body pre {
-            margin: 1.5em 0;
-            padding: 1rem 1.25rem;
-            background: #f6f6f6;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            font-size: 0.88rem;
-            line-height: 1.55;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-word;
-            max-width: 100%;
-        }
     </style>
 </head>
 
@@ -1382,7 +1297,7 @@
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
-            <h1 class="hero-title">{{PAGE_TITLE}}</h1>
+            <h1 class="ll-page-title hero-title">{{PAGE_TITLE}}</h1>
             {{#if PAGE_DESCRIPTION}}
             <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
             {{/if}}
@@ -1395,12 +1310,7 @@
 
     <!-- Content Section: answer-first for organic search -->
     <div class="content-container" id="guide-content">
-        {{#if (isNotEmpty AUTHOR_NAME)}}
-        <aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222">
-            <p style="margin:0 0 0.35rem"><strong>By</strong> {{AUTHOR_NAME}}{{#if (isNotEmpty AUTHOR_JOB)}}<span style="color:#555"> · {{AUTHOR_JOB}}</span>{{/if}}</p>
-            {{#if (isNotEmpty AUTHOR_BIO)}}<p style="margin:0;color:#555">{{AUTHOR_BIO}}</p>{{/if}}
-        </aside>
-        {{/if}}
+        {{{AUTHOR_BYLINE_HTML}}}
         {{{EDITORIAL_LEAD_HTML}}}
         <div class="content ai-article-body">
             {{{AI_GENERATED_CONTENT}}}
@@ -1478,7 +1388,7 @@
     <!-- Comparison Section -->
     <section class="comparison-section" id="comparison">
         <h2 class="comparison-title">Comparison at a Glance</h2>
-        <p style="margin-bottom: 16px; color: #666; font-size: 14px; text-align: center;">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
+        <p class="ll-comparison-lead ll-comparison-lead--center">Compare key features, materials, and specifications across premium products to help you make an informed decision.</p>
         <div class="table-wrapper">
             <table class="comparison-table">
                 <thead>
@@ -1528,9 +1438,9 @@
                 </tbody>
             </table>
         </div>
-        <p style="margin-top: 16px; color: #999; font-size: 12px; font-style: italic; text-align: center;">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
+        <p class="ll-comparison-disclaimer ll-comparison-disclaimer--center">* External products are listed for comparison purposes only. Prices and specifications are subject to change. Please verify current information on manufacturer websites.</p>
         {{#if COMPARISON_CLOSING}}
-        <p style="margin-top: 20px; color: #333; font-size: 15px; line-height: 1.55; text-align: center;">{{COMPARISON_CLOSING}}</p>
+        <p class="ll-comparison-closing ll-comparison-closing--center">{{COMPARISON_CLOSING}}</p>
         {{/if}}
     </section>
     {{/if}}
@@ -1598,7 +1508,7 @@
         {{#if TRUST_STRIP_HTML}}{{{TRUST_STRIP_HTML}}}{{/if}}
         {{#if PRODUCT_SECTION_INTRO}}
         <div class="product-block-intro" style="max-width: 960px; margin: 0 auto 20px; padding: 0 20px;">
-            <h2 style="font-size: 1.25rem; margin-bottom: 8px;">{{PRODUCT_SECTION_TITLE}}</h2>
+            <h2 class="ll-section-heading">{{PRODUCT_SECTION_TITLE}}</h2>
             <p style="color: #555; font-size: 14px; line-height: 1.5; margin: 0;">{{PRODUCT_SECTION_INTRO}}</p>
         </div>
         {{/if}}

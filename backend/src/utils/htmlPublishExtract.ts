@@ -24,7 +24,31 @@ function stripJsonLd(html: string): string {
 }
 
 /**
+ * Rewrite `body.template-*` selectors so inline `<style>` in Sanity fragments
+ * still match `.ll-landing-root.template-*` (classes moved off `<body>`).
+ */
+export function adaptCssForSanityFragment(css: string): string {
+  return css
+    .replace(/\bbody\.(template-\d)/g, ":is(body, .ll-landing-root).$1")
+    .replace(/\bbody\[class\*="template-"\]/g, ':is(body, .ll-landing-root)[class*="template-"]')
+    .replace(/\bbody\[class\*="layout-"\]/g, ':is(body, .ll-landing-root)[class*="layout-"]');
+}
+
+function adaptStyleBlocks(styleBlocks: string[] | null | undefined): string {
+  if (!styleBlocks?.length) return "";
+  return styleBlocks
+    .map((block) => {
+      const inner = block.replace(/^<style[^>]*>/i, "").replace(/<\/style>$/i, "");
+      const adapted = adaptCssForSanityFragment(inner);
+      return `<style>\n${adapted}\n</style>`;
+    })
+    .join("\n");
+}
+
+/**
  * Split a rendered template document into publishable body HTML and JSON-LD payloads.
+ * Wraps body content in `.ll-landing-root` + original body classes so scoped CSS
+ * works on Sanity/Next.js (no `<body class="template-*">` in stored fragment).
  */
 export function extractPublishHtml(fullHtml: string): ExtractedPublishHtml {
   const trimmed = fullHtml.trim();
@@ -41,13 +65,22 @@ export function extractPublishHtml(fullHtml: string): ExtractedPublishHtml {
   }
 
   const styleBlocks = fullHtml.match(/<style[^>]*>[\s\S]*?<\/style>/gi);
+  const bodyOpenMatch = fullHtml.match(/<body([^>]*)>/i);
   const bodyMatch = fullHtml.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
   let bodyContent = bodyMatch ? bodyMatch[1] : fullHtml;
 
   bodyContent = stripJsonLd(bodyContent).trim();
 
-  const styles = styleBlocks?.map((s) => s.trim()).join("\n") ?? "";
-  const bodyHtml = (styles ? `${styles}\n` : "") + bodyContent;
+  const bodyAttrs = bodyOpenMatch?.[1] ?? "";
+  const bodyClassMatch = bodyAttrs.match(/class\s*=\s*(["'])([^"']*)\1/i);
+  const bodyClasses = bodyClassMatch?.[2]?.trim() ?? "";
+  const rootClass = bodyClasses
+    ? `ll-landing-root ${bodyClasses}`
+    : "ll-landing-root";
+
+  const styles = adaptStyleBlocks(styleBlocks);
+  const wrappedBody = `<div class="${rootClass}">\n${bodyContent}\n</div>`;
+  const bodyHtml = (styles ? `${styles}\n` : "") + wrappedBody;
 
   return { bodyHtml, jsonLdScripts };
 }

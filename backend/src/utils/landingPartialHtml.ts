@@ -19,12 +19,12 @@ export function buildAuthorBylineHtml(
   const n = name?.trim();
   if (!n) return "";
   const jobPart = job?.trim()
-    ? `<span style="color:#555"> · ${escapeHtml(job.trim())}</span>`
+    ? `<span class="ll-author-byline-meta"> · ${escapeHtml(job.trim())}</span>`
     : "";
   const bioPart = bio?.trim()
-    ? `<p style="margin:0;color:#555">${escapeHtml(bio.trim())}</p>`
+    ? `<p class="ll-author-bio">${escapeHtml(bio.trim())}</p>`
     : "";
-  return `<aside class="ll-author-byline" aria-label="Article author" style="max-width:960px;margin:0 auto 1rem;padding:0 4px;font-size:14px;line-height:1.5;color:#222"><p style="margin:0 0 0.35rem"><strong>By</strong> ${escapeHtml(n)}${jobPart}</p>${bioPart}</aside>`;
+  return `<aside class="ll-author-byline" aria-label="Article author"><p><strong>By</strong> ${escapeHtml(n)}${jobPart}</p>${bioPart}</aside>`;
 }
 
 export function buildRelatedGuidesHtml(
@@ -38,10 +38,10 @@ export function buildRelatedGuidesHtml(
   const lis = items
     .map(
       (g) =>
-        `<li><a href="${escapeHtml(g.url)}" style="color:#1a5fb4">${escapeHtml(g.title)}</a></li>`
+        `<li class="ll-link-item"><a href="${escapeHtml(g.url)}">${escapeHtml(g.title)}</a></li>`
     )
     .join("");
-  return `<div class="links-section ll-related-guides" style="max-width:960px;margin:2rem auto;padding:0 16px"><h2 class="links-title" style="font-size:1.25rem;margin:0 0 12px">${escapeHtml(title)}</h2><ul class="links-list" style="margin:0;padding-left:1.25rem;line-height:1.7">${lis}</ul></div>`;
+  return `<div class="links-section ll-related-guides"><h2 class="links-title">${escapeHtml(title)}</h2><ul class="links-list">${lis}</ul></div>`;
 }
 
 export function buildInternalLinksHtml(links: LinkItem[]): string {
@@ -50,10 +50,10 @@ export function buildInternalLinksHtml(links: LinkItem[]): string {
     .slice(0, 8)
     .map(
       (l) =>
-        `<li><a href="${escapeHtml(l.url)}" style="color:#1a5fb4">${escapeHtml(l.title)}</a></li>`
+        `<li class="ll-link-item"><a href="${escapeHtml(l.url)}">${escapeHtml(l.title)}</a></li>`
     )
     .join("");
-  return `<div class="links-section ll-internal-links" style="max-width:960px;margin:2rem auto;padding:0 16px"><h2 class="links-title" style="font-size:1.25rem;margin:0 0 12px">Explore VERTU</h2><ul class="links-list" style="margin:0;padding-left:1.25rem;line-height:1.7">${lis}</ul></div>`;
+  return `<div class="links-section ll-internal-links"><h2 class="links-title">Explore VERTU</h2><ul class="links-list">${lis}</ul></div>`;
 }
 
 /** Server-side TOC — avoids client CLS from late DOM injection. */
@@ -81,10 +81,10 @@ export function injectServerSideToc(articleHtml: string): string {
   const tocItems = headings
     .map(
       (h) =>
-        `<li><a href="#${h.id}" style="color:#1a5fb4">${escapeHtml(h.text)}</a></li>`
+        `<li><a href="#${h.id}">${escapeHtml(h.text)}</a></li>`
     )
     .join("");
-  const toc = `<nav class="ll-on-this-page" aria-label="On this page" style="margin:0 0 1.25rem;padding:12px 14px;background:#fafafa;border:1px solid #e8e8e8;border-radius:8px;font-size:14px;line-height:1.5"><p class="ll-toc-title" style="margin:0 0 8px;font-weight:700;font-size:15px;color:#111">On this page</p><ol class="ll-toc-list" style="margin:0;padding-left:1.25rem;color:#333">${tocItems}</ol></nav>`;
+  const toc = `<nav class="ll-on-this-page" aria-label="On this page"><p class="ll-toc-title">On this page</p><ol class="ll-toc-list">${tocItems}</ol></nav>`;
 
   return toc + withIds;
 }

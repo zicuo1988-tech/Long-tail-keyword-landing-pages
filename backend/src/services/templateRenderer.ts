@@ -15,12 +15,24 @@ import {
 export const DEFAULT_TRUST_STRIP_HTML =
   '<div class="trust-strip" role="region" aria-label="Official store benefits">Official VERTU store · Secure checkout · Concierge support</div>';
 
-/** 为正文中的每个 <table> 外包 .table-wrapper，便于横向滚动与圆角阴影（模板7等） */
+/** 为正文中的每个 <table> 添加 ll-article-table 并外包 .table-wrapper */
 export function wrapArticleTablesInScroll(html: string): string {
   if (!html?.trim()) return html;
-  return html.replace(/<table\b[^>]*>[\s\S]*?<\/table>/gi, (full) =>
-    full.includes("table-wrapper") ? full : `<div class="table-wrapper">${full}</div>`
-  );
+  return html.replace(/<table\b([^>]*)>[\s\S]*?<\/table>/gi, (full, attrs) => {
+    let table = full;
+    if (!/\bll-article-table\b/i.test(table)) {
+      const a = attrs ?? "";
+      if (/\bclass\s*=/i.test(a)) {
+        table = full.replace(
+          /class\s*=\s*(["'])([^"']*)\1/i,
+          (_m, q: string, classes: string) => `class=${q}${classes} ll-article-table${q}`
+        );
+      } else {
+        table = full.replace(/<table\b/i, "<table class=\"ll-article-table\"");
+      }
+    }
+    return table.includes("table-wrapper") ? table : `<div class="table-wrapper">${table}</div>`;
+  });
 }
 
 function formatIsoDateForDisplay(iso: string): string {
@@ -340,7 +352,7 @@ export function renderTemplate({
   const dateModified = modifiedIso;
   const LAST_UPDATED_LABEL = formatIsoDateForDisplay(dateModified);
 
-  const editorialLeadHtml = `<p class="ll-editorial-lead" role="note" style="margin:0 0 1.1rem;font-size:15px;line-height:1.55;color:#333;background:#f8f8f8;border-left:4px solid #111;padding:12px 14px;border-radius:0 6px 6px 0"><strong>Editorial note:</strong> This guide reflects our product knowledge base at the time of writing. <span style="white-space:nowrap">Updated <time datetime="${dateModified}">${LAST_UPDATED_LABEL}</time>.</span></p>`;
+  const editorialLeadHtml = `<p class="ll-editorial-lead" role="note"><strong>Editorial note:</strong> This guide reflects our product knowledge base at the time of writing. <span class="ll-updated">Updated <time datetime="${dateModified}">${LAST_UPDATED_LABEL}</time>.</span></p>`;
 
   const authorNamePlain = (articleAuthorName ?? "").replace(/<[^>]*>/g, "").trim();
   const authorJobPlain = (articleAuthorJobTitle ?? "").replace(/<[^>]*>/g, "").trim();

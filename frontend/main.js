@@ -116,6 +116,7 @@ function prepareTemplatePreviewHtml(html, sharedCss) {
   const sampleArticle =
     "<p>This sample paragraph shows the <strong>layout shell</strong> typography and spacing for this template.</p>" +
     "<h2>Sample section heading</h2>" +
+    "<div class=\"table-wrapper\"><table class=\"ll-article-table\"><thead><tr><th>Evaluation Criterion</th><th>Standard Smartphone</th><th>Luxurious Mobile Phone</th></tr></thead><tbody><tr><td>Materials</td><td>Aluminium, glass</td><td>Hand-finished leather, sapphire</td></tr><tr><td>Services</td><td>Standard warranty</td><td>24/7 concierge</td></tr></tbody></table></div>" +
     "<p>Product grids, comparison tables, and FAQ blocks render when real data is available during generation.</p>";
   let prepared = html.replace(/<!-- SHARED_LANDING_CSS -->/g, sharedCss || "");
   prepared = stripHandlebarsBlocks(prepared);
