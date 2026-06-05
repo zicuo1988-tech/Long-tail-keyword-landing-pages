@@ -491,20 +491,3 @@
     color: #2f6f44;
 }
 
-.ll-layout-commerce-first .ll-layout-stack {
-    display: flex;
-    flex-direction: column;
-}
-
-.ll-layout-commerce-first .ll-layout-stack .comparison-section {
-    order: 2;
-}
-
-.ll-layout-commerce-first .ll-layout-stack .product-section,
-.ll-layout-commerce-first .ll-layout-stack .top-picks-section {
-    order: 1;
-}
-
-.ll-layout-comparison-first .ll-layout-stack .comparison-section {
-    order: 0;
-}

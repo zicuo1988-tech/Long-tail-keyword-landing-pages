@@ -1,5 +1,83 @@
 [
   {
+    "id": "ba1da25d-8b5c-4ae6-accd-da7232df242d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-smart-luxury-watches-options-top-choices",
+    "createdAt": 1780652589131,
+    "updatedAt": 1780652745127,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "B",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Smart luxury watches",
+    "titleType": "best",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "B",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-smart-luxury-watches-options-top-choices/"
+  },
+  {
+    "id": "63710f36-bf35-41d9-b88c-96dcae80016b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-watches-quality-and-performance-guide",
+    "createdAt": 1780651917741,
+    "updatedAt": 1780652122583,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "A",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Luxury watches",
+    "titleType": "best",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "A",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-watches-quality-and-performance-guide/"
+  },
+  {
+    "id": "067ed361-bdaf-4c6a-a272-8fd85f5e8e1b",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-watches-top-rated-and-reviews",
+    "createdAt": 1780651696755,
+    "updatedAt": 1780651845397,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "evaluative",
+      "experimentVariant": "A",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Luxury watches",
+    "titleType": "best",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "evaluative",
+    "experimentVariant": "A",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-watches-top-rated-and-reviews/"
+  },
+  {
     "id": "7f03bb96-d501-4b3c-9521-43a6cd13d133",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-high-end-timepieces-watches",
@@ -14430,47 +14508,5 @@
     "titleType": "recommendations",
     "templateType": "template-6",
     "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-bangle-bracelet-top-picks/"
-  },
-  {
-    "id": "1e9f6fbc-559d-4f28-b02b-2494fa5de148",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142029",
-    "createdAt": 1774248680429,
-    "updatedAt": 1774248880709,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury office decor",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-office-decor/"
-  },
-  {
-    "id": "4a6735bc-dc92-459e-bc48-644c1099e103",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142027",
-    "createdAt": 1774248470443,
-    "updatedAt": 1774248680331,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "modern luxury jewelry",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/exclusive-modern-luxury-jewelry-selection/"
-  },
-  {
-    "id": "a6aa3358-b14a-41e2-8131-7437a3430d0d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142024",
-    "createdAt": 1774248287424,
-    "updatedAt": 1774248467552,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury bracelet for women",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-bracelet-for-women-top-rated-and-reviews/"
   }
 ]

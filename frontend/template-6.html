@@ -79,6 +79,14 @@
             max-width: 80%;
     margin: auto;
         }
+
+        .content-container .ll-quick-answer {
+            margin: 0 0 1.25rem;
+            padding: 14px 16px;
+            border-left: 4px solid #c9a962;
+            background: #f8f8f8;
+            border-radius: 4px;
+        }
         /* Hero Section - 首屏优化 */
         .hero-section {
             background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
@@ -1289,16 +1297,11 @@
     </style>
 </head>
 
-<body class="template-6 layout-seo-trust {{LAYOUT_PRIORITY_CLASS}}">
+<body class="template-6 layout-seo-trust">
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <h1 class="ll-page-title hero-title">{{PAGE_TITLE}}</h1>
-{{#if QUICK_ANSWER_HTML}}
-<section class="ll-quick-answer" aria-label="Quick answer">
-  {{{QUICK_ANSWER_HTML}}}
-</section>
-{{/if}}
             {{#if PAGE_DESCRIPTION}}
             <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
             {{/if}}
@@ -1309,10 +1312,13 @@
         </div>
     </section>
 
-    <main id="main-content">
-    <article class="ll-article">
     <!-- Content Section: answer-first for organic search -->
     <div class="content-container" id="guide-content">
+        {{#if QUICK_ANSWER_HTML}}
+        <section class="ll-quick-answer" aria-label="Quick answer">
+            {{{QUICK_ANSWER_HTML}}}
+        </section>
+        {{/if}}
         {{{AUTHOR_BYLINE_HTML}}}
         {{{EDITORIAL_LEAD_HTML}}}
         <div class="content ai-article-body">
@@ -1320,7 +1326,6 @@
         </div>
     </div>
 
-    <div class="ll-layout-stack">
     {{#if topProducts.length}}
     <!-- Top Picks Section -->
     <section id="products" class="product-section">
@@ -1448,10 +1453,6 @@
         {{/if}}
     </section>
     {{/if}}
-
-    </div>
-    </article>
-    </main>
 
     {{#if references.length}}
     <!-- References Section - 参考文献部分 -->
@@ -1685,9 +1686,9 @@
                 {{#each faqItems}}
                 <div class="accordion-item">
                     <div class="accordion-header">
-                        <h3 class="faq-question accordion-question">{{this.question}}</h3>
+                        <h3 class="faq-question accordion-question" id="faq-q-{{@index}}">{{this.question}}</h3>
                     </div>
-                    <div class="accordion-content">
+                    <div class="accordion-content" aria-labelledby="faq-q-{{@index}}">
                         {{this.answer}}
                     </div>
                 </div>
