@@ -12,9 +12,26 @@ export interface KeywordGateResult {
   reasons: string[];
   /** When tier is C, prefer long-form editorial shell (template-5/6). */
   forceLongShell: boolean;
+  /** Brand + clear intent: relax batch blocking, shell forcing, and category template locks. */
+  brandStrong: boolean;
 }
 
-const BRAND_TERMS = /\b(vertu|agent\s*q|quantum\s*flip|metavertu|meta\s*max|meta\s*curve|ivertu|signature|ironflip|grand\s*watch|meta\s*ring|ai\s*diamond\s*ring|ows\s*earbud|ruby\s*key|ruby\s*talk|concierge)\b/i;
+/** Exported for frontend batch logic (keep regex in sync with BRAND_TERMS). */
+export const BRAND_STRONG_PATTERN =
+  /\b(vertu|agent\s*q|quantum\s*flip|metavertu|meta\s*max|meta\s*curve|ivertu|signature|ironflip|grand\s*watch|meta\s*ring|ai\s*diamond\s*ring|ows\s*earbud|ruby\s*key|ruby\s*talk|concierge)\b/i;
+
+export function isBrandStrongKeyword(keyword: string, pageTitle?: string): boolean {
+  const text = `${keyword} ${pageTitle || ""}`.trim();
+  if (!BRAND_STRONG_PATTERN.test(text)) return false;
+  return (
+    LUXURY_MODIFIERS.test(text) ||
+    GUIDE_INTENT.test(text) ||
+    COMMERCIAL_INTENT.test(text) ||
+    CATEGORY_TERMS.test(text)
+  );
+}
+
+const BRAND_TERMS = BRAND_STRONG_PATTERN;
 
 const LUXURY_MODIFIERS =
   /\b(luxury|luxurious|premium|ultra[\s-]?premium|high[\s-]?end|bespoke|artisan|hand[\s-]?crafted|exclusive|flagship|collectible|concierge)\b/i;
@@ -70,16 +87,23 @@ export function evaluateKeywordGate(
     reasons.push("VERTU-relevant category");
   }
 
+  const hasBrand = BRAND_TERMS.test(text);
+
   for (const pat of TIER_D_PATTERNS) {
     if (pat.test(text)) {
-      score -= 50;
+      // Brand-qualified queries (e.g. VERTU + accessory) stay publishable — softer penalty
+      score -= hasBrand ? 15 : 50;
       reasons.push(`low-fit pattern: ${pat.source.slice(0, 40)}`);
       break;
     }
   }
 
-  // Generic android/ios without luxury — weak unless category education intent
-  if (/\b(android|iphone|samsung|xiaomi|pixel)\b/i.test(text) && !LUXURY_MODIFIERS.test(text) && !BRAND_TERMS.test(text)) {
+  // Generic android/ios without luxury — weak unless brand or category education intent
+  if (
+    /\b(android|iphone|samsung|xiaomi|pixel)\b/i.test(text) &&
+    !LUXURY_MODIFIERS.test(text) &&
+    !hasBrand
+  ) {
     score -= 20;
     reasons.push("generic platform term without luxury context");
   }
@@ -90,18 +114,29 @@ export function evaluateKeywordGate(
   else if (score >= 10) tier = "C";
   else tier = "D";
 
-  // Override: explicit brand always at least B
-  if (BRAND_TERMS.test(text) && tier === "D") tier = "B";
+  const brandStrong = isBrandStrongKeyword(keyword, options?.pageTitle);
+
+  // Brand-strong: always at least Tier B, often Tier A
+  if (brandStrong) {
+    if (tier === "D" || tier === "C") tier = "B";
+    if (score >= 45 || (COMMERCIAL_INTENT.test(text) && hasBrand)) tier = "A";
+    reasons.push("brand-strong keyword: relaxed gate");
+  } else if (hasBrand && tier === "D") {
+    tier = "B";
+    reasons.push("brand present: floor Tier B");
+  }
 
   const forceGenerate = options?.forceGenerate === true;
-  const allowed = tier !== "D" || forceGenerate;
-  const forceLongShell = tier === "C" || (tier === "B" && GUIDE_INTENT.test(text));
+  const allowed = tier !== "D" || forceGenerate || brandStrong;
+  // Do not force long shell for brand-strong — allow template rotation / conversion shells
+  const forceLongShell =
+    !brandStrong && (tier === "C" || (tier === "B" && GUIDE_INTENT.test(text)));
 
-  if (tier === "D" && !forceGenerate) {
+  if (tier === "D" && !forceGenerate && !brandStrong) {
     reasons.push("Tier D: blocked in batch unless forceGenerate");
   }
 
-  return { tier, score, allowed, reasons, forceLongShell };
+  return { tier, score, allowed, reasons, forceLongShell, brandStrong };
 }
 
 /** Stable pick for keyword-aware reference URLs (generation.ts). */

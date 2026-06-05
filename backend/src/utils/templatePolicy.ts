@@ -3,6 +3,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { GenerationRequestPayload } from "../types.js";
 import { isCommercialTitleType, shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
+import { isBrandStrongKeyword } from "./keywordIntentGate.js";
 import { detectPrimaryCategory, isComparisonIntent } from "./productCategory.js";
 import {
   classifySearchIntent,
@@ -95,6 +96,7 @@ export function applyCategoryAwareTemplateFix(
   finalPageTitle: string
 ): void {
   if (payload.respectTemplateChoice) return;
+  if (isBrandStrongKeyword(payload.keyword, finalPageTitle)) return;
   if (isComparisonIntent(payload.keyword, finalPageTitle)) return;
 
   const tt = (payload.templateType || "template-1").trim();
@@ -120,6 +122,7 @@ export function applyGuideIntentLongShellIfNeeded(
   finalPageTitle: string
 ): void {
   if (payload.respectTemplateChoice) return;
+  if (isBrandStrongKeyword(payload.keyword, finalPageTitle)) return;
 
   const tt = (payload.templateType || "template-1").trim();
 
@@ -179,7 +182,7 @@ export function applyIntentDrivenLayout(
   payload.searchIntent = intent;
   payload.layoutPriority = layoutPriority;
 
-  if (payload.respectTemplateChoice) {
+  if (payload.respectTemplateChoice || isBrandStrongKeyword(payload.keyword, finalPageTitle)) {
     return { intent, layoutPriority };
   }
 
@@ -214,8 +217,14 @@ export function applyIntentDrivenLayout(
   return { intent, layoutPriority };
 }
 
-/** A/B: variant A = template-6 (text-heavy), variant B keeps intent-driven commerce shells. */
+/**
+ * A/B: variant A = template-6 (text-heavy).
+ * Only overrides shell for single-page auto-pick flows — never when respectTemplateChoice is set (batch rotation / manual pick).
+ */
 export function applyExperimentVariantShell(payload: GenerationRequestPayload): void {
-  if (payload.respectTemplateChoice || payload.experimentVariant !== "A") return;
+  if (payload.respectTemplateChoice) return;
+  if (payload.experimentVariant !== "A") return;
+  const tt = (payload.templateType || "").trim();
+  if (tt === "template-6") return;
   loadTemplateIntoPayload(payload, "template-6", "A/B variant A (text-heavy shell)");
 }

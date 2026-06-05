@@ -319,7 +319,11 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       pageTitle: payload.pageTitle,
       titleType: payload.titleType,
     });
-    if (keywordGate.forceLongShell && !payload.respectTemplateChoice) {
+    if (
+      keywordGate.forceLongShell &&
+      !payload.respectTemplateChoice &&
+      !keywordGate.brandStrong
+    ) {
       applyGuideIntentLongShellIfNeeded(payload, payload.pageTitle?.trim() || payload.keyword);
     }
 
@@ -412,13 +416,19 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     );
 
     if (!payload.experimentVariant) {
-      let h = 0;
-      for (let i = 0; i < payload.keyword.length; i++) {
-        h = (h * 31 + payload.keyword.charCodeAt(i)) | 0;
+      if (payload.respectTemplateChoice) {
+        const tt = (payload.templateType || "template-1").trim();
+        payload.experimentVariant = tt === "template-6" ? "A" : "B";
+      } else {
+        let h = 0;
+        for (let i = 0; i < payload.keyword.length; i++) {
+          h = (h * 31 + payload.keyword.charCodeAt(i)) | 0;
+        }
+        payload.experimentVariant = Math.abs(h) % 2 === 0 ? "A" : "B";
       }
-      payload.experimentVariant = Math.abs(h) % 2 === 0 ? "A" : "B";
-      payload.experimentId = `ll-shell-${new Date().getFullYear()}`;
+      payload.experimentId = payload.experimentId || `ll-shell-${new Date().getFullYear()}`;
     }
+    // A/B 壳替换仅对单条「自动选壳」生效；批量/手动选壳时 respectTemplateChoice 会跳过
     applyExperimentVariantShell(payload);
 
     applyGuideIntentLongShellIfNeeded(payload, finalPageTitle);

@@ -758,8 +758,29 @@ form.addEventListener("submit", async (event) => {
       .map(k => k.trim())
       .filter(k => k.length > 0);
 
-    /** Tier D 泛词（与 backend keywordIntentGate 对齐）— 批量模式自动跳过 */
+    /** 与 backend keywordIntentGate BRAND_STRONG_PATTERN 保持同步 */
+    const BRAND_STRONG_PATTERN =
+      /\b(vertu|agent\s*q|quantum\s*flip|metavertu|meta\s*max|meta\s*curve|ivertu|signature|ironflip|grand\s*watch|meta\s*ring|ai\s*diamond\s*ring|ows\s*earbud|ruby\s*key|ruby\s*talk|concierge)\b/i;
+    const LUXURY_MODIFIERS =
+      /\b(luxury|luxurious|premium|ultra[\s-]?premium|high[\s-]?end|bespoke|artisan|hand[\s-]?crafted|exclusive|flagship|collectible|concierge)\b/i;
+    const GUIDE_INTENT_BATCH =
+      /\b(how\s+to|what\s+is|best\b|top\s+\d|vs\.?\b|versus\b|review|reviews|guides?\b|comparison|buying\s+guide|buy|purchase|shop|price|where\s+to\s+buy)\b/i;
+    const CATEGORY_TERMS_BATCH =
+      /\b(phone|phones|smartphone|watch|watches|timepiece|ring|rings|earbud|earbuds|flip\s+phone)\b/i;
+
+    function isBrandStrongKeyword(kw) {
+      const t = String(kw || "").trim();
+      if (!BRAND_STRONG_PATTERN.test(t)) return false;
+      return (
+        LUXURY_MODIFIERS.test(t) ||
+        GUIDE_INTENT_BATCH.test(t) ||
+        CATEGORY_TERMS_BATCH.test(t)
+      );
+    }
+
+    /** Tier D 泛词 — 品牌强效果词不跳过 */
     function isTierDKeyword(kw) {
+      if (isBrandStrongKeyword(kw)) return false;
       const t = String(kw || "").toLowerCase();
       const tierDPatterns = [
         /\b(charging\s+cable|charger|usb\s+c|power\s+adapter|wall\s+charger|wireless\s+charger)\b/,
@@ -818,6 +839,21 @@ form.addEventListener("submit", async (event) => {
 
     function pickBatchTemplate(index, titleType, keyword) {
       const tt = String(titleType || "");
+      const brandStrong = isBrandStrongKeyword(keyword);
+
+      // 品牌强效果词：多壳轮换，不锁死 template-6
+      if (brandStrong) {
+        const commercialTypes = new Set([
+          "purchase", "commercial", "best", "top", "top-ranking", "most",
+        ]);
+        if (commercialTypes.has(tt)) {
+          const pool = ["template-1", "template-2", "template-4", "template-5"];
+          return pool[index % pool.length];
+        }
+        const guidePool = ["template-4", "template-5", "template-6"];
+        return guidePool[index % guidePool.length];
+      }
+
       const category = detectKeywordProductCategory(keyword);
       if (category === "watch" || category === "ring" || category === "earbud") {
         return "template-6";
@@ -865,7 +901,10 @@ form.addEventListener("submit", async (event) => {
         targetCategory: String(formData.get("targetCategory") ?? "").trim() || undefined,
         templateType: currentTemplate,
         templateContent: currentTemplateContent,
-        respectTemplateChoice: getRespectTemplateChoice(formData),
+        // 批量模式：严格使用 pickBatchTemplate 轮换，不让后端 A/B / 意图策略覆盖壳
+        respectTemplateChoice: true,
+        experimentVariant: currentTemplate === "template-6" ? "A" : "B",
+        experimentId: `ll-batch-${new Date().getFullYear()}`,
     forceGenerate: formData.get("forceGenerate") === "on",
     articleAuthorName: String(formData.get("articleAuthorName") ?? "").trim() || undefined,
         useElementor: formData.get("useElementor") === "on",

@@ -1,5 +1,135 @@
 [
   {
+    "id": "4eb56a91-d7ec-4f36-a6d4-a882b1643d5f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-luxury-apple-watch",
+    "createdAt": 1780653839260,
+    "updatedAt": 1780654012860,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "informational",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "luxury apple watch",
+    "titleType": "how-to",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "informational",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-select-luxury-apple-watch/"
+  },
+  {
+    "id": "f4c6b081-bf57-4c50-9a6b-4d39ac7ca7fb",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-premium-mechanical-military-watch-collection",
+    "createdAt": 1780653661126,
+    "updatedAt": 1780653839071,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "mechanical military watch",
+    "titleType": "commercial",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/premium-mechanical-military-watch-collection/"
+  },
+  {
+    "id": "283d1713-cc9b-4a1e-99c2-7aaa36b2dc59",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-luxury-military-watches-comparison-best-rated",
+    "createdAt": 1780653518037,
+    "updatedAt": 1780653660348,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "evaluative",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "luxury military watches",
+    "titleType": "review",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "evaluative",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-military-watches-comparison-best-rated/"
+  },
+  {
+    "id": "ef0f3c9c-8f26-4ef3-8bab-db11f518ed3d",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-complete-guide-to-luxury-business-watches-men",
+    "createdAt": 1780653343620,
+    "updatedAt": 1780653516394,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "informational",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "luxury business watches men",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "informational",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/complete-guide-to-luxury-business-watches-men/"
+  },
+  {
+    "id": "d598ca1a-8806-4e03-8bbc-004d0e6438f2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-buy-rugged-luxury-watches-official-store",
+    "createdAt": 1780653139090,
+    "updatedAt": 1780653341890,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "rugged luxury watches",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/buy-rugged-luxury-watches-official-store/"
+  },
+  {
     "id": "ba1da25d-8b5c-4ae6-accd-da7232df242d",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-smart-luxury-watches-options-top-choices",
@@ -14438,75 +14568,5 @@
     "titleType": "best",
     "templateType": "template-4",
     "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-office-products-top-rated-and-reviews/"
-  },
-  {
-    "id": "d0c0d2e5-cd7a-4a45-a433-19b15101961b",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142041",
-    "createdAt": 1774249405422,
-    "updatedAt": 1774249591925,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond engagement rings",
-    "titleType": "expert",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-diamond-engagement-rings-expert-buying-guide/"
-  },
-  {
-    "id": "7bea3472-26f3-42d1-b698-98d4d5db87d5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142039",
-    "createdAt": 1774249321422,
-    "updatedAt": 1774249403679,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "ball pen luxury",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ball-pen-luxury-comparison-which-is-better/"
-  },
-  {
-    "id": "442f0755-0b34-44f7-a045-76f2e010c0be",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142036",
-    "createdAt": 1774249234428,
-    "updatedAt": 1774249319821,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury men bracelet",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-men-bracelet-tech-comparison/"
-  },
-  {
-    "id": "b0dd46b3-d086-4d60-81dc-932021a231a8",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142034",
-    "createdAt": 1774249075433,
-    "updatedAt": 1774249234364,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury shades sunglasses",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-shades-sunglasses-usage-guide-complete-manual/"
-  },
-  {
-    "id": "35a43b9d-259d-4795-8e4c-70a4560fc785",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142032",
-    "createdAt": 1774248881428,
-    "updatedAt": 1774249074379,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury bangle bracelet",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/recommended-luxury-bangle-bracelet-top-picks/"
   }
 ]
