@@ -1036,13 +1036,21 @@
             line-height: 1.5;
             margin: 0;
         }
+        .references-section{
+            padding: 40px 160px;
+        }
     </style>
 </head>
 
-<body class="template-4 layout-ranking">
+<body class="template-4 layout-ranking {{LAYOUT_PRIORITY_CLASS}}">
     <div>
         <div class="content-container">
             <h1 class="ll-page-title title">{{PAGE_TITLE}}</h1>
+{{#if QUICK_ANSWER_HTML}}
+<section class="ll-quick-answer" aria-label="Quick answer">
+  {{{QUICK_ANSWER_HTML}}}
+</section>
+{{/if}}
             {{#if (isNotEmpty PAGE_DESCRIPTION)}}
             <div class="page-description">
                 <p>{{PAGE_DESCRIPTION}}</p>
@@ -1098,9 +1106,9 @@
                         </a>
                     </div>
 
-                    <h2 class="woocommerce-loop-product__title">
+                    <h3 class="woocommerce-loop-product__title product-card-title">
                         <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
-                    </h2>
+                    </h3>
 
                     <span class="price">
                         {{#if this.price}}
@@ -1234,9 +1242,9 @@
                         </a>
                     </div>
 
-                    <h2 class="woocommerce-loop-product__title">
+                    <h3 class="woocommerce-loop-product__title product-card-title">
                         <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
-                    </h2>
+                    </h3>
 
                     <span class="price">
                         {{#if this.price}}
@@ -1336,9 +1344,9 @@
                         </a>
                     </div>
 
-                    <h2 class="woocommerce-loop-product__title">
+                    <h3 class="woocommerce-loop-product__title product-card-title">
                         <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
-                    </h2>
+                    </h3>
 
                     <span class="price">
                         {{#if this.price}}
@@ -1382,7 +1390,7 @@
                     {{#each faqItems}}
                     <div class="accordion-item">
                         <div class="accordion-header">
-                            <div class="accordion-question">{{this.question}}</div>
+                            <h3 class="faq-question accordion-question">{{this.question}}</h3>
                         </div>
                         <div class="accordion-content">
                             {{this.answer}}
@@ -1616,9 +1624,9 @@
                         </a>
                     </div>
 
-                    <h2 class="woocommerce-loop-product__title">
+                    <h3 class="woocommerce-loop-product__title product-card-title">
                         <a href="{{this.link}}" class="product-title-link">{{truncateText this.name 40}}</a>
-                    </h2>
+                    </h3>
 
                     <span class="price">
                         {{#if this.price}}
@@ -1657,6 +1665,7 @@
         {{/if}}
     </div>
 
+{{{HELPFUL_FEEDBACK_HTML}}}
 {{{PAGE_UX_SCRIPT}}}
 </body>
 

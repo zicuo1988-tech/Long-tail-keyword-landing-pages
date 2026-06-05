@@ -30,6 +30,13 @@ export interface GenerationRequestPayload {
   articleAuthorName?: string;
   articleAuthorJobTitle?: string;
   articleAuthorBio?: string;
+  /** Classified search intent (set by templatePolicy) */
+  searchIntent?: "informational" | "transactional" | "evaluative";
+  /** First-screen block order priority */
+  layoutPriority?: "article-first" | "commerce-first" | "comparison-first";
+  /** A/B experiment variant: A=text-heavy (template-6), B=tool-heavy (template-4/5) */
+  experimentVariant?: "A" | "B";
+  experimentId?: string;
   templateContent: string;
   googleApiKey?: string;
   useElementor?: boolean; // 是否使用 Elementor 保存页面
@@ -105,4 +112,7 @@ export interface TaskProgress {
   alignmentAttempts?: number;
   alignmentReasons?: string[];
   finalAlignmentMismatch?: boolean;
+  searchIntent?: "informational" | "transactional" | "evaluative";
+  experimentVariant?: "A" | "B";
+  experimentId?: string;
 }

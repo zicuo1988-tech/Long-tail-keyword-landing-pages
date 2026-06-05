@@ -13,7 +13,11 @@
     "test:alignment": "tsx src/utils/contentAlignment.test.ts",
     "test:keyword-gate": "tsx src/utils/keywordIntentGate.test.ts",
     "audit:history": "tsx src/scripts/auditHistoryPages.ts",
-    "audit:rewrite-queue": "tsx src/scripts/auditHistoryPages.ts --rewrite-queue"
+    "audit:rewrite-queue": "tsx src/scripts/auditHistoryPages.ts --rewrite-queue",
+    "monitor:gsc": "tsx src/scripts/monitorGsc.ts",
+    "refresh:stale-guides": "tsx src/scripts/refreshStaleGuides.ts",
+    "refresh:stale-guides:queue": "tsx src/scripts/refreshStaleGuides.ts --write-queue",
+    "test:search-intent": "tsx src/utils/searchIntentClassifier.test.ts"
   },
   "dependencies": {
     "@sanity/client": "^6.28.1",
@@ -25,6 +29,7 @@
     "handlebars": "^4.7.8",
     "marked": "^12.0.0",
     "slugify": "^1.6.6",
+    "googleapis": "^144.0.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

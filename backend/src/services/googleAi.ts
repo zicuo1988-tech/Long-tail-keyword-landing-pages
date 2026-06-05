@@ -3714,6 +3714,52 @@ async function generateWithModelRotation(
   }
 }
 
+export interface GenerateQuickAnswerOptions {
+  apiKey?: string;
+  keyword: string;
+  pageTitle: string;
+  intent?: "informational" | "transactional" | "evaluative";
+  onStatusUpdate?: (message: string) => void;
+}
+
+/** 100–150 word direct answer for featured snippets (British English, no hard sell). */
+export async function generateQuickAnswerSnippet({
+  apiKey,
+  keyword,
+  pageTitle,
+  intent = "informational",
+  onStatusUpdate,
+}: GenerateQuickAnswerOptions): Promise<string> {
+  const prompt = `Write a direct answer to the search query "${keyword}" (page title: "${pageTitle}") in British English.
+
+Requirements:
+- EXACTLY 2–3 sentences, 100–150 words total
+- Answer the core question immediately — no greetings, no "In this guide"
+- Factual, neutral tone; no hype or calls to action
+- Intent: ${intent}
+- Do NOT use Chinese characters
+- Output plain text only (no HTML, no markdown)`;
+
+  const run = async (key: string): Promise<string> => {
+    const genAI = new GoogleGenerativeAI(key);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    onStatusUpdate?.("Generating quick answer snippet...");
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().trim().replace(/^["']|["']$/g, "");
+    const words = text.split(/\s+/).filter(Boolean);
+    if (words.length < 40) {
+      return `${text} This guide explains what matters for "${keyword}" and how premium options differ on materials, support, and long-term ownership.`;
+    }
+    if (words.length > 160) {
+      return words.slice(0, 150).join(" ") + ".";
+    }
+    return text;
+  };
+
+  if (apiKey) return run(apiKey);
+  return withApiKey((key) => run(key), 3, onStatusUpdate);
+}
+
 export async function generateHtmlContent({
   apiKey,
   keyword,

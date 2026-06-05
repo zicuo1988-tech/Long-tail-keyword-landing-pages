@@ -4,6 +4,12 @@ import { fileURLToPath } from "url";
 import type { GenerationRequestPayload } from "../types.js";
 import { isCommercialTitleType, shouldTreatAsLongFormGuideArticle } from "./guideIntent.js";
 import { detectPrimaryCategory, isComparisonIntent } from "./productCategory.js";
+import {
+  classifySearchIntent,
+  getLayoutPriority,
+  type LayoutPriority,
+  type SearchIntent,
+} from "./searchIntentClassifier.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -153,4 +159,63 @@ export function applyCommercialShellIfNeeded(
     "template-5",
     `Commercial titleType (${payload.titleType}): conversion shell`
   );
+}
+
+/**
+ * Intent-driven template and layout selection.
+ * Runs before guide-intent and commercial shell upgrades when respectTemplateChoice is false.
+ */
+export function applyIntentDrivenLayout(
+  payload: GenerationRequestPayload,
+  finalPageTitle: string
+): { intent: SearchIntent; layoutPriority: LayoutPriority } {
+  const intent = classifySearchIntent(
+    payload.keyword,
+    finalPageTitle,
+    payload.titleType
+  );
+  const layoutPriority = getLayoutPriority(intent);
+
+  payload.searchIntent = intent;
+  payload.layoutPriority = layoutPriority;
+
+  if (payload.respectTemplateChoice) {
+    return { intent, layoutPriority };
+  }
+
+  const tt = (payload.templateType || "template-1").trim();
+
+  switch (intent) {
+    case "informational":
+      if (tt === "template-1" || tt === "template-2") {
+        loadTemplateIntoPayload(payload, "template-6", "Intent-driven (informational)");
+      }
+      break;
+    case "transactional":
+      if (tt !== "template-4" && tt !== "template-5") {
+        loadTemplateIntoPayload(
+          payload,
+          hashKeyword(payload.keyword) % 2 === 0 ? "template-5" : "template-4",
+          "Intent-driven (transactional)"
+        );
+      }
+      break;
+    case "evaluative":
+      if (tt === "template-1" || tt === "template-2" || tt === "template-3") {
+        loadTemplateIntoPayload(
+          payload,
+          "template-5",
+          "Intent-driven (evaluative)"
+        );
+      }
+      break;
+  }
+
+  return { intent, layoutPriority };
+}
+
+/** A/B: variant A = template-6 (text-heavy), variant B keeps intent-driven commerce shells. */
+export function applyExperimentVariantShell(payload: GenerationRequestPayload): void {
+  if (payload.respectTemplateChoice || payload.experimentVariant !== "A") return;
+  loadTemplateIntoPayload(payload, "template-6", "A/B variant A (text-heavy shell)");
 }

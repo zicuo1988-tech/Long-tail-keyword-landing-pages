@@ -14,7 +14,8 @@ export function escapeHtml(text: string): string {
 export function buildAuthorBylineHtml(
   name: string,
   job?: string,
-  bio?: string
+  bio?: string,
+  profileUrl?: string
 ): string {
   const n = name?.trim();
   if (!n) return "";
@@ -24,7 +25,50 @@ export function buildAuthorBylineHtml(
   const bioPart = bio?.trim()
     ? `<p class="ll-author-bio">${escapeHtml(bio.trim())}</p>`
     : "";
-  return `<aside class="ll-author-byline" aria-label="Article author"><p><strong>By</strong> ${escapeHtml(n)}${jobPart}</p>${bioPart}</aside>`;
+  const nameHtml = profileUrl?.trim()
+    ? `<a href="${escapeHtml(profileUrl.trim())}" class="ll-author-link" rel="author">${escapeHtml(n)}</a>`
+    : escapeHtml(n);
+  return `<aside class="ll-author-byline" aria-label="Article author"><p><strong>By</strong> ${nameHtml}${jobPart}</p>${bioPart}</aside>`;
+}
+
+/** Featured-snippet target: 100–150 word direct answer. */
+export function buildQuickAnswerHtml(snippet: string): string {
+  const text = snippet?.trim();
+  if (!text) return "";
+  return `<p class="ll-quick-answer-text" itemprop="description">${escapeHtml(text)}</p>`;
+}
+
+export function buildExpertInsightHtml(title: string, body: string): string {
+  const t = title?.trim();
+  const b = body?.trim();
+  if (!b) return "";
+  const heading = t ? `<h2 class="ll-gain-title">${escapeHtml(t)}</h2>` : "";
+  return `<section class="ll-information-gain ll-expert-insight" aria-label="Expert insight">${heading}<p>${escapeHtml(b)}</p></section>`;
+}
+
+export function buildHelpfulFeedbackHtml(pageSlug?: string): string {
+  const slugAttr = pageSlug?.trim()
+    ? ` data-page-slug="${escapeHtml(pageSlug.trim())}"`
+    : "";
+  return `<section class="ll-helpful-feedback" aria-label="Was this helpful?"${slugAttr}>
+  <p class="ll-helpful-prompt">Was this guide helpful?</p>
+  <div class="ll-helpful-actions">
+    <button type="button" class="ll-helpful-btn" data-vote="yes">Yes</button>
+    <button type="button" class="ll-helpful-btn" data-vote="no">Not really</button>
+  </div>
+  <p class="ll-helpful-thanks" hidden>Thank you for your feedback.</p>
+</section>`;
+}
+
+/** Inject information-gain block before the first h2 in article HTML. */
+export function injectInformationGainBeforeFirstH2(
+  articleHtml: string,
+  gainHtml: string
+): string {
+  if (!gainHtml?.trim() || !articleHtml?.trim()) return articleHtml;
+  const idx = articleHtml.search(/<h2\b/i);
+  if (idx < 0) return articleHtml + gainHtml;
+  return articleHtml.slice(0, idx) + gainHtml + articleHtml.slice(idx);
 }
 
 export function buildRelatedGuidesHtml(

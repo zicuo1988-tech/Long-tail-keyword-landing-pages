@@ -3,7 +3,18 @@ import { notFound } from "next/navigation";
 import { sanityReadClient } from "../../../lib/sanity.client";
 import { parseJsonLdScripts } from "../../../lib/jsonLd";
 
-export const dynamic = "force-dynamic";
+export const revalidate = Number(process.env.NEXT_REVALIDATE_SECONDS || 3600);
+
+export async function generateStaticParams() {
+  const rows = await sanityReadClient.fetch<Array<{ slug?: string }>>(
+    `*[_type == "luxuryLifeGuide" && defined(slug.current)]{ "slug": slug.current }`
+  );
+  return (rows || [])
+    .filter((r) => r.slug)
+    .map((r) => ({
+      slug: r.slug!.replace(/^luxury-life-guides\//, ""),
+    }));
+}
 
 type Doc = {
   _id: string;

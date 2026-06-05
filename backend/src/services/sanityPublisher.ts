@@ -16,6 +16,11 @@ export interface SanityPublishInput {
   modifiedAt?: string;
   primaryCategory?: string;
   keyword?: string;
+  experimentVariant?: "A" | "B";
+  experimentId?: string;
+  authorSlug?: string;
+  contentVersion?: number;
+  lastReviewedAt?: string;
   projectId: string;
   dataset: string;
   token: string;
@@ -128,6 +133,22 @@ export async function publishToSanity(input: SanityPublishInput): Promise<Sanity
   const publishedAt = input.publishedAt || new Date().toISOString();
   const modifiedAt = input.modifiedAt || publishedAt;
 
+  let contentVersion = input.contentVersion ?? 1;
+  try {
+    const existing = await client.fetch<{ contentVersion?: number; publishedAt?: string } | null>(
+      `*[_id == $id][0]{ contentVersion, publishedAt }`,
+      { id: documentId }
+    );
+    if (existing) {
+      contentVersion = (existing.contentVersion ?? 0) + 1;
+      if (!input.publishedAt && existing.publishedAt) {
+        // preserve original publish date on republish when not explicitly set
+      }
+    }
+  } catch {
+    /* first publish */
+  }
+
   await client.createOrReplace({
     _id: documentId,
     _type: docType,
@@ -143,6 +164,11 @@ export async function publishToSanity(input: SanityPublishInput): Promise<Sanity
     modifiedAt,
     primaryCategory: input.primaryCategory || "",
     keyword: input.keyword || "",
+    experimentVariant: input.experimentVariant || "",
+    experimentId: input.experimentId || "",
+    authorSlug: input.authorSlug || "",
+    contentVersion,
+    lastReviewedAt: input.lastReviewedAt || modifiedAt,
     source: "ai-automation",
   });
 

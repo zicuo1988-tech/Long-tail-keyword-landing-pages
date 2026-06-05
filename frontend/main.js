@@ -1463,3 +1463,31 @@ if (document.readyState === "loading") {
 }
 
 // 注意：历史记录刷新已在 pollTaskStatus 函数内部的任务完成/失败时触发
+
+async function loadSeoHealth() {
+  const output = document.querySelector("#seo-health-output");
+  if (!output) return;
+  try {
+    const base = getBackendUrl();
+    const res = await fetch(`${base}/api/seo-health`);
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || "request failed");
+    const s = data.summary || {};
+    output.textContent = [
+      `Completed pages: ${s.completedPages ?? 0}`,
+      `Tier D pages: ${s.tierDPages ?? 0}`,
+      `Rewrite queue: ${s.rewriteQueueSize ?? 0}`,
+      `GSC alerts: ${s.gscAlerts ?? 0}`,
+      `A/B variants — A: ${s.experimentVariants?.A ?? 0}, B: ${s.experimentVariants?.B ?? 0}`,
+      `Helpful votes — yes: ${s.helpfulVotes?.yes ?? 0}, no: ${s.helpfulVotes?.no ?? 0}`,
+    ].join("\n");
+  } catch (err) {
+    output.textContent = `SEO health unavailable: ${err.message}`;
+  }
+}
+
+const refreshSeoHealthBtn = document.querySelector("#refresh-seo-health-btn");
+if (refreshSeoHealthBtn) {
+  refreshSeoHealthBtn.addEventListener("click", loadSeoHealth);
+}
+setTimeout(loadSeoHealth, 800);

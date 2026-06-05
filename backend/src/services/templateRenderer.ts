@@ -2,10 +2,13 @@ import Handlebars from "handlebars";
 import type { ProductSummary, FAQItem } from "../types.js";
 import { markdownToHtmlIfNeeded } from "./articleMarkdown.js";
 import { injectSharedLandingCss } from "../utils/sharedLandingCss.js";
+import type { LayoutPriority, SearchIntent } from "../utils/searchIntentClassifier.js";
 import {
   buildAuthorBylineHtml,
+  buildHelpfulFeedbackHtml,
   buildHowToSchemaJson,
   buildInternalLinksHtml,
+  buildQuickAnswerHtml,
   buildRelatedGuidesHtml,
   extractHowToStepsFromHtml,
   injectServerSideToc,
@@ -45,12 +48,28 @@ function formatIsoDateForDisplay(iso: string): string {
   });
 }
 
-function buildPageUxScript(): string {
+function buildPageUxScript(experimentVariant?: string): string {
+  const variantAttr = experimentVariant
+    ? `,experiment_variant:'${experimentVariant.replace(/'/g, "")}'`
+    : "";
+  const expJson = experimentVariant
+    ? `,experimentVariant:'${experimentVariant.replace(/'/g, "")}'`
+    : "";
   return `<script>(function(){
 function llTrack(n,p){try{if(typeof gtag==='function'){gtag('event',n,p||{});}else if(Array.isArray(window.dataLayer)){window.dataLayer.push(Object.assign({event:n},p||{}));}}catch(e){}}
 document.addEventListener('click',function(e){
   var t=e.target;
   if(!t)return;
+  var voteBtn=t.closest&&t.closest('.ll-helpful-btn');
+  if(voteBtn){
+    var sec=voteBtn.closest('.ll-helpful-feedback');
+    var vote=voteBtn.getAttribute('data-vote')||'';
+    var slug=sec&&sec.getAttribute('data-page-slug')||'';
+    llTrack('ll_helpful_vote',{vote:vote,page_slug:slug${variantAttr}});
+    if(sec){var thanks=sec.querySelector('.ll-helpful-thanks');if(thanks)thanks.hidden=false;var acts=sec.querySelector('.ll-helpful-actions');if(acts)acts.style.display='none';}
+    try{fetch('/api/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({vote:vote,pageSlug:slug${expJson}})});}catch(err){}
+    return;
+  }
   var acc=t.closest&&t.closest('.accordion-header');
   if(acc){llTrack('faq_toggle',{section:'faq'});return;}
   var a=t.closest&&t.closest('a.cta-primary,a.cta-secondary,a.button,a.blog-product-cta,a.shop-cta');
@@ -286,6 +305,14 @@ export interface RenderTemplateInput {
   titleType?: string;
   /** 长模板渲染 Related Guides 区块为 compact（模板 1/2） */
   relatedGuidesCompact?: boolean;
+  quickAnswerText?: string;
+  layoutPriority?: LayoutPriority;
+  searchIntent?: SearchIntent;
+  authorProfileUrl?: string;
+  authorSameAs?: string[];
+  pageSlug?: string;
+  experimentVariant?: "A" | "B";
+  showHelpfulFeedback?: boolean;
 }
 
 export function renderTemplate({
@@ -324,6 +351,14 @@ export function renderTemplate({
   craftImages = {},
   titleType,
   relatedGuidesCompact = false,
+  quickAnswerText,
+  layoutPriority = "article-first",
+  searchIntent,
+  authorProfileUrl,
+  authorSameAs = [],
+  pageSlug,
+  experimentVariant,
+  showHelpfulFeedback = true,
 }: RenderTemplateInput) {
   const templateContentWithSharedCss = injectSharedLandingCss(templateContent);
   const template = Handlebars.compile(templateContentWithSharedCss);
@@ -450,6 +485,7 @@ export function renderTemplate({
         if (authorNamePlain) {
           try {
             const pageIdBase = new URL(pu).href.replace(/\/+$/, "");
+            const origin = new URL(pu).origin;
             const personId = `${pageIdBase}#author`;
             const personNode: Record<string, unknown> = {
               "@type": "Person",
@@ -458,6 +494,12 @@ export function renderTemplate({
             };
             if (authorJobPlain) personNode.jobTitle = authorJobPlain;
             if (authorBioPlain) personNode.description = authorBioPlain;
+            if (authorProfileUrl?.trim()) {
+              personNode.url = authorProfileUrl.startsWith("http")
+                ? authorProfileUrl
+                : `${origin}${authorProfileUrl.startsWith("/") ? authorProfileUrl : `/${authorProfileUrl}`}`;
+            }
+            if (authorSameAs?.length) personNode.sameAs = authorSameAs;
             personNode.worksFor = { "@id": orgId };
             graph.push(personNode);
           } catch {
@@ -540,6 +582,31 @@ export function renderTemplate({
         .filter((c) => Object.keys(c).length > 1);
     }
     graph.push(articleNode);
+
+    if (pu) {
+      try {
+        const pageId = new URL(pu).href.replace(/\/+$/, "") + "/";
+        const webPageNode: Record<string, unknown> = {
+          "@type": "WebPage",
+          "@id": pageId,
+          url: pageId,
+          name: pageTitlePlain,
+          description: (metaDescription || pageDescription || "").replace(/<[^>]*>/g, "").trim(),
+          inLanguage: "en-GB",
+          isPartOf: { "@id": `${new URL(pu).origin}/#website` },
+          mainEntity: { "@type": "Article", headline: pageTitlePlain },
+        };
+        if (quickAnswerText?.trim()) {
+          webPageNode.speakable = {
+            "@type": "SpeakableSpecification",
+            cssSelector: [".ll-quick-answer", ".ll-quick-answer-text"],
+          };
+        }
+        graph.push(webPageNode);
+      } catch {
+        /* ignore invalid pageUrl for WebPage */
+      }
+    }
 
     if (pu) {
       const crumbs = buildBreadcrumbListSchema(pu, pageTitlePlain);
@@ -690,23 +757,47 @@ export function renderTemplate({
         return baseSchema;
       }).filter(schema => schema !== null);
       
-      productStructuredData = JSON.stringify(productSchemas, null, 2);
+      productStructuredData = JSON.stringify(
+        { "@context": "https://schema.org", "@graph": productSchemas },
+        null,
+        2
+      );
     } catch (error) {
       console.warn(`[TemplateRenderer] Failed to generate Product structured data:`, error);
     }
   }
 
-  /** Citations merged into main Article @graph; no second Article script */
-  const citationsStructuredData = "";
+  const quickAnswerHtml = buildQuickAnswerHtml(quickAnswerText || "");
+  const layoutArticleFirst = layoutPriority === "article-first";
+  const layoutCommerceFirst = layoutPriority === "commerce-first";
+  const layoutComparisonFirst = layoutPriority === "comparison-first";
+  const layoutPriorityClass =
+    layoutPriority === "commerce-first"
+      ? "ll-layout-commerce-first"
+      : layoutPriority === "comparison-first"
+        ? "ll-layout-comparison-first"
+        : "ll-layout-article-first";
 
-  const authorBylineHtml = buildAuthorBylineHtml(authorNamePlain, authorJobPlain, authorBioPlain);
+  const authorBylineHtml = buildAuthorBylineHtml(
+    authorNamePlain,
+    authorJobPlain,
+    authorBioPlain,
+    authorProfileUrl
+  );
+  const helpfulFeedbackHtml = showHelpfulFeedback
+    ? buildHelpfulFeedbackHtml(pageSlug)
+    : "";
   const relatedGuidesHtml = buildRelatedGuidesHtml(relatedGuides, {
     compact: relatedGuidesCompact,
   });
   const internalLinksHtml = buildInternalLinksHtml(internalLinks);
 
   let howToStructuredData = "";
-  if (titleType === "how-to" || titleType === "services-guides") {
+  const howToEligible =
+    titleType === "how-to" ||
+    titleType === "services-guides" ||
+    searchIntent === "informational";
+  if (howToEligible) {
     const steps = extractHowToStepsFromHtml(aiContentResolved);
     howToStructuredData = buildHowToSchemaJson(pageTitlePlain, pageUrl || "", steps);
   }
@@ -741,14 +832,21 @@ export function renderTemplate({
     // 模板6新增字段
     references: references || [], // 参考文献列表
     externalResources: externalResources || [], // 外部权威资源列表
-    CITATIONS_STRUCTURED_DATA: citationsStructuredData ? new Handlebars.SafeString(citationsStructuredData) : "", // Citations结构化数据
+    QUICK_ANSWER_HTML: quickAnswerHtml ? new Handlebars.SafeString(quickAnswerHtml) : "",
+    LAYOUT_ARTICLE_FIRST: layoutArticleFirst,
+    LAYOUT_COMMERCE_FIRST: layoutCommerceFirst,
+    LAYOUT_COMPARISON_FIRST: layoutComparisonFirst,
+    LAYOUT_PRIORITY_CLASS: layoutPriorityClass,
+    HELPFUL_FEEDBACK_HTML: helpfulFeedbackHtml
+      ? new Handlebars.SafeString(helpfulFeedbackHtml)
+      : "",
     PRODUCT_SECTION_TITLE: productSectionTitle,
     PRODUCT_SECTION_INTRO: productSectionIntro,
     TRUST_STRIP_HTML: showTrustStrip ? new Handlebars.SafeString(DEFAULT_TRUST_STRIP_HTML) : "",
     COMPARISON_CLOSING: comparisonClosing,
     LAST_UPDATED_LABEL,
     EDITORIAL_LEAD_HTML: new Handlebars.SafeString(editorialLeadHtml),
-    PAGE_UX_SCRIPT: new Handlebars.SafeString(buildPageUxScript()),
+    PAGE_UX_SCRIPT: new Handlebars.SafeString(buildPageUxScript(experimentVariant)),
     META_AUTHOR: metaAuthor,
     AUTHOR_NAME: authorNamePlain,
     AUTHOR_JOB: authorJobPlain,

@@ -1,5 +1,123 @@
 [
   {
+    "id": "7f03bb96-d501-4b3c-9521-43a6cd13d133",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-everything-about-high-end-timepieces-watches",
+    "createdAt": 1780651199410,
+    "updatedAt": 1780651372813,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "informational",
+      "experimentVariant": "B",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "High-end timepieces watches",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "informational",
+    "experimentVariant": "B",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-high-end-timepieces-watches/"
+  },
+  {
+    "id": "697d8120-6738-46ad-902e-2b7f7f2ec34f",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-shop-luxury-watches-official-retailer",
+    "createdAt": 1780651083099,
+    "updatedAt": 1780651197854,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "A",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Luxury watches",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "A",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/shop-luxury-watches-official-retailer/"
+  },
+  {
+    "id": "b99f86f5-f33d-4404-b4f2-8ae1274f4bd7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-rings-options-top-choices",
+    "createdAt": 1780648733723,
+    "updatedAt": 1780648851113,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "A",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Luxury rings",
+    "titleType": "best",
+    "templateType": "template-3",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "A",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-rings-options-top-choices/"
+  },
+  {
+    "id": "50bb0caa-f1e3-4c1c-915d-6175e69c29de",
+    "status": "failed",
+    "message": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接",
+    "createdAt": 1780646607474,
+    "updatedAt": 1780647010058,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Luxury rings",
+    "titleType": "best",
+    "templateType": "template-3",
+    "error": "[HTTP 0] 网络连接失败 - 无法访问 Google AI API。可能的原因：\n1. 网络无法访问 Google 服务（可能需要配置代理）\n2. DNS 解析失败\n3. 防火墙阻止连接\n\n解决方案：\n- 如果在中国大陆，需要配置代理访问 Google API\n- 检查网络连接是否正常\n- 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接"
+  },
+  {
+    "id": "48b0aa7c-d024-4d8e-af43-2752b0ff2cf2",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-limited-edition-watches-top-rated-and-reviews",
+    "createdAt": 1780645576940,
+    "updatedAt": 1780645778663,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "evaluative",
+      "experimentVariant": "B",
+      "experimentId": "ll-shell-2026"
+    },
+    "keyword": "Limited edition watches",
+    "titleType": "best",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "evaluative",
+    "experimentVariant": "B",
+    "experimentId": "ll-shell-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-limited-edition-watches-top-rated-and-reviews/"
+  },
+  {
     "id": "d29689b9-ed43-460d-87f4-1a662316e96c",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-technology-top-rated-and-reviews",
@@ -14354,75 +14472,5 @@
     "titleType": "review",
     "templateType": "template-3",
     "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-bracelet-for-women-top-rated-and-reviews/"
-  },
-  {
-    "id": "61c2965c-edba-4c6a-965d-80a4473060f4",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142019",
-    "createdAt": 1774248191426,
-    "updatedAt": 1774248285449,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "engagement ring luxury",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/ultimate-guide-to-engagement-ring-luxury/"
-  },
-  {
-    "id": "46a8c039-4404-46b8-818c-e958ca7c41af",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142017",
-    "createdAt": 1774248106334,
-    "updatedAt": 1774248189304,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer necklace",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-luxury-designer-necklace-expert-guide/"
-  },
-  {
-    "id": "ef425654-3d79-43ee-972f-ed68ff5942cd",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141989",
-    "createdAt": 1774229095436,
-    "updatedAt": 1774229278865,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury goods and jewelry",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-buy-luxury-goods-and-jewelry/"
-  },
-  {
-    "id": "94307cb1-ea5f-400a-ad3e-68d05e304295",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141987",
-    "createdAt": 1774228897425,
-    "updatedAt": 1774229093236,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry brand",
-    "titleType": "commercial",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/official-luxury-jewelry-brand-store/"
-  },
-  {
-    "id": "8d1af5fd-e6b6-40d3-b1d3-f2e40693f24e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141983",
-    "createdAt": 1774228685454,
-    "updatedAt": 1774228895131,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry necklace",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-jewelry-necklace-review-top-rated-models/"
   }
 ]

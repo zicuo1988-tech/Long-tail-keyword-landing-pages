@@ -117,6 +117,33 @@ export default defineType({
       type: "string",
       description: "Provenance from the generator (e.g. pipeline id or upstream URL).",
     }),
+    defineField({
+      name: "authorSlug",
+      title: "Author slug",
+      type: "string",
+      description: "Matches /authors/[slug] on the Next.js site.",
+    }),
+    defineField({
+      name: "experimentVariant",
+      title: "A/B variant",
+      type: "string",
+      options: { list: ["A", "B"] },
+    }),
+    defineField({
+      name: "experimentId",
+      title: "Experiment ID",
+      type: "string",
+    }),
+    defineField({
+      name: "contentVersion",
+      title: "Content version",
+      type: "number",
+    }),
+    defineField({
+      name: "lastReviewedAt",
+      title: "Last reviewed at",
+      type: "datetime",
+    }),
   ],
   preview: {
     select: {

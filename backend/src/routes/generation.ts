@@ -32,11 +32,20 @@ import {
   serializeJsonLdScripts,
 } from "../utils/htmlPublishExtract.js";
 import { evaluateKeywordGate } from "../utils/keywordIntentGate.js";
-import { applyGuideIntentLongShellIfNeeded } from "../utils/templatePolicy.js";
+import { pickInformationGainSnippet } from "../data/informationGainPools.js";
 import {
   buildKeywordAwareReferences,
   resolveArticleAuthor,
 } from "../utils/referencePools.js";
+import {
+  shouldIncludeReferences,
+  shouldRequireHowToSteps,
+} from "../utils/searchIntentClassifier.js";
+import {
+  buildExpertInsightHtml,
+  extractHowToStepsFromHtml,
+  injectInformationGainBeforeFirstH2,
+} from "../utils/landingPartialHtml.js";
 /**
  * 智能判断链接是否需要加 nofollow
  * 根据链接类型和性质决定 rel 属性
@@ -127,11 +136,18 @@ function attachCategoryLinks(items: ProductSummary[], siteUrl: string): ProductS
     return item;
   });
 }
-import { generateHtmlContent, generatePageTitle, type GeneratedContent } from "../services/googleAi.js";
+import {
+  generateHtmlContent,
+  generatePageTitle,
+  generateQuickAnswerSnippet,
+  type GeneratedContent,
+} from "../services/googleAi.js";
 import { publishPage } from "../services/wordpress.js";
 import {
   applyCommercialShellIfNeeded,
   applyGuideIntentLongShellIfNeeded,
+  applyExperimentVariantShell,
+  applyIntentDrivenLayout,
   migrateDisabledTemplate,
 } from "../utils/templatePolicy.js";
 import {
@@ -389,6 +405,21 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         updateTaskStatus(taskId, "generating_title", `使用备用标题（类型: ${payload.titleType || '默认'}）: ${finalPageTitle}`);
       }
     }
+
+    const { intent: searchIntent, layoutPriority } = applyIntentDrivenLayout(
+      payload,
+      finalPageTitle
+    );
+
+    if (!payload.experimentVariant) {
+      let h = 0;
+      for (let i = 0; i < payload.keyword.length; i++) {
+        h = (h * 31 + payload.keyword.charCodeAt(i)) | 0;
+      }
+      payload.experimentVariant = Math.abs(h) % 2 === 0 ? "A" : "B";
+      payload.experimentId = `ll-shell-${new Date().getFullYear()}`;
+    }
+    applyExperimentVariantShell(payload);
 
     applyGuideIntentLongShellIfNeeded(payload, finalPageTitle);
     applyCommercialShellIfNeeded(payload, finalPageTitle);
@@ -2559,6 +2590,40 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
+    const gainSnippet = pickInformationGainSnippet(payload.keyword, primaryCategory);
+    const gainHtml = buildExpertInsightHtml(gainSnippet.title, gainSnippet.body);
+    generatedContent.articleContent = injectInformationGainBeforeFirstH2(
+      generatedContent.articleContent,
+      gainHtml
+    );
+
+    if (
+      shouldRequireHowToSteps(searchIntent, payload.titleType) &&
+      extractHowToStepsFromHtml(generatedContent.articleContent).length < 3
+    ) {
+      console.warn(
+        `[task ${taskId}] HowTo steps < 3 for informational/how-to intent — HowTo schema may be omitted`
+      );
+    }
+
+    let quickAnswerText = "";
+    try {
+      quickAnswerText = await generateQuickAnswerSnippet({
+        apiKey,
+        keyword: payload.keyword,
+        pageTitle: finalPageTitle,
+        intent: searchIntent,
+        onStatusUpdate: (message) => {
+          if (!isTaskPaused(taskId)) {
+            updateTaskStatus(taskId, "generating_content", message);
+          }
+        },
+      });
+    } catch (qaErr) {
+      console.warn(`[task ${taskId}] Quick answer generation failed:`, qaErr);
+      quickAnswerText = `${finalPageTitle} — a concise guide to ${payload.keyword}, covering what to look for, how premium options differ, and practical buying considerations.`;
+    }
+
     console.log(`[task ${taskId}] ✅ AI 内容生成完成（基于实际 ${availableProductNames.length} 个产品）`);
     console.log(`[task ${taskId}] AI 内容检查:`);
     console.log(`  - AI 内容长度: ${generatedContent.articleContent.length}`);
@@ -2736,7 +2801,24 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       }
     }
 
-    const resolvedAuthor = resolveArticleAuthor(payload);
+    const resolvedAuthor = resolveArticleAuthor(payload, payload.keyword);
+    const authorProfileUrl = `${siteBaseUrl}${resolvedAuthor.profilePath}`;
+    const includeReferences = shouldIncludeReferences(
+      searchIntent,
+      payload.templateType
+    );
+
+    updateTaskStatus(taskId, "rendering_template", "正在渲染 SEO 优化模板...", {
+      searchIntent,
+      experimentVariant: payload.experimentVariant,
+      experimentId: payload.experimentId,
+      details: {
+        ...((getTask(taskId)?.details as Record<string, unknown>) || {}),
+        searchIntent,
+        experimentVariant: payload.experimentVariant,
+        experimentId: payload.experimentId,
+      },
+    });
 
     const finalHtml = renderTemplate({
       templateContent: payload.templateContent,
@@ -2760,8 +2842,8 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       relatedGuides,
       externalLinks,
       // 模板6/7新增字段
-      references: isTemplate5 || isTemplate6 ? references : [],
-      externalResources: isTemplate5 || isTemplate6 ? externalResources : [],
+      references: includeReferences ? references : [],
+      externalResources: includeReferences ? externalResources : [],
       productSectionTitle,
       productSectionIntro,
       showTrustStrip: showTrustStripFinal,
@@ -2772,10 +2854,18 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
       articleAuthorName: resolvedAuthor.name,
       articleAuthorJobTitle: resolvedAuthor.jobTitle,
       articleAuthorBio: resolvedAuthor.bio,
+      authorProfileUrl,
+      authorSameAs: resolvedAuthor.sameAs,
       titleType: payload.titleType,
       relatedGuidesCompact: isTemplate1 || isTemplate2,
       categoryImages,
       craftImages,
+      quickAnswerText,
+      layoutPriority: payload.layoutPriority || layoutPriority,
+      searchIntent,
+      pageSlug: `luxury-life-guides/${baseSlug}`,
+      experimentVariant: payload.experimentVariant,
+      showHelpfulFeedback: true,
     });
 
     // 调试：检查渲染后的 HTML 内容
@@ -2832,6 +2922,7 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
     if ((payload.publishTarget ?? "wordpress") === "sanity") {
       updateTaskStatus(taskId, "publishing", "正在发布到 Sanity...");
       const { bodyHtml, jsonLdScripts } = extractPublishHtml(finalHtml);
+      const nowIso = new Date().toISOString();
       const published = await publishToSanity({
         title: finalPageTitle,
         slug,
@@ -2840,14 +2931,15 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         canonicalPath: canonicalPathFromPageUrl(expectedPageUrl),
         ogImage: pageImageUrl || "",
         jsonLd: serializeJsonLdScripts(jsonLdScripts),
-        publishedAt:
-          payload.articleDatePublishedISO || new Date().toISOString(),
-        modifiedAt:
-          payload.articleDateModifiedISO ||
-          payload.articleDatePublishedISO ||
-          new Date().toISOString(),
+        publishedAt: payload.articleDatePublishedISO || nowIso,
+        modifiedAt: nowIso,
         primaryCategory,
         keyword: payload.keyword,
+        experimentVariant: payload.experimentVariant,
+        experimentId: payload.experimentId,
+        authorSlug: resolvedAuthor.slug,
+        contentVersion: 1,
+        lastReviewedAt: nowIso,
         projectId: payload.sanity?.projectId || process.env.SANITY_PROJECT_ID || "",
         dataset: payload.sanity?.dataset || process.env.SANITY_DATASET || "",
         token: payload.sanity?.token || process.env.SANITY_API_TOKEN || "",
@@ -2855,6 +2947,18 @@ async function processTask(taskId: string, payload: GenerationRequestPayload) {
         docType: payload.sanity?.docType || process.env.SANITY_DOC_TYPE || "luxuryLifeGuide",
         baseUrl: payload.sanity?.baseUrl || process.env.SANITY_BASE_URL || "",
       });
+
+      const revalidateSecret = process.env.REVALIDATE_SECRET || "";
+      const nextSiteUrl = process.env.NEXT_PUBLIC_SITE_URL || payload.sanity?.baseUrl || "";
+      if (revalidateSecret && nextSiteUrl) {
+        try {
+          const revalidateUrl = `${nextSiteUrl.replace(/\/+$/, "")}/api/revalidate?secret=${encodeURIComponent(revalidateSecret)}&slug=${encodeURIComponent(slug.replace(/^luxury-life-guides\//, ""))}`;
+          await fetch(revalidateUrl, { method: "POST" });
+          console.log(`[task ${taskId}] ISR revalidate requested for ${slug}`);
+        } catch (revErr) {
+          console.warn(`[task ${taskId}] ISR revalidate failed:`, revErr);
+        }
+      }
       if (isTaskPaused(taskId)) {
         return;
       }

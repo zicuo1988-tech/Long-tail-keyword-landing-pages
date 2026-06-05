@@ -5,6 +5,8 @@ import { tasksRouter } from "./routes/tasks.js";
 import { generationRouter } from "./routes/generation.js";
 import { historyRouter } from "./routes/history.js";
 import { apiKeysRouter } from "./routes/apiKeys.js";
+import { feedbackRouter } from "./routes/feedback.js";
+import { seoHealthRouter } from "./routes/seoHealth.js";
 
 export function createApp(): Application {
   const app = express();
@@ -113,6 +115,8 @@ export function createApp(): Application {
   app.use("/api", tasksRouter);
   app.use("/api", historyRouter);
   app.use("/api", apiKeysRouter);
+  app.use("/api", feedbackRouter);
+  app.use("/api", seoHealthRouter);
 
   app.use((err: unknown, _req, res, _next) => {
     console.error("[error]", err);

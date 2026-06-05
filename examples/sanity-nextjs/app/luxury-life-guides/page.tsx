@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { sanityReadClient } from "../../lib/sanity.client";
 
-export const dynamic = "force-dynamic";
+export const revalidate = Number(process.env.NEXT_REVALIDATE_SECONDS || 3600);
 
 type GuideRow = {
   title: string;

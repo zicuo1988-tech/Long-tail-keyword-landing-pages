@@ -53,12 +53,6 @@
     </script>
     {{/if}}
     
-    <!-- Citations Structured Data -->
-    {{#if CITATIONS_STRUCTURED_DATA}}
-    <script type="application/ld+json">
-    {{{CITATIONS_STRUCTURED_DATA}}}
-    </script>
-    {{/if}}
     {{#if HOWTO_STRUCTURED_DATA}}
     <script type="application/ld+json">
     {{{HOWTO_STRUCTURED_DATA}}}
@@ -95,7 +89,9 @@
             overflow: visible;
             min-height: auto !important;
         }
-
+        .references-section{
+            padding: 40px 160px;
+        }
         .hero-section::before {
             content: '';
             position: absolute;
@@ -1293,11 +1289,16 @@
     </style>
 </head>
 
-<body class="template-6 layout-seo-trust">
+<body class="template-6 layout-seo-trust {{LAYOUT_PRIORITY_CLASS}}">
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-content">
             <h1 class="ll-page-title hero-title">{{PAGE_TITLE}}</h1>
+{{#if QUICK_ANSWER_HTML}}
+<section class="ll-quick-answer" aria-label="Quick answer">
+  {{{QUICK_ANSWER_HTML}}}
+</section>
+{{/if}}
             {{#if PAGE_DESCRIPTION}}
             <p class="hero-subtitle">{{PAGE_DESCRIPTION}}</p>
             {{/if}}
@@ -1308,6 +1309,8 @@
         </div>
     </section>
 
+    <main id="main-content">
+    <article class="ll-article">
     <!-- Content Section: answer-first for organic search -->
     <div class="content-container" id="guide-content">
         {{{AUTHOR_BYLINE_HTML}}}
@@ -1317,6 +1320,7 @@
         </div>
     </div>
 
+    <div class="ll-layout-stack">
     {{#if topProducts.length}}
     <!-- Top Picks Section -->
     <section id="products" class="product-section">
@@ -1353,9 +1357,9 @@
                     </a>
                 </div>
 
-                <h2 class="woocommerce-loop-product__title">
+                <h3 class="woocommerce-loop-product__title product-card-title">
                     <a href="{{this.link}}" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
-                </h2>
+                </h3>
 
                 <span class="price">
                     {{#if this.price}}
@@ -1444,6 +1448,10 @@
         {{/if}}
     </section>
     {{/if}}
+
+    </div>
+    </article>
+    </main>
 
     {{#if references.length}}
     <!-- References Section - 参考文献部分 -->
@@ -1542,9 +1550,9 @@
                     </a>
                 </div>
 
-                <h2 class="woocommerce-loop-product__title">
+                <h3 class="woocommerce-loop-product__title product-card-title">
                     <a href="{{this.link}}" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
-                </h2>
+                </h3>
 
                 <span class="price">
                     {{#if this.price}}
@@ -1637,9 +1645,9 @@
                     </a>
                 </div>
 
-                <h2 class="woocommerce-loop-product__title">
+                <h3 class="woocommerce-loop-product__title product-card-title">
                     <a href="{{this.link}}" class="product-title-link" title="{{this.name}}">{{this.name}}</a>
-                </h2>
+                </h3>
 
                 <span class="price">
                     {{#if this.price}}
@@ -1677,7 +1685,7 @@
                 {{#each faqItems}}
                 <div class="accordion-item">
                     <div class="accordion-header">
-                        <div class="accordion-question">{{this.question}}</div>
+                        <h3 class="faq-question accordion-question">{{this.question}}</h3>
                     </div>
                     <div class="accordion-content">
                         {{this.answer}}
@@ -1858,6 +1866,7 @@
             }
         })();
     </script>
+{{{HELPFUL_FEEDBACK_HTML}}}
 {{{PAGE_UX_SCRIPT}}}
 </body>
 </html>
