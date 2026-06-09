@@ -1,5 +1,361 @@
 [
   {
+    "id": "a0d0c54e-563a-4314-be80-4843ff9ba90c",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780973623097,
+    "updatedAt": 1780973854471,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Luxury watches",
+    "titleType": "services-guides",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "fc60891b-6c61-4d36-8677-d7cfa7b1aa92",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780973429093,
+    "updatedAt": 1780973622377,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Artisan-crafted rings",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "ec19e24c-99c5-4b28-b0cf-e94fe7c63485",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780973195084,
+    "updatedAt": 1780973426325,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Designer rings",
+    "titleType": "how-to",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "2efcb1fd-f836-4172-b146-299cebad4988",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780972962088,
+    "updatedAt": 1780973194201,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "High-end diamond rings",
+    "titleType": "commercial",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "cef89fb1-aaf7-468a-ab99-2d4df4f72e07",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780972768096,
+    "updatedAt": 1780972961920,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Bespoke jewelry rings",
+    "titleType": "review",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "0c12e704-bbbb-4b54-b4df-d32170cd1755",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780972536091,
+    "updatedAt": 1780972765969,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Custom engagement rings",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "327e738f-6728-42e8-a64c-be1f331a9692",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780972344860,
+    "updatedAt": 1780972533538,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "Luxury rings",
+    "titleType": "purchase",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "e61ef044-64b4-4996-8b44-57b78919b23a",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780888399833,
+    "updatedAt": 1780888882092,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "most expensive flip phone",
+    "titleType": "purchase",
+    "templateType": "template-4",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "157df834-1995-414a-a6d9-dff8c9023178",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780888202838,
+    "updatedAt": 1780888397624,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "satellite flip phone",
+    "titleType": "most",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "31d49f55-9974-4d4f-ae12-110c45f85f53",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780887740834,
+    "updatedAt": 1780888201799,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "nano sim flip phone",
+    "titleType": "top-ranking",
+    "templateType": "template-5",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "f368f583-f270-4310-80b1-c3c030dee705",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780887506864,
+    "updatedAt": 1780887738949,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "high end flip phones",
+    "titleType": "top",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "7ebcca5d-e41b-41c6-8b2a-cb9847dd0ceb",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780887276842,
+    "updatedAt": 1780887506720,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "vertu flip phone",
+    "titleType": "best",
+    "templateType": "template-4",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "17d1d25a-b9d8-455f-bd1b-83ebbad581b4",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780887078845,
+    "updatedAt": 1780887274394,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "flip phone types",
+    "titleType": "expert",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "5c033642-1297-4441-99bb-255191873178",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780885533833,
+    "updatedAt": 1780887078428,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "do flip phones have internet",
+    "titleType": "comparison",
+    "templateType": "template-5",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "35b5c45c-7ff1-4387-a874-c666dd8c0eb8",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780885350047,
+    "updatedAt": 1780885533133,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "waterproof flip phone",
+    "titleType": "tech-insights",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "7f4cbbfa-2e3c-41c4-b65f-cc59dd7efb07",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-gold-flip-phone-service-guide",
+    "createdAt": 1780885214832,
+    "updatedAt": 1780885348100,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "informational",
+      "experimentVariant": "B",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "gold flip phone",
+    "titleType": "services-guides",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "informational",
+    "experimentVariant": "B",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/gold-flip-phone-service-guide/"
+  },
+  {
+    "id": "60415183-e967-4752-a565-c9813b86bc8c",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-durable-flip-phones-highly-recommended",
+    "createdAt": 1780884993207,
+    "updatedAt": 1780885212114,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "informational",
+      "experimentVariant": "A",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "durable flip phones",
+    "titleType": "recommendations",
+    "templateType": "template-6",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "informational",
+    "experimentVariant": "A",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-durable-flip-phones-highly-recommended/"
+  },
+  {
+    "id": "0e646083-2d25-4cf6-aba0-007c6807a049",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780884800087,
+    "updatedAt": 1780884992217,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "silver flip phone",
+    "titleType": "how-to",
+    "templateType": "template-5",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "277fe730-bf98-45bc-bd3a-d4875c5224f7",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-official-flip-phone-with-gps-store",
+    "createdAt": 1780884374445,
+    "updatedAt": 1780884799942,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 3,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "transactional",
+      "experimentVariant": "B",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "flip phone with gps",
+    "titleType": "commercial",
+    "templateType": "template-1",
+    "alignmentAttempts": 3,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "transactional",
+    "experimentVariant": "B",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/official-flip-phone-with-gps-store/"
+  },
+  {
+    "id": "8d80a9e5-32b0-40f2-a5a2-33a4bc900fdd",
+    "status": "completed",
+    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-touch-screen-flip-phone-top-rated-and-reviews",
+    "createdAt": 1780884129381,
+    "updatedAt": 1780884374289,
+    "details": {
+      "previousStatus": "publishing",
+      "alignmentAttempts": 1,
+      "alignmentReasons": [],
+      "finalAlignmentMismatch": false,
+      "searchIntent": "evaluative",
+      "experimentVariant": "B",
+      "experimentId": "ll-batch-2026"
+    },
+    "keyword": "touch screen flip phone",
+    "titleType": "review",
+    "templateType": "template-5",
+    "alignmentAttempts": 1,
+    "alignmentReasons": [],
+    "finalAlignmentMismatch": false,
+    "searchIntent": "evaluative",
+    "experimentVariant": "B",
+    "experimentId": "ll-batch-2026",
+    "pageUrl": "https://vertu.com/luxury-life-guides/best-touch-screen-flip-phone-top-rated-and-reviews/"
+  },
+  {
+    "id": "0b7b23a7-7440-49fe-a5f3-87e8cce0234e",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780883666871,
+    "updatedAt": 1780884128034,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "flip phone with keyboard",
+    "titleType": "informational",
+    "templateType": "template-6",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
+    "id": "f95467a1-b44a-4482-a71f-4b90ee136f5c",
+    "status": "failed",
+    "message": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。",
+    "createdAt": 1780883476414,
+    "updatedAt": 1780883665268,
+    "details": {
+      "previousStatus": "generating_content"
+    },
+    "keyword": "smart flip phone",
+    "titleType": "purchase",
+    "templateType": "template-1",
+    "error": "[HTTP 400] 地理位置限制 (400)：您所在的地理位置不支持使用 Google Gemini API。\n\n可能的原因：\n1. 您所在的国家/地区（如中国大陆）不在 Google Gemini API 的支持范围内\n2. 网络请求被识别为来自不支持的地区\n\n解决方案：\n1. 【推荐】配置代理服务器（VPN/代理）：\n   - 设置 HTTP_PROXY 或 HTTPS_PROXY 环境变量\n   - 例如：HTTP_PROXY=http://127.0.0.1:7890 HTTPS_PROXY=http://127.0.0.1:7890\n   - 或在代码中配置代理（需要修改 GoogleGenerativeAI SDK 配置）\n\n2. 使用支持的地区：\n   - 将服务器部署到支持 Google Gemini API 的地区（如美国、欧洲等）\n   - 或使用云服务商提供的代理服务\n\n3. 检查网络环境：\n   - 确认您的网络可以访问 Google 服务\n   - 尝试在浏览器中访问 https://generativelanguage.googleapis.com 测试连接\n\n注意：切换 API Key 无法解决此问题，这是地理位置限制。"
+  },
+  {
     "id": "4eb56a91-d7ec-4f36-a6d4-a882b1643d5f",
     "status": "completed",
     "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-how-to-select-luxury-apple-watch",
@@ -14260,313 +14616,5 @@
     "titleType": "purchase",
     "templateType": "template-1",
     "pageUrl": "https://vertu.com/luxury-life-guides/shop-where-to-buy-flip-phones-official-retailer/"
-  },
-  {
-    "id": "524bdb3a-3b5f-4321-86ba-fe40de5342be",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-5-luxury-gifts-for-him-best-rankings",
-    "createdAt": 1775032360914,
-    "updatedAt": 1775032401644,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gifts for him",
-    "titleType": "top-ranking",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-luxury-gifts-for-him-best-rankings/"
-  },
-  {
-    "id": "44578df0-da61-44b8-a7f8-9bcbb6b53cb7",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-top-5-luxury-mobile-phones-best-rankings",
-    "createdAt": 1775031796825,
-    "updatedAt": 1775031880448,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury mobile phones",
-    "titleType": "top-ranking",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-5-luxury-mobile-phones-best-rankings/"
-  },
-  {
-    "id": "7df13db6-610b-41ee-85bc-fa5d994ca5b0",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-mobile-cell-phone-booster-reviews-rankings-comprehensive-list",
-    "createdAt": 1775027044601,
-    "updatedAt": 1775027138075,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mobile cell phone booster reviews",
-    "titleType": "top-ranking",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/mobile-cell-phone-booster-reviews-rankings-comprehensive-list/"
-  },
-  {
-    "id": "66e74199-e95e-4876-8bcb-6229e39686d4",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-smart-folder-phone-rankings-comprehensive-list",
-    "createdAt": 1775026690086,
-    "updatedAt": 1775026768159,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "smart folder phone",
-    "titleType": "top-ranking",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/smart-folder-phone-rankings-comprehensive-list/"
-  },
-  {
-    "id": "249add69-b796-4baf-a492-a9b81ef02a2f",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-cell-phone-for-pictures-rankings-comprehensive-list",
-    "createdAt": 1775025865596,
-    "updatedAt": 1775025949242,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "best cell phone for pictures",
-    "titleType": "top-ranking",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-cell-phone-for-pictures-rankings-comprehensive-list/"
-  },
-  {
-    "id": "4676d666-5061-45c5-86e0-f58759d97cdf",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-folding-phone-price-quality-guide",
-    "createdAt": 1774864426997,
-    "updatedAt": 1774864528052,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "folding phone price",
-    "titleType": "best",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-folding-phone-price-quality-guide/"
-  },
-  {
-    "id": "a8fccf34-c1b3-486e-8d82-126fc7f35b42",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-android-smartphone-apps-options-top-choices",
-    "createdAt": 1774859151685,
-    "updatedAt": 1774859287510,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "best android smartphone apps",
-    "titleType": "best",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-android-smartphone-apps-options-top-choices/"
-  },
-  {
-    "id": "faa17fd6-6278-4a9e-b13a-8f7979e91d27",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-rated-mobile-phone-reviews-quality-guide",
-    "createdAt": 1774858915781,
-    "updatedAt": 1774859028887,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "mobile phone reviews",
-    "titleType": "best",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-rated-mobile-phone-reviews-quality-guide/"
-  },
-  {
-    "id": "4037bb6c-58f2-4cb0-8066-6724bb14bed6",
-    "status": "completed",
-    "message": "Sanity 发布成功！文档ID: luxuryLifeGuide.luxury-life-guides-best-luxury-watches-options-top-choices",
-    "createdAt": 1774852438808,
-    "updatedAt": 1774852640978,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury watches",
-    "titleType": "best",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-watches-options-top-choices/"
-  },
-  {
-    "id": "a0f614b5-a14f-4559-bd81-b71d7f218fb3",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141991",
-    "createdAt": 1774229279454,
-    "updatedAt": 1774342518031,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury jewelry shopping",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-jewelry-shopping-recommendations-top-choices/"
-  },
-  {
-    "id": "561789ab-045a-4b6a-888f-ddc4a38e1f1a",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 141391",
-    "createdAt": 1773729111657,
-    "updatedAt": 1774342517984,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "timeless luxury watches",
-    "titleType": "comparison",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/timeless-luxury-watches-vs-alternatives/"
-  },
-  {
-    "id": "213199c0-5187-4084-b495-02b26e562e61",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142065",
-    "createdAt": 1774252324451,
-    "updatedAt": 1774252412389,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "norway prison luxury",
-    "titleType": "tech-insights",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/which-norway-prison-luxury-is-better/"
-  },
-  {
-    "id": "19168b90-09cf-4c2b-a59a-cedd2c2648d0",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142063",
-    "createdAt": 1774252117421,
-    "updatedAt": 1774252324166,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer belts",
-    "titleType": "services-guides",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-designer-belts-user-guide/"
-  },
-  {
-    "id": "6eecd836-d7f6-438e-a108-a8ce2391a51c",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142061",
-    "createdAt": 1774251952423,
-    "updatedAt": 1774252117325,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury designer reading glasses for women",
-    "titleType": "recommendations",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/luxury-designer-reading-glasses-for-women-recommendations-top-choices/"
-  },
-  {
-    "id": "1acf65b6-7116-4a78-9465-96407515809d",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142059",
-    "createdAt": 1774251754446,
-    "updatedAt": 1774251952333,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury women's belts",
-    "titleType": "how-to",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/how-to-find-luxury-womens-belts/"
-  },
-  {
-    "id": "fc54ebae-8aa3-4ec3-9541-fef2d4bd018f",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142055",
-    "createdAt": 1774251418435,
-    "updatedAt": 1774251597460,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury square sunglasses",
-    "titleType": "review",
-    "templateType": "template-3",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-square-sunglasses-top-rated-and-reviews/"
-  },
-  {
-    "id": "58618ca3-338c-4405-b2cc-67cd3ef43178",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142053",
-    "createdAt": 1774250839427,
-    "updatedAt": 1774251417761,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury style watches",
-    "titleType": "informational",
-    "templateType": "template-2",
-    "pageUrl": "https://vertu.com/luxury-life-guides/everything-about-luxury-style-watches/"
-  },
-  {
-    "id": "1a9e0f64-404c-410e-9e18-7cffc575a566",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142051",
-    "createdAt": 1774250740438,
-    "updatedAt": 1774250836684,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "women's luxury bracelets",
-    "titleType": "purchase",
-    "templateType": "template-1",
-    "pageUrl": "https://vertu.com/luxury-life-guides/find-the-best-womens-luxury-bracelets-expert-guide/"
-  },
-  {
-    "id": "db8379da-e97f-4b02-8a37-7cd1c7ff33e5",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142049",
-    "createdAt": 1774250296448,
-    "updatedAt": 1774250738725,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury brand sunglasses",
-    "titleType": "most",
-    "templateType": "template-7",
-    "pageUrl": "https://vertu.com/luxury-life-guides/most-popular-luxury-brand-sunglasses-best-selling-models/"
-  },
-  {
-    "id": "a7f9f592-f476-4856-a28c-f5617f181f3e",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142047",
-    "createdAt": 1774249995566,
-    "updatedAt": 1774250294902,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury diamond tennis bracelet",
-    "titleType": "top-ranking",
-    "templateType": "template-6",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-luxury-diamond-tennis-bracelet-list-comprehensive-rankings/"
-  },
-  {
-    "id": "72027360-39ef-4678-a15a-00eee9fcccba",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142045",
-    "createdAt": 1774249795423,
-    "updatedAt": 1774249993062,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury gold bracelet",
-    "titleType": "top",
-    "templateType": "template-5",
-    "pageUrl": "https://vertu.com/luxury-life-guides/top-quality-luxury-gold-bracelet-expert-review/"
-  },
-  {
-    "id": "5240405b-f76f-4ac2-88f5-39a4a5e20242",
-    "status": "completed",
-    "message": "发布成功！页面 ID: 142043",
-    "createdAt": 1774249594428,
-    "updatedAt": 1774249792867,
-    "details": {
-      "previousStatus": "publishing"
-    },
-    "keyword": "luxury office products",
-    "titleType": "best",
-    "templateType": "template-4",
-    "pageUrl": "https://vertu.com/luxury-life-guides/best-luxury-office-products-top-rated-and-reviews/"
   }
 ]
